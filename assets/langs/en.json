@@ -1,0 +1,13 @@
+{
+  "@@locale": "en",
+  "settings": "Settings",
+  "general": "GENERAL",
+  "language": "Language",
+  "notifications": "Notifications",
+  "coupons": "Coupons",
+  "app_evaluation": "Application Evaluation",
+  "send_feedback": "Send feedback",
+  "feedback": "FEEDBACK",
+  "privacy_policy": "Privacy Policy",
+  "terms_conditions": "Terms & Conditions"
+}
