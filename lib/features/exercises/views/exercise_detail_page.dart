@@ -1,133 +1,195 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/ui/components/pp_button.dart';
+import '../../../core/ui/components/pp_card.dart';
 import '../../../shared/models/exercise.dart';
 
-/// Detailed view of a single exercise with hero animation.
-///
-/// Previously lib/view/views/ExerciseDetailPage.dart — same logic, updated imports.
 class ExerciseDetailPage extends StatelessWidget {
-  final Exercise? exercise;
-
   const ExerciseDetailPage({super.key, this.exercise});
+  final Exercise? exercise;
 
   @override
   Widget build(BuildContext context) {
+    final ex = exercise;
+    if (ex == null) return const SizedBox.shrink();
+
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              // Hero image
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.40,
-                child: Hero(
-                  tag: 'exerciseImage_${exercise!.title}',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(exercise!.image),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.black.withOpacity(0.5),
-                              Colors.transparent,
-                            ],
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+      backgroundColor: AppColors.background,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8),
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.45),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withOpacity(0.15)),
               ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                exercise!.title,
-                style: AppTextStyles.headingLarge,
-                textAlign: TextAlign.right,
-                textDirection: TextDirection.rtl,
-              ),
-              const SizedBox(height: 10),
-
-              // Details card
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  exercise!.details,
-                  style: AppTextStyles.bodySmall,
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              Text(
-                'التعليمات',
-                style: AppTextStyles.headingMedium,
-                textAlign: TextAlign.right,
-                textDirection: TextDirection.rtl,
-              ),
-              const SizedBox(height: 10),
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: exercise!.instructions.map((instruction) {
-                  return Text(
-                    instruction,
-                    style: AppTextStyles.exerciseDetails.copyWith(
-                      color: Colors.grey[300],
-                    ),
-                    textAlign: TextAlign.right,
-                    textDirection: TextDirection.rtl,
-                  );
-                }).toList(),
-              ),
-
-              const SizedBox(height: 30),
-            ],
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
+            ),
           ),
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.marginMobile, 0, AppSpacing.marginMobile, AppSpacing.sm + 8),
+        child: PpButton(label: 'إنهاء', onPressed: () => Navigator.pop(context)),
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // ── Hero image ─────────────────────────────────────────────────
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.42,
+              child: Hero(
+                tag: 'exerciseImage_${ex.title}',
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(AppSpacing.radiusXl)),
+                      child: Image.asset(ex.image, fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: AppColors.surfaceHigh,
+                          child: const Icon(Icons.fitness_center, color: AppColors.outline, size: 64),
+                        ),
+                      ),
+                    ),
+                    // gradient bottom fade
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(AppSpacing.radiusXl)),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, AppColors.background],
+                              stops: const [0.5, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          child: Text(
-            'انهاء',
-            style: AppTextStyles.headingSmall
-                .copyWith(fontWeight: FontWeight.bold),
-          ),
+
+            // ── Content ────────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.marginMobile),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(ex.title, style: AppTextStyles.headlineLgMobile, textAlign: TextAlign.end),
+                  const SizedBox(height: AppSpacing.sm),
+
+                  // Details card
+                  PpCard(
+                    padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text('وصف التمرين', style: AppTextStyles.labelPrimary),
+                            const SizedBox(width: 6),
+                            Container(
+                              width: 28, height: 28,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                              ),
+                              child: const Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 16),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(ex.details, style: AppTextStyles.bodyMd.copyWith(color: AppColors.textSecondary, height: 1.7), textAlign: TextAlign.end, textDirection: TextDirection.rtl),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+
+                  // Instructions
+                  PpCard(
+                    padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text('خطوات التنفيذ', style: AppTextStyles.labelPrimary),
+                            const SizedBox(width: 6),
+                            Container(
+                              width: 28, height: 28,
+                              decoration: BoxDecoration(
+                                color: AppColors.success.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                              ),
+                              child: const Icon(Icons.list_alt_rounded, color: AppColors.success, size: 16),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        ...ex.instructions.asMap().entries.map((e) => Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xs + 2),
+                          child: Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: AppSpacing.xs),
+                                    child: Text(
+                                      e.value,
+                                      style: AppTextStyles.bodyMd.copyWith(
+                                          color: AppColors.textSecondary, height: 1.65),
+                                      textDirection: TextDirection.rtl,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 26, height: 26,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(top: 1),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withOpacity(0.15),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${e.key + 1}',
+                                        style: AppTextStyles.labelCaps.copyWith(
+                                            color: AppColors.primary, fontSize: 10),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

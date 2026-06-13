@@ -1,32 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/models/exercise.dart';
 import '../../../shared/models/fetch_exercises.dart';
 import '../../../shared/widgets/exercise_card.dart';
+import '../../../core/ui/components/pp_empty_state.dart';
 
-/// Fetches exercises by [pageId] from JSON and renders them in a list.
-///
-/// Previously lib/model/json/GetExerciseList.dart (`class Exerciselistwidget`).
-/// Updated import paths; no logic changes.
 class ExerciseListWidget extends StatelessWidget {
-  final String pageId;
-  final String? text;
-  final String? image;
-  final String? text1;
-  final int itemCount;
-  final void Function(Exercise)? onAddPressed;
-
   const ExerciseListWidget({
     super.key,
     required this.pageId,
     required this.itemCount,
-    this.onAddPressed,
+    this.text1,
     this.text,
     this.image,
-    this.text1,
+    this.onAddPressed,
   });
+
+  final String pageId;
+  final int itemCount;
+  final String? text1, text, image;
+  final void Function(Exercise)? onAddPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -34,66 +30,105 @@ class ExerciseListWidget extends StatelessWidget {
       future: fetchExercisesFromJson(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error loading exercises: ${snapshot.error}'),
-          );
-        } else if (snapshot.hasData) {
-          final exercises =
-              (snapshot.data![pageId] ?? []).take(itemCount).toList();
-
           return Scaffold(
-            body: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(38),
-                  ),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(AppConstants.backgroundImage),
-                        fit: BoxFit.cover,
+            backgroundColor: AppColors.background,
+            body: const Center(child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2.5)),
+          );
+        }
+        if (snapshot.hasError) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: Center(child: Text('خطأ في تحميل التمارين', style: AppTextStyles.bodyMuted)),
+          );
+        }
+        final exercises = (snapshot.data?[pageId] ?? []).take(itemCount).toList();
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              // ── Collapsible hero header ──────────────────────────────────
+              SliverAppBar(
+                expandedHeight: 200,
+                pinned: true,
+                backgroundColor: AppColors.background,
+                leading: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.4),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white.withOpacity(0.15)),
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 80,
-                          width: double.infinity,
-                          decoration:
-                              BoxDecoration(color: Colors.black.withOpacity(0.5)),
-                          child: Center(
-                            child: Text(
-                              text1 ?? '',
-                              style: AppTextStyles.exerciseListHeader,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: exercises.length,
-                            itemBuilder: (context, index) {
-                              return ExerciseCard(
-                                exercise: exercises[index],
-                                onAddPressed: onAddPressed,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                      child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        } else {
-          return const Center(child: Text('No data available'));
-        }
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(text1 ?? '', style: AppTextStyles.appBarTitleSmall),
+                  centerTitle: false,
+                  titlePadding: const EdgeInsets.only(right: 20, bottom: 14),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(AppConstants.backgroundImage, fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(color: AppColors.surfaceHigh)),
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                              colors: [Colors.black.withOpacity(0.3), AppColors.background],
+                              stops: const [0.4, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ── Exercise count badge ─────────────────────────────────────
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.marginMobile, AppSpacing.sm, AppSpacing.marginMobile, AppSpacing.xs),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                        ),
+                        child: Text('${exercises.length} تمارين', style: AppTextStyles.labelCaps.copyWith(color: AppColors.primary)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ── Exercise list ────────────────────────────────────────────
+              exercises.isEmpty
+                  ? SliverFillRemaining(
+                      child: Center(child: Text('لا توجد تمارين', style: AppTextStyles.bodyMuted)),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, i) => ExerciseCard(exercise: exercises[i], onAddPressed: onAddPressed),
+                        childCount: exercises.length,
+                      ),
+                    ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.bottomNavHeight + AppSpacing.md)),
+            ],
+          ),
+        );
       },
     );
   }

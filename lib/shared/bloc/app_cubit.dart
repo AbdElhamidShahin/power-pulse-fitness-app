@@ -10,6 +10,7 @@ import '../../features/home/views/home_view.dart';
 import '../../features/tools/views/tools_screen.dart';
 import '../../features/settings/views/settings_view.dart';
 import '../../features/workout_plans/views/choose_workout_system_screen.dart';
+import '../../features/progress/views/progress_screen.dart';
 
 /// Main app cubit.
 ///
@@ -35,7 +36,7 @@ class AppCubit extends Cubit<AppState> {
   List<Widget> screens = const [
     HomeView(),
     ToolsScreen(),
-    ChooseWorkoutSystemScreen(),
+    ProgressScreen(),
     SettingsView(),
   ];
 

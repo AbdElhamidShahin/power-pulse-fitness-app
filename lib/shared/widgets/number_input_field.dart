@@ -1,87 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 
-/// Labeled numeric input row used across all calculator screens.
-///
-/// Previously `class Continar` in lib/view/wedget/CustomContinar.dart.
-/// Renamed to NumberInputField — a more descriptive name.
+/// Legacy wrapper kept for backward compatibility.
+/// New code should use PpNumberInput from core/ui/components/pp_input.dart
 class NumberInputField extends StatelessWidget {
-  NumberInputField({
+  const NumberInputField({
     super.key,
     required this.title,
     required this.hintText,
     this.onChanged,
+    this.suffix,
+    this.controller,
+    this.validator,
   });
 
-  final String title;
-  final String hintText;
+  final String title, hintText;
+  final String? suffix;
   final ValueChanged<String>? onChanged;
-
-  static double emailRegex = 0;
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 18),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    title,
-                    textDirection: TextDirection.rtl,
-                    style: const TextStyle(
-                      color: AppColors.textWhite,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.50,
-                  child: TextFormField(
-                    style: const TextStyle(color: AppColors.textWhite),
-                    keyboardType: TextInputType.number,
-                    onChanged: onChanged,
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: AppColors.inputBorder, width: 2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: AppColors.inputBorder, width: 2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      border: const OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black, width: 2),
-                      ),
-                      hintText: hintText,
-                      hintStyle:
-                          const TextStyle(color: AppColors.textWhite),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'لا يمكن أن يكون الحقل فارغًا';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ],
-            ),
+        Text(title, style: AppTextStyles.bodyMd.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w700)),
+        const SizedBox(height: AppSpacing.base),
+        TextFormField(
+          controller: controller,
+          onChanged: onChanged,
+          validator: validator,
+          textAlign: TextAlign.end,
+          textDirection: TextDirection.rtl,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
+          style: AppTextStyles.bodyLg,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: AppTextStyles.bodyMuted,
+            suffixText: suffix,
+            suffixStyle: AppTextStyles.labelMuted,
           ),
         ),
       ],

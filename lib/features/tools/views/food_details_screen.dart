@@ -1,166 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/ui/components/pp_app_bar.dart';
+import '../../../core/ui/components/pp_button.dart';
+import '../../../core/ui/components/pp_card.dart';
 import '../../../shared/bloc/app_cubit.dart';
 import '../../../shared/bloc/app_states.dart';
 
 class FoodDetailsScreen extends StatelessWidget {
-  final TextEditingController _controller = TextEditingController();
+  FoodDetailsScreen({super.key});
+  final TextEditingController _ctrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => AppCubit(),
+      create: (_) => AppCubit(),
       child: BlocConsumer<AppCubit, AppState>(
-        listener: (BuildContext context, state) {},
-        builder: (BuildContext context, state) {
-          var cubit = AppCubit.get(context);
-
+        listener: (_, __) {},
+        builder: (context, state) {
+          final cubit = AppCubit.get(context);
           return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'تفاصيل الطعام',
-              ),
-            ),
+            backgroundColor: AppColors.background,
+            appBar: const PpBackBar(title: 'تفاصيل الطعام'),
             body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // TextField لإدخال اسم الطعام
-                    TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        labelText: 'أدخل اسم الطعام بالإنجليزية',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        prefixIcon: Icon(Icons.fastfood, color: Colors.teal),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black), // تغيير اللون حسب الحاجة
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.marginMobile, vertical: AppSpacing.sm),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('تفاصيل الطعام', style: AppTextStyles.headlineLgMobile),
+                  const SizedBox(height: 4),
+                  Text('Food Nutrition Details', style: AppTextStyles.labelMuted),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // ── Search input ─────────────────────────────────────────
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppSpacing.radius),
+                      border: Border.all(color: AppColors.outlineVariant),
                     ),
-
-                    SizedBox(height: 20),
-
-                    // زر للحصول على تفاصيل الطعام
-                    ElevatedButton(
-                      onPressed: () {
-                        cubit.getFoodDetails(
-                            _controller.text); // إرسال النص للمتحكم
-                      },
-                      child: Text(
-                        'احصل على تفاصيل الطعام',
-                        style: GoogleFonts.changa(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        backgroundColor: Colors.teal,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.search_rounded, color: AppColors.outline),
+                          onPressed: () => cubit.detailsintegrs(),
                         ),
-                      ),
+                        Expanded(
+                          child: TextField(
+                            controller: _ctrl,
+                            textAlign: TextAlign.end,
+                            style: AppTextStyles.bodyMd,
+                            decoration: InputDecoration(
+                              hintText: 'أدخل اسم الطعام بالإنجليزية',
+                              hintStyle: AppTextStyles.bodyMuted,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 40),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  PpButton(
+                    label: 'احصل على تفاصيل الطعام',
+                    icon: Icons.restaurant_rounded,
+                    onPressed: () => cubit.detailsintegrs(),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
 
-                    if (cubit.isLoading)
-                      Center(child: CircularProgressIndicator()),
-
-                    if (cubit.errorMessage.isNotEmpty)
-                      Center(
-                        child: Text(
-                          cubit.errorMessage,
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    if (cubit.label.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              ':اسم الطعام',
-                              style: TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Text(
-                              cubit.label,
-                              style: GoogleFonts.changa(
-                                  fontSize: 24, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (cubit.calories > 0 &&
-                        !cubit.isLoading &&
-                        cubit.errorMessage.isEmpty)
-                      Column(
-                        children: [
-                          // مقياس السعرات الحرارية
-                          SfRadialGauge(
-                            axes: <RadialAxis>[
-                              RadialAxis(
-                                minimum: 0,
-                                maximum: 600,
-                                ranges: <GaugeRange>[
-                                  GaugeRange(
-                                      startValue: 0,
-                                      endValue: 100,
-                                      color: Colors.green),
-                                  GaugeRange(
-                                      startValue: 100,
-                                      endValue: 300,
-                                      color: Colors.orange),
-                                  GaugeRange(
-                                      startValue: 300,
-                                      endValue: 600,
-                                      color: Colors.red),
-                                ],
-                                pointers: <GaugePointer>[
-                                  NeedlePointer(value: cubit.calories),
-                                ],
-                                annotations: <GaugeAnnotation>[
-                                  GaugeAnnotation(
-                                    widget: Text(
-                                      '${cubit.calories.toStringAsFixed(0)} Cal',
-                                      style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    angle: 90,
-                                    positionFactor: 0.5,
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-
-                          // قسم الماكرو
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              buildNutrientCircle(
-                                  'PROTEIN', cubit.protein, Colors.green),
-                              buildNutrientCircle(
-                                  'CARBS', cubit.carbs, Colors.orange),
-                              buildNutrientCircle('FAT', cubit.fat, Colors.red),
-                            ],
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
+                  // ── States ───────────────────────────────────────────────
+                  if (cubit.isLoading)
+                    const Center(child: Padding(
+                      padding: EdgeInsets.all(40),
+                      child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2.5),
+                    ))
+                  else if (cubit.errorMessage.isNotEmpty)
+                    _ErrorCard(message: cubit.errorMessage)
+                  else if (cubit.calories > 0)
+                    _NutritionResults(cubit: cubit)
+                  else
+                    _EmptyState(),
+                ],
               ),
             ),
           );
@@ -168,56 +95,180 @@ class FoodDetailsScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget buildNutrientCircle(String label, double value, Color color) {
+class _ErrorCard extends StatelessWidget {
+  const _ErrorCard({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => PpCard(
+    borderColor: AppColors.error.withOpacity(0.4),
+    padding: const EdgeInsets.all(AppSpacing.cardPadding),
+    child: Row(
+      children: [
+        Expanded(child: Text(message, style: AppTextStyles.bodyMd.copyWith(color: AppColors.error), textAlign: TextAlign.end)),
+        const SizedBox(width: AppSpacing.xs),
+        const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 22),
+      ],
+    ),
+  );
+}
+
+class _NutritionResults extends StatelessWidget {
+  const _NutritionResults({required this.cubit});
+  final AppCubit cubit;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              child: SfRadialGauge(
-                axes: <RadialAxis>[
-                  RadialAxis(
-                    minimum: 0,
-                    maximum: 200,
-                    showLabels: false,
-                    showTicks: false,
-                    axisLineStyle: AxisLineStyle(
-                      thickness: 0.1,
-                      thicknessUnit: GaugeSizeUnit.factor,
-                      color: color.withOpacity(0.2),
+        // Food name
+        if (cubit.label.isNotEmpty)
+          PpCard(
+            padding: const EdgeInsets.all(AppSpacing.cardPadding),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(cubit.label, style: AppTextStyles.headingSmall),
+                const SizedBox(width: AppSpacing.xs),
+                Text('اسم الطعام:', style: AppTextStyles.labelMuted),
+              ],
+            ),
+          ),
+        const SizedBox(height: AppSpacing.sm),
+
+        // Calories gauge
+        PpCard(
+          padding: const EdgeInsets.all(AppSpacing.cardPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('السعرات الحرارية', style: AppTextStyles.labelMuted),
+              const SizedBox(height: AppSpacing.xs),
+              SizedBox(
+                height: 200,
+                child: SfRadialGauge(
+                  backgroundColor: Colors.transparent,
+                  axes: [
+                    RadialAxis(
+                      minimum: 0, maximum: 600,
+                      axisLineStyle: const AxisLineStyle(color: Color(0x12FFFFFF), thickness: 10),
+                      axisLabelStyle: GaugeTextStyle(color: AppColors.textSecondary, fontSize: 11),
+                      ranges: [
+                        GaugeRange(startValue: 0, endValue: 100, color: AppColors.success.withOpacity(0.8)),
+                        GaugeRange(startValue: 100, endValue: 300, color: AppColors.warning.withOpacity(0.8)),
+                        GaugeRange(startValue: 300, endValue: 600, color: AppColors.error.withOpacity(0.8)),
+                      ],
+                      pointers: [NeedlePointer(value: cubit.calories, needleColor: AppColors.primary, enableAnimation: true)],
+                      annotations: [
+                        GaugeAnnotation(
+                          widget: Text('${cubit.calories.toStringAsFixed(0)}\nكال',
+                            style: AppTextStyles.headlineMd.copyWith(color: AppColors.textPrimary),
+                            textAlign: TextAlign.center),
+                          angle: 90, positionFactor: 0.5,
+                        ),
+                      ],
                     ),
-                    pointers: <GaugePointer>[
-                      RangePointer(
-                        value: value,
-                        width: 0.1,
-                        sizeUnit: GaugeSizeUnit.factor,
-                        color: color,
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+
+        // Data quality disclaimer if macro kcal >> displayed calories
+        Builder(builder: (context) {
+          final macroKcal = cubit.protein * 4 + cubit.carbs * 4 + cubit.fat * 9;
+          final mismatch  = macroKcal > 0 && (macroKcal - cubit.calories).abs() > cubit.calories * 0.5;
+          if (!mismatch) return const SizedBox.shrink();
+          return Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+            child: Container(
+              padding: const EdgeInsets.all(AppSpacing.cardPadding),
+              decoration: BoxDecoration(
+                color: AppColors.warning.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                border: Border.all(color: AppColors.warning.withOpacity(0.25)),
+              ),
+              child: Text(
+                'ملاحظة: قد تكون بيانات الماكروز تقريبية أو لحصة مختلفة.',
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.warning),
+                textAlign: TextAlign.end,
+                textDirection: TextDirection.rtl,
               ),
             ),
-            Text(
-              '${value.toStringAsFixed(0)} g',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
+          );
+        }),
+        // Macros
+        Row(
+          children: [
+            Expanded(child: _MacroCard(label: 'بروتين', value: cubit.protein, color: AppColors.success, kcalMultiplier: 4)),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(child: _MacroCard(label: 'كارب', value: cubit.carbs, color: AppColors.warning, kcalMultiplier: 4)),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(child: _MacroCard(label: 'دهون', value: cubit.fat, color: AppColors.error, kcalMultiplier: 9)),
           ],
-        ),
-        SizedBox(height: 10),
-        Text(
-          label,
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ],
     );
   }
+}
+
+class _MacroCard extends StatelessWidget {
+  const _MacroCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.kcalMultiplier,
+  });
+  final String label;
+  final double value;
+  final Color color;
+  final double kcalMultiplier; // 4 for carbs/protein, 9 for fat
+
+  @override
+  Widget build(BuildContext context) {
+    final kcal = (value * kcalMultiplier).round();
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
+      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+          '${value.toStringAsFixed(0)}g',
+          style: AppTextStyles.headlineMd.copyWith(color: color, fontSize: 20),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          '$kcal kcal',
+          style: AppTextStyles.labelMuted.copyWith(fontSize: 10),
+        ),
+        const SizedBox(height: 2),
+        Text(label, style: AppTextStyles.labelMuted),
+      ]),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 140,
+    decoration: BoxDecoration(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      border: Border.all(color: AppColors.cardBorder),
+    ),
+    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Icon(Icons.restaurant_menu_outlined, color: AppColors.outline, size: 38),
+      const SizedBox(height: AppSpacing.xs),
+      Text('ابحث عن طعام لعرض تفاصيله', style: AppTextStyles.bodyMuted),
+    ]),
+  );
 }

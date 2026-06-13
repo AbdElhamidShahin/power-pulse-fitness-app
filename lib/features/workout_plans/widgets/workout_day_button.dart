@@ -1,77 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../views/exercise_screen.dart';
 
+/// WorkoutDayButton — entry point into a plan day.
+/// Passes systemName + muscleGroup through to ExerciseScreen
+/// so WorkoutCompletionScreen gets accurate data.
 class WorkoutDayButton extends StatelessWidget {
+  const WorkoutDayButton({
+    super.key,
+    required this.titlee,
+    required this.type,
+    this.systemName = '',
+    this.muscleGroup = '',
+  });
+
   final String titlee;
   final String type;
-
-  const WorkoutDayButton(
-      {Key? key, required this.titlee, required this.type})
-      : super(key: key);
+  final String systemName;
+  final String muscleGroup;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.marginMobile, vertical: 6),
+      child: GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ExerciseScreen(
+              currentDay:  type,
+              systemName:  systemName,
+              muscleGroup: muscleGroup.isNotEmpty ? muscleGroup : titlee,
+            ),
+          ),
+        ),
         child: Container(
-          child: InkWell(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  side: BorderSide(width: 2, color: Colors.amber),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          ),
+          child: Row(
+            children: [
+              // Icon
+              Container(
+                width: 40, height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ExerciseScreen(
-                              currentDay: type,
-                            )),
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: const Icon(Icons.fitness_center_rounded,
+                    color: AppColors.primary, size: 20),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+
+              // Text
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          titlee,
-                          style: GoogleFonts.changa(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "Tap To View exercises",
-                          style: GoogleFonts.changa(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.amber,
-                    ),
+                    Text(titlee,
+                        style: AppTextStyles.headingSmall,
+                        textAlign: TextAlign.end),
+                    const SizedBox(height: 3),
+                    Text('اضغط لبدء التمرين',
+                        style: AppTextStyles.labelMuted),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(width: AppSpacing.xs),
+              const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: AppColors.outline, size: 14),
+            ],
           ),
         ),
       ),

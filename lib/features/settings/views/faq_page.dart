@@ -1,143 +1,123 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/ui/components/pp_app_bar.dart';
+import '../../../core/ui/components/pp_card.dart';
 
 class FAQPage extends StatelessWidget {
-  final List<Map<String, String>> faqs = [
-    {
-      "question": "ما هي أفضل طريقة لبدء ممارسة التمارين الرياضية في الجيم؟",
-      "answer":
-          "أفضل طريقة لبدء ممارسة التمارين الرياضية هي تحديد أهدافك أولاً، سواء كانت لبناء العضلات، فقدان الوزن، أو تحسين اللياقة العامة. بعد ذلك، قم بإنشاء برنامج تدريبي يناسب هذه الأهداف. يمكنك أيضًا استشارة مدرب شخصي لمساعدتك في وضع خطة تدريبية مناسبة."
-    },
-    {
-      "question": "كم مرة يجب أن أتمرن في الأسبوع؟",
-      "answer":
-          "يعتمد ذلك على أهدافك ومستوى لياقتك البدنية الحالي. بشكل عام، يوصى بممارسة التمارين من 3 إلى 5 مرات في الأسبوع. يجب أن تتضمن هذه الجلسات تمارين القوة وتمارين الكارديو."
-    },
-    {
-      "question": "ما هي أفضل التمارين لبناء العضلات؟",
-      "answer":
-          "هناك العديد من التمارين الفعالة لبناء العضلات، مثل تمارين القرفصاء (Squats)، والرفعة الميتة (Deadlifts)، وتمارين الصدر بالدمبل (Dumbbell Bench Press)، وتمارين الباي سيبس بالدمبل (Dumbbell Bicep Curls)."
-    },
-    {
-      "question": "هل يجب أن أتناول مكملات غذائية؟",
-      "answer":
-          "المكملات الغذائية ليست ضرورية لجميع الأشخاص. يمكن الحصول على جميع العناصر الغذائية اللازمة من نظام غذائي متوازن. إذا كنت تشعر بأنك لا تحصل على كمية كافية من بعض العناصر الغذائية، يمكنك استشارة أخصائي تغذية للنظر في إمكانية تناول مكملات غذائية."
-    },
-    {
-      "question": "ما هي التمارين التي يمكنني القيام بها لتحسين مرونتي؟",
-      "answer":
-          "لتحسين المرونة، يمكنك ممارسة تمارين التمدد (Stretching) مثل تمرين الكوبرا (Cobra Stretch)، وتمرين الهمسترينغ (Hamstring Stretch)، وتمارين اليوغا مثل وضعية الطفل (Child's Pose) ووضعية المحارب (Warrior Pose)."
-    },
-    {
-      "question": "كيف يمكنني تجنب الإصابات أثناء التمرين؟",
-      "answer":
-          "لتجنب الإصابات، تأكد من القيام بالإحماء الجيد قبل بدء التمرين، وتعلم التقنية الصحيحة لكل تمرين، ولا ترفع أوزاناً ثقيلة جداً بالنسبة لمستوى قوتك. كما يجب أن تأخذ فترات راحة كافية بين الجلسات وتستمع لجسمك."
-    },
-    {
-      "question": "هل يمكنني ممارسة التمارين الرياضية إذا كنت مريضاً؟",
-      "answer":
-          "إذا كنت تعاني من مرض خفيف مثل نزلة برد، يمكنك ممارسة التمارين بانتظام ولكن بخفة. إذا كنت تعاني من مرض شديد أو حمى، فمن الأفضل أخذ راحة حتى تتعافى تماماً."
-    },
-  ];
+  FAQPage({super.key});
 
-    FAQPage({super.key});
+  static const _faqs = [
+    ('ما هي أفضل طريقة لبدء ممارسة التمارين؟', 'أفضل طريقة لبدء ممارسة التمارين الرياضية هي تحديد أهدافك أولاً، سواء كانت لبناء العضلات، فقدان الوزن، أو تحسين اللياقة العامة. بعد ذلك، قم بإنشاء برنامج تدريبي يناسب هذه الأهداف.'),
+    ('كم مرة يجب أن أتمرن في الأسبوع؟', 'يوصى بممارسة التمارين من 3 إلى 5 مرات في الأسبوع. يجب أن تتضمن هذه الجلسات تمارين القوة وتمارين الكارديو.'),
+    ('ما هي أفضل التمارين لبناء العضلات؟', 'تمارين القرفصاء والرفعة الميتة وتمارين الصدر والبايسيبس من أفضل التمارين لبناء العضلات.'),
+    ('هل يجب أن أتناول مكملات غذائية؟', 'المكملات الغذائية ليست ضرورية. يمكن الحصول على العناصر الغذائية من نظام غذائي متوازن. استشر أخصائي تغذية.'),
+    ('ما هي التمارين التي تحسن المرونة؟', 'تمارين التمدد واليوغا مثل وضعية الطفل والمحارب تحسن المرونة بشكل فعال.'),
+    ('كيف أتجنب الإصابات أثناء التمرين؟', 'قم بالإحماء الجيد، تعلم التقنية الصحيحة، لا ترفع أوزاناً ثقيلة، خذ راحة كافية واستمع لجسمك.'),
+    ('هل يمكنني التمرين وأنا مريض؟', 'مرض خفيف: يمكن التمرين بخفة. مرض شديد أو حمى: خذ راحة حتى تتعافى تماماً.'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('الأسئلة الشائعة',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-      ),
-      body: AnimationLimiter(
-        child: ListView.builder(
-          itemCount: faqs.length,
-          itemBuilder: (context, index) {
-            return AnimationConfiguration.staggeredList(
-              position: index,
-              duration: const Duration(milliseconds: 375),
-              child: SlideAnimation(
-                verticalOffset: 50.0,
-                child: FadeInAnimation(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: OpenContainer(
-                      transitionType: ContainerTransitionType.fade,
-                      openBuilder: (context, _) => _buildAnswerPage(context,
-                          faqs[index]['question']!, faqs[index]['answer']!),
-                      closedElevation: 0,
-                      closedShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      closedBuilder: (context, openContainer) {
-                        return GestureDetector(
-                          onTap: openContainer,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 8),
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: const PpBackBar(title: 'الأسئلة الشائعة'),
+        body: AnimationLimiter(
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.marginMobile, vertical: AppSpacing.sm),
+            itemCount: _faqs.length,
+            itemBuilder: (context, i) {
+              return AnimationConfiguration.staggeredList(
+                position: i,
+                duration: const Duration(milliseconds: 350),
+                child: SlideAnimation(
+                  verticalOffset: 40,
+                  child: FadeInAnimation(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                      child: OpenContainer(
+                        transitionType: ContainerTransitionType.fade,
+                        transitionDuration: const Duration(milliseconds: 350),
+                        openColor: AppColors.background,
+                        closedColor: AppColors.surface,
+                        closedElevation: 0,
+                        closedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                          side: const BorderSide(color: AppColors.cardBorder, width: 1),
+                        ),
+                        openBuilder: (context, _) => _AnswerPage(question: _faqs[i].$1, answer: _faqs[i].$2),
+                        closedBuilder: (context, open) => InkWell(
+                          onTap: open,
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSpacing.cardPadding),
                             child: Row(
                               children: [
-                                const Icon(Icons.help_outline,
-                                    color: Colors.blueAccent),
-                                const SizedBox(width: 15),
-                                Expanded(
-                                  child: Text(
-                                    faqs[index]['question']!,
-                                    style: GoogleFonts.cairo(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.right,
+                                const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.outline),
+                                const SizedBox(width: AppSpacing.xs),
+                                Expanded(child: Text(_faqs[i].$1,
+                                  style: AppTextStyles.headingSmall, textAlign: TextAlign.end)),
+                                const SizedBox(width: AppSpacing.xs),
+                                Container(
+                                  width: 36, height: 36,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                                    border: Border.all(color: AppColors.primary.withOpacity(0.25)),
                                   ),
+                                  child: const Icon(Icons.help_outline_rounded, color: AppColors.primary, size: 18),
                                 ),
                               ],
                             ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildAnswerPage(
-      BuildContext context, String question, String answer) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(question,
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        backgroundColor: Colors.amber,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Text(
-            answer,
-            style: GoogleFonts.cairo(fontSize: 16, color: Colors.black87),
-            textAlign: TextAlign.right,
+class _AnswerPage extends StatelessWidget {
+  const _AnswerPage({required this.question, required this.answer});
+  final String question, answer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: PpBackBar(title: 'الإجابة'),
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(AppSpacing.marginMobile),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              PpCard(
+                borderColor: AppColors.primary.withOpacity(0.3),
+                padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
+                child: Text(question, style: AppTextStyles.headingSmall, textAlign: TextAlign.end),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              PpCard(
+                padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
+                child: Text(answer, style: AppTextStyles.bodyLg.copyWith(height: 1.8), textAlign: TextAlign.end),
+              ),
+            ],
           ),
         ),
       ),

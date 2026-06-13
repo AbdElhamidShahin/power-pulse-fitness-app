@@ -1,117 +1,97 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/utils/navigation_utils.dart';
 import '../models/exercise.dart';
 import '../../features/exercises/views/exercise_detail_page.dart';
 
-/// Exercise card shown in list views.
-///
-/// Previously lib/view/wedget/costom_bosh.dart (`class CustomBosh`).
-/// Renamed to ExerciseCard. Import paths updated; no logic changes.
 class ExerciseCard extends StatelessWidget {
+  const ExerciseCard({super.key, this.exercise, this.onAddPressed});
   final Exercise? exercise;
   final void Function(Exercise)? onAddPressed;
 
-  const ExerciseCard({
-    super.key,
-    this.onAddPressed,
-    this.exercise,
-  });
-
-  void _navigateToDetailPage(BuildContext context) {
-    Navigator.push(
-      context,
-      NavigationUtils.slideRightRoute(ExerciseDetailPage(exercise: exercise)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final ex = exercise;
+    if (ex == null) return const SizedBox.shrink();
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.marginMobile, vertical: 6),
       child: GestureDetector(
-        onTap: () => _navigateToDetailPage(context),
+        onTap: () => Navigator.push(context, NavigationUtils.slideRightRoute(ExerciseDetailPage(exercise: ex))),
         child: Container(
-          height: 150,
+          height: 120,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.overlayLight,
-                spreadRadius: 2,
-                blurRadius: 5,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+            border: Border.all(color: AppColors.cardBorder, width: 1),
           ),
+          clipBehavior: Clip.hardEdge,
           child: Row(
             children: [
-              // Exercise image with hero animation
-              Stack(
-                children: [
-                  Hero(
-                    tag: 'exerciseImage_${exercise!.title}',
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          bottomLeft: Radius.circular(20),
-                        ),
-                        image: DecorationImage(
-                          image: AssetImage(exercise!.image),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 150,
-                    height: 150,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                      ),
-                      color: Colors.black12,
-                    ),
-                  ),
-                ],
-              ),
+              // ── Text side (right in RTL) ─────────────────────────────────
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          exercise!.title,
-                          style: AppTextStyles.exerciseTitle,
-                        ),
-                        Text(
-                          exercise!.details,
-                          style: AppTextStyles.exerciseDetails,
-                        ),
-                        if (onAddPressed != null)
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(ex.title,
+                        style: AppTextStyles.headingSmall.copyWith(color: AppColors.textPrimary),
+                        textAlign: TextAlign.end, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 5),
+                      Text(ex.details,
+                        style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                        textAlign: TextAlign.end, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      if (onAddPressed != null) ...[
+                        const SizedBox(height: 6),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            onTap: () => onAddPressed!(ex),
+                            child: Container(
+                              width: 30, height: 30,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.15),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.primary.withOpacity(0.4)),
                               ),
-                              onPressed: () => onAddPressed!(exercise!),
-                              child: const Icon(Icons.add,
-                                  color: AppColors.textWhite),
+                              child: const Icon(Icons.add_rounded, color: AppColors.primary, size: 18),
                             ),
                           ),
+                        ),
                       ],
-                    ),
+                    ],
                   ),
+                ),
+              ),
+
+              // ── Image side (left in RTL) ──────────────────────────────────
+              Hero(
+                tag: 'exerciseImage_${ex.title}',
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 120, height: 120,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image: AssetImage(ex.image), fit: BoxFit.cover),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [AppColors.surface, Colors.transparent],
+                            stops: const [0.0, 0.5],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
