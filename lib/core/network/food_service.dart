@@ -1,11 +1,6 @@
 import 'package:dio/dio.dart';
 import '../constants/app_constants.dart';
 
-/// Network service for the Edamam food API.
-///
-/// Previously lived at lib/model/dio/dio.dart as `NewsService` (misnamed).
-/// Moved to core/network with a clearer name and uses AppConstants for
-/// the API credentials instead of hardcoded strings.
 class FoodService {
   final Dio dio;
 

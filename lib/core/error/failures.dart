@@ -1,3 +1,4 @@
+
 sealed class Failure {
   const Failure(this.message);
 
@@ -7,13 +8,13 @@ sealed class Failure {
   String toString() => '$runtimeType: $message';
 }
 
-/// No internet connection or the request timed out.
+// ── Network / HTTP ────────────────────────────────────────────────────────────
+
 final class NetworkFailure extends Failure {
   const NetworkFailure([String message = 'لا يوجد اتصال بالإنترنت'])
       : super(message);
 }
 
-/// Server responded with a non-2xx status code.
 final class ServerFailure extends Failure {
   const ServerFailure({
     required String message,
@@ -23,25 +24,29 @@ final class ServerFailure extends Failure {
   final int? statusCode;
 }
 
-/// The server returned 404 / no data for this query.
 final class NotFoundFailure extends Failure {
   const NotFoundFailure([String message = 'لم يتم العثور على البيانات'])
       : super(message);
 }
 
-/// SharedPreferences read/write failed or returned corrupt data.
+// ── Local storage ─────────────────────────────────────────────────────────────
+
 final class CacheFailure extends Failure {
   const CacheFailure([String message = 'خطأ في قراءة البيانات المحلية'])
       : super(message);
 }
 
+// ── Domain / Validation ───────────────────────────────────────────────────────
+
 final class ValidationFailure extends Failure {
   const ValidationFailure(super.message);
 }
 
+/// Generic catch-all for truly unexpected exceptions.
 final class UnknownFailure extends Failure {
   const UnknownFailure([String message = 'حدث خطأ غير متوقع']) : super(message);
 }
+
 
 sealed class ApiResult<T> {
   const ApiResult();
@@ -49,11 +54,10 @@ sealed class ApiResult<T> {
   factory ApiResult.success(T data) = ApiSuccess<T>;
   factory ApiResult.failure(Failure failure) = ApiFailure<T>;
 
-  /// Returns [data] or throws if this is a [ApiFailure].
   T get dataOrThrow => switch (this) {
-        ApiSuccess(:final data) => data,
-        ApiFailure(:final failure) => throw failure,
-      };
+    ApiSuccess(:final data) => data,
+    ApiFailure(:final failure) => throw failure,
+  };
 
   bool get isSuccess => this is ApiSuccess<T>;
   bool get isFailure => this is ApiFailure<T>;
