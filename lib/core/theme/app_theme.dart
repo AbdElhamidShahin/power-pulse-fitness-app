@@ -38,9 +38,9 @@ class AppTheme {
       ),
       textTheme: GoogleFonts.cairoTextTheme(
         ThemeData.dark().textTheme.apply(
-          bodyColor: AppColors.textPrimary,
-          displayColor: AppColors.textPrimary,
-        ),
+              bodyColor: AppColors.textPrimary,
+              displayColor: AppColors.textPrimary,
+            ),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
@@ -81,7 +81,8 @@ class AppTheme {
         hintStyle: AppTextStyles.bodyMuted,
         labelStyle: AppTextStyles.bodyMuted,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm, vertical: AppSpacing.sm,
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.sm,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -97,7 +98,8 @@ class AppTheme {
         ),
       ),
       dividerTheme: const DividerThemeData(
-        color: AppColors.divider, thickness: 1,
+        color: AppColors.divider,
+        thickness: 1,
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surface,
