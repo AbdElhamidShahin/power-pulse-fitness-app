@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-/// Power Pulse — Typography
-/// Cairo font — Arabic-first, emotionally athletic
 class AppTextStyles {
   AppTextStyles._();
 
-  // ── Display Hero — streak numbers, featured stats ─────────────────────────
-  /// 52px / 900 — the ONE number that matters on screen
   static TextStyle get displayHero => GoogleFonts.cairo(
         fontSize: 52,
         fontWeight: FontWeight.w900,
@@ -17,7 +13,6 @@ class AppTextStyles {
         letterSpacing: -1.5,
       );
 
-  // ── Display metrics — BMI result, calorie total ───────────────────────────
   static TextStyle get displayMetrics => GoogleFonts.cairo(
         fontSize: 44,
         fontWeight: FontWeight.w900,
@@ -27,7 +22,6 @@ class AppTextStyles {
       );
 
   // ── Headlines ─────────────────────────────────────────────────────────────
-  /// 34px — hero card title, featured workout name
   static TextStyle get headlineHero => GoogleFonts.cairo(
         fontSize: 34,
         fontWeight: FontWeight.w900,
@@ -36,7 +30,6 @@ class AppTextStyles {
         letterSpacing: -0.5,
       );
 
-  /// 26px — screen titles, section titles
   static TextStyle get headlineLgMobile => GoogleFonts.cairo(
         fontSize: 26,
         fontWeight: FontWeight.w800,
@@ -46,7 +39,6 @@ class AppTextStyles {
 
   static TextStyle get headlineLg => headlineLgMobile;
 
-  /// 20px — card titles
   static TextStyle get headlineMd => GoogleFonts.cairo(
         fontSize: 20,
         fontWeight: FontWeight.w700,
@@ -54,7 +46,6 @@ class AppTextStyles {
         height: 1.3,
       );
 
-  /// 17px — list item titles, labels
   static TextStyle get headingSmall => GoogleFonts.cairo(
         fontSize: 17,
         fontWeight: FontWeight.w700,
@@ -62,7 +53,7 @@ class AppTextStyles {
         height: 1.3,
       );
 
-  static TextStyle get headingLarge  => headlineLgMobile;
+  static TextStyle get headingLarge => headlineLgMobile;
   static TextStyle get headingMedium => headlineMd;
 
   // ── Body ──────────────────────────────────────────────────────────────────
@@ -136,18 +127,22 @@ class AppTextStyles {
       );
 
   // ── Tool / calc screens ───────────────────────────────────────────────────
-  static TextStyle get toolCardTitle  => headingSmall;
-  static TextStyle get calcLabel      => headingSmall;
-  static TextStyle get calcResult     => displayMetrics.copyWith(color: AppColors.success);
-  static TextStyle get calcHeading    => headlineLgMobile.copyWith(color: AppColors.primary);
+  static TextStyle get toolCardTitle => headingSmall;
+  static TextStyle get calcLabel => headingSmall;
+  static TextStyle get calcResult =>
+      displayMetrics.copyWith(color: AppColors.success);
+  static TextStyle get calcHeading =>
+      headlineLgMobile.copyWith(color: AppColors.primary);
 
   // ── Exercise / workout ─────────────────────────────────────────────────────
-  static TextStyle get exerciseTitle  => headingSmall.copyWith(color: AppColors.primary);
-  static TextStyle get exerciseDetails => bodyMd.copyWith(color: AppColors.textSecondary);
+  static TextStyle get exerciseTitle =>
+      headingSmall.copyWith(color: AppColors.primary);
+  static TextStyle get exerciseDetails =>
+      bodyMd.copyWith(color: AppColors.textSecondary);
   static TextStyle get exerciseListHeader => headlineLgMobile;
 
   // ── Cards ──────────────────────────────────────────────────────────────────
-  static TextStyle get cardTitle    => headlineMd.copyWith(fontSize: 18);
+  static TextStyle get cardTitle => headlineMd.copyWith(fontSize: 18);
   static TextStyle get cardSubtitle => bodyMd;
   static TextStyle get workoutOptionTitle => headingSmall;
   static TextStyle tabBarItem(Color color) =>
