@@ -175,7 +175,7 @@ class _ConsistencyHeatmap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Build a set of date strings for the last 28 days that had workouts
+    // Build a set of data strings for the last 28 days that had workouts
     final trainedDates = <String>{};
     for (final r in history) {
       trainedDates.add(

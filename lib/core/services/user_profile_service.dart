@@ -6,10 +6,10 @@ class WorkoutRecord {
 
   final DateTime date;
 
-  Map<String, dynamic> toJson() => {'date': date.toIso8601String()};
+  Map<String, dynamic> toJson() => {'data': date.toIso8601String()};
 
   factory WorkoutRecord.fromJson(Map<String, dynamic> json) =>
-      WorkoutRecord(date: DateTime.parse(json['date'] as String));
+      WorkoutRecord(date: DateTime.parse(json['data'] as String));
 }
 
 class UserProfileService {
