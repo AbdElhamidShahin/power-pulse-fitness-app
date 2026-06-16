@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+
 import 'core/di/injection.dart';
 import 'core/services/user_profile_service.dart';
 import 'core/theme/app_theme.dart';
@@ -11,7 +12,7 @@ import 'shared/providers/item_provider.dart';
 import 'features/exercises/views/gim_view.dart';
 import 'features/onboarding/views/onboarding_flow.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -22,8 +23,6 @@ void main() async {
   ));
 
   await setupDi();
-
-  await UserProfileService.instance.init();
 
   final showOnboarding = !UserProfileService.instance.onboardingDone;
 
@@ -37,6 +36,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.showOnboarding});
+
   final bool showOnboarding;
 
   @override
