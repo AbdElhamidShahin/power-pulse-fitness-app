@@ -1,12 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/models/exercise.dart';
+import '../../../../core/error/failures.dart';
+import '../../../exercises/data/model/exercise.dart';
 import '../../../../shared/providers/item_provider.dart';
-import '../../data/repositories/workout_plan_repository.dart';
+import '../../data/repo/workout_plan_repository.dart';
 import 'workout_plan_state.dart';
 
-/// Drives the custom workout plan (YourExersize) screen.
-///
-/// Depends only on [WorkoutPlanRepository]. (CLAUDE.md §B.1)
+
 class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
   WorkoutPlanCubit(this._repository) : super(const WorkoutPlanInitial());
 

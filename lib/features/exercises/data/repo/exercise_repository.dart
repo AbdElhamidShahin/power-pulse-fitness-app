@@ -1,5 +1,5 @@
 import '../../../../core/error/failures.dart';
-import '../../../../shared/models/exercise.dart';
+import '../model/exercise.dart';
 import '../service/exercise_service.dart';
 
 abstract interface class ExerciseRepository {

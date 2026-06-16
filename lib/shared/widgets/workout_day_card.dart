@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/utils/navigation_utils.dart';
 
-/// Home screen workout-day card (image + title overlay).
-///
-/// Previously lib/view/wedget/custom_text_feild.dart (`class CustomTextField`).
-/// Renamed to WorkoutDayCard — more descriptive; no logic changes.
 class WorkoutDayCard extends StatelessWidget {
   const WorkoutDayCard({
     super.key,

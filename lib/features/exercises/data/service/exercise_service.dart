@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import '../../../../shared/models/exercise.dart';
+import '../model/exercise.dart';
 
 class ExerciseService {
   const ExerciseService();

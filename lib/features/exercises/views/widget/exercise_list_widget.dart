@@ -7,7 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/ui/components/pp_empty_state.dart';
-import '../../../../shared/models/exercise.dart';
+import '../../data/model/exercise.dart';
 
 import '../../../../shared/widgets/exercise_card.dart';
 import '../../data/repo/exercise_repository.dart';

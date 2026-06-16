@@ -1,6 +1,5 @@
-import '../../../../core/models/exercise.dart';
+import '../../../exercises/data/model/exercise.dart';
 
-/// Workout plan (custom system) states — sealed class (CLAUDE.md §B.2).
 sealed class WorkoutPlanState {
   const WorkoutPlanState();
 }
@@ -15,7 +14,6 @@ final class WorkoutPlanLoaded extends WorkoutPlanState {
     required this.selectedDay,
   });
 
-  /// Map of day name → list of exercises.
   final Map<String, List<Exercise>> days;
   final String selectedDay;
 }

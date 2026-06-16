@@ -39,27 +39,35 @@ class BmiWidget extends StatelessWidget {
                     child: Column(
                       children: [
                         PpNumberInput(
-                          label: 'الطول', hint: 'مثال: 175', suffix: 'سم',
+                          label: 'الطول',
+                          hint: 'مثال: 175',
+                          suffix: 'سم',
                           validator: (v) {
                             if (v == null || v.isEmpty) return 'أدخل الطول';
                             final n = double.tryParse(v);
                             if (n == null) return 'رقم غير صالح';
-                            if (n < 50 || n > 250) return 'طول غير منطقي (50–250 سم)';
+                            if (n < 50 || n > 250)
+                              return 'طول غير منطقي (50–250 سم)';
                             return null;
                           },
-                          onChanged: (v) => cubit.height1 = double.tryParse(v) ?? 0,
+                          onChanged: (v) =>
+                              cubit.height1 = double.tryParse(v) ?? 0,
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         PpNumberInput(
-                          label: 'الوزن', hint: 'مثال: 75', suffix: 'كجم',
+                          label: 'الوزن',
+                          hint: 'مثال: 75',
+                          suffix: 'كجم',
                           validator: (v) {
                             if (v == null || v.isEmpty) return 'أدخل الوزن';
                             final n = double.tryParse(v);
                             if (n == null) return 'رقم غير صالح';
-                            if (n < 10 || n > 500) return 'وزن غير منطقي (10–500 كجم)';
+                            if (n < 10 || n > 500)
+                              return 'وزن غير منطقي (10–500 كجم)';
                             return null;
                           },
-                          onChanged: (v) => cubit.weight1 = double.tryParse(v) ?? 0,
+                          onChanged: (v) =>
+                              cubit.weight1 = double.tryParse(v) ?? 0,
                         ),
                       ],
                     ),
@@ -72,7 +80,9 @@ class BmiWidget extends StatelessWidget {
                     icon: Icons.calculate_rounded,
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        cubit.calculatedBMI = cubit.weight1 / (cubit.height1 * cubit.height1) * 10000;
+                        cubit.calculatedBMI = cubit.weight1 /
+                            (cubit.height1 * cubit.height1) *
+                            10000;
                         cubit.emit(AppStateUpdatedState());
                       }
                     },
@@ -81,7 +91,8 @@ class BmiWidget extends StatelessWidget {
 
                   // ── Result ─────────────────────────────────────────────────
                   if (cubit.calculatedBMI > 0) ...[
-                    _ResultCard(bmi: cubit.calculatedBMI, label: cubit.getResultText()),
+                    _ResultCard(
+                        bmi: cubit.calculatedBMI, label: cubit.getResultText()),
                     const SizedBox(height: AppSpacing.sm),
                     _BmiGauge(bmi: cubit.calculatedBMI),
                   ] else
@@ -127,15 +138,22 @@ class _ResultCard extends StatelessWidget {
             const SizedBox(height: 6),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(color: c.withOpacity(0.15), borderRadius: BorderRadius.circular(AppSpacing.radiusFull), border: Border.all(color: c.withOpacity(0.4))),
-              child: Text(label, style: AppTextStyles.labelCaps.copyWith(color: c, fontSize: 13)),
+              decoration: BoxDecoration(
+                  color: c.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                  border: Border.all(color: c.withOpacity(0.4))),
+              child: Text(label,
+                  style:
+                      AppTextStyles.labelCaps.copyWith(color: c, fontSize: 13)),
             ),
           ]),
           const Spacer(),
           Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Text('المؤشر', style: AppTextStyles.labelMuted),
             const SizedBox(height: 4),
-            Text(bmi.toStringAsFixed(1), style: AppTextStyles.displayMetrics.copyWith(fontSize: 44, color: c)),
+            Text(bmi.toStringAsFixed(1),
+                style: AppTextStyles.displayMetrics
+                    .copyWith(fontSize: 44, color: c)),
           ]),
         ],
       ),
@@ -160,31 +178,66 @@ class _BmiGauge extends StatelessWidget {
         backgroundColor: Colors.transparent,
         axes: [
           RadialAxis(
-            minimum: 0, maximum: 55,
-            axisLineStyle: const AxisLineStyle(color: Color(0x12FFFFFF), thickness: 10),
-            majorTickStyle: const MajorTickStyle(color: AppColors.outlineVariant, thickness: 1),
-            minorTickStyle: const MinorTickStyle(color: AppColors.outlineVariant, thickness: 0.5),
-            axisLabelStyle: GaugeTextStyle(color: AppColors.textSecondary, fontSize: 11),
+            minimum: 0,
+            maximum: 55,
+            axisLineStyle:
+                const AxisLineStyle(color: Color(0x12FFFFFF), thickness: 10),
+            majorTickStyle: const MajorTickStyle(
+                color: AppColors.outlineVariant, thickness: 1),
+            minorTickStyle: const MinorTickStyle(
+                color: AppColors.outlineVariant, thickness: 0.5),
+            axisLabelStyle:
+                GaugeTextStyle(color: AppColors.textSecondary, fontSize: 11),
             ranges: [
-              GaugeRange(startValue: 0, endValue: 18.5, color: AppColors.bmiUnderweight.withOpacity(0.8), rangeOffset: 0.05),
-              GaugeRange(startValue: 18.5, endValue: 24.9, color: AppColors.bmiNormal.withOpacity(0.8), rangeOffset: 0.05),
-              GaugeRange(startValue: 25, endValue: 29.9, color: AppColors.bmiOverweight.withOpacity(0.8), rangeOffset: 0.05),
-              GaugeRange(startValue: 30, endValue: 40, color: AppColors.bmiObese.withOpacity(0.8), rangeOffset: 0.05),
-              GaugeRange(startValue: 40, endValue: 55, color: AppColors.bmiMorbidObese.withOpacity(0.8), rangeOffset: 0.05),
+              GaugeRange(
+                  startValue: 0,
+                  endValue: 18.5,
+                  color: AppColors.bmiUnderweight.withOpacity(0.8),
+                  rangeOffset: 0.05),
+              GaugeRange(
+                  startValue: 18.5,
+                  endValue: 24.9,
+                  color: AppColors.bmiNormal.withOpacity(0.8),
+                  rangeOffset: 0.05),
+              GaugeRange(
+                  startValue: 25,
+                  endValue: 29.9,
+                  color: AppColors.bmiOverweight.withOpacity(0.8),
+                  rangeOffset: 0.05),
+              GaugeRange(
+                  startValue: 30,
+                  endValue: 40,
+                  color: AppColors.bmiObese.withOpacity(0.8),
+                  rangeOffset: 0.05),
+              GaugeRange(
+                  startValue: 40,
+                  endValue: 55,
+                  color: AppColors.bmiMorbidObese.withOpacity(0.8),
+                  rangeOffset: 0.05),
             ],
             pointers: [
               NeedlePointer(
-                value: bmi, enableAnimation: true,
-                animationDuration: 900, animationType: AnimationType.easeOutBack,
+                value: bmi,
+                enableAnimation: true,
+                animationDuration: 900,
+                animationType: AnimationType.easeOutBack,
                 needleColor: AppColors.primary,
-                knobStyle: KnobStyle(color: AppColors.primaryContainer, borderColor: AppColors.primary, borderWidth: 0.05, knobRadius: 0.08),
-                tailStyle: const TailStyle(color: AppColors.primary, width: 1.5, length: 0.2),
+                knobStyle: KnobStyle(
+                    color: AppColors.primaryContainer,
+                    borderColor: AppColors.primary,
+                    borderWidth: 0.05,
+                    knobRadius: 0.08),
+                tailStyle: const TailStyle(
+                    color: AppColors.primary, width: 1.5, length: 0.2),
               ),
             ],
             annotations: [
               GaugeAnnotation(
-                widget: Text(bmi.toStringAsFixed(1), style: AppTextStyles.displayMetrics.copyWith(fontSize: 26, color: _bmiColor(bmi))),
-                angle: 90, positionFactor: 0.8,
+                widget: Text(bmi.toStringAsFixed(1),
+                    style: AppTextStyles.displayMetrics
+                        .copyWith(fontSize: 26, color: _bmiColor(bmi))),
+                angle: 90,
+                positionFactor: 0.8,
               ),
             ],
           ),
@@ -205,7 +258,8 @@ class _EmptyState extends StatelessWidget {
         border: Border.all(color: AppColors.cardBorder),
       ),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.monitor_weight_outlined, color: AppColors.outline, size: 38),
+        const Icon(Icons.monitor_weight_outlined,
+            color: AppColors.outline, size: 38),
         const SizedBox(height: AppSpacing.xs),
         Text('أدخل بياناتك لحساب المؤشر', style: AppTextStyles.bodyMuted),
       ]),

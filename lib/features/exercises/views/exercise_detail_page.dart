@@ -4,7 +4,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/ui/components/pp_button.dart';
 import '../../../core/ui/components/pp_card.dart';
-import '../../../shared/models/exercise.dart';
+import '../data/model/exercise.dart';
 
 class ExerciseDetailPage extends StatelessWidget {
   const ExerciseDetailPage({super.key, this.exercise});

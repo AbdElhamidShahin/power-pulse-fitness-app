@@ -1,4 +1,4 @@
-import '../../../../shared/models/exercise.dart';
+import '../data/model/exercise.dart';
 
 sealed class ExerciseState {
   const ExerciseState();
