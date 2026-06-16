@@ -9,14 +9,7 @@ import '../../core/constants/app_constants.dart';
 import '../../features/home/views/home_view.dart';
 import '../../features/tools/views/tools_screen.dart';
 import '../../features/settings/views/settings_view.dart';
-import '../../features/workout_plans/views/choose_workout_system_screen.dart';
-import '../../features/progress/views/progress_screen.dart';
 
-/// Main app cubit.
-///
-/// Previously lib/model/bloc/cubit.dart.
-/// Only change: imports updated to the new folder structure.
-/// All business logic is preserved exactly as-is.
 class AppCubit extends Cubit<AppState> {
   AppCubit() : super(NewsIntiatialState());
 
@@ -36,7 +29,6 @@ class AppCubit extends Cubit<AppState> {
   List<Widget> screens = const [
     HomeView(),
     ToolsScreen(),
-    ProgressScreen(),
     SettingsView(),
   ];
 

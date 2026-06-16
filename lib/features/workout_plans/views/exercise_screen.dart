@@ -71,29 +71,6 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
-  void _completeWorkout(List<Exercise> items) {
-    _stopwatch.stop();
-    _timer?.cancel();
-
-    final durationMinutes = (_elapsedSeconds / 60).ceil().clamp(1, 999);
-
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => WorkoutCompletionScreen(
-          muscleGroup:     widget.muscleGroup.isNotEmpty
-              ? widget.muscleGroup
-              : widget.currentDay,
-          exerciseCount:   items.length,
-          durationMinutes: durationMinutes,
-          systemName:      widget.systemName,
-        ),
-        transitionsBuilder: (_, anim, __, child) =>
-            FadeTransition(opacity: anim, child: child),
-        transitionDuration: const Duration(milliseconds: 500),
-      ),
-    );
-  }
 
   void _showDetail(Exercise ex) {
     showModalBottomSheet(
@@ -167,7 +144,6 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   child: PpButton(
                     label: 'إنهاء التمرين',
                     icon:  Icons.check_rounded,
-                    onPressed: () => _completeWorkout(items),
                   ),
                 ),
               ],

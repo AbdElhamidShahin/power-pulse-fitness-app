@@ -24,10 +24,10 @@ class GimView extends StatelessWidget {
             extendBody: true,
             appBar: cubit.currentIndex == 0
                 ? const PpAppBar(
-                    title: 'Power Pulse',
-                    showNotification: false,
-                    transparent: false,
-                  )
+              title: 'Power Pulse',
+              showNotification: false,
+              transparent: false,
+            )
                 : null,
             body: AnimatedSwitcher(
               duration: const Duration(milliseconds: 240),
