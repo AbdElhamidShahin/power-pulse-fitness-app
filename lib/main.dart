@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-
 import 'core/di/injection.dart';
 import 'core/services/user_profile_service.dart';
 import 'core/theme/app_theme.dart';
@@ -12,7 +11,7 @@ import 'shared/providers/item_provider.dart';
 import 'features/exercises/views/gim_view.dart';
 import 'features/onboarding/views/onboarding_flow.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -21,6 +20,8 @@ Future<void> main() async {
     systemNavigationBarColor: Color(0xFF0B0F1A),
     systemNavigationBarIconBrightness: Brightness.light,
   ));
+
+  await UserProfileService.instance.init();
 
   await setupDi();
 
@@ -36,7 +37,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.showOnboarding});
-
   final bool showOnboarding;
 
   @override

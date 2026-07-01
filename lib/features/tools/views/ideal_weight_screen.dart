@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -8,131 +7,114 @@ import '../../../core/ui/components/pp_app_bar.dart';
 import '../../../core/ui/components/pp_button.dart';
 import '../../../core/ui/components/pp_card.dart';
 import '../../../core/ui/components/pp_input.dart';
-import '../data/repo/tools_repositories.dart';
-import '../logic/cubit/tools_cubits.dart';
-import '../logic/cubit/tools_states.dart';
+import '../../../shared/bloc/app_cubit.dart';
+import '../../../shared/bloc/app_states.dart';
 
 class Idelweight extends StatelessWidget {
-  const Idelweight({super.key});
+  Idelweight({super.key});
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => IdealWeightCubit(const IdealWeightRepositoryImpl()),
-      child: const _IdealWeightBody(),
-    );
-  }
-}
+      create: (_) => AppCubit(),
+      child: BlocConsumer<AppCubit, AppState>(
+        listener: (_, __) {},
+        builder: (context, state) {
+          final cubit = AppCubit.get(context);
+          return Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+              backgroundColor: AppColors.background,
+              appBar: const PpBackBar(title: 'الوزن المثالي'),
+              body: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.marginMobile,
+                    vertical: AppSpacing.sm),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('الوزن المثالي',
+                          style: AppTextStyles.headlineLgMobile),
+                      const SizedBox(height: 4),
+                      Text('Ideal Body Weight',
+                          style: AppTextStyles.labelMuted),
+                      const SizedBox(height: AppSpacing.md),
 
-class _IdealWeightBody extends StatefulWidget {
-  const _IdealWeightBody();
-  @override
-  State<_IdealWeightBody> createState() => _State();
-}
+                      // ── Form card ──────────────────────────────────────
+                      PpCard(
+                        padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
+                        child: Column(
+                          children: [
+                            PpNumberInput(
+                              label: 'الطول',
+                              hint: 'مثال: 175',
+                              suffix: 'سم',
+                              validator: (v) =>
+                                  (v == null || v.isEmpty) ? 'مطلوب' : null,
+                              onChanged: (v) =>
+                                  cubit.height = double.tryParse(v) ?? 0,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
 
-class _State extends State<_IdealWeightBody> {
-  final _formKey = GlobalKey<FormState>();
-  double _height = 0;
-  String _gender = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: const PpBackBar(title: 'الوزن المثالي'),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.marginMobile, vertical: AppSpacing.sm),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text('الوزن المثالي', style: AppTextStyles.headlineLgMobile),
-                const SizedBox(height: 4),
-                Text('Ideal Body Weight', style: AppTextStyles.labelMuted),
-                const SizedBox(height: AppSpacing.md),
-                PpCard(
-                  padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
-                  child: Column(children: [
-                    PpNumberInput(
-                      label: 'الطول',
-                      hint: 'مثال: 175',
-                      suffix: 'سم',
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'مطلوب';
-                        final n = double.tryParse(v);
-                        if (n == null) return 'رقم غير صالح';
-                        if (n < 50 || n > 250)
-                          return 'طول غير منطقي (50–250 سم)';
-                        return null;
-                      },
-                      onChanged: (v) => _height = double.tryParse(v) ?? 0,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Align(
-                        alignment: Alignment.centerRight,
-                        child: Text('النوع',
-                            style: AppTextStyles.bodyMd.copyWith(
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w700))),
-                    const SizedBox(height: AppSpacing.xs),
-                    Row(children: [
-                      _GenderBtn(
-                          label: 'أنثى ♀',
-                          value: 'FEMALE',
-                          selected: _gender == 'FEMALE',
-                          onTap: () => setState(() => _gender = 'FEMALE')),
-                      const SizedBox(width: AppSpacing.xs),
-                      _GenderBtn(
-                          label: 'ذكر ♂',
-                          value: 'MALE',
-                          selected: _gender == 'MALE',
-                          onTap: () => setState(() => _gender = 'MALE')),
-                    ]),
-                  ]),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                PpButton(
-                  label: 'احسب الوزن المثالي',
-                  icon: Icons.calculate_rounded,
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (_gender.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('اختر النوع'),
-                                backgroundColor: AppColors.error));
-                        return;
-                      }
-                      context
-                          .read<IdealWeightCubit>()
-                          .calculate(heightCm: _height, gender: _gender);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppSpacing.md),
-                BlocBuilder<IdealWeightCubit, IdealWeightState>(
-                  builder: (_, state) => switch (state) {
-                    IdealWeightInitial() => _EmptyResult(),
-                    IdealWeightError(:final message) => PpCard(
-                        borderColor: AppColors.error.withOpacity(0.4),
-                        padding: const EdgeInsets.all(AppSpacing.cardPadding),
-                        child: Text(message,
-                            style: AppTextStyles.bodyMd
-                                .copyWith(color: AppColors.error),
-                            textAlign: TextAlign.center),
+                            // Gender selector
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'النوع',
+                                style: AppTextStyles.bodyMd.copyWith(
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Row(
+                              children: [
+                                _GenderBtn(
+                                    label: 'أنثى ♀',
+                                    value: 'FEMALE',
+                                    selected: cubit.gender == 'FEMALE',
+                                    onTap: () => cubit.updateGender('FEMALE')),
+                                const SizedBox(width: AppSpacing.xs),
+                                _GenderBtn(
+                                    label: 'ذكر ♂',
+                                    value: 'MALE',
+                                    selected: cubit.gender == 'MALE',
+                                    onTap: () => cubit.updateGender('MALE')),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    IdealWeightLoaded(:final kg) => _ResultCard(result: kg),
-                  },
+                      const SizedBox(height: AppSpacing.sm),
+
+                      PpButton(
+                        label: 'احسب الوزن المثالي',
+                        icon: Icons.calculate_rounded,
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            // Updated from cubit.Idelweight() to match renamed method.
+                            cubit.calculateIdealWeight();
+                          }
+                        },
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+
+                      // ── Result ─────────────────────────────────────────
+                      if (cubit.result > 0)
+                        _ResultCard(result: cubit.result)
+                      else
+                        const _EmptyResult(),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -149,31 +131,33 @@ class _GenderBtn extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Expanded(
-        child: GestureDetector(
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            decoration: BoxDecoration(
-              color: selected
-                  ? AppColors.primary.withOpacity(0.15)
-                  : AppColors.surfaceHigh,
-              borderRadius: BorderRadius.circular(AppSpacing.radius),
-              border: Border.all(
-                  color:
-                      selected ? AppColors.primary : AppColors.outlineVariant,
-                  width: selected ? 1.5 : 1),
-            ),
-            child: Text(label,
-                style: AppTextStyles.bodyMd.copyWith(
-                    color:
-                        selected ? AppColors.primary : AppColors.textSecondary,
-                    fontWeight: FontWeight.w700),
-                textAlign: TextAlign.center),
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primary.withOpacity(0.15)
+                : AppColors.surfaceHigh,
+            borderRadius: BorderRadius.circular(AppSpacing.radius),
+            border: Border.all(
+                color: selected ? AppColors.primary : AppColors.outlineVariant,
+                width: selected ? 1.5 : 1),
+          ),
+          child: Text(
+            label,
+            style: AppTextStyles.bodyMd.copyWith(
+                color: selected ? AppColors.primary : AppColors.textSecondary,
+                fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _ResultCard extends StatelessWidget {
@@ -181,11 +165,13 @@ class _ResultCard extends StatelessWidget {
   final double result;
 
   @override
-  Widget build(BuildContext context) => PpCard(
-        borderColor: AppColors.success.withOpacity(0.4),
-        glowColor: AppColors.success,
-        padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
-        child: Row(children: [
+  Widget build(BuildContext context) {
+    return PpCard(
+      borderColor: AppColors.success.withOpacity(0.4),
+      glowColor: AppColors.success,
+      padding: const EdgeInsets.all(AppSpacing.cardPaddingLg),
+      child: Row(
+        children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('النتيجة', style: AppTextStyles.labelMuted),
             const SizedBox(height: 4),
@@ -199,11 +185,15 @@ class _ResultCard extends StatelessWidget {
                     .copyWith(fontSize: 44, color: AppColors.success)),
             Text('كجم', style: AppTextStyles.labelMuted),
           ]),
-        ]),
-      );
+        ],
+      ),
+    );
+  }
 }
 
 class _EmptyResult extends StatelessWidget {
+  const _EmptyResult();
+
   @override
   Widget build(BuildContext context) => Container(
         height: 110,

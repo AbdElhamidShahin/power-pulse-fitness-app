@@ -19,7 +19,8 @@ final class OnboardingRepositoryImpl implements OnboardingRepository {
     required String goal,
   }) async {
     try {
-      await _profileService.completeOnboarding(level: level, goal: goal);
+      await _profileService.saveOnboarding(
+          level: level, goal: goal, startWeekday: 1);
       return ApiResult.success(null);
     } catch (e) {
       return ApiResult.failure(

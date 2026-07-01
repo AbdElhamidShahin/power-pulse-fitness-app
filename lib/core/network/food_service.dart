@@ -1,14 +1,18 @@
 import 'package:dio/dio.dart';
 import '../constants/app_constants.dart';
+import 'dio_client.dart';
 
 class FoodService {
-  final Dio dio;
+  final Dio _dio;
 
-  FoodService(this.dio);
+  FoodService(Dio dio) : _dio = dio;
+  factory FoodService.withDefaultDio() {
+    return FoodService(DioClient().dio);
+  }
 
   Future<Map<String, dynamic>> getFoodDetails(String food) async {
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         AppConstants.foodApiBaseUrl,
         queryParameters: {
           'ingr': food,
