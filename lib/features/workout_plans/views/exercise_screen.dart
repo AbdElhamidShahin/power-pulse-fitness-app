@@ -25,7 +25,7 @@ class ExerciseScreen extends StatefulWidget {
   final String systemName;
   final String muscleGroup;
 
-  
+
   @override
   State<ExerciseScreen> createState() => _ExerciseScreenState();
 }
