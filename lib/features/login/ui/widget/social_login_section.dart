@@ -1,0 +1,52 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../logic/cubit/login_cubit.dart';
+
+class SocialLoginSection extends StatelessWidget {
+  const SocialLoginSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: () => context.read<LoginCubit>().loginWithGoogle(),
+          child: iconSocial(
+            context,
+            'assets/icons/google.svg',
+            'الدخول بحساب جوجل',
+          ),
+        ),
+        SizedBox(height: 8.w),
+      ],
+    );
+  }
+}
+
+Widget iconSocial(BuildContext context, String image, String text) {
+  final cs = Theme.of(context).colorScheme;
+  return Container(
+    width: double.infinity,
+    height: 52.h,
+    decoration: BoxDecoration(
+      border: Border.all(color: cs.outline, width: 1.5),
+      borderRadius: BorderRadius.circular(12.r),
+      color: cs.surface,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          text,
+          style: AppTextStyles.bodySmall.copyWith(color: cs.onSurface),
+        ),
+        SizedBox(width: 12.w),
+        SvgPicture.asset(image, width: 22.r, height: 22.r),
+      ],
+    ),
+  );
+}
