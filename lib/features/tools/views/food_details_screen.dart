@@ -10,9 +10,21 @@ import '../../../core/ui/components/pp_card.dart';
 import '../../../shared/bloc/app_cubit.dart';
 import '../../../shared/bloc/app_states.dart';
 
-class FoodDetailsScreen extends StatelessWidget {
-  FoodDetailsScreen({super.key});
+class FoodDetailsScreen extends StatefulWidget {
+  const FoodDetailsScreen({super.key});
+
+  @override
+  State<FoodDetailsScreen> createState() => _FoodDetailsScreenState();
+}
+
+class _FoodDetailsScreenState extends State<FoodDetailsScreen> {
   final TextEditingController _ctrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +39,15 @@ class FoodDetailsScreen extends StatelessWidget {
             appBar: const PpBackBar(title: 'تفاصيل الطعام'),
             body: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.marginMobile, vertical: AppSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.marginMobile, vertical: AppSpacing.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text('تفاصيل الطعام', style: AppTextStyles.headlineLgMobile),
                   const SizedBox(height: 4),
-                  Text('Food Nutrition Details', style: AppTextStyles.labelMuted),
+                  Text('Food Nutrition Details',
+                      style: AppTextStyles.labelMuted),
                   const SizedBox(height: AppSpacing.md),
 
                   // ── Search input ─────────────────────────────────────────
@@ -46,21 +60,27 @@ class FoodDetailsScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.search_rounded, color: AppColors.outline),
-                          onPressed: () => cubit.detailsintegrs(),
+                          icon: const Icon(Icons.search_rounded,
+                              color: AppColors.outline),
+                          onPressed: () =>
+                              cubit.fetchFoodDetails(_ctrl.text.trim()),
                         ),
                         Expanded(
                           child: TextField(
                             controller: _ctrl,
                             textAlign: TextAlign.end,
                             style: AppTextStyles.bodyMd,
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: (v) =>
+                                cubit.fetchFoodDetails(v.trim()),
                             decoration: InputDecoration(
                               hintText: 'أدخل اسم الطعام بالإنجليزية',
                               hintStyle: AppTextStyles.bodyMuted,
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.sm),
                             ),
                           ),
                         ),
@@ -71,22 +91,24 @@ class FoodDetailsScreen extends StatelessWidget {
                   PpButton(
                     label: 'احصل على تفاصيل الطعام',
                     icon: Icons.restaurant_rounded,
-                    onPressed: () => cubit.detailsintegrs(),
+                    onPressed: () => cubit.fetchFoodDetails(_ctrl.text.trim()),
                   ),
                   const SizedBox(height: AppSpacing.md),
 
                   // ── States ───────────────────────────────────────────────
                   if (cubit.isLoading)
-                    const Center(child: Padding(
+                    const Center(
+                        child: Padding(
                       padding: EdgeInsets.all(40),
-                      child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2.5),
+                      child: CircularProgressIndicator(
+                          color: AppColors.primary, strokeWidth: 2.5),
                     ))
                   else if (cubit.errorMessage.isNotEmpty)
                     _ErrorCard(message: cubit.errorMessage)
                   else if (cubit.calories > 0)
                     _NutritionResults(cubit: cubit)
                   else
-                    _EmptyState(),
+                    const _EmptyState(),
                 ],
               ),
             ),
@@ -103,16 +125,21 @@ class _ErrorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PpCard(
-    borderColor: AppColors.error.withOpacity(0.4),
-    padding: const EdgeInsets.all(AppSpacing.cardPadding),
-    child: Row(
-      children: [
-        Expanded(child: Text(message, style: AppTextStyles.bodyMd.copyWith(color: AppColors.error), textAlign: TextAlign.end)),
-        const SizedBox(width: AppSpacing.xs),
-        const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 22),
-      ],
-    ),
-  );
+        borderColor: AppColors.error.withOpacity(0.4),
+        padding: const EdgeInsets.all(AppSpacing.cardPadding),
+        child: Row(
+          children: [
+            Expanded(
+                child: Text(message,
+                    style:
+                        AppTextStyles.bodyMd.copyWith(color: AppColors.error),
+                    textAlign: TextAlign.end)),
+            const SizedBox(width: AppSpacing.xs),
+            const Icon(Icons.error_outline_rounded,
+                color: AppColors.error, size: 22),
+          ],
+        ),
+      );
 }
 
 class _NutritionResults extends StatelessWidget {
@@ -152,21 +179,42 @@ class _NutritionResults extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   axes: [
                     RadialAxis(
-                      minimum: 0, maximum: 600,
-                      axisLineStyle: const AxisLineStyle(color: Color(0x12FFFFFF), thickness: 10),
-                      axisLabelStyle: GaugeTextStyle(color: AppColors.textSecondary, fontSize: 11),
+                      minimum: 0,
+                      maximum: 600,
+                      axisLineStyle: const AxisLineStyle(
+                          color: Color(0x12FFFFFF), thickness: 10),
+                      axisLabelStyle: GaugeTextStyle(
+                          color: AppColors.textSecondary, fontSize: 11),
                       ranges: [
-                        GaugeRange(startValue: 0, endValue: 100, color: AppColors.success.withOpacity(0.8)),
-                        GaugeRange(startValue: 100, endValue: 300, color: AppColors.warning.withOpacity(0.8)),
-                        GaugeRange(startValue: 300, endValue: 600, color: AppColors.error.withOpacity(0.8)),
+                        GaugeRange(
+                            startValue: 0,
+                            endValue: 100,
+                            color: AppColors.success.withOpacity(0.8)),
+                        GaugeRange(
+                            startValue: 100,
+                            endValue: 300,
+                            color: AppColors.warning.withOpacity(0.8)),
+                        GaugeRange(
+                            startValue: 300,
+                            endValue: 600,
+                            color: AppColors.error.withOpacity(0.8)),
                       ],
-                      pointers: [NeedlePointer(value: cubit.calories, needleColor: AppColors.primary, enableAnimation: true)],
+                      pointers: [
+                        NeedlePointer(
+                            value: cubit.calories,
+                            needleColor: AppColors.primary,
+                            enableAnimation: true)
+                      ],
                       annotations: [
                         GaugeAnnotation(
-                          widget: Text('${cubit.calories.toStringAsFixed(0)}\nكال',
-                            style: AppTextStyles.headlineMd.copyWith(color: AppColors.textPrimary),
-                            textAlign: TextAlign.center),
-                          angle: 90, positionFactor: 0.5,
+                          widget: Text(
+                            '${cubit.calories.toStringAsFixed(0)}\nكال',
+                            style: AppTextStyles.headlineMd
+                                .copyWith(color: AppColors.textPrimary),
+                            textAlign: TextAlign.center,
+                          ),
+                          angle: 90,
+                          positionFactor: 0.5,
                         ),
                       ],
                     ),
@@ -181,7 +229,8 @@ class _NutritionResults extends StatelessWidget {
         // Data quality disclaimer if macro kcal >> displayed calories
         Builder(builder: (context) {
           final macroKcal = cubit.protein * 4 + cubit.carbs * 4 + cubit.fat * 9;
-          final mismatch  = macroKcal > 0 && (macroKcal - cubit.calories).abs() > cubit.calories * 0.5;
+          final mismatch = macroKcal > 0 &&
+              (macroKcal - cubit.calories).abs() > cubit.calories * 0.5;
           if (!mismatch) return const SizedBox.shrink();
           return Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.xs),
@@ -194,21 +243,38 @@ class _NutritionResults extends StatelessWidget {
               ),
               child: Text(
                 'ملاحظة: قد تكون بيانات الماكروز تقريبية أو لحصة مختلفة.',
-                style: AppTextStyles.bodySmall.copyWith(color: AppColors.warning),
+                style:
+                    AppTextStyles.bodySmall.copyWith(color: AppColors.warning),
                 textAlign: TextAlign.end,
                 textDirection: TextDirection.rtl,
               ),
             ),
           );
         }),
+
         // Macros
         Row(
           children: [
-            Expanded(child: _MacroCard(label: 'بروتين', value: cubit.protein, color: AppColors.success, kcalMultiplier: 4)),
+            Expanded(
+                child: _MacroCard(
+                    label: 'بروتين',
+                    value: cubit.protein,
+                    color: AppColors.success,
+                    kcalMultiplier: 4)),
             const SizedBox(width: AppSpacing.xs),
-            Expanded(child: _MacroCard(label: 'كارب', value: cubit.carbs, color: AppColors.warning, kcalMultiplier: 4)),
+            Expanded(
+                child: _MacroCard(
+                    label: 'كارب',
+                    value: cubit.carbs,
+                    color: AppColors.warning,
+                    kcalMultiplier: 4)),
             const SizedBox(width: AppSpacing.xs),
-            Expanded(child: _MacroCard(label: 'دهون', value: cubit.fat, color: AppColors.error, kcalMultiplier: 9)),
+            Expanded(
+                child: _MacroCard(
+                    label: 'دهون',
+                    value: cubit.fat,
+                    color: AppColors.error,
+                    kcalMultiplier: 9)),
           ],
         ),
       ],
@@ -257,18 +323,21 @@ class _MacroCard extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
   @override
   Widget build(BuildContext context) => Container(
-    height: 140,
-    decoration: BoxDecoration(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      border: Border.all(color: AppColors.cardBorder),
-    ),
-    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Icon(Icons.restaurant_menu_outlined, color: AppColors.outline, size: 38),
-      const SizedBox(height: AppSpacing.xs),
-      Text('ابحث عن طعام لعرض تفاصيله', style: AppTextStyles.bodyMuted),
-    ]),
-  );
+        height: 140,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          border: Border.all(color: AppColors.cardBorder),
+        ),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.restaurant_menu_outlined,
+              color: AppColors.outline, size: 38),
+          const SizedBox(height: AppSpacing.xs),
+          Text('ابحث عن طعام لعرض تفاصيله', style: AppTextStyles.bodyMuted),
+        ]),
+      );
 }

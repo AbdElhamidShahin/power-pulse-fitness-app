@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
-
 
 class CustomGauge extends StatelessWidget {
   final double caloriesValue;

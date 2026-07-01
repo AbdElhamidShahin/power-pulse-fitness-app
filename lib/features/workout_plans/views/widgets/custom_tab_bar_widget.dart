@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tab_bar/library.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/ui/components/pp_app_bar.dart';
-import '../../exercises/views/muscle_group_add_screen.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/ui/components/pp_app_bar.dart';
+import '../../../exercises/views/muscle_group_add_screen.dart';
 
 class CustomTabBarDemo extends StatelessWidget {
   CustomTabBarDemo({super.key, required this.pageId});
@@ -25,7 +25,8 @@ class CustomTabBarDemo extends StatelessWidget {
           alignment: Alignment.center,
           constraints: const BoxConstraints(minWidth: 80),
           child: Text(_tabTitles[index],
-            style: AppTextStyles.bodyMd.copyWith(color: color, fontWeight: FontWeight.w700)),
+              style: AppTextStyles.bodyMd
+                  .copyWith(color: color, fontWeight: FontWeight.w700)),
         ),
       ),
       index: index,
@@ -50,7 +51,10 @@ class CustomTabBarDemo extends StatelessWidget {
               builder: _tabChild,
               indicator: RoundIndicator(
                 color: AppColors.primary,
-                top: 2, bottom: 2, left: 2, right: 2,
+                top: 2,
+                bottom: 2,
+                left: 2,
+                right: 2,
                 radius: BorderRadius.circular(10),
               ),
               pageController: _controller,
@@ -60,7 +64,8 @@ class CustomTabBarDemo extends StatelessWidget {
             child: PageView.builder(
               controller: _controller,
               itemCount: pageCount,
-              itemBuilder: (context, index) => _PageItem(index: index, pageId: pageId),
+              itemBuilder: (context, index) =>
+                  _PageItem(index: index, pageId: pageId),
             ),
           ),
         ],
@@ -84,6 +89,7 @@ class _PageItem extends StatelessWidget {
       ('legs', 'تمارين الأرجل'),
       ('beily', 'تمارين البطن'),
     ];
-    return MuscleGroupAddScreen(pageId: pages[index].$1, title: pages[index].$2);
+    return MuscleGroupAddScreen(
+        pageId: pages[index].$1, title: pages[index].$2);
   }
 }

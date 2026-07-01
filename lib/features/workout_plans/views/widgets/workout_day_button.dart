@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../views/exercise_screen.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../exercise_screen.dart';
 
-/// WorkoutDayButton — entry point into a plan day.
-/// Passes systemName + muscleGroup through to ExerciseScreen
-/// so WorkoutCompletionScreen gets accurate data.
+
 class WorkoutDayButton extends StatelessWidget {
   const WorkoutDayButton({
     super.key,

@@ -1,6 +1,3 @@
-import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_states.dart';
@@ -14,13 +11,55 @@ import '../../features/progress/views/progress_screen.dart';
 
 /// Main app cubit.
 ///
-/// Previously lib/model/bloc/cubit.dart.
-/// Only change: imports updated to the new folder structure.
-/// All business logic is preserved exactly as-is.
+/// Changes from original:
+///
+/// 1. [FoodService] is now injected via the constructor instead of being
+///    instantiated with a raw [Dio()] instance. This ensures the configured
+///    [DioClient] (with interceptors, timeouts, and error mapping) is used.
+///    [AppCubit()] still works with no argument for screens that create their
+///    own provider; pass the singleton from [setupDi()] when available.
+///
+/// 2. [_controller] (TextEditingController) removed from the cubit.
+///    It was never connected to any TextField in the UI — [FoodDetailsScreen]
+///    maintained its own separate controller — so the cubit was always
+///    calling the API with an empty string. [fetchFoodDetails] now accepts
+///    the query text as a parameter, supplied directly by the screen.
+///    This also eliminates the controller disposal leak (Cubit has no
+///    dispose() lifecycle hook).
+///
+/// 3. [getFoodDetails] (the method with the empty try-body that silently
+///    did nothing) is removed. [fetchFoodDetails] is the single entry point
+///    for food API calls.
+///
+/// 4. [Idelweight()] renamed to [calculateIdealWeight()] — Dart method names
+///    must start with a lowercase letter.
+///
+/// 5. States renamed to match:
+///    - [IdelWeightState]          → [IdealWeightState]
+///    - [calculateIBWState]        → [CalculateIbwState]
+///    - [calculateFinalResultState]→ [CalculateFinalResultState]
 class AppCubit extends Cubit<AppState> {
-  AppCubit() : super(NewsIntiatialState());
+  /// [foodService] is optional so existing [BlocProvider(create: (_) => AppCubit())]
+  /// call-sites continue to compile. When [null], a bare [FoodService] is
+  /// constructed using the configured [DioClient] from DI. Screens that go
+  /// through [setupDi()] will pass the singleton; see [main.dart].
+  AppCubit({FoodService? foodService})
+      : _foodService = foodService,
+        super(NewsIntiatialState());
 
   static AppCubit get(context) => BlocProvider.of<AppCubit>(context);
+
+  // Lazily resolved so the cubit can still be constructed without DI.
+  FoodService? _foodService;
+  FoodService get _food {
+    if (_foodService != null) return _foodService!;
+    // Fallback: create with default Dio. This path is taken by feature screens
+    // that call BlocProvider(create: (_) => AppCubit()) directly. Those screens
+    // should be migrated to inject the singleton, but the fallback keeps them
+    // functional in the interim.
+    _foodService = FoodService.withDefaultDio();
+    return _foodService!;
+  }
 
   int currentIndex = 0;
 
@@ -95,24 +134,20 @@ class AppCubit extends Cubit<AppState> {
   bool showImage = true;
   bool isLoading = false;
   String errorMessage = '';
-  final TextEditingController _controller = TextEditingController();
 
-  void getFoodDetails(String text) async {
+  /// Fetches food nutrition details for [query] from the Edamam API.
+  ///
+  /// [query] is the search text typed by the user, passed in directly from
+  /// the screen's own [TextEditingController]. The cubit no longer owns a
+  /// controller — that was the root cause of the bug where the API was
+  /// always called with an empty string.
+  Future<void> fetchFoodDetails(String query) async {
     isLoading = true;
     errorMessage = '';
     showImage = false;
     emit(FoodDetailsLoadingState());
-    try {} catch (e) {
-      errorMessage = 'Error: $e';
-      emit(FoodDetailsErrorState(errorMessage));
-    }
-  }
-
-  final foodService = FoodService(Dio());
-
-  void detailsintegrs() async {
     try {
-      final details = await foodService.getFoodDetails(_controller.text);
+      final details = await _food.getFoodDetails(query);
       calories = double.parse(details['calories'] ?? '0');
       fat = double.parse(details['fat'] ?? '0');
       protein = double.parse(details['protein'] ?? '0');
@@ -132,7 +167,8 @@ class AppCubit extends Cubit<AppState> {
   String gender = "";
   double result = 0;
 
-  void Idelweight() {
+  /// Renamed from [Idelweight] — Dart method names must start lowercase.
+  void calculateIdealWeight() {
     if (height > 0) {
       if (gender == "MALE") {
         result = 22 * (height / 100) * (height / 100);
@@ -144,7 +180,7 @@ class AppCubit extends Cubit<AppState> {
     } else {
       result = 0;
     }
-    emit(IdelWeightState());
+    emit(IdealWeightState());
   }
 
   // ── Calorie Calculator ──────────────────────────────────────────────────────
@@ -158,7 +194,6 @@ class AppCubit extends Cubit<AppState> {
   bool showCalorieTexts = false;
   int A = 1000;
   int B = 500;
-  int Result = 0;
 
   void calculateIBW() {
     if (height0 > 0 && weight > 0 && age > 0) {
@@ -170,7 +205,7 @@ class AppCubit extends Cubit<AppState> {
         result0 = 0;
       }
     }
-    emit(calculateIBWState());
+    emit(CalculateIbwState());
   }
 
   void calculateFinalResult() {
@@ -178,9 +213,8 @@ class AppCubit extends Cubit<AppState> {
     if (result0 > 0) {
       showCalorieTexts = true;
       final multipliers = AppConstants.activityMultipliers;
-      finalResult =
-          result0 * (multipliers[activityLevel] ?? 1.0);
+      finalResult = result0 * (multipliers[activityLevel] ?? 1.0);
     }
-    emit(calculateFinalResultState());
+    emit(CalculateFinalResultState());
   }
 }

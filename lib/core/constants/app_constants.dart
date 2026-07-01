@@ -1,4 +1,3 @@
-/// App-wide constants extracted from hardcoded literals across the codebase.
 class AppConstants {
   AppConstants._();
 
@@ -11,11 +10,19 @@ class AppConstants {
   static const String playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.yourcompanyname.yourappname';
 
-  // ── Food API (model/dio/dio.dart) ────────────────────────────────────────────
-  static const String foodApiBaseUrl =
-      'https://api.edamam.com/api/food-database/v2/parser';
-  static const String foodApiAppId = 'c022070b';
-  static const String foodApiAppKey = 'dcda98c1bc8b9b4473c336b4f4966639';
+
+  static const String foodApiBaseUrl = String.fromEnvironment(
+    'FOOD_API_BASE_URL',
+    defaultValue: 'https://api.edamam.com/api/food-database/v2/parser',
+  );
+  static const String foodApiAppId = String.fromEnvironment(
+    'FOOD_API_APP_ID',
+    defaultValue: '',
+  );
+  static const String foodApiAppKey = String.fromEnvironment(
+    'FOOD_API_APP_KEY',
+    defaultValue: '',
+  );
 
   // ── Asset paths ──────────────────────────────────────────────────────────────
   static const String exercisesJson = 'assets/exercises.json';

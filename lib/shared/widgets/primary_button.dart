@@ -3,8 +3,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 
-/// Legacy wrapper for backward compatibility.
-/// New code should use PpButton from core/ui/components/pp_button.dart
+
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
@@ -45,12 +44,12 @@ class PrimaryButton extends StatelessWidget {
               child: isLoading
                   ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, valueColor: AlwaysStoppedAnimation(AppColors.onPrimary)))
                   : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (icon != null) ...[Icon(icon, color: AppColors.onPrimary, size: 20), const SizedBox(width: 8)],
-                        Text(text, style: AppTextStyles.buttonLabel),
-                      ],
-                    ),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[Icon(icon, color: AppColors.onPrimary, size: 20), const SizedBox(width: 8)],
+                  Text(text, style: AppTextStyles.buttonLabel),
+                ],
+              ),
             ),
           ),
         ),

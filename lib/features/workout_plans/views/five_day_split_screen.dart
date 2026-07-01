@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:task/features/workout_plans/views/widgets/system_banner.dart';
+import 'package:task/features/workout_plans/views/widgets/workout_day_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/ui/components/pp_app_bar.dart';
-import '../widgets/workout_day_button.dart';
-import '../widgets/system_banner.dart';
 
 class FiveDaySplitScreen extends StatelessWidget {
   const FiveDaySplitScreen({super.key});
@@ -26,7 +25,7 @@ class FiveDaySplitScreen extends StatelessWidget {
             SystemBanner(
               label: 'Five Day Split',
               description:
-                  'يوم مخصص لكل مجموعة عضلية. '
+              'يوم مخصص لكل مجموعة عضلية. '
                   'مثالي للمتقدمين الراغبين في تركيز أعلى لكل عضلة.',
               color: AppColors.success,
             ),

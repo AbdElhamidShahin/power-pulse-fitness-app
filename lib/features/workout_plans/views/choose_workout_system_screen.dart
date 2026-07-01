@@ -66,12 +66,12 @@ class ChooseWorkoutSystemScreen extends StatelessWidget {
             ..._allSystems
                 .where((s) => s.index != recommended.index)
                 .map((s) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: _SecondarySystemCard(
-                        system:  s,
-                        onTap:   () => _navigate(context, s.index),
-                      ),
-                    )),
+              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+              child: _SecondarySystemCard(
+                system:  s,
+                onTap:   () => _navigate(context, s.index),
+              ),
+            )),
           ],
         ),
       ),
@@ -174,7 +174,7 @@ class _RecommendedBanner extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: system.color.withOpacity(0.12),
                   borderRadius:
-                      BorderRadius.circular(AppSpacing.radiusMd),
+                  BorderRadius.circular(AppSpacing.radiusMd),
                 ),
                 child: Icon(system.icon, color: system.color, size: 24),
               ),
@@ -246,7 +246,7 @@ class _SecondarySystemCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: system.color.withOpacity(0.1),
                 borderRadius:
-                    BorderRadius.circular(AppSpacing.radiusMd),
+                BorderRadius.circular(AppSpacing.radiusMd),
               ),
               child: Icon(system.icon, color: system.color, size: 20),
             ),
@@ -276,7 +276,7 @@ const _allSystems = [
     'دفع - سحب - أرجل',
     'Push Pull Legs',
     'تقسيم فعّال إلى ثلاثة محاور. '
-    'مناسب للمبتدئين والمتوسطين. 3 أيام / أسبوع.',
+        'مناسب للمبتدئين والمتوسطين. 3 أيام / أسبوع.',
     Icons.sync_alt_rounded,
     AppColors.primary,
   ),
@@ -285,7 +285,7 @@ const _allSystems = [
     'نظام 5 أيام',
     'Five Day Split',
     'يوم مخصص لكل مجموعة عضلية. '
-    'للمتقدمين الراغبين في أعلى تركيز. 5 أيام / أسبوع.',
+        'للمتقدمين الراغبين في أعلى تركيز. 5 أيام / أسبوع.',
     Icons.calendar_today_rounded,
     AppColors.success,
   ),
@@ -294,7 +294,7 @@ const _allSystems = [
     'النظام الخاص',
     'Custom System',
     'ابنِ روتينك الأسبوعي بنفسك. '
-    'أضف أي تمرين لأي يوم بحرية كاملة.',
+        'أضف أي تمرين لأي يوم بحرية كاملة.',
     Icons.tune_rounded,
     AppColors.warning,
   ),

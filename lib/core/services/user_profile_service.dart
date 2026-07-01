@@ -28,7 +28,6 @@ class UserProfileService {
   bool onboardingDone = false;
   String fitnessLevel = '';
   String fitnessGoal = '';
-
   int startWeekday = 1;
 
   List<WorkoutRecord> _history = [];
@@ -54,16 +53,30 @@ class UserProfileService {
     }
   }
 
-  Future<void> completeOnboarding({
+  /// Saves all onboarding selections and marks onboarding as complete.
+  ///
+  /// Previously named [completeOnboarding] and did not accept or persist
+  /// [startWeekday]. The onboarding flow called [saveOnboarding] (which did
+  /// not exist), causing a [NoSuchMethodError] at runtime that manifested as
+  /// "LateInitializationError: Field '_prefs' has not been initialized".
+  ///
+  /// Renamed to [saveOnboarding] to match the call-site in [onboarding_flow.dart]
+  /// and extended to persist [startWeekday], which is required by the home
+  /// screen weekly plan offset logic.
+  Future<void> saveOnboarding({
     required String level,
     required String goal,
+    required int startWeekday,
   }) async {
     onboardingDone = true;
     fitnessLevel = level;
     fitnessGoal = goal;
+    this.startWeekday = startWeekday;
+
     await _prefs.setBool(_kOnboardingDone, true);
     await _prefs.setString(_kFitnessLevel, level);
     await _prefs.setString(_kFitnessGoal, goal);
+    await _prefs.setInt(_kStartWeekday, startWeekday);
   }
 
   Future<void> recordWorkoutCompleted([DateTime? when]) async {

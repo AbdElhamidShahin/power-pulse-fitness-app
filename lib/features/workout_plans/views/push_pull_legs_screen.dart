@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:task/features/workout_plans/views/widgets/system_banner.dart';
+import 'package:task/features/workout_plans/views/widgets/workout_day_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/ui/components/pp_app_bar.dart';
-import '../widgets/workout_day_button.dart';
-import '../widgets/system_banner.dart';
 
 class PushPullLegsScreen extends StatelessWidget {
   const PushPullLegsScreen({super.key});
@@ -26,7 +25,7 @@ class PushPullLegsScreen extends StatelessWidget {
             SystemBanner(
               label: 'Push / Pull / Legs',
               description:
-                  'تقسيم التمارين إلى محاور الدفع والسحب والأرجل. '
+              'تقسيم التمارين إلى محاور الدفع والسحب والأرجل. '
                   'فعّال جداً لبناء القوة وكتلة العضلات.',
               color: AppColors.primary,
             ),

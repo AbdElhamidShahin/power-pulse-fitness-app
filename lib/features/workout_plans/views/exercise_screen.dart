@@ -1,25 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task/features/workout_plans/views/widgets/custom_tab_bar_widget.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/ui/components/pp_app_bar.dart';
 import '../../../core/ui/components/pp_button.dart';
 import '../../../core/ui/components/pp_card.dart';
 import '../../../core/ui/components/pp_empty_state.dart';
-import '../../../shared/models/exercise.dart';
+import '../../exercises/data/model/exercise.dart';
 import '../../../shared/providers/item_provider.dart';
 import '../../workout_completion/views/workout_completion_screen.dart';
-import '../widgets/custom_tab_bar_widget.dart';
 
-/// ExerciseScreen — my plan day view.
-///
-/// NOW has:
-///   - Live session timer (starts when first exercise is tapped, or on load)
-///   - Exercise counter in app bar subtitle
-///   - "Complete Workout" CTA at bottom — launches WorkoutCompletionScreen
-///   - Exercise detail bottom sheet
+
 class ExerciseScreen extends StatefulWidget {
   const ExerciseScreen({
     super.key,
@@ -31,6 +24,7 @@ class ExerciseScreen extends StatefulWidget {
   final String currentDay;
   final String systemName;
   final String muscleGroup;
+
 
   @override
   State<ExerciseScreen> createState() => _ExerciseScreenState();
@@ -107,7 +101,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   @override
   Widget build(BuildContext context) {
     final items =
-        Provider.of<ItemProvider>(context).getItems(widget.currentDay);
+    Provider.of<ItemProvider>(context).getItems(widget.currentDay);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -128,50 +122,50 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       ),
       body: items.isEmpty
           ? const PpEmptyState(
-              emoji: '🏋️',
-              title: 'خطتك فارغة',
-              subtitle: 'اضغط + لإضافة تمارين\nوابنِ روتينك اليومي',
-            )
+        emoji: '🏋️',
+        title: 'خطتك فارغة',
+        subtitle: 'اضغط + لإضافة تمارين\nوابنِ روتينك اليومي',
+      )
           : Column(
-              children: [
-                // Exercise list
-                Expanded(
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.marginMobile, AppSpacing.sm,
-                      AppSpacing.marginMobile, AppSpacing.xs,
-                    ),
-                    itemCount: items.length,
-                    itemBuilder: (context, i) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: _ExerciseRow(
-                        exercise:  items[i],
-                        index:     i + 1,
-                        total:     items.length,
-                        onTap:     () => _showDetail(items[i]),
-                        onRemove:  () => Provider.of<ItemProvider>(
-                                context, listen: false)
-                            .removeItem(widget.currentDay, items[i]),
-                      ),
-                    ),
-                  ),
+        children: [
+          // Exercise list
+          Expanded(
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.marginMobile, AppSpacing.sm,
+                AppSpacing.marginMobile, AppSpacing.xs,
+              ),
+              itemCount: items.length,
+              itemBuilder: (context, i) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: _ExerciseRow(
+                  exercise:  items[i],
+                  index:     i + 1,
+                  total:     items.length,
+                  onTap:     () => _showDetail(items[i]),
+                  onRemove:  () => Provider.of<ItemProvider>(
+                      context, listen: false)
+                      .removeItem(widget.currentDay, items[i]),
                 ),
-
-                // Complete Workout CTA
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.marginMobile, 0,
-                    AppSpacing.marginMobile, AppSpacing.sm,
-                  ),
-                  child: PpButton(
-                    label: 'إنهاء التمرين',
-                    icon:  Icons.check_rounded,
-                    onPressed: () => _completeWorkout(items),
-                  ),
-                ),
-              ],
+              ),
             ),
+          ),
+
+          // Complete Workout CTA
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.marginMobile, 0,
+              AppSpacing.marginMobile, AppSpacing.sm,
+            ),
+            child: PpButton(
+              label: 'إنهاء التمرين',
+              icon:  Icons.check_rounded,
+              onPressed: () => _completeWorkout(items),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -238,7 +232,7 @@ class _SessionAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Container(
                         width: 6, height: 6,
                         decoration: const BoxDecoration(
-                          color: AppColors.primary, shape: BoxShape.circle),
+                            color: AppColors.primary, shape: BoxShape.circle),
                       ),
                       const SizedBox(width: 5),
                       Text(timer,
@@ -410,7 +404,7 @@ class _ExerciseDetailSheet extends StatelessWidget {
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXl)),
+        BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXl)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -452,14 +446,14 @@ class _ExerciseDetailSheet extends StatelessWidget {
                   Text('التعليمات', style: AppTextStyles.labelPrimary),
                   const SizedBox(height: AppSpacing.xs),
                   ...exercise.instructions.map((inst) => Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: Text(
-                          '• $inst',
-                          style: AppTextStyles.bodyMd.copyWith(color: AppColors.textSecondary),
-                          textAlign: TextAlign.end,
-                          textDirection: TextDirection.rtl,
-                        ),
-                      )),
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text(
+                      '• $inst',
+                      style: AppTextStyles.bodyMd.copyWith(color: AppColors.textSecondary),
+                      textAlign: TextAlign.end,
+                      textDirection: TextDirection.rtl,
+                    ),
+                  )),
                   const SizedBox(height: AppSpacing.sm),
                   PpButton(
                       label: 'إغلاق',

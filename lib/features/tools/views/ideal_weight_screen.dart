@@ -29,15 +29,19 @@ class Idelweight extends StatelessWidget {
               appBar: const PpBackBar(title: 'الوزن المثالي'),
               body: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.marginMobile, vertical: AppSpacing.sm),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.marginMobile,
+                    vertical: AppSpacing.sm),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('الوزن المثالي', style: AppTextStyles.headlineLgMobile),
+                      Text('الوزن المثالي',
+                          style: AppTextStyles.headlineLgMobile),
                       const SizedBox(height: 4),
-                      Text('Ideal Body Weight', style: AppTextStyles.labelMuted),
+                      Text('Ideal Body Weight',
+                          style: AppTextStyles.labelMuted),
                       const SizedBox(height: AppSpacing.md),
 
                       // ── Form card ──────────────────────────────────────
@@ -46,23 +50,40 @@ class Idelweight extends StatelessWidget {
                         child: Column(
                           children: [
                             PpNumberInput(
-                              label: 'الطول', hint: 'مثال: 175', suffix: 'سم',
-                              validator: (v) => (v == null || v.isEmpty) ? 'مطلوب' : null,
-                              onChanged: (v) => cubit.height = double.tryParse(v) ?? 0,
+                              label: 'الطول',
+                              hint: 'مثال: 175',
+                              suffix: 'سم',
+                              validator: (v) =>
+                                  (v == null || v.isEmpty) ? 'مطلوب' : null,
+                              onChanged: (v) =>
+                                  cubit.height = double.tryParse(v) ?? 0,
                             ),
                             const SizedBox(height: AppSpacing.md),
 
                             // Gender selector
                             Align(
                               alignment: Alignment.centerRight,
-                              child: Text('النوع', style: AppTextStyles.bodyMd.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w700)),
+                              child: Text(
+                                'النوع',
+                                style: AppTextStyles.bodyMd.copyWith(
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w700),
+                              ),
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             Row(
                               children: [
-                                _GenderBtn(label: 'أنثى ♀', value: 'FEMALE', selected: cubit.gender == 'FEMALE', onTap: () => cubit.updateGender('FEMALE')),
+                                _GenderBtn(
+                                    label: 'أنثى ♀',
+                                    value: 'FEMALE',
+                                    selected: cubit.gender == 'FEMALE',
+                                    onTap: () => cubit.updateGender('FEMALE')),
                                 const SizedBox(width: AppSpacing.xs),
-                                _GenderBtn(label: 'ذكر ♂', value: 'MALE', selected: cubit.gender == 'MALE', onTap: () => cubit.updateGender('MALE')),
+                                _GenderBtn(
+                                    label: 'ذكر ♂',
+                                    value: 'MALE',
+                                    selected: cubit.gender == 'MALE',
+                                    onTap: () => cubit.updateGender('MALE')),
                               ],
                             ),
                           ],
@@ -74,7 +95,10 @@ class Idelweight extends StatelessWidget {
                         label: 'احسب الوزن المثالي',
                         icon: Icons.calculate_rounded,
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) cubit.Idelweight();
+                          if (_formKey.currentState!.validate()) {
+                            // Updated from cubit.Idelweight() to match renamed method.
+                            cubit.calculateIdealWeight();
+                          }
                         },
                       ),
                       const SizedBox(height: AppSpacing.md),
@@ -83,7 +107,7 @@ class Idelweight extends StatelessWidget {
                       if (cubit.result > 0)
                         _ResultCard(result: cubit.result)
                       else
-                        _EmptyResult(),
+                        const _EmptyResult(),
                     ],
                   ),
                 ),
@@ -97,7 +121,11 @@ class Idelweight extends StatelessWidget {
 }
 
 class _GenderBtn extends StatelessWidget {
-  const _GenderBtn({required this.label, required this.value, required this.selected, required this.onTap});
+  const _GenderBtn(
+      {required this.label,
+      required this.value,
+      required this.selected,
+      required this.onTap});
   final String label, value;
   final bool selected;
   final VoidCallback onTap;
@@ -111,13 +139,21 @@ class _GenderBtn extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: selected ? AppColors.primary.withOpacity(0.15) : AppColors.surfaceHigh,
+            color: selected
+                ? AppColors.primary.withOpacity(0.15)
+                : AppColors.surfaceHigh,
             borderRadius: BorderRadius.circular(AppSpacing.radius),
-            border: Border.all(color: selected ? AppColors.primary : AppColors.outlineVariant, width: selected ? 1.5 : 1),
+            border: Border.all(
+                color: selected ? AppColors.primary : AppColors.outlineVariant,
+                width: selected ? 1.5 : 1),
           ),
-          child: Text(label,
-            style: AppTextStyles.bodyMd.copyWith(color: selected ? AppColors.primary : AppColors.textSecondary, fontWeight: FontWeight.w700),
-            textAlign: TextAlign.center),
+          child: Text(
+            label,
+            style: AppTextStyles.bodyMd.copyWith(
+                color: selected ? AppColors.primary : AppColors.textSecondary,
+                fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
@@ -139,11 +175,14 @@ class _ResultCard extends StatelessWidget {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('النتيجة', style: AppTextStyles.labelMuted),
             const SizedBox(height: 4),
-            Text('الوزن المثالي', style: AppTextStyles.bodyMd.copyWith(color: AppColors.success)),
+            Text('الوزن المثالي',
+                style: AppTextStyles.bodyMd.copyWith(color: AppColors.success)),
           ]),
           const Spacer(),
           Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text(result.toStringAsFixed(1), style: AppTextStyles.displayMetrics.copyWith(fontSize: 44, color: AppColors.success)),
+            Text(result.toStringAsFixed(1),
+                style: AppTextStyles.displayMetrics
+                    .copyWith(fontSize: 44, color: AppColors.success)),
             Text('كجم', style: AppTextStyles.labelMuted),
           ]),
         ],
@@ -153,18 +192,21 @@ class _ResultCard extends StatelessWidget {
 }
 
 class _EmptyResult extends StatelessWidget {
+  const _EmptyResult();
+
   @override
   Widget build(BuildContext context) => Container(
-    height: 110,
-    decoration: BoxDecoration(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      border: Border.all(color: AppColors.cardBorder),
-    ),
-    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Icon(Icons.scale_outlined, color: AppColors.outline, size: 36),
-      const SizedBox(height: AppSpacing.xs),
-      Text('أدخل بياناتك لحساب وزنك المثالي', style: AppTextStyles.bodyMuted),
-    ]),
-  );
+        height: 110,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          border: Border.all(color: AppColors.cardBorder),
+        ),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.scale_outlined, color: AppColors.outline, size: 36),
+          const SizedBox(height: AppSpacing.xs),
+          Text('أدخل بياناتك لحساب وزنك المثالي',
+              style: AppTextStyles.bodyMuted),
+        ]),
+      );
 }

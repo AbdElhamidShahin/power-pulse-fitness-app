@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'core/di/injection.dart';
 import 'core/services/user_profile_service.dart';
 import 'core/theme/app_theme.dart';
 import 'shared/bloc/app_cubit.dart';
@@ -20,8 +21,9 @@ void main() async {
     systemNavigationBarIconBrightness: Brightness.light,
   ));
 
-  // Init UserProfileService FIRST — all screens depend on it
   await UserProfileService.instance.init();
+
+  await setupDi();
 
   final showOnboarding = !UserProfileService.instance.onboardingDone;
 
@@ -51,9 +53,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: Directionality(
               textDirection: TextDirection.rtl,
-              child: showOnboarding
-                  ? const OnboardingFlow()
-                  : const GimView(),
+              child: showOnboarding ? const OnboardingFlow() : const GimView(),
             ),
           );
         },

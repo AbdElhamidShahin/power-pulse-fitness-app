@@ -4,8 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 
-/// Legacy wrapper kept for backward compatibility.
-/// New code should use PpNumberInput from core/ui/components/pp_input.dart
+
 class NumberInputField extends StatelessWidget {
   const NumberInputField({
     super.key,
