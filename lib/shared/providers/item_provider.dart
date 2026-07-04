@@ -11,6 +11,9 @@ class ItemProvider with ChangeNotifier {
     _loadItems();
   }
 
+  // ✅ getter جديد — بيرجع كل الـ items
+  Map<String, List<Exercise>> get items => Map.unmodifiable(_items);
+
   List<Exercise> getItems(String day) {
     return _items[day] ?? [];
   }
