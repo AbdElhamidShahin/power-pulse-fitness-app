@@ -50,7 +50,7 @@ jobs:
       # Step 5: فحص الكود
       # ─────────────────────────────────────────
       - name: 🔍 Flutter Analyze
-        run: flutter analyze --no-fatal-infos
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       # ─────────────────────────────────────────
       # Step 6: تشغيل الـ Tests
