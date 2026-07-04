@@ -12,6 +12,8 @@ class MuscleGroupScreen extends StatelessWidget {
     super.key,
     required this.pageId,
     required this.title,
+
+
     this.itemCount = 6,
   });
 
