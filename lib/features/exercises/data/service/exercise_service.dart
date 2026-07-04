@@ -14,6 +14,10 @@ class ExerciseService {
         final list = (value as List<dynamic>)
             .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
             .toList();
+
+
+
+
         return MapEntry(key, list);
       });
     } on FlutterError catch (e) {

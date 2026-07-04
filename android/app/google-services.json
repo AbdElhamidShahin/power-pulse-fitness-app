@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569679674083",
+    "project_id": "abdo-1689344702677",
+    "storage_bucket": "abdo-1689344702677.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569679674083:android:ad48a13aba5815745ae3d6",
+        "android_client_info": {
+          "package_name": "com.powerteam.powerpulse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCEatOzRpGnuYXFK4ErAQDXMksFaCktkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,98 @@
+name: Power Pulse CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  FLUTTER_VERSION: '3.32.5'
+
+jobs:
+  build_and_deploy:
+    name: Build & Deploy to Firebase
+    runs-on: ubuntu-latest
+
+    steps:
+      # ─────────────────────────────────────────
+      # Step 1: تحميل الكود من GitHub
+      # ─────────────────────────────────────────
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      # ─────────────────────────────────────────
+      # Step 2: تثبيت Java (مطلوب لـ Android)
+      # ─────────────────────────────────────────
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # ─────────────────────────────────────────
+      # Step 3: تثبيت Flutter
+      # ─────────────────────────────────────────
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      # ─────────────────────────────────────────
+      # Step 4: تحميل الـ Dependencies
+      # ─────────────────────────────────────────
+      - name: 📦 Get Dependencies
+        run: flutter pub get
+
+      # ─────────────────────────────────────────
+      # Step 5: فحص الكود
+      # ─────────────────────────────────────────
+      - name: 🔍 Flutter Analyze
+        run: flutter analyze --no-fatal-infos
+
+      # ─────────────────────────────────────────
+      # Step 6: تشغيل الـ Tests
+      # ─────────────────────────────────────────
+      - name: 🧪 Flutter Test
+        run: flutter test
+
+      # ─────────────────────────────────────────
+      # Step 7: فك تشفير الـ Keystore
+      # ─────────────────────────────────────────
+      - name: 🔐 Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      # ─────────────────────────────────────────
+      # Step 8: إنشاء ملف key.properties
+      # ─────────────────────────────────────────
+      - name: 📝 Create key.properties
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=../app/upload-keystore.jks
+          EOF
+
+      # ─────────────────────────────────────────
+      # Step 9: بناء الـ Release APK
+      # ─────────────────────────────────────────
+      - name: 🏗️ Build Release APK
+        run: flutter build apk --release
+
+      # ─────────────────────────────────────────
+      # Step 10: رفع على Firebase App Distribution
+      # ─────────────────────────────────────────
+      - name: 🚀 Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: testers
+          file: build/app/outputs/flutter-apk/app-release.apk
+          releaseNotes: |
+            Build from commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
