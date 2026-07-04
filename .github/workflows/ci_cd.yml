@@ -52,6 +52,8 @@ jobs:
       - name: 🔍 Flutter Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
+
+
       # ─────────────────────────────────────────
       # Step 6: تشغيل الـ Tests
       # ─────────────────────────────────────────

@@ -7,6 +7,8 @@ class MuscleGroupScreen extends StatelessWidget {
   final int itemCount;
 
   const MuscleGroupScreen({
+
+
     super.key,
     required this.pageId,
     required this.title,
