@@ -1,10 +1,7 @@
 class AppConstants {
   AppConstants._();
 
-  // ── App meta ─────────────────────────────────────────────────────────────────
   static const String appName = 'Power Pulse';
-
-  // ── External URLs (Settings screen) ─────────────────────────────────────────
   static const String privacyPolicyUrl =
       'https://www.freeprivacypolicy.com/live/931d000c-ebf9-46ec-a72d-a619560a7173';
   static const String playStoreUrl =
@@ -24,11 +21,7 @@ class AppConstants {
     defaultValue: '',
   );
 
-  // ── Asset paths ──────────────────────────────────────────────────────────────
-  static const String exercisesJson = 'assets/exercises.json';
   static const String backgroundImage = 'assets/images/123456.jpg';
-
-  // Category images (Home_veiw)
   static const String imgChest = 'assets/catogry/chest.jpg';
   static const String imgLates = 'assets/catogry/lates.jpg';
   static const String imgShoulder = 'assets/catogry/shorter.jpeg';

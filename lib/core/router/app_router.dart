@@ -1,17 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-// Screens — سيتم import كل screen مع Phase 3
-// import '../../features/home/presentation/screens/home_screen.dart';
-// import '../../features/exercises/presentation/screens/exercises_screen.dart';
-// import '../../features/exercises/presentation/screens/exercise_detail_screen.dart';
-// import '../../features/nutrition/presentation/screens/nutrition_screen.dart';
-// import '../../features/progress/presentation/screens/progress_screen.dart';
-// import '../../features/profile/presentation/screens/profile_screen.dart';
-// import '../presentation/screens/onboarding_screen.dart';
 import '../../shared/shell/main_shell.dart';
 
-/// Power Pulse — App Router
 abstract class AppRouter {
   AppRouter._();
 
@@ -29,7 +19,6 @@ abstract class AppRouter {
     initialLocation: home,
     debugLogDiagnostics: true,
     routes: [
-      // ─── Main Shell (Bottom Nav) ──────────────────────────
       ShellRoute(
         builder: (context, state, child) => MainShell(child: child),
         routes: [
@@ -71,7 +60,6 @@ abstract class AppRouter {
         ],
       ),
 
-      // ─── Onboarding (خارج الـ Shell) ─────────────────────
       GoRoute(
         path: onboarding,
         name: 'onboarding',
@@ -79,7 +67,6 @@ abstract class AppRouter {
       ),
     ],
 
-    // ─── Error Page ───────────────────────────────────────
     errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: Text(
@@ -92,7 +79,6 @@ abstract class AppRouter {
   );
 }
 
-// Placeholder مؤقت لكل screen حتى Phase 3
 class _PlaceholderScreen extends StatelessWidget {
   const _PlaceholderScreen({required this.label});
   final String label;
