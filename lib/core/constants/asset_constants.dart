@@ -3,7 +3,6 @@ class AssetConstants {
 
   static const String backgroundImage = 'assets/images/123456.jpg';
 
-  // ─── Exercise Categories ───────────────────────────────────
   static const String imgChest = 'assets/category/chest.jpg';
   static const String imgLats = 'assets/category/lats.jpg';
   static const String imgShoulder = 'assets/category/shoulder.jpeg';

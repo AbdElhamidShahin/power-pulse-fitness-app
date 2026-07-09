@@ -1,4 +1,4 @@
-import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/constants.dart';
 import '../../../../core/error/failures.dart';
 import '../service/food_data_service.dart';
 

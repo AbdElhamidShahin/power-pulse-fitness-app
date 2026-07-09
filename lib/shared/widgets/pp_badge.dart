@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/constants/app_constants.dart';
+import '../../core/constants/constants.dart';
 import '../../core/constants/app_strings.dart';
 
 enum PPBadgeSize { small, medium }
 
-/// Badge عام قابل للتخصيص
 class PPBadge extends StatelessWidget {
   const PPBadge({
     super.key,
@@ -32,7 +31,7 @@ class PPBadge extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: c.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+        borderRadius: BorderRadius.circular(UiConstants.radiusPill),
         border: Border.all(color: c.withValues(alpha: 0.3)),
       ),
       child: Row(

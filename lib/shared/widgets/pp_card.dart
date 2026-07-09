@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/constants/app_constants.dart';
+import '../../core/constants/constants.dart';
 
 /// كارد سطح عادي
 class PPCard extends StatelessWidget {
@@ -29,11 +29,11 @@ class PPCard extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         color: color ?? AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(radius ?? AppConstants.radiusL),
+        borderRadius: BorderRadius.circular(radius ?? UiConstants.radiusL),
         border: Border.all(color: borderColor ?? AppColors.borderSubtle),
       ),
       child: Padding(
-        padding: padding ?? const EdgeInsets.all(AppConstants.spaceL),
+        padding: padding ?? const EdgeInsets.all(UiConstants.spaceL),
         child: child,
       ),
     );
@@ -58,7 +58,7 @@ class PPHeroCard extends StatelessWidget {
     this.tagColor,
     this.imageUrl,
     this.imageWidget,
-    this.height = AppConstants.cardHeightHero,
+    this.height = UiConstants.cardHeightHero,
     this.onTap,
     this.bottomWidget,
   });
@@ -78,7 +78,7 @@ class PPHeroCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        borderRadius: BorderRadius.circular(UiConstants.radiusL),
         child: SizedBox(
           height: height,
           child: Stack(
@@ -114,21 +114,23 @@ class PPHeroCard extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.spaceL),
+                  padding: const EdgeInsets.all(UiConstants.spaceL),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (tag != null)
                         Container(
-                          margin: const EdgeInsets.only(bottom: AppConstants.spaceS),
+                          margin:
+                              const EdgeInsets.only(bottom: UiConstants.spaceS),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppConstants.spaceM,
-                            vertical: AppConstants.spaceXXS + 2,
+                            horizontal: UiConstants.spaceM,
+                            vertical: UiConstants.spaceXXS + 2,
                           ),
                           decoration: BoxDecoration(
                             color: tagColor ?? AppColors.accent,
-                            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                            borderRadius:
+                                BorderRadius.circular(UiConstants.radiusPill),
                           ),
                           child: Text(
                             tag!,
@@ -153,7 +155,7 @@ class PPHeroCard extends StatelessWidget {
                         ),
                       ),
                       if (subtitle != null) ...[
-                        const SizedBox(height: AppConstants.spaceXS),
+                        const SizedBox(height: UiConstants.spaceXS),
                         Text(
                           subtitle!,
                           style: const TextStyle(
@@ -164,7 +166,7 @@ class PPHeroCard extends StatelessWidget {
                         ),
                       ],
                       if (bottomWidget != null) ...[
-                        const SizedBox(height: AppConstants.spaceS),
+                        const SizedBox(height: UiConstants.spaceS),
                         bottomWidget!,
                       ],
                     ],
@@ -180,7 +182,8 @@ class PPHeroCard extends StatelessWidget {
 
   Widget _placeholder() => Container(
         color: AppColors.bgElevated,
-        child: const Icon(Icons.fitness_center, color: AppColors.bgHighest, size: 48),
+        child: const Icon(Icons.fitness_center,
+            color: AppColors.bgHighest, size: 48),
       );
 }
 
@@ -217,11 +220,11 @@ class PPStatCard extends StatelessWidget {
             height: 34,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppConstants.radiusS),
+              borderRadius: BorderRadius.circular(UiConstants.radiusS),
             ),
-            child: Icon(icon, color: color, size: AppConstants.iconS),
+            child: Icon(icon, color: color, size: UiConstants.iconS),
           ),
-          const SizedBox(height: AppConstants.spaceM),
+          const SizedBox(height: UiConstants.spaceM),
           Text(
             value,
             style: const TextStyle(
@@ -232,7 +235,7 @@ class PPStatCard extends StatelessWidget {
               height: 1.0,
             ),
           ),
-          const SizedBox(height: AppConstants.spaceXS),
+          const SizedBox(height: UiConstants.spaceXS),
           Text(
             label,
             style: const TextStyle(
@@ -242,7 +245,7 @@ class PPStatCard extends StatelessWidget {
             ),
           ),
           if (trend != null) ...[
-            const SizedBox(height: AppConstants.spaceS),
+            const SizedBox(height: UiConstants.spaceS),
             Text(
               '${(trendUp ?? true) ? '▲' : '▼'} $trend',
               style: TextStyle(
@@ -254,7 +257,7 @@ class PPStatCard extends StatelessWidget {
             ),
           ],
           if (bottomWidget != null) ...[
-            const SizedBox(height: AppConstants.spaceS),
+            const SizedBox(height: UiConstants.spaceS),
             bottomWidget!,
           ],
         ],

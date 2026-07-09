@@ -2,18 +2,15 @@
 abstract class AppStrings {
   AppStrings._();
 
-  // ─── App ───────────────────────────────────────────────────
   static const String appName    = 'Power Pulse';
   static const String appTagline = 'تمرين أذكى، نتائج أسرع';
 
-  // ─── Bottom Nav ────────────────────────────────────────────
   static const String navHome      = 'الرئيسية';
   static const String navWorkouts  = 'التمارين';
   static const String navNutrition = 'التغذية';
   static const String navProgress  = 'تقدمي';
   static const String navProfile   = 'حسابي';
 
-  // ─── Home Screen ───────────────────────────────────────────
   static const String goodMorning   = 'صباح الخير';
   static const String goodAfternoon = 'مساء الخير';
   static const String goodEvening   = 'مساء النور';
@@ -26,7 +23,6 @@ abstract class AppStrings {
   static const String workoutTime   = 'وقت التمرين';
   static const String fromYesterday = 'من أمس';
 
-  // ─── Workouts Screen ───────────────────────────────────────
   static const String workoutsTitle  = 'التمارين';
   static const String workoutsSub    = 'اختر ما يناسبك';
   static const String searchWorkout  = 'ابحث عن تمرين...';

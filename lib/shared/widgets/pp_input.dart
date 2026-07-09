@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../core/constants/app_constants.dart';
+import '../../core/constants/constants.dart';
 
 /// Search Bar
 class PPSearchBar extends StatelessWidget {
@@ -30,14 +30,14 @@ class PPSearchBar extends StatelessWidget {
         height: 48,
         decoration: BoxDecoration(
           color: AppColors.bgElevated,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderRadius: BorderRadius.circular(UiConstants.radiusM),
           border: Border.all(color: AppColors.borderSubtle),
         ),
         child: Row(
           children: [
-            const SizedBox(width: AppConstants.spaceL),
-            const Icon(Icons.search_rounded, color: AppColors.textMuted, size: AppConstants.iconM),
-            const SizedBox(width: AppConstants.spaceM),
+            const SizedBox(width: UiConstants.spaceL),
+            const Icon(Icons.search_rounded, color: AppColors.textMuted, size: UiConstants.iconM),
+            const SizedBox(width: UiConstants.spaceM),
             Expanded(
               child: readOnly
                   ? Text(hint, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted))
@@ -59,7 +59,7 @@ class PPSearchBar extends StatelessWidget {
                       ),
                     ),
             ),
-            const SizedBox(width: AppConstants.spaceL),
+            const SizedBox(width: UiConstants.spaceL),
           ],
         ),
       ),
@@ -104,7 +104,7 @@ class PPTextField extends StatelessWidget {
       children: [
         if (label != null) ...[
           Text(label!, style: AppTextStyles.labelMedium),
-          const SizedBox(height: AppConstants.spaceS),
+          const SizedBox(height: UiConstants.spaceS),
         ],
         TextFormField(
           controller: controller,
@@ -146,7 +146,7 @@ class PPProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+      borderRadius: BorderRadius.circular(UiConstants.radiusPill),
       child: LinearProgressIndicator(
         value: value.clamp(0.0, 1.0),
         minHeight: height,

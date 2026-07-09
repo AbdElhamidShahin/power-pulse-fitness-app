@@ -7,7 +7,6 @@ class AppConfig {
   static const String playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.yourcompanyname.yourappname';
 
-  // ─── API Config ───────────────────────────────────────────
   static const String foodApiBaseUrl = String.fromEnvironment(
     'FOOD_API_BASE_URL',
     defaultValue: 'https://api.edamam.com/api/food-database/v2/parser',

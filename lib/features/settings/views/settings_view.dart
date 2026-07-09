@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task/features/settings/views/widget/profile_card.dart';
 import 'package:task/features/settings/views/widget/settings_item.dart';
 import 'package:task/features/settings/views/widget/warning_dialog.dart';
-import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';

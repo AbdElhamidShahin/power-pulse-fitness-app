@@ -1,8 +1,6 @@
 import 'app_failure.dart';
 
-/// Power Pulse — ApiResult<T>
-/// Either-like type: Success or Failure
-/// Zero Flutter imports — domain layer pure Dart
+
 sealed class ApiResult<T> {
   const ApiResult();
 }
@@ -17,7 +15,6 @@ final class Failure<T> extends ApiResult<T> {
   final AppFailure failure;
 }
 
-// ─── Extensions ───────────────────────────────────────────
 extension ApiResultX<T> on ApiResult<T> {
   bool get isSuccess => this is Success<T>;
   bool get isFailure => this is Failure<T>;
