@@ -1,8 +1,6 @@
 import 'exercise_entity.dart';
 
-/// ExerciseModel — Data Layer
-/// Parses JSON from ExerciseDB API
-/// Maps to domain Exercise entity
+
 final class ExerciseModel {
   const ExerciseModel({
     required this.id,
@@ -43,7 +41,6 @@ final class ExerciseModel {
     );
   }
 
-  /// Map to domain entity
   Exercise toEntity() => Exercise(
         id:               id,
         name:             name,

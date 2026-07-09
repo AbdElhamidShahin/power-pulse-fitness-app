@@ -1,11 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/domain/app_failure.dart';
+import '../../../../core/domin/app_failure.dart';
 import '../../logic/usecases/exercise_usecases.dart';
 import 'exercises_state.dart';
 
-/// ExercisesCubit — List + Filter + Pagination
-/// Depends ONLY on use cases — never on repos or services
 final class ExercisesCubit extends Cubit<ExercisesState> {
   ExercisesCubit({
     required GetExercisesUseCase getExercises,
@@ -23,7 +20,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
   static const String _allFilter = 'all';
   int _offset = 0;
 
-  /// Initial load — exercises + body parts list
   Future<void> loadInitial() async {
     emit(const ExercisesLoading());
 
@@ -97,9 +93,9 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
 
     final result = await _getExercises(limit: 20, offset: _offset);
     result.fold(
-      onFailure: (_) {}, // silent — don't break existing list
+      onFailure: (_) {},
       onSuccess: (more) {
-        _offset += more.length;
+        _offset += more.length!;
         emit(current.copyWith(
           exercises: [...current.exercises, ...more],
           hasMore: more.length >= 20,
@@ -110,10 +106,10 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
 
   // ─── Private ──────────────────────────────────────────────
   String _mapFailure(AppFailure f) => switch (f) {
-        NetworkFailure()    => 'تحقق من اتصال الإنترنت',
-        ServerFailure()     => 'خطأ في الخادم، حاول لاحقاً',
-        NotFoundFailure()   => 'لم يتم العثور على التمارين',
-        CacheFailure()      => 'خطأ في التخزين المحلي',
+        NetworkFailure() => 'تحقق من اتصال الإنترنت',
+        ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
+        NotFoundFailure() => 'لم يتم العثور على التمارين',
+        CacheFailure() => 'خطأ في التخزين المحلي',
         UnexpectedFailure() => 'حدث خطأ غير متوقع',
       };
 }
@@ -142,9 +138,9 @@ final class ExerciseSearchCubit extends Cubit<ExerciseSearchState> {
   void clear() => emit(const ExerciseSearchIdle());
 
   String _mapFailure(AppFailure f) => switch (f) {
-        NetworkFailure()    => 'تحقق من اتصال الإنترنت',
-        ServerFailure()     => 'خطأ في الخادم، حاول لاحقاً',
-        _                   => 'حدث خطأ غير متوقع',
+        NetworkFailure() => 'تحقق من اتصال الإنترنت',
+        ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
+        _ => 'حدث خطأ غير متوقع',
       };
 }
 
@@ -164,8 +160,8 @@ final class ExerciseDetailCubit extends Cubit<ExerciseDetailState> {
   }
 
   String _mapFailure(AppFailure f) => switch (f) {
-        NetworkFailure()    => 'تحقق من اتصال الإنترنت',
-        NotFoundFailure()   => 'التمرين غير موجود',
-        _                   => 'حدث خطأ غير متوقع',
+        NetworkFailure() => 'تحقق من اتصال الإنترنت',
+        NotFoundFailure() => 'التمرين غير موجود',
+        _ => 'حدث خطأ غير متوقع',
       };
 }

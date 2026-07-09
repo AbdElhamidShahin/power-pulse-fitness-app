@@ -22,20 +22,20 @@ class ExerciseCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppConstants.spaceM),
+        padding: const EdgeInsets.all(UiConstants.spaceM),
         decoration: BoxDecoration(
           color: AppColors.bgSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusL),
+          borderRadius: BorderRadius.circular(UiConstants.radiusL),
           border: Border.all(color: AppColors.borderSubtle),
         ),
         child: Row(
           children: [
             // ─── Thumbnail ──────────────────────────────────
             ClipRRect(
-              borderRadius: BorderRadius.circular(AppConstants.radiusM),
+              borderRadius: BorderRadius.circular(UiConstants.radiusM),
               child: SizedBox(
-                width: AppConstants.exerciseThumb,
-                height: AppConstants.exerciseThumb,
+                width: UiConstants.exerciseThumb,
+                height: UiConstants.exerciseThumb,
                 child: CachedNetworkImage(
                   imageUrl: exercise.gifUrl,
                   fit: BoxFit.cover,
@@ -59,7 +59,7 @@ class ExerciseCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(width: AppConstants.spaceM),
+            const SizedBox(width: UiConstants.spaceM),
 
             // ─── Info ───────────────────────────────────────
             Expanded(
@@ -72,21 +72,21 @@ class ExerciseCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: AppConstants.spaceXS),
+                  const SizedBox(height: UiConstants.spaceXS),
                   Text(
                     exercise.equipment,
                     style: AppTextStyles.bodySmall,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: AppConstants.spaceS),
+                  const SizedBox(height: UiConstants.spaceS),
                   Row(
                     children: [
                       MuscleGroupBadge(
                         muscle: exercise.bodyPart,
                         size: PPBadgeSize.small,
                       ),
-                      const SizedBox(width: AppConstants.spaceXS),
+                      const SizedBox(width: UiConstants.spaceXS),
                       PPBadge(
                         label: exercise.target,
                         color: AppColors.textMuted,
@@ -98,11 +98,11 @@ class ExerciseCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(width: AppConstants.spaceS),
+            const SizedBox(width: UiConstants.spaceS),
             const Icon(
               Icons.arrow_back_ios_rounded,
               color: AppColors.textMuted,
-              size: AppConstants.iconXS,
+              size: UiConstants.iconXS,
             ),
           ],
         ),

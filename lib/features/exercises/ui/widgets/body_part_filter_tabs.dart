@@ -40,23 +40,23 @@ class BodyPartFilterTabs extends StatelessWidget {
       height: 36,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppConstants.screenPaddingH),
+        padding: const EdgeInsets.symmetric(horizontal: UiConstants.screenPaddingH),
         itemCount: bodyParts.length,
-        separatorBuilder: (_, __) => const SizedBox(width: AppConstants.spaceS),
+        separatorBuilder: (_, __) => const SizedBox(width: UiConstants.spaceS),
         itemBuilder: (_, i) {
           final part = bodyParts[i];
           final isSelected = part == selected;
           return GestureDetector(
             onTap: () => onSelect(part),
             child: AnimatedContainer(
-              duration: AppConstants.durationFast,
+              duration: UiConstants.durationFast,
               padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.spaceL,
-                vertical: AppConstants.spaceS,
+                horizontal: UiConstants.spaceL,
+                vertical: UiConstants.spaceS,
               ),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.accent : AppColors.bgElevated,
-                borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                borderRadius: BorderRadius.circular(UiConstants.radiusPill),
                 border: Border.all(
                   color: isSelected ? AppColors.accent : AppColors.borderSubtle,
                 ),

@@ -58,13 +58,13 @@ class _DetailContent extends StatelessWidget {
           leading: GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
-              margin: const EdgeInsets.all(AppConstants.spaceS),
+              margin: const EdgeInsets.all(UiConstants.spaceS),
               decoration: BoxDecoration(
                 color: AppColors.bgSurface.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                borderRadius: BorderRadius.circular(UiConstants.radiusM),
               ),
               child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: AppColors.textPrimary, size: AppConstants.iconS),
+                  color: AppColors.textPrimary, size: UiConstants.iconS),
             ),
           ),
           flexibleSpace: FlexibleSpaceBar(
@@ -88,33 +88,33 @@ class _DetailContent extends StatelessWidget {
 
         // ─── Info ────────────────────────────────────────────
         SliverPadding(
-          padding: const EdgeInsets.all(AppConstants.screenPaddingH),
+          padding: const EdgeInsets.all(UiConstants.screenPaddingH),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               Text(exercise.name,
                   style: Theme.of(context).textTheme.headlineLarge),
-              const SizedBox(height: AppConstants.spaceM),
+              const SizedBox(height: UiConstants.spaceM),
 
               // Badges
               Wrap(
-                spacing: AppConstants.spaceS,
-                runSpacing: AppConstants.spaceS,
+                spacing: UiConstants.spaceS,
+                runSpacing: UiConstants.spaceS,
                 children: [
                   MuscleGroupBadge(muscle: exercise.bodyPart),
                   PPBadge(label: exercise.target, color: AppColors.info),
                   PPBadge(label: exercise.equipment, color: AppColors.textMuted),
                 ],
               ),
-              const SizedBox(height: AppConstants.spaceXXL),
+              const SizedBox(height: UiConstants.spaceXXL),
 
               // Secondary muscles
               if (exercise.secondaryMuscles.isNotEmpty) ...[
                 Text('العضلات الثانوية',
                     style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: AppConstants.spaceM),
+                const SizedBox(height: UiConstants.spaceM),
                 Wrap(
-                  spacing: AppConstants.spaceS,
-                  runSpacing: AppConstants.spaceS,
+                  spacing: UiConstants.spaceS,
+                  runSpacing: UiConstants.spaceS,
                   children: exercise.secondaryMuscles
                       .map((m) => PPBadge(
                             label: m,
@@ -123,18 +123,18 @@ class _DetailContent extends StatelessWidget {
                           ))
                       .toList(),
                 ),
-                const SizedBox(height: AppConstants.spaceXXL),
+                const SizedBox(height: UiConstants.spaceXXL),
               ],
 
               // Instructions
               if (exercise.instructions.isNotEmpty) ...[
                 Text('كيفية الأداء',
                     style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: AppConstants.spaceL),
+                const SizedBox(height: UiConstants.spaceL),
                 ...exercise.instructions.asMap().entries.map(
                       (e) => Padding(
                         padding: const EdgeInsets.only(
-                            bottom: AppConstants.spaceM),
+                            bottom: UiConstants.spaceM),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -142,11 +142,11 @@ class _DetailContent extends StatelessWidget {
                               width: 26,
                               height: 26,
                               margin: const EdgeInsets.only(
-                                  left: AppConstants.spaceM),
+                                  left: UiConstants.spaceM),
                               decoration: BoxDecoration(
                                 color: AppColors.accentDim,
                                 borderRadius: BorderRadius.circular(
-                                    AppConstants.radiusPill),
+                                    UiConstants.radiusPill),
                                 border: Border.all(
                                     color: AppColors.borderAccent),
                               ),
@@ -170,7 +170,7 @@ class _DetailContent extends StatelessWidget {
                     ),
               ],
 
-              const SizedBox(height: AppConstants.space3XL),
+              const SizedBox(height: UiConstants.space3XL),
               PPButton(
                 label: 'أضف للخطة',
                 onPressed: () {
@@ -178,7 +178,7 @@ class _DetailContent extends StatelessWidget {
                 },
                 icon: Icons.add_rounded,
               ),
-              const SizedBox(height: AppConstants.spaceXL),
+              const SizedBox(height: UiConstants.spaceXL),
             ]),
           ),
         ),
@@ -212,7 +212,7 @@ class _DetailError extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline_rounded,
               color: AppColors.danger, size: 48),
-          const SizedBox(height: AppConstants.spaceM),
+          const SizedBox(height: UiConstants.spaceM),
           Text(message, style: AppTextStyles.bodyMedium),
         ],
       ),

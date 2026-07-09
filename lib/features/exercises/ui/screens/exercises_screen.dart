@@ -96,10 +96,10 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppConstants.screenPaddingH,
-        AppConstants.spaceL,
-        AppConstants.screenPaddingH,
-        AppConstants.spaceL,
+        UiConstants.screenPaddingH,
+        UiConstants.spaceL,
+        UiConstants.screenPaddingH,
+        UiConstants.spaceL,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +127,7 @@ class _Header extends StatelessWidget {
                         ? AppColors.accentDim
                         : AppColors.bgElevated,
                     borderRadius:
-                        BorderRadius.circular(AppConstants.radiusM),
+                        BorderRadius.circular(UiConstants.radiusM),
                     border: Border.all(
                       color: isSearching
                           ? AppColors.accent
@@ -139,14 +139,14 @@ class _Header extends StatelessWidget {
                     color: isSearching
                         ? AppColors.accent
                         : AppColors.textMuted,
-                    size: AppConstants.iconM,
+                    size: UiConstants.iconM,
                   ),
                 ),
               ),
             ],
           ),
           if (isSearching) ...[
-            const SizedBox(height: AppConstants.spaceM),
+            const SizedBox(height: UiConstants.spaceM),
             PPSearchBar(
               hint: AppStrings.searchWorkout,
               controller: searchController,
@@ -195,20 +195,20 @@ class _LoadedList extends StatelessWidget {
           onSelect: (p) =>
               context.read<ExercisesCubit>().filterByBodyPart(p),
         ),
-        const SizedBox(height: AppConstants.spaceL),
+        const SizedBox(height: UiConstants.spaceL),
         Expanded(
           child: ListView.separated(
             controller: scrollController,
             padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.screenPaddingH,
+              horizontal: UiConstants.screenPaddingH,
             ),
             itemCount: state.exercises.length + (state.hasMore ? 1 : 0),
             separatorBuilder: (_, __) =>
-                const SizedBox(height: AppConstants.spaceM),
+                const SizedBox(height: UiConstants.spaceM),
             itemBuilder: (context, i) {
               if (i == state.exercises.length) {
                 return const Padding(
-                  padding: EdgeInsets.all(AppConstants.spaceXL),
+                  padding: EdgeInsets.all(UiConstants.spaceXL),
                   child: Center(
                     child: CircularProgressIndicator(color: AppColors.accent),
                   ),
@@ -240,11 +240,11 @@ class _SearchResults extends StatelessWidget {
                                                     => const _EmptyView(),
         ExerciseSearchLoaded(:final results)        => ListView.separated(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.screenPaddingH,
+              horizontal: UiConstants.screenPaddingH,
             ),
             itemCount: results.length,
             separatorBuilder: (_, __) =>
-                const SizedBox(height: AppConstants.spaceM),
+                const SizedBox(height: UiConstants.spaceM),
             itemBuilder: (context, i) => ExerciseCard(
               exercise: results[i],
               onTap: () => context.push('/exercises/${results[i].id}'),
@@ -263,10 +263,10 @@ class _LoadingList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.screenPaddingH,
+        horizontal: UiConstants.screenPaddingH,
       ),
       itemCount: 8,
-      separatorBuilder: (_, __) => const SizedBox(height: AppConstants.spaceM),
+      separatorBuilder: (_, __) => const SizedBox(height: UiConstants.spaceM),
       itemBuilder: (_, __) => _ExerciseShimmer(),
     );
   }
@@ -279,7 +279,7 @@ class _ExerciseShimmer extends StatelessWidget {
       height: 80,
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        borderRadius: BorderRadius.circular(UiConstants.radiusL),
         border: Border.all(color: AppColors.borderSubtle),
       ),
     );
@@ -298,9 +298,9 @@ class _ErrorView extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline_rounded,
               color: AppColors.danger, size: 48),
-          const SizedBox(height: AppConstants.spaceM),
+          const SizedBox(height: UiConstants.spaceM),
           Text(message, style: AppTextStyles.bodyMedium),
-          const SizedBox(height: AppConstants.spaceL),
+          const SizedBox(height: UiConstants.spaceL),
           GestureDetector(
             onTap: () => context.read<ExercisesCubit>().loadInitial(),
             child: Text(AppStrings.tryAgain,
@@ -317,13 +317,13 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.search_off_rounded,
+           Icon(Icons.search_off_rounded,
               color: AppColors.textMuted, size: 48),
-          const SizedBox(height: AppConstants.spaceM),
+           SizedBox(height: UiConstants.spaceM),
           Text(AppStrings.noResults, style: AppTextStyles.bodyMedium),
         ],
       ),

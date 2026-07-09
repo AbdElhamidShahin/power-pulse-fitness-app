@@ -1,13 +1,11 @@
-import '../../../../core/domain/api_result.dart';
-import '../../../../core/domain/app_failure.dart';
+import '../../../../core/domin/api_result.dart';
+import '../../../../core/domin/app_failure.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/network_info.dart';
 import '../models/exercise_entity.dart';
 import '../services/exercise_service.dart';
 
-/// ExerciseRepository — Repository Layer
-/// Single source of truth for exercises
-/// Maps exceptions → ApiResult<T>
+
 abstract interface class ExerciseRepository {
   Future<ApiResult<List<Exercise>>> getExercises({int limit, int offset});
   Future<ApiResult<List<Exercise>>> getExercisesByBodyPart(String bodyPart);
