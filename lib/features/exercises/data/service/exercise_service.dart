@@ -1,29 +1,95 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import '../model/exercise.dart';
+import 'package:dio/dio.dart';
 
-class ExerciseService {
-  const ExerciseService();
+import '../../../../core/error/exceptions.dart';
+import '../../../../core/network/api_endpoints.dart';
+import '../../../../core/network/dio_client.dart';
+import '../models/exercise_entity.dart';
+import '../models/exercise_model.dart';
 
-  Future<Map<String, List<Exercise>>> loadAll() async {
+/// ExerciseService — Data / Service Layer
+/// Raw API calls to ExerciseDB
+/// Catches DioException → throws AppException
+abstract interface class ExerciseService {
+  Future<List<Exercise>> getExercises({int limit, int offset});
+  Future<List<Exercise>> getExercisesByBodyPart(String bodyPart, {int limit});
+  Future<List<Exercise>> searchExercisesByName(String name, {int limit});
+  Future<Exercise> getExerciseById(String id);
+  Future<List<String>> getBodyPartList();
+}
+
+final class ExerciseServiceImpl implements ExerciseService {
+  ExerciseServiceImpl(this._dio);
+
+  final Dio _dio;
+
+  @override
+  Future<List<Exercise>> getExercises({
+    int limit = 20,
+    int offset = 0,
+  }) async {
     try {
-      final raw = await rootBundle.loadString('assets/exercises.json');
-      final data = json.decode(raw) as Map<String, dynamic>;
-      return data.map((key, value) {
-        final list = (value as List<dynamic>)
-            .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
-            .toList();
+      final response = await _dio.get(
+        ApiEndpoints.exercises,
+        queryParameters: {'limit': limit, 'offset': offset},
+      );
+      return ExerciseModel.toEntityList(response.data as List);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
 
+  @override
+  Future<List<Exercise>> getExercisesByBodyPart(
+    String bodyPart, {
+    int limit = 20,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '${ApiEndpoints.exercisesByTarget}/$bodyPart',
+        queryParameters: {'limit': limit},
+      );
+      return ExerciseModel.toEntityList(response.data as List);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
 
+  @override
+  Future<List<Exercise>> searchExercisesByName(
+    String name, {
+    int limit = 20,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '${ApiEndpoints.exercisesByName}/$name',
+        queryParameters: {'limit': limit},
+      );
+      return ExerciseModel.toEntityList(response.data as List);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
 
+  @override
+  Future<Exercise> getExerciseById(String id) async {
+    try {
+      final response = await _dio.get(
+        '${ApiEndpoints.exerciseById}/$id',
+      );
+      return ExerciseModel.fromJson(response.data as Map<String, dynamic>)
+          .toEntity();
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
 
-        return MapEntry(key, list);
-      });
-    } on FlutterError catch (e) {
-      throw Exception('فشل تحميل ملف التمارين: ${e.message}');
-    } catch (e) {
-      throw Exception('خطأ غير متوقع: $e');
+  @override
+  Future<List<String>> getBodyPartList() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.bodyPartList);
+      return (response.data as List).map((e) => e.toString()).toList();
+    } on DioException catch (e) {
+      throw mapDioException(e);
     }
   }
 }

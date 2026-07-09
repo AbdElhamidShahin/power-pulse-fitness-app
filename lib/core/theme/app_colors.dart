@@ -1,78 +1,52 @@
 import 'package:flutter/material.dart';
 
-class AppColors {
+/// Power Pulse — App Colors
+/// Dark Theme: أسود + أخضر ليموني
+abstract class AppColors {
   AppColors._();
 
-  // ── Canvas — tonal depth (Level 0 → 3) ────────────────────────────────────
-  static const Color background    = Color(0xFF0B0F1A);
-  static const Color surface       = Color(0xFF13182A);
-  static const Color surfaceCard   = Color(0xFF13182A);
-  static const Color surfaceHigh   = Color(0xFF1A2035);
-  static const Color surfaceBright = Color(0xFF212840);
+  // ─── Backgrounds ───────────────────────────────────────────
+  static const Color bgDeep     = Color(0xFF111113); // خلفية الشاشة الأساسية
+  static const Color bgSurface  = Color(0xFF1C1C1E); // خلفية الـ cards
+  static const Color bgElevated = Color(0xFF2C2C2E); // عناصر مرتفعة - inputs - tabs
+  static const Color bgHighest  = Color(0xFF3A3A3C); // progress bars - dividers
 
-  // ── Primary ────────────────────────────────────────────────────────────────
-  static const Color primary             = Color(0xFF7B6EFF);
-  static const Color primaryContainer    = Color(0xFF4A3FBF);
-  static const Color onPrimary           = Color(0xFFFFFFFF);
-  static const Color onPrimaryContainer  = Color(0xFFECE9FF);
-  static const Color primaryAmbient      = Color(0x1A7B6EFF);
+  // ─── Accent ────────────────────────────────────────────────
+  static const Color accent        = Color(0xFFBFFF00); // أخضر ليموني — اللون الأساسي
+  static const Color accentDim     = Color(0x26BFFF00); // accent شفاف 15%
+  static const Color accentPressed = Color(0xFFAAE600); // عند الضغط
 
-  // ── Text ───────────────────────────────────────────────────────────────────
-  static const Color textPrimary      = Color(0xFFF0F2FF);
-  static const Color textSecondary    = Color(0xFF8A93B0);
-  static const Color textTertiary     = Color(0xFF555E7A);
-  static const Color onSurface        = Color(0xFFF0F2FF);
-  static const Color onSurfaceVariant = Color(0xFF8A93B0);
+  // ─── Text ──────────────────────────────────────────────────
+  static const Color textPrimary   = Color(0xFFF5F5F5); // نصوص رئيسية
+  static const Color textSecondary = Color(0xFFAAAAAA); // نصوص ثانوية
+  static const Color textMuted     = Color(0xFF666666); // نصوص خافتة
+  static const Color textOnAccent  = Color(0xFF111113); // نص فوق اللون الأخضر
 
-  // ── Semantic ───────────────────────────────────────────────────────────────
-  static const Color success = Color(0xFF34DCA0);
-  static const Color warning = Color(0xFFFFAB2E);
-  static const Color error   = Color(0xFFFF5C5C);
+  // ─── Semantic ──────────────────────────────────────────────
+  static const Color success     = Color(0xFF10B981); // نجاح
+  static const Color successDim  = Color(0x2010B981);
+  static const Color warning     = Color(0xFFF59E0B); // تحذير - مستوى متوسط
+  static const Color warningDim  = Color(0x20F59E0B);
+  static const Color danger      = Color(0xFFEF4444); // خطر - مستوى متقدم
+  static const Color dangerDim   = Color(0x20EF4444);
+  static const Color info        = Color(0xFF3B82F6); // معلومة
 
-  // ── Borders / separators ───────────────────────────────────────────────────
-  static const Color separator    = Color(0x14FFFFFF);
-  static const Color borderSubtle = Color(0x1FFFFFFF);
-  static const Color borderActive = Color(0xFF7B6EFF);
-  static const Color cardBorder   = Color(0x0DFFFFFF);
-  static const Color divider      = Color(0x0DFFFFFF);
+  // ─── Border ────────────────────────────────────────────────
+  static const Color borderSubtle = Color(0xFF2C2C2E);
+  static const Color borderMedium = Color(0xFF3A3A3C);
+  static const Color borderAccent = Color(0x40BFFF00); // border أخضر شفاف
 
-  // ── Outline ────────────────────────────────────────────────────────────────
-  static const Color outline        = Color(0xFF4A5270);
-  static const Color outlineVariant = Color(0xFF252C45);
+  // ─── Muscle Group Colors ───────────────────────────────────
+  static const Color muscleChest    = Color(0xFFEF4444);
+  static const Color muscleBack     = Color(0xFF3B82F6);
+  static const Color muscleLegs     = Color(0xFF10B981);
+  static const Color muscleShoulder = Color(0xFFF59E0B);
+  static const Color muscleArms     = Color(0xFFA78BFA);
+  static const Color muscleCore     = Color(0xFFEC4899);
+  static const Color muscleCardio   = Color(0xFFBFFF00);
 
-  // ── Gradients ─────────────────────────────────────────────────────────────
-  static const List<Color> primaryGradient = [Color(0xFF9B8FFF), Color(0xFF5B50D9)];
-  static const List<Color> actionGlow      = [Color(0xFF9B8FFF), Color(0xFF5B50D9)];
-  static const List<Color> successGradient = [Color(0xFF34DCA0), Color(0xFF00B87A)];
-  static const List<Color> warnGradient    = [Color(0xFFFFAB2E), Color(0xFFE8900A)];
-
-  // ── Progress rings ─────────────────────────────────────────────────────────
-  static const List<Color> progressRingCalories = [Color(0xFF7B6EFF), Color(0xFF34DCA0)];
-  static const List<Color> progressRingWorkouts = [Color(0xFF34DCA0), Color(0xFF00B87A)];
-  static const List<Color> progressRingSteps    = [Color(0xFFFFAB2E), Color(0xFF7B6EFF)];
-
-  // ── BMI scale ──────────────────────────────────────────────────────────────
-  static const Color bmiUnderweight = Color(0xFF7B6EFF);
-  static const Color bmiNormal      = Color(0xFF34DCA0);
-  static const Color bmiOverweight  = Color(0xFFFFAB2E);
-  static const Color bmiObese       = Color(0xFFFF8C42);
-  static const Color bmiMorbidObese = Color(0xFFFF5C5C);
-
-  // ── Theme palette helpers (used by AppTheme / MaterialApp) ─────────────────
-  static const Color inversePrimary      = Color(0xFFBDAEFF);
-  static const Color secondary           = success;
-  static const Color secondaryContainer  = Color(0xFF1A3D32);
-  static const Color onSecondary         = Color(0xFF003828);
-  static const Color onSecondaryContainer = success;
-  static const Color tertiary            = warning;
-  static const Color tertiaryContainer   = Color(0xFF3D2E00);
-  static const Color onTertiary          = Color(0xFF2A1C00);
-  static const Color onError             = Color(0xFFFFFFFF);
-  static const Color errorContainer      = Color(0xFF4D0A0A);
-  static const Color surfaceVariant      = surfaceBright;
-
-  static const Color overlayDark = Color(0xCC000000);
-
-  static const Color cardBackground = surfaceHigh;
-  static const Color primaryGlow = primaryAmbient;
+  // ─── Level Colors ──────────────────────────────────────────
+  static const Color levelBeginner     = Color(0xFF10B981);
+  static const Color levelIntermediate = Color(0xFFF59E0B);
+  static const Color levelAdvanced     = Color(0xFFEF4444);
 }
