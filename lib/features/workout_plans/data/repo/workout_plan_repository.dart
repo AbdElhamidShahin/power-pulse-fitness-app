@@ -1,6 +1,8 @@
+import '../../../../core/domin/api_result.dart' show ApiResult;
 import '../../../../core/error/failures.dart';
 import '../../../exercises/data/model/exercise.dart';
 import '../../../../shared/providers/item_provider.dart';
+import '../../../exercises/data/models/exercise_entity.dart';
 
 abstract interface class WorkoutPlanRepository {
   ApiResult<Map<String, List<Exercise>>> getPlans(ItemProvider provider);
