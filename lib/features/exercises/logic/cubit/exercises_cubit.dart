@@ -1,11 +1,13 @@
+
+
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:power_pulse/core/domain/api_result.dart';
 
 import '../../../../core/domain/app_failure.dart';
-import '../../logic/usecases/exercise_usecases.dart';
+import '../usecases/exercise_usecases.dart';
 import 'exercises_state.dart';
 
-/// ExercisesCubit — List + Filter + Pagination
-/// Depends ONLY on use cases — never on repos or services
 final class ExercisesCubit extends Cubit<ExercisesState> {
   ExercisesCubit({
     required GetExercisesUseCase getExercises,

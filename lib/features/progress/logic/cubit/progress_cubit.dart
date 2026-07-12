@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:power_pulse/core/domain/api_result.dart';
 
 import '../../../../core/domain/app_failure.dart';
 import '../../data/models/progress_entity.dart';
 import '../usecases/progress_usecases.dart';
 import 'progress_state.dart';
 
-/// ProgressCubit — ملخص التقدم + تغيير الفترة
 final class ProgressCubit extends Cubit<ProgressState> {
   ProgressCubit({required GetProgressSummaryUseCase getSummary})
       : _getSummary = getSummary,

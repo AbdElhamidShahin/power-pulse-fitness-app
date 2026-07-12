@@ -1,12 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:power_pulse/core/domain/api_result.dart';
 
 import '../../../../core/domain/app_failure.dart';
 import '../../data/models/food_entity.dart';
 import '../usecases/nutrition_usecases.dart';
 import 'nutrition_state.dart';
 
-/// NutritionCubit — يومية التغذية
-/// Depends ONLY on use cases
+
 final class NutritionCubit extends Cubit<NutritionState> {
   NutritionCubit({
     required GetDailyNutritionUseCase getDailyNutrition,

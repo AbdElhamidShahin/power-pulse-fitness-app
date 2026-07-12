@@ -1,6 +1,6 @@
 import '../../../../core/domain/api_result.dart';
-import '../data/models/food_entity.dart';
-import '../data/repositories/nutrition_repository.dart';
+import '../../data/models/food_entity.dart';
+import '../../data/repositories/nutrition_repository.dart';
 
 final class SearchFoodUseCase {
   const SearchFoodUseCase(this._repo);
