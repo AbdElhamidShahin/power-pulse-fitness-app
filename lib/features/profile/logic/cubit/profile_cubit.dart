@@ -6,6 +6,7 @@ import '../../data/models/user_profile_entity.dart';
 import '../usecases/profile_usecases.dart';
 import 'profile_state.dart';
 
+/// ProfileCubit — تحميل الملف الشخصي
 final class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required GetProfileUseCase getProfile})
       : _getProfile = getProfile,
@@ -22,6 +23,7 @@ final class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
+  /// تحديث الـ state بعد حفظ ناجح
   void onProfileSaved(UserProfile updated) =>
       emit(ProfileLoaded(updated));
 

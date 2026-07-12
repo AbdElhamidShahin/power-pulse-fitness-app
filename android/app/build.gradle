@@ -12,6 +12,8 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.powerteam.powerpulse"
+    ndkVersion "27.0.12077973"
+
     compileSdk = 35   // لازم 35
 
     ndkVersion = flutter.ndkVersion

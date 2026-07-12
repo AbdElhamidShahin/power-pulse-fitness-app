@@ -6,30 +6,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 
-// Exercises
 import '../../features/exercises/data/services/exercise_service.dart';
 import '../../features/exercises/data/repositories/exercise_repository.dart';
 import '../../features/exercises/logic/usecases/exercise_usecases.dart';
 import '../../features/exercises/logic/cubit/exercises_cubit.dart';
 
-// Nutrition
 import '../../features/nutrition/data/services/nutrition_service.dart';
 import '../../features/nutrition/data/services/nutrition_local_service.dart';
 import '../../features/nutrition/data/repositories/nutrition_repository.dart';
 import '../../features/nutrition/logic/usecases/nutrition_usecases.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
 
-// Progress
 import '../../features/progress/data/services/progress_local_service.dart';
 import '../../features/progress/data/repositories/progress_repository.dart';
 import '../../features/progress/logic/usecases/progress_usecases.dart';
 import '../../features/progress/logic/cubit/progress_cubit.dart';
 
-// Profile
 import '../../features/profile/data/services/profile_local_service.dart';
 import '../../features/profile/data/repositories/profile_repository.dart';
 import '../../features/profile/logic/usecases/profile_usecases.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
+
+import '../../features/home/logic/cubit/home_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -49,6 +47,7 @@ Future<void> initDependencies() async {
   _initNutrition();
   _initProgress();
   _initProfile();
+  _initHome();
 }
 
 void _initExercises() {
@@ -109,4 +108,12 @@ void _initProfile() {
   sl.registerLazySingleton(() => HasProfileUseCase(sl()));
   sl.registerFactory(() => ProfileCubit(getProfile: sl()));
   sl.registerFactory(() => ProfileSaveCubit(saveProfile: sl()));
+}
+
+void _initHome() {
+  sl.registerFactory(() => HomeCubit(
+        getProfile:         sl(),
+        getDailyNutrition:  sl(),
+        getProgressSummary: sl(),
+      ));
 }
