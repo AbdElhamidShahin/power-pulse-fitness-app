@@ -1,8 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../core/constants/ui_constants.dart';
 import '../../data/models/progress_entity.dart';
 
 class WeightChart extends StatelessWidget {
@@ -23,10 +24,10 @@ class WeightChart extends StatelessWidget {
     final maxY = points.map((p) => p.y).reduce((a, b) => a > b ? a : b) + 2;
 
     return Container(
-      padding: const EdgeInsets.all(UiConstants.spaceL),
+      padding: const EdgeInsets.all(AppConstants.spaceL),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(UiConstants.radiusL),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
         border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Column(
@@ -34,7 +35,7 @@ class WeightChart extends StatelessWidget {
         children: [
           Text('تغير الوزن',
               style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: UiConstants.spaceXL),
+          const SizedBox(height: AppConstants.spaceXL),
           SizedBox(
             height: height,
             child: LineChart(
@@ -155,10 +156,10 @@ class WorkoutBarChart extends StatelessWidget {
     final maxY = points.map((p) => p.y).reduce((a, b) => a > b ? a : b) + 1;
 
     return Container(
-      padding: const EdgeInsets.all(UiConstants.spaceL),
+      padding: const EdgeInsets.all(AppConstants.spaceL),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(UiConstants.radiusL),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
         border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Column(
@@ -166,7 +167,7 @@ class WorkoutBarChart extends StatelessWidget {
         children: [
           Text('التمارين المكتملة',
               style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: UiConstants.spaceXL),
+          const SizedBox(height: AppConstants.spaceXL),
           SizedBox(
             height: height,
             child: BarChart(
@@ -259,7 +260,7 @@ class _EmptyChart extends StatelessWidget {
       height: 140,
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(UiConstants.radiusL),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
         border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Center(
@@ -268,7 +269,7 @@ class _EmptyChart extends StatelessWidget {
           children: [
             const Icon(Icons.bar_chart_rounded,
                 color: AppColors.textMuted, size: 36),
-            const SizedBox(height: UiConstants.spaceS),
+            const SizedBox(height: AppConstants.spaceS),
             Text(label,
                 style: AppTextStyles.bodySmall
                     .copyWith(color: AppColors.textMuted)),

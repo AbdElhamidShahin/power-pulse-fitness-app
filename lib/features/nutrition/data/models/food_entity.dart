@@ -1,4 +1,5 @@
-
+/// FoodItem Entity — Domain Layer
+/// Pure Dart — Zero Flutter imports
 final class FoodItem {
   const FoodItem({
     required this.id,
@@ -35,6 +36,7 @@ final class FoodItem {
   int get hashCode => id.hashCode;
 }
 
+/// MealEntry — وجبة مسجلة في اليوم
 final class MealEntry {
   const MealEntry({
     required this.id,
@@ -67,6 +69,7 @@ extension MealTypeX on MealType {
       };
 }
 
+/// DailyNutrition — ملخص يوم كامل
 final class DailyNutrition {
   const DailyNutrition({
     required this.date,

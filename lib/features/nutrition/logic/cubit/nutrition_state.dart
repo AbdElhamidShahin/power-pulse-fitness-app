@@ -1,5 +1,6 @@
 import '../../data/models/food_entity.dart';
 
+/// NutritionState — شاشة التغذية الرئيسية
 sealed class NutritionState {
   const NutritionState();
 }

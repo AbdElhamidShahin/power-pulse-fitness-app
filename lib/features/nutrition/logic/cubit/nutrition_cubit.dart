@@ -1,11 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:power_pulse/core/domin/api_result.dart';
 
-import '../../../../core/domin/app_failure.dart';
+import '../../../../core/domain/app_failure.dart';
 import '../../data/models/food_entity.dart';
 import '../usecases/nutrition_usecases.dart';
 import 'nutrition_state.dart';
 
+/// NutritionCubit — يومية التغذية
+/// Depends ONLY on use cases
 final class NutritionCubit extends Cubit<NutritionState> {
   NutritionCubit({
     required GetDailyNutritionUseCase getDailyNutrition,
@@ -46,14 +47,15 @@ final class NutritionCubit extends Cubit<NutritionState> {
   }
 
   String _map(AppFailure f) => switch (f) {
-        NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        CacheFailure() => 'خطأ في حفظ البيانات',
-        ServerFailure() => 'خطأ في الخادم',
-        NotFoundFailure() => 'البيانات غير موجودة',
+        NetworkFailure()    => 'تحقق من اتصال الإنترنت',
+        CacheFailure()      => 'خطأ في حفظ البيانات',
+        ServerFailure()     => 'خطأ في الخادم',
+        NotFoundFailure()   => 'البيانات غير موجودة',
         UnexpectedFailure() => 'حدث خطأ غير متوقع',
       };
 }
 
+/// FoodSearchCubit — البحث عن أكل + pagination
 final class FoodSearchCubit extends Cubit<FoodSearchState> {
   FoodSearchCubit(this._searchFood) : super(const FoodSearchIdle());
 
@@ -97,10 +99,11 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
 
   String _map(AppFailure f) => switch (f) {
         NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        _ => 'حدث خطأ غير متوقع',
+        _                => 'حدث خطأ غير متوقع',
       };
 }
 
+/// AddMealCubit — إضافة وجبة + تحديد الكمية
 final class AddMealCubit extends Cubit<AddMealState> {
   AddMealCubit(this._addMealEntry) : super(const AddMealIdle());
 
@@ -114,11 +117,11 @@ final class AddMealCubit extends Cubit<AddMealState> {
     emit(const AddMealLoading());
 
     final entry = MealEntry(
-      id: '${food.id}_${DateTime.now().millisecondsSinceEpoch}',
-      food: food,
-      mealType: mealType,
-      quantity: quantity,
-      loggedAt: DateTime.now(),
+      id:        '${food.id}_${DateTime.now().millisecondsSinceEpoch}',
+      food:      food,
+      mealType:  mealType,
+      quantity:  quantity,
+      loggedAt:  DateTime.now(),
     );
 
     final result = await _addMealEntry(entry);
@@ -131,8 +134,8 @@ final class AddMealCubit extends Cubit<AddMealState> {
   void reset() => emit(const AddMealIdle());
 
   String _map(AppFailure f) => switch (f) {
-        CacheFailure() => 'خطأ في حفظ الوجبة',
+        CacheFailure()      => 'خطأ في حفظ الوجبة',
         UnexpectedFailure() => 'حدث خطأ غير متوقع',
-        _ => 'حدث خطأ',
+        _                   => 'حدث خطأ',
       };
 }

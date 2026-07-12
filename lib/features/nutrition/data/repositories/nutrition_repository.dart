@@ -1,5 +1,5 @@
-import '../../../../core/domin/api_result.dart';
-import '../../../../core/domin/app_failure.dart';
+import '../../../../core/domain/api_result.dart';
+import '../../../../core/domain/app_failure.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/network_info.dart';
 import '../models/food_entity.dart';

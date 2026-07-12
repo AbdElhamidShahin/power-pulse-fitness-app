@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_strings.dart';
-import '../../core/constants/constants.dart';
+import '../../core/constants/app_constants.dart';
 
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
@@ -24,7 +24,7 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: UiConstants.bottomNavHeight,
+      height: AppConstants.bottomNavHeight,
       decoration: const BoxDecoration(
         color: AppColors.bgSurface,
         border: Border(top: BorderSide(color: AppColors.borderSubtle, width: 0.5)),
@@ -73,7 +73,7 @@ class _NavButton extends StatelessWidget {
           children: [
             Icon(
               item.icon,
-              size: UiConstants.iconM,
+              size: AppConstants.iconM,
               color: isActive ? AppColors.accent : AppColors.textMuted,
             ),
             const SizedBox(height: 2),
@@ -88,7 +88,7 @@ class _NavButton extends StatelessWidget {
             ),
             const SizedBox(height: 3),
             AnimatedContainer(
-              duration: UiConstants.durationFast,
+              duration: AppConstants.durationFast,
               width: isActive ? 4 : 0,
               height: isActive ? 4 : 0,
               decoration: const BoxDecoration(

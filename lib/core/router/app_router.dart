@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../features/exercises/logic/cubit/exercises_cubit.dart';
+import '../../features/exercises/ui/screens/exercises_screen.dart';
+import '../../features/exercises/ui/screens/exercise_detail_screen.dart';
+import '../../features/nutrition/data/models/food_entity.dart';
+import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
+import '../../features/nutrition/ui/screens/nutrition_screen.dart';
+import '../../features/nutrition/ui/screens/food_search_screen.dart';
+import '../../features/progress/logic/cubit/progress_cubit.dart';
+import '../../features/progress/ui/screens/progress_screen.dart';
+import '../../features/profile/logic/cubit/profile_cubit.dart';
+import '../../features/profile/logic/cubit/profile_state.dart';
+import '../../features/profile/ui/screens/profile_screen.dart';
+import '../../features/profile/ui/screens/edit_profile_screen.dart';
 import '../../shared/shell/main_shell.dart';
+import '../di/injection.dart';
 
 abstract class AppRouter {
   AppRouter._();
 
-  // ─── Route Names ──────────────────────────────────────────
-  static const String onboarding    = '/onboarding';
-  static const String home          = '/home';
-  static const String exercises     = '/exercises';
-  static const String exerciseDetail= '/exercises/:id';
-  static const String nutrition     = '/nutrition';
-  static const String progress      = '/progress';
-  static const String profile       = '/profile';
+  static const String home            = '/home';
+  static const String exercises       = '/exercises';
+  static const String nutrition       = '/nutrition';
+  static const String nutritionSearch = '/nutrition/search';
+  static const String progress        = '/progress';
+  static const String profile         = '/profile';
+  static const String profileEdit     = '/profile/edit';
 
-  // ─── Router ───────────────────────────────────────────────
   static final GoRouter router = GoRouter(
     initialLocation: home,
     debugLogDiagnostics: true,
@@ -24,56 +38,95 @@ abstract class AppRouter {
         routes: [
           GoRoute(
             path: home,
-            name: 'home',
-            builder: (context, state) => const _PlaceholderScreen(label: 'الرئيسية'),
+            builder: (_, __) => const _PlaceholderScreen(label: 'الرئيسية'),
           ),
           GoRoute(
             path: exercises,
-            name: 'exercises',
-            builder: (context, state) => const _PlaceholderScreen(label: 'التمارين'),
+            builder: (_, __) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => sl<ExercisesCubit>()),
+                BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
+              ],
+              child: const ExercisesScreen(),
+            ),
             routes: [
               GoRoute(
                 path: ':id',
-                name: 'exerciseDetail',
-                builder: (context, state) {
-                  final id = state.pathParameters['id']!;
-                  return _PlaceholderScreen(label: 'تفاصيل التمرين $id');
-                },
+                builder: (_, state) => BlocProvider(
+                  create: (_) => sl<ExerciseDetailCubit>(),
+                  child: ExerciseDetailScreen(
+                      exerciseId: state.pathParameters['id']!),
+                ),
               ),
             ],
           ),
           GoRoute(
             path: nutrition,
-            name: 'nutrition',
-            builder: (context, state) => const _PlaceholderScreen(label: 'التغذية'),
+            builder: (_, __) => BlocProvider(
+              create: (_) => sl<NutritionCubit>(),
+              child: const NutritionScreen(),
+            ),
           ),
           GoRoute(
             path: progress,
-            name: 'progress',
-            builder: (context, state) => const _PlaceholderScreen(label: 'تقدمي'),
+            builder: (_, __) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => sl<ProgressCubit>()),
+                BlocProvider(create: (_) => sl<WeightLogCubit>()),
+              ],
+              child: const ProgressScreen(),
+            ),
           ),
           GoRoute(
             path: profile,
-            name: 'profile',
-            builder: (context, state) => const _PlaceholderScreen(label: 'حسابي'),
+            builder: (_, __) => BlocProvider(
+              create: (_) => sl<ProfileCubit>(),
+              child: const ProfileScreen(),
+            ),
           ),
         ],
       ),
 
+      // ─── خارج الـ Shell ────────────────────────────────────
       GoRoute(
-        path: onboarding,
-        name: 'onboarding',
-        builder: (context, state) => const _PlaceholderScreen(label: 'Onboarding'),
+        path: nutritionSearch,
+        builder: (context, state) {
+          final mealType = state.extra as MealType? ?? MealType.lunch;
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => sl<FoodSearchCubit>()),
+              BlocProvider(create: (_) => sl<AddMealCubit>()),
+              BlocProvider.value(value: context.read<NutritionCubit>()),
+            ],
+            child: FoodSearchScreen(mealType: mealType),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: profileEdit,
+        builder: (context, state) {
+          final profileState = context.read<ProfileCubit>().state;
+          final profile = profileState is ProfileLoaded
+              ? profileState.profile
+              : null;
+          if (profile == null) {
+            return const _PlaceholderScreen(label: 'جاري التحميل...');
+          }
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
+              BlocProvider.value(value: context.read<ProfileCubit>()),
+            ],
+            child: EditProfileScreen(profile: profile),
+          );
+        },
       ),
     ],
-
-    errorBuilder: (context, state) => Scaffold(
+    errorBuilder: (_, state) => Scaffold(
       body: Center(
-        child: Text(
-          'الصفحة غير موجودة\n${state.error}',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontFamily: 'Cairo', color: Colors.white),
-        ),
+        child: Text('الصفحة غير موجودة',
+            style: const TextStyle(fontFamily: 'Cairo', color: Colors.white)),
       ),
     ),
   );
@@ -82,21 +135,15 @@ abstract class AppRouter {
 class _PlaceholderScreen extends StatelessWidget {
   const _PlaceholderScreen({required this.label});
   final String label;
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Cairo',
-            fontSize: 22,
-            fontWeight: FontWeight.w900,
-            color: Color(0xFFBFFF00),
-          ),
+  Widget build(BuildContext context) => Scaffold(
+        body: Center(
+          child: Text(label,
+              style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFFBFFF00))),
         ),
-      ),
-    );
-  }
+      );
 }

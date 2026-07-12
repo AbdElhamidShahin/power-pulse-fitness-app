@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
-import '../constants/constants.dart';
+import '../constants/app_constants.dart';
 
 /// Power Pulse — App Theme
 /// Dark Mode فقط — Cairo Font
@@ -60,9 +60,9 @@ abstract class AppTheme {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.accent,
             foregroundColor: AppColors.textOnAccent,
-            minimumSize: const Size(double.infinity, UiConstants.buttonHeightLarge),
+            minimumSize: const Size(double.infinity, AppConstants.buttonHeightLarge),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(UiConstants.radiusM),
+              borderRadius: BorderRadius.circular(AppConstants.radiusM),
             ),
             textStyle: AppTextStyles.labelLarge,
             elevation: 0,
@@ -73,10 +73,10 @@ abstract class AppTheme {
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.accent,
-            minimumSize: const Size(double.infinity, UiConstants.buttonHeightLarge),
+            minimumSize: const Size(double.infinity, AppConstants.buttonHeightLarge),
             side: const BorderSide(color: AppColors.accent, width: 1.5),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(UiConstants.radiusM),
+              borderRadius: BorderRadius.circular(AppConstants.radiusM),
             ),
             textStyle: AppTextStyles.labelLarge,
           ),
@@ -96,23 +96,23 @@ abstract class AppTheme {
           fillColor: AppColors.bgElevated,
           hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: UiConstants.spaceL,
-            vertical: UiConstants.spaceM,
+            horizontal: AppConstants.spaceL,
+            vertical: AppConstants.spaceM,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(UiConstants.radiusM),
+            borderRadius: BorderRadius.circular(AppConstants.radiusM),
             borderSide: const BorderSide(color: AppColors.borderSubtle),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(UiConstants.radiusM),
+            borderRadius: BorderRadius.circular(AppConstants.radiusM),
             borderSide: const BorderSide(color: AppColors.borderSubtle),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(UiConstants.radiusM),
+            borderRadius: BorderRadius.circular(AppConstants.radiusM),
             borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(UiConstants.radiusM),
+            borderRadius: BorderRadius.circular(AppConstants.radiusM),
             borderSide: const BorderSide(color: AppColors.danger),
           ),
         ),
@@ -122,7 +122,7 @@ abstract class AppTheme {
           color: AppColors.bgSurface,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(UiConstants.radiusL),
+            borderRadius: BorderRadius.circular(AppConstants.radiusL),
             side: const BorderSide(color: AppColors.borderSubtle),
           ),
           margin: EdgeInsets.zero,
@@ -135,7 +135,7 @@ abstract class AppTheme {
           selectedColor: AppColors.accentDim,
           side: const BorderSide(color: AppColors.borderSubtle),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(UiConstants.radiusPill),
+            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         ),
@@ -175,7 +175,7 @@ abstract class AppTheme {
           backgroundColor: AppColors.bgElevated,
           contentTextStyle: AppTextStyles.bodyMedium,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(UiConstants.radiusM),
+            borderRadius: BorderRadius.circular(AppConstants.radiusM),
           ),
           behavior: SnackBarBehavior.floating,
         ),

@@ -24,6 +24,7 @@ Future<void> main() async {
 
   runApp(const PowerPulseApp());
 }
+
 class PowerPulseApp extends StatelessWidget {
   const PowerPulseApp({super.key});
 

@@ -1,7 +1,8 @@
-import '../../../../core/domin/api_result.dart';
-import '../../data/models/exercise_entity.dart';
-import '../../data/repositories/exercise_repository.dart';
+import '../../../../core/domain/api_result.dart';
+import '../data/models/exercise_entity.dart';
+import '../data/repositories/exercise_repository.dart';
 
+/// GetExercisesUseCase
 final class GetExercisesUseCase {
   const GetExercisesUseCase(this._repository);
   final ExerciseRepository _repository;

@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../core/constants/constants.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_badge.dart';
@@ -58,13 +58,13 @@ class _DetailContent extends StatelessWidget {
           leading: GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
-              margin: const EdgeInsets.all(UiConstants.spaceS),
+              margin: const EdgeInsets.all(AppConstants.spaceS),
               decoration: BoxDecoration(
                 color: AppColors.bgSurface.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(UiConstants.radiusM),
+                borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
               child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: AppColors.textPrimary, size: UiConstants.iconS),
+                  color: AppColors.textPrimary, size: AppConstants.iconS),
             ),
           ),
           flexibleSpace: FlexibleSpaceBar(
@@ -88,33 +88,33 @@ class _DetailContent extends StatelessWidget {
 
         // ─── Info ────────────────────────────────────────────
         SliverPadding(
-          padding: const EdgeInsets.all(UiConstants.screenPaddingH),
+          padding: const EdgeInsets.all(AppConstants.screenPaddingH),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               Text(exercise.name,
                   style: Theme.of(context).textTheme.headlineLarge),
-              const SizedBox(height: UiConstants.spaceM),
+              const SizedBox(height: AppConstants.spaceM),
 
               // Badges
               Wrap(
-                spacing: UiConstants.spaceS,
-                runSpacing: UiConstants.spaceS,
+                spacing: AppConstants.spaceS,
+                runSpacing: AppConstants.spaceS,
                 children: [
                   MuscleGroupBadge(muscle: exercise.bodyPart),
                   PPBadge(label: exercise.target, color: AppColors.info),
                   PPBadge(label: exercise.equipment, color: AppColors.textMuted),
                 ],
               ),
-              const SizedBox(height: UiConstants.spaceXXL),
+              const SizedBox(height: AppConstants.spaceXXL),
 
               // Secondary muscles
               if (exercise.secondaryMuscles.isNotEmpty) ...[
                 Text('العضلات الثانوية',
                     style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: UiConstants.spaceM),
+                const SizedBox(height: AppConstants.spaceM),
                 Wrap(
-                  spacing: UiConstants.spaceS,
-                  runSpacing: UiConstants.spaceS,
+                  spacing: AppConstants.spaceS,
+                  runSpacing: AppConstants.spaceS,
                   children: exercise.secondaryMuscles
                       .map((m) => PPBadge(
                             label: m,
@@ -123,18 +123,18 @@ class _DetailContent extends StatelessWidget {
                           ))
                       .toList(),
                 ),
-                const SizedBox(height: UiConstants.spaceXXL),
+                const SizedBox(height: AppConstants.spaceXXL),
               ],
 
               // Instructions
               if (exercise.instructions.isNotEmpty) ...[
                 Text('كيفية الأداء',
                     style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: UiConstants.spaceL),
+                const SizedBox(height: AppConstants.spaceL),
                 ...exercise.instructions.asMap().entries.map(
                       (e) => Padding(
                         padding: const EdgeInsets.only(
-                            bottom: UiConstants.spaceM),
+                            bottom: AppConstants.spaceM),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -142,11 +142,11 @@ class _DetailContent extends StatelessWidget {
                               width: 26,
                               height: 26,
                               margin: const EdgeInsets.only(
-                                  left: UiConstants.spaceM),
+                                  left: AppConstants.spaceM),
                               decoration: BoxDecoration(
                                 color: AppColors.accentDim,
                                 borderRadius: BorderRadius.circular(
-                                    UiConstants.radiusPill),
+                                    AppConstants.radiusPill),
                                 border: Border.all(
                                     color: AppColors.borderAccent),
                               ),
@@ -170,7 +170,7 @@ class _DetailContent extends StatelessWidget {
                     ),
               ],
 
-              const SizedBox(height: UiConstants.space3XL),
+              const SizedBox(height: AppConstants.space3XL),
               PPButton(
                 label: 'أضف للخطة',
                 onPressed: () {
@@ -178,7 +178,7 @@ class _DetailContent extends StatelessWidget {
                 },
                 icon: Icons.add_rounded,
               ),
-              const SizedBox(height: UiConstants.spaceXL),
+              const SizedBox(height: AppConstants.spaceXL),
             ]),
           ),
         ),
@@ -212,7 +212,7 @@ class _DetailError extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline_rounded,
               color: AppColors.danger, size: 48),
-          const SizedBox(height: UiConstants.spaceM),
+          const SizedBox(height: AppConstants.spaceM),
           Text(message, style: AppTextStyles.bodyMedium),
         ],
       ),

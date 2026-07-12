@@ -3,12 +3,14 @@ import 'package:go_router/go_router.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../../core/router/app_router.dart';
 
-
+/// الـ Shell الأساسي — بيحتوي الـ Bottom Nav
+/// بيتستخدم مع GoRouter ShellRoute
 class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.child});
 
   final Widget child;
 
+  // ترتيب الـ tabs بنفس ترتيب GoRouter
   static const _routes = [
     AppRouter.home,
     AppRouter.exercises,

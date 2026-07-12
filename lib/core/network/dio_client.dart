@@ -1,18 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../constants/constants.dart';
+import '../constants/app_constants.dart';
 import '../error/exceptions.dart';
 import 'api_endpoints.dart';
 
+/// Power Pulse — Dio HTTP Client
 class DioClient {
   DioClient._();
 
+  // ─── ExerciseDB instance ───────────────────────────────────
   static Dio get exerciseDb {
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.exerciseDbBaseUrl,
-        connectTimeout:const Duration(seconds: AppConfig.apiTimeoutSeconds),
-        receiveTimeout: const Duration(seconds: AppConfig.apiTimeoutSeconds),
+        connectTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
+        receiveTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
         headers: {
           'X-RapidAPI-Key': const String.fromEnvironment(
             'RAPIDAPI_KEY',
@@ -26,12 +28,13 @@ class DioClient {
     return dio;
   }
 
+  // ─── Open Food Facts instance ──────────────────────────────
   static Dio get foodFacts {
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.foodBaseUrl,
-        connectTimeout: const Duration(seconds: AppConfig.apiTimeoutSeconds),
-        receiveTimeout: const Duration(seconds: AppConfig.apiTimeoutSeconds),
+        connectTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
+        receiveTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
         headers: {
           'User-Agent': 'PowerPulse/2.0 (Flutter)',
         },
@@ -41,7 +44,9 @@ class DioClient {
     return dio;
   }
 
+  // ─── Interceptors ─────────────────────────────────────────
   static void _addInterceptors(Dio dio, {required String name}) {
+    // Debug logger
     if (kDebugMode) {
       dio.interceptors.add(
         LogInterceptor(
@@ -55,6 +60,7 @@ class DioClient {
       );
     }
 
+    // Error handler
     dio.interceptors.add(
       InterceptorsWrapper(
         onError: (DioException e, ErrorInterceptorHandler handler) {
@@ -66,13 +72,13 @@ class DioClient {
   }
 }
 
+/// تحويل DioException → AppException
 Exception mapDioException(DioException e) {
   return switch (e.type) {
     DioExceptionType.connectionTimeout ||
-    DioExceptionType.receiveTimeout ||
-    DioExceptionType.sendTimeout ||
-    DioExceptionType.connectionError =>
-      const NetworkException(),
+    DioExceptionType.receiveTimeout   ||
+    DioExceptionType.sendTimeout      ||
+    DioExceptionType.connectionError  => const NetworkException(),
     DioExceptionType.badResponse => ServerException(
         message: _extractMessage(e.response),
         statusCode: e.response?.statusCode,
@@ -86,8 +92,8 @@ String _extractMessage(Response? response) {
     final data = response?.data;
     if (data is Map) {
       return data['message']?.toString() ??
-          data['error']?.toString() ??
-          'Server error';
+             data['error']?.toString() ??
+             'Server error';
     }
     return 'Server error ${response?.statusCode}';
   } catch (_) {

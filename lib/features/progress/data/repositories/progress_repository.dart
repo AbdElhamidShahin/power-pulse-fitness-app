@@ -1,5 +1,5 @@
-import '../../../../core/domin/api_result.dart';
-import '../../../../core/domin/app_failure.dart';
+import '../../../../core/domain/api_result.dart';
+import '../../../../core/domain/app_failure.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/progress_entity.dart';
 import '../services/progress_local_service.dart';

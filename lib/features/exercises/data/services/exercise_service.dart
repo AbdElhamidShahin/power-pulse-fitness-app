@@ -6,6 +6,9 @@ import '../../../../core/network/dio_client.dart';
 import '../models/exercise_entity.dart';
 import '../models/exercise_model.dart';
 
+/// ExerciseService — Data / Service Layer
+/// Raw API calls to ExerciseDB
+/// Catches DioException → throws AppException
 abstract interface class ExerciseService {
   Future<List<Exercise>> getExercises({int limit, int offset});
   Future<List<Exercise>> getExercisesByBodyPart(String bodyPart, {int limit});

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../core/constants/ui_constants.dart';
 
 class ProgressStatCard extends StatelessWidget {
   const ProgressStatCard({
@@ -27,10 +28,10 @@ class ProgressStatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = iconColor ?? AppColors.accent;
     return Container(
-      padding: const EdgeInsets.all(UiConstants.spaceL),
+      padding: const EdgeInsets.all(AppConstants.spaceL),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(UiConstants.radiusL),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
         border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Column(
@@ -41,11 +42,11 @@ class ProgressStatCard extends StatelessWidget {
             height: 34,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(UiConstants.radiusS),
+              borderRadius: BorderRadius.circular(AppConstants.radiusS),
             ),
-            child: Icon(icon, color: color, size: UiConstants.iconS),
+            child: Icon(icon, color: color, size: AppConstants.iconS),
           ),
-          const SizedBox(height: UiConstants.spaceM),
+          const SizedBox(height: AppConstants.spaceM),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -70,7 +71,7 @@ class ProgressStatCard extends StatelessWidget {
               ],
             ],
           ),
-          const SizedBox(height: UiConstants.spaceXS),
+          const SizedBox(height: AppConstants.spaceXS),
           Text(label, style: AppTextStyles.bodySmall),
           if (sub != null) ...[
             const SizedBox(height: 2),

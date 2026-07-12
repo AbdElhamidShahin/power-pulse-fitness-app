@@ -1,6 +1,6 @@
-import '../../../../core/domin/api_result.dart';
-import '../../data/models/progress_entity.dart';
-import '../../data/repositories/progress_repository.dart';
+import '../../../../core/domain/api_result.dart';
+import '../data/models/progress_entity.dart';
+import '../data/repositories/progress_repository.dart';
 
 final class GetProgressSummaryUseCase {
   const GetProgressSummaryUseCase(this._repo);

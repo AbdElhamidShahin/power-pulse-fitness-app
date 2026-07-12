@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_input.dart';
-import '../../../../core/constants/ui_constants.dart';
 import '../../data/models/food_entity.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
@@ -49,10 +50,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                UiConstants.screenPaddingH,
-                UiConstants.spaceL,
-                UiConstants.screenPaddingH,
-                UiConstants.spaceM,
+                AppConstants.screenPaddingH,
+                AppConstants.spaceL,
+                AppConstants.screenPaddingH,
+                AppConstants.spaceM,
               ),
               child: Row(
                 children: [
@@ -64,14 +65,14 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       decoration: BoxDecoration(
                         color: AppColors.bgElevated,
                         borderRadius:
-                            BorderRadius.circular(UiConstants.radiusM),
+                            BorderRadius.circular(AppConstants.radiusM),
                       ),
                       child: const Icon(Icons.arrow_back_ios_new_rounded,
                           color: AppColors.textPrimary,
-                          size: UiConstants.iconS),
+                          size: AppConstants.iconS),
                     ),
                   ),
-                  const SizedBox(width: UiConstants.spaceM),
+                  const SizedBox(width: AppConstants.spaceM),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +93,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             // Search
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: UiConstants.screenPaddingH),
+                  horizontal: AppConstants.screenPaddingH),
               child: PPSearchBar(
                 hint: 'ابحث عن طعام...',
                 controller: _controller,
@@ -100,7 +101,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 autofocus: true,
               ),
             ),
-            const SizedBox(height: UiConstants.spaceL),
+            const SizedBox(height: AppConstants.spaceL),
 
             // Results
             Expanded(
@@ -148,14 +149,14 @@ class _ResultsList extends StatelessWidget {
     return ListView.separated(
       controller: scroll,
       padding: const EdgeInsets.symmetric(
-          horizontal: UiConstants.screenPaddingH),
+          horizontal: AppConstants.screenPaddingH),
       itemCount: results.length + (hasMore ? 1 : 0),
       separatorBuilder: (_, __) =>
-          const SizedBox(height: UiConstants.spaceM),
+          const SizedBox(height: AppConstants.spaceM),
       itemBuilder: (context, i) {
         if (i == results.length) {
           return const Padding(
-            padding: EdgeInsets.all(UiConstants.spaceXL),
+            padding: EdgeInsets.all(AppConstants.spaceXL),
             child: Center(
               child: CircularProgressIndicator(color: AppColors.accent),
             ),
@@ -175,7 +176,7 @@ class _ResultsList extends StatelessWidget {
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(UiConstants.radiusXL),
+          top: Radius.circular(AppConstants.radiusXL),
         ),
       ),
       builder: (_) => BlocProvider.value(
@@ -221,10 +222,10 @@ class _AddMealSheetState extends State<_AddMealSheet> {
       },
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-          UiConstants.screenPaddingH,
-          UiConstants.spaceXL,
-          UiConstants.screenPaddingH,
-          MediaQuery.of(context).viewInsets.bottom + UiConstants.spaceXL,
+          AppConstants.screenPaddingH,
+          AppConstants.spaceXL,
+          AppConstants.screenPaddingH,
+          MediaQuery.of(context).viewInsets.bottom + AppConstants.spaceXL,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -234,7 +235,7 @@ class _AddMealSheetState extends State<_AddMealSheet> {
                 style: Theme.of(context).textTheme.headlineSmall),
             if (widget.food.brand != null)
               Text(widget.food.brand!, style: AppTextStyles.bodySmall),
-            const SizedBox(height: UiConstants.spaceXXL),
+            const SizedBox(height: AppConstants.spaceXXL),
 
             // Quantity input
             Row(
@@ -257,7 +258,7 @@ class _AddMealSheetState extends State<_AddMealSheet> {
                     ),
                   ),
                 ),
-                const SizedBox(width: UiConstants.spaceL),
+                const SizedBox(width: AppConstants.spaceL),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -270,14 +271,14 @@ class _AddMealSheetState extends State<_AddMealSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: UiConstants.spaceXXL),
+            const SizedBox(height: AppConstants.spaceXXL),
 
             BlocBuilder<AddMealCubit, AddMealState>(
               builder: (context, state) {
                 final isLoading = state is AddMealLoading;
                 return SizedBox(
                   width: double.infinity,
-                  height: UiConstants.buttonHeightLarge,
+                  height: AppConstants.buttonHeightLarge,
                   child: ElevatedButton(
                     onPressed: isLoading
                         ? null
@@ -316,7 +317,7 @@ class _IdleView extends StatelessWidget {
           children: [
             const Icon(Icons.search_rounded,
                 color: AppColors.textMuted, size: 48),
-            const SizedBox(height: UiConstants.spaceM),
+            const SizedBox(height: AppConstants.spaceM),
             Text('ابحث عن طعام لإضافته',
                 style: AppTextStyles.bodyMedium
                     .copyWith(color: AppColors.textMuted)),
@@ -342,7 +343,7 @@ class _EmptyView extends StatelessWidget {
           children: [
             const Icon(Icons.no_food_rounded,
                 color: AppColors.textMuted, size: 48),
-            const SizedBox(height: UiConstants.spaceM),
+            const SizedBox(height: AppConstants.spaceM),
             Text('لا توجد نتائج',
                 style: AppTextStyles.bodyMedium
                     .copyWith(color: AppColors.textMuted)),

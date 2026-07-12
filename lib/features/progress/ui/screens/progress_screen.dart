@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../core/constants/ui_constants.dart';
 import '../../data/models/progress_entity.dart';
 import '../../logic/cubit/progress_cubit.dart';
 import '../../logic/cubit/progress_state.dart';
@@ -57,9 +58,9 @@ class _LoadedView extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
-              UiConstants.screenPaddingH,
-              UiConstants.spaceL,
-              UiConstants.screenPaddingH,
+              AppConstants.screenPaddingH,
+              AppConstants.spaceL,
+              AppConstants.screenPaddingH,
               0,
             ),
             child: Row(
@@ -84,8 +85,8 @@ class _LoadedView extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: UiConstants.screenPaddingH,
-              vertical: UiConstants.spaceL,
+              horizontal: AppConstants.screenPaddingH,
+              vertical: AppConstants.spaceL,
             ),
             child: _PeriodSelector(
               selected: period,
@@ -98,7 +99,7 @@ class _LoadedView extends StatelessWidget {
         // Stats grid
         SliverPadding(
           padding: const EdgeInsets.symmetric(
-              horizontal: UiConstants.screenPaddingH),
+              horizontal: AppConstants.screenPaddingH),
           sliver: SliverGrid(
             delegate: SliverChildListDelegate([
               ProgressStatCard(
@@ -136,22 +137,22 @@ class _LoadedView extends StatelessWidget {
                     : AppColors.danger,
               ),
             ]),
-            gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: UiConstants.spaceM,
-              crossAxisSpacing: UiConstants.spaceM,
+              mainAxisSpacing: AppConstants.spaceM,
+              crossAxisSpacing: AppConstants.spaceM,
               childAspectRatio: 1.1,
             ),
           ),
         ),
 
         const SliverToBoxAdapter(
-            child: SizedBox(height: UiConstants.spaceXXL)),
+            child: SizedBox(height: AppConstants.spaceXXL)),
 
         // Workout bar chart
         SliverPadding(
           padding: const EdgeInsets.symmetric(
-              horizontal: UiConstants.screenPaddingH),
+              horizontal: AppConstants.screenPaddingH),
           sliver: SliverToBoxAdapter(
             child: WorkoutBarChart(
               points: summary.weeklyWorkoutPoints,
@@ -160,24 +161,24 @@ class _LoadedView extends StatelessWidget {
         ),
 
         const SliverToBoxAdapter(
-            child: SizedBox(height: UiConstants.spaceL)),
+            child: SizedBox(height: AppConstants.spaceL)),
 
         // Weight line chart
         SliverPadding(
           padding: const EdgeInsets.symmetric(
-              horizontal: UiConstants.screenPaddingH),
+              horizontal: AppConstants.screenPaddingH),
           sliver: SliverToBoxAdapter(
             child: WeightChart(points: summary.weightChartPoints),
           ),
         ),
 
         const SliverToBoxAdapter(
-            child: SizedBox(height: UiConstants.spaceXXL)),
+            child: SizedBox(height: AppConstants.spaceXXL)),
 
         // Weight history
         SliverPadding(
           padding: const EdgeInsets.symmetric(
-              horizontal: UiConstants.screenPaddingH),
+              horizontal: AppConstants.screenPaddingH),
           sliver: SliverToBoxAdapter(
             child: WeightHistoryList(
               entries: summary.weightEntries,
@@ -190,7 +191,7 @@ class _LoadedView extends StatelessWidget {
         ),
 
         const SliverToBoxAdapter(
-            child: SizedBox(height: UiConstants.space4XL)),
+            child: SizedBox(height: AppConstants.space4XL)),
       ],
     );
   }
@@ -208,7 +209,7 @@ class _PeriodSelector extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: AppColors.bgElevated,
-        borderRadius: BorderRadius.circular(UiConstants.radiusM),
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       child: Row(
         children: ProgressPeriod.values
@@ -216,15 +217,15 @@ class _PeriodSelector extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () => onSelect(p),
                     child: AnimatedContainer(
-                      duration: UiConstants.durationFast,
+                      duration: AppConstants.durationFast,
                       padding: const EdgeInsets.symmetric(
-                          vertical: UiConstants.spaceS),
+                          vertical: AppConstants.spaceS),
                       decoration: BoxDecoration(
                         color: selected == p
                             ? AppColors.accent
                             : Colors.transparent,
                         borderRadius:
-                            BorderRadius.circular(UiConstants.radiusS),
+                            BorderRadius.circular(AppConstants.radiusS),
                       ),
                       child: Text(
                         p.labelAr,
@@ -277,7 +278,7 @@ class _AddWeightFAB extends StatelessWidget {
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(UiConstants.radiusXL)),
+            top: Radius.circular(AppConstants.radiusXL)),
       ),
       builder: (_) => BlocProvider.value(
         value: ctx.read<WeightLogCubit>(),
@@ -309,10 +310,10 @@ class _AddWeightSheetState extends State<_AddWeightSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        UiConstants.screenPaddingH,
-        UiConstants.spaceXXL,
-        UiConstants.screenPaddingH,
-        MediaQuery.of(context).viewInsets.bottom + UiConstants.spaceXXL,
+        AppConstants.screenPaddingH,
+        AppConstants.spaceXXL,
+        AppConstants.screenPaddingH,
+        MediaQuery.of(context).viewInsets.bottom + AppConstants.spaceXXL,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -320,7 +321,7 @@ class _AddWeightSheetState extends State<_AddWeightSheet> {
         children: [
           Text('تسجيل الوزن',
               style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: UiConstants.spaceXXL),
+          const SizedBox(height: AppConstants.spaceXXL),
 
           TextField(
             controller: _controller,
@@ -335,7 +336,7 @@ class _AddWeightSheetState extends State<_AddWeightSheet> {
               suffixText: 'كج',
             ),
           ),
-          const SizedBox(height: UiConstants.spaceL),
+          const SizedBox(height: AppConstants.spaceL),
 
           TextField(
             controller: _noteController,
@@ -345,14 +346,14 @@ class _AddWeightSheetState extends State<_AddWeightSheet> {
               hintText: 'كيف تشعر؟',
             ),
           ),
-          const SizedBox(height: UiConstants.spaceXXL),
+          const SizedBox(height: AppConstants.spaceXXL),
 
           BlocBuilder<WeightLogCubit, WeightLogState>(
             builder: (context, state) {
               final isLoading = state is WeightLogLoading;
               return SizedBox(
                 width: double.infinity,
-                height: UiConstants.buttonHeightLarge,
+                height: AppConstants.buttonHeightLarge,
                 child: ElevatedButton(
                   onPressed: isLoading
                       ? null
@@ -404,9 +405,9 @@ class _ErrorView extends StatelessWidget {
           children: [
             const Icon(Icons.error_outline_rounded,
                 color: AppColors.danger, size: 48),
-            const SizedBox(height: UiConstants.spaceM),
+            const SizedBox(height: AppConstants.spaceM),
             Text(message, style: AppTextStyles.bodyMedium),
-            const SizedBox(height: UiConstants.spaceL),
+            const SizedBox(height: AppConstants.spaceL),
             GestureDetector(
               onTap: () => context.read<ProgressCubit>().load(),
               child: Text('حاول مجدداً',

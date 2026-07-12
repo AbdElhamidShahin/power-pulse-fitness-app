@@ -1,3 +1,5 @@
+/// Power Pulse — Exceptions
+/// بتترمي في الـ data layer وبتتحول لـ Failures في الـ repository
 
 class ServerException implements Exception {
   const ServerException({required this.message, this.statusCode});

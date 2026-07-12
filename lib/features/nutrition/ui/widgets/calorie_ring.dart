@@ -2,8 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../core/constants/ui_constants.dart';
 
 /// دائرة السعرات في أعلى شاشة التغذية
 class CalorieRing extends StatelessWidget {
@@ -151,9 +151,9 @@ class MacroBar extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: UiConstants.spaceXS),
+        const SizedBox(height: AppConstants.spaceXS),
         ClipRRect(
-          borderRadius: BorderRadius.circular(UiConstants.radiusPill),
+          borderRadius: BorderRadius.circular(AppConstants.radiusPill),
           child: LinearProgressIndicator(
             value: progress.clamp(0.0, 1.0),
             minHeight: 4,

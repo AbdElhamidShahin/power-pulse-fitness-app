@@ -1,4 +1,5 @@
-
+/// Exercise Entity — Domain Layer
+/// Pure Dart — Zero Flutter imports
 final class Exercise {
   const Exercise({
     required this.id,
@@ -13,9 +14,9 @@ final class Exercise {
 
   final String id;
   final String name;
-  final String bodyPart;
-  final String target;
-  final String equipment;
+  final String bodyPart;   // chest, back, legs, etc.
+  final String target;     // muscle targeted
+  final String equipment;  // barbell, dumbbell, etc.
   final String gifUrl;
   final List<String> secondaryMuscles;
   final List<String> instructions;

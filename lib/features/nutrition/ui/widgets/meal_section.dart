@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../core/constants/ui_constants.dart';
 import '../../data/models/food_entity.dart';
 
 class MealSection extends StatelessWidget {
@@ -21,26 +21,27 @@ class MealSection extends StatelessWidget {
 
   static IconData _icon(MealType t) => switch (t) {
         MealType.breakfast => Icons.wb_sunny_rounded,
-        MealType.lunch => Icons.lunch_dining_rounded,
-        MealType.dinner => Icons.nightlight_round,
-        MealType.snack => Icons.apple_rounded,
+        MealType.lunch     => Icons.lunch_dining_rounded,
+        MealType.dinner    => Icons.nightlight_round,
+        MealType.snack     => Icons.apple_rounded,
       };
 
-  double get _totalCalories => entries.fold(0, (s, e) => s + e.calories);
+  double get _totalCalories =>
+      entries.fold(0, (s, e) => s + e.calories);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(UiConstants.radiusL),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
         border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Column(
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.all(UiConstants.spaceL),
+            padding: const EdgeInsets.all(AppConstants.spaceL),
             child: Row(
               children: [
                 Container(
@@ -48,25 +49,26 @@ class MealSection extends StatelessWidget {
                   height: 36,
                   decoration: BoxDecoration(
                     color: AppColors.accentDim,
-                    borderRadius: BorderRadius.circular(UiConstants.radiusS),
+                    borderRadius: BorderRadius.circular(AppConstants.radiusS),
                   ),
                   child: Icon(
                     _icon(mealType),
                     color: AppColors.accent,
-                    size: UiConstants.iconS,
+                    size: AppConstants.iconS,
                   ),
                 ),
-                const SizedBox(width: UiConstants.spaceM),
+                const SizedBox(width: AppConstants.spaceM),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(mealType.labelAr, style: AppTextStyles.titleMedium),
+                      Text(mealType.labelAr,
+                          style: AppTextStyles.titleMedium),
                       if (entries.isNotEmpty)
                         Text(
                           '${_totalCalories.toInt()} سعرة',
-                          style: AppTextStyles.bodySmall
-                              .copyWith(color: AppColors.accent),
+                          style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.accent),
                         ),
                     ],
                   ),
@@ -78,7 +80,8 @@ class MealSection extends StatelessWidget {
                     height: 32,
                     decoration: BoxDecoration(
                       color: AppColors.accentDim,
-                      borderRadius: BorderRadius.circular(UiConstants.radiusS),
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.radiusS),
                       border: Border.all(color: AppColors.borderAccent),
                     ),
                     child: const Icon(Icons.add_rounded,
@@ -117,16 +120,16 @@ class _MealEntryRow extends StatelessWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: UiConstants.spaceL),
+        padding: const EdgeInsets.only(left: AppConstants.spaceL),
         color: AppColors.danger.withValues(alpha: 0.15),
         child: const Icon(Icons.delete_rounded,
-            color: AppColors.danger, size: UiConstants.iconM),
+            color: AppColors.danger, size: AppConstants.iconM),
       ),
       onDismissed: (_) => onDelete(),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: UiConstants.spaceL,
-          vertical: UiConstants.spaceM,
+          horizontal: AppConstants.spaceL,
+          vertical: AppConstants.spaceM,
         ),
         child: Row(
           children: [
