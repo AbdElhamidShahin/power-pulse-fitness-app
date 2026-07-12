@@ -1,5 +1,5 @@
+import '../../../../core/domin/api_result.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/services/user_profile_service.dart';
 
 abstract interface class WorkoutCompletionRepository {
   Future<ApiResult<void>> recordCompletion([DateTime? when]);

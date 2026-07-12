@@ -1,7 +1,6 @@
 import 'food_entity.dart';
 
-/// FoodModel — Data Layer
-/// Parses JSON from Open Food Facts API (free, no key needed)
+
 final class FoodModel {
   const FoodModel({
     required this.id,

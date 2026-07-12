@@ -4,9 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/food_entity.dart';
 
-/// NutritionLocalService — Local Storage
-/// يخزن وجبات اليوم في SharedPreferences كـ JSON
-/// في الـ production يتحول لـ Hive
+
 abstract interface class NutritionLocalService {
   Future<List<MealEntry>> getMealEntries(DateTime date);
   Future<void> addMealEntry(MealEntry entry);

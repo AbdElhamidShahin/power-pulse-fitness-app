@@ -158,7 +158,7 @@ final class ExerciseDetailCubit extends Cubit<ExerciseDetailState> {
       onFailure: (f) => emit(ExerciseDetailError(_mapFailure(f))),
       onSuccess: (exercise) => emit(ExerciseDetailLoaded(exercise)),
     );
-  }
+
 
   String _mapFailure(AppFailure f) => switch (f) {
         NetworkFailure() => 'تحقق من اتصال الإنترنت',
