@@ -49,4 +49,8 @@ abstract class AppColors {
   static const Color levelBeginner     = Color(0xFF10B981);
   static const Color levelIntermediate = Color(0xFFF59E0B);
   static const Color levelAdvanced     = Color(0xFFEF4444);
+
+  // ─── Extra — Home UI + Workout Logger ──────────────────────
+  static const Color infoDim      = Color(0x203B82F6);
+  static const Color bghighest    = Color(0xFF3A3A3C);
 }

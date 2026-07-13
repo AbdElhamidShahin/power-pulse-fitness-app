@@ -60,7 +60,8 @@ abstract class AppTheme {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.accent,
             foregroundColor: AppColors.textOnAccent,
-            minimumSize: const Size(double.infinity, AppConstants.buttonHeightLarge),
+            minimumSize:
+                const Size(double.infinity, AppConstants.buttonHeightLarge),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppConstants.radiusM),
             ),
@@ -73,7 +74,8 @@ abstract class AppTheme {
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.accent,
-            minimumSize: const Size(double.infinity, AppConstants.buttonHeightLarge),
+            minimumSize:
+                const Size(double.infinity, AppConstants.buttonHeightLarge),
             side: const BorderSide(color: AppColors.accent, width: 1.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -94,7 +96,8 @@ abstract class AppTheme {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.bgElevated,
-          hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+          hintStyle:
+              AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spaceL,
             vertical: AppConstants.spaceM,
@@ -163,10 +166,14 @@ abstract class AppTheme {
         // ─── Switch ──────────────────────────────────────────
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.resolveWith(
-            (s) => s.contains(WidgetState.selected) ? AppColors.textOnAccent : AppColors.textMuted,
+            (s) => s.contains(WidgetState.selected)
+                ? AppColors.textOnAccent
+                : AppColors.textMuted,
           ),
           trackColor: WidgetStateProperty.resolveWith(
-            (s) => s.contains(WidgetState.selected) ? AppColors.accent : AppColors.bgElevated,
+            (s) => s.contains(WidgetState.selected)
+                ? AppColors.accent
+                : AppColors.bgElevated,
           ),
         ),
 
@@ -182,20 +189,20 @@ abstract class AppTheme {
 
         // ─── Text ────────────────────────────────────────────
         textTheme: const TextTheme(
-          displayLarge:   AppTextStyles.displayLarge,
-          displayMedium:  AppTextStyles.displayMedium,
-          headlineLarge:  AppTextStyles.headlineLarge,
+          displayLarge: AppTextStyles.displayLarge,
+          displayMedium: AppTextStyles.displayMedium,
+          headlineLarge: AppTextStyles.headlineLarge,
           headlineMedium: AppTextStyles.headlineMedium,
-          headlineSmall:  AppTextStyles.headlineSmall,
-          titleLarge:     AppTextStyles.titleLarge,
-          titleMedium:    AppTextStyles.titleMedium,
-          titleSmall:     AppTextStyles.titleSmall,
-          bodyLarge:      AppTextStyles.bodyLarge,
-          bodyMedium:     AppTextStyles.bodyMedium,
-          bodySmall:      AppTextStyles.bodySmall,
-          labelLarge:     AppTextStyles.labelLarge,
-          labelMedium:    AppTextStyles.labelMedium,
-          labelSmall:     AppTextStyles.labelSmall,
+          headlineSmall: AppTextStyles.headlineSmall,
+          titleLarge: AppTextStyles.titleLarge,
+          titleMedium: AppTextStyles.titleMedium,
+          titleSmall: AppTextStyles.titleSmall,
+          bodyLarge: AppTextStyles.bodyLarge,
+          bodyMedium: AppTextStyles.bodyMedium,
+          bodySmall: AppTextStyles.bodySmall,
+          labelLarge: AppTextStyles.labelLarge,
+          labelMedium: AppTextStyles.labelMedium,
+          labelSmall: AppTextStyles.labelSmall,
         ),
       );
 }

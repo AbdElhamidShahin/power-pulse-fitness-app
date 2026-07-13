@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -19,6 +18,7 @@ class HomeGreetingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Column(
@@ -31,41 +31,67 @@ class HomeGreetingHeader extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                'أهلاً، ${profile.name} 👋',
+                '👋 ${profile.name}',
                 style: Theme.of(context).textTheme.headlineLarge,
                 overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppConstants.spaceXS),
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: AppColors.success,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'جاهز للتمرين اليوم؟',
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: AppColors.success),
+                  ),
+                ],
               ),
             ],
           ),
         ),
         const SizedBox(width: AppConstants.spaceM),
-        Row(
-          children: [
-            // Notification bell
-            _IconBtn(
-              icon: Icons.notifications_none_rounded,
-              onTap: () {},
+        // Notification
+        _IconBtn(
+          icon: Icons.notifications_none_rounded,
+          onTap: () {},
+        ),
+        const SizedBox(width: AppConstants.spaceS),
+        // Avatar
+        GestureDetector(
+          onTap: () => context.go('/profile'),
+          child: Container(
+            width: AppConstants.avatarM,
+            height: AppConstants.avatarM,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: const LinearGradient(
+                colors: [AppColors.accent, AppColors.accentPressed],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
-            const SizedBox(width: AppConstants.spaceS),
-            // Avatar → profile
-            GestureDetector(
-              onTap: () => context.go('/profile'),
-              child: Container(
-                width: AppConstants.avatarM,
-                height: AppConstants.avatarM,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.bgElevated,
-                  border: Border.all(color: AppColors.accent, width: 2),
-                ),
-                child: const Icon(
-                  Icons.person_rounded,
-                  color: AppColors.textMuted,
-                  size: 20,
+            child: Center(
+              child: Text(
+                profile.name.isNotEmpty
+                    ? profile.name[0].toUpperCase()
+                    : 'P',
+                style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.textOnAccent,
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ],
     );

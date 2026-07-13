@@ -18,7 +18,7 @@ class DioClient {
         headers: {
           'X-RapidAPI-Key': const String.fromEnvironment(
             'RAPIDAPI_KEY',
-            defaultValue: 'YOUR_RAPIDAPI_KEY_HERE',
+            defaultValue: 'YOUR_RAPIDAPI_KEY_HERE'
           ),
           'X-RapidAPI-Host': ApiEndpoints.exerciseDbHost,
         },
@@ -76,9 +76,10 @@ class DioClient {
 Exception mapDioException(DioException e) {
   return switch (e.type) {
     DioExceptionType.connectionTimeout ||
-    DioExceptionType.receiveTimeout   ||
-    DioExceptionType.sendTimeout      ||
-    DioExceptionType.connectionError  => const NetworkException(),
+    DioExceptionType.receiveTimeout ||
+    DioExceptionType.sendTimeout ||
+    DioExceptionType.connectionError =>
+      const NetworkException(),
     DioExceptionType.badResponse => ServerException(
         message: _extractMessage(e.response),
         statusCode: e.response?.statusCode,
@@ -92,8 +93,8 @@ String _extractMessage(Response? response) {
     final data = response?.data;
     if (data is Map) {
       return data['message']?.toString() ??
-             data['error']?.toString() ??
-             'Server error';
+          data['error']?.toString() ??
+          'Server error';
     }
     return 'Server error ${response?.statusCode}';
   } catch (_) {

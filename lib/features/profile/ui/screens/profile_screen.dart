@@ -6,6 +6,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
 import '../../logic/cubit/profile_state.dart';
 import '../widgets/bmi_card.dart';
@@ -95,7 +96,7 @@ class _LoadedView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                               AppConstants.radiusPill),
                           border:
-                              Border.all(color: AppColors.borderAccent),
+                          Border.all(color: AppColors.borderAccent),
                         ),
                         child: Text(
                           profile.goal.labelAr,
@@ -115,7 +116,7 @@ class _LoadedView extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.bgElevated,
                       borderRadius:
-                          BorderRadius.circular(AppConstants.radiusM),
+                      BorderRadius.circular(AppConstants.radiusM),
                       border: Border.all(color: AppColors.borderSubtle),
                     ),
                     child: const Icon(Icons.edit_rounded,
@@ -254,17 +255,17 @@ class _ErrorView extends StatelessWidget {
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.error_outline_rounded,
-              color: AppColors.danger, size: 48),
-          const SizedBox(height: AppConstants.spaceM),
-          Text(message, style: AppTextStyles.bodyMedium),
-          const SizedBox(height: AppConstants.spaceL),
-          GestureDetector(
-            onTap: () => context.read<ProfileCubit>().load(),
-            child: Text(AppStrings.tryAgain,
-                style: AppTextStyles.accentLabel),
-          ),
-        ]),
-      );
+    child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.error_outline_rounded,
+          color: AppColors.danger, size: 48),
+      const SizedBox(height: AppConstants.spaceM),
+      Text(message, style: AppTextStyles.bodyMedium),
+      const SizedBox(height: AppConstants.spaceL),
+      GestureDetector(
+        onTap: () => context.read<ProfileCubit>().load(),
+        child: Text(AppStrings.tryAgain,
+            style: AppTextStyles.accentLabel),
+      ),
+    ]),
+  );
 }

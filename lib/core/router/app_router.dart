@@ -19,6 +19,8 @@ import '../../features/profile/logic/cubit/profile_state.dart';
 import '../../features/profile/ui/screens/profile_screen.dart';
 import '../../features/profile/ui/screens/edit_profile_screen.dart';
 import '../../features/onboarding/ui/screens/onboarding_screen.dart';
+import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
+import '../../features/workout_logger/ui/screens/workout_logger_screen.dart';
 import '../../shared/shell/main_shell.dart';
 import '../di/injection.dart';
 
@@ -33,6 +35,7 @@ abstract class AppRouter {
   static const String progress      = '/progress';
   static const String profile       = '/profile';
   static const String profileEdit   = '/profile/edit';
+  static const String workoutLogger = '/workout-logger';
 
   static Future<String> _initialLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -129,11 +132,20 @@ abstract class AppRouter {
             providers: [
               BlocProvider(create: (_) => sl<FoodSearchCubit>()),
               BlocProvider(create: (_) => sl<AddMealCubit>()),
-              BlocProvider.value(value: context.read<NutritionCubit>()),
+              // NutritionCubit خارج الـ ShellRoute فبنعمل instance جديد
+              BlocProvider(create: (_) => sl<NutritionCubit>()),
             ],
             child: FoodSearchScreen(mealType: mealType),
           );
         },
+      ),
+
+      GoRoute(
+        path: workoutLogger,
+        builder: (_, __) => BlocProvider(
+          create: (_) => sl<WorkoutLoggerCubit>(),
+          child: const WorkoutLoggerScreen(),
+        ),
       ),
 
       GoRoute(

@@ -2,32 +2,30 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
-
 import '../../features/exercises/data/services/exercise_service.dart';
 import '../../features/exercises/data/repositories/exercise_repository.dart';
 import '../../features/exercises/logic/usecases/exercise_usecases.dart';
 import '../../features/exercises/logic/cubit/exercises_cubit.dart';
-
 import '../../features/nutrition/data/services/nutrition_service.dart';
 import '../../features/nutrition/data/services/nutrition_local_service.dart';
 import '../../features/nutrition/data/repositories/nutrition_repository.dart';
 import '../../features/nutrition/logic/usecases/nutrition_usecases.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
-
 import '../../features/progress/data/services/progress_local_service.dart';
 import '../../features/progress/data/repositories/progress_repository.dart';
 import '../../features/progress/logic/usecases/progress_usecases.dart';
 import '../../features/progress/logic/cubit/progress_cubit.dart';
-
 import '../../features/profile/data/services/profile_local_service.dart';
 import '../../features/profile/data/repositories/profile_repository.dart';
 import '../../features/profile/logic/usecases/profile_usecases.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
-
 import '../../features/home/logic/cubit/home_cubit.dart';
+import '../../features/workout_logger/data/services/workout_logger_service.dart';
+import '../../features/workout_logger/data/repositories/workout_logger_repository.dart';
+import '../../features/workout_logger/logic/usecases/workout_logger_usecases.dart';
+import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -35,11 +33,10 @@ Future<void> initDependencies() async {
   final prefs = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(prefs);
   sl.registerSingleton<Connectivity>(Connectivity());
-
-  sl.registerLazySingleton<Dio>(
-      () => DioClient.exerciseDb, instanceName: 'exerciseDb');
-  sl.registerLazySingleton<Dio>(
-      () => DioClient.foodFacts, instanceName: 'foodFacts');
+  sl.registerLazySingleton<Dio>(() => DioClient.exerciseDb,
+      instanceName: 'exerciseDb');
+  sl.registerLazySingleton<Dio>(() => DioClient.foodFacts,
+      instanceName: 'foodFacts');
   sl.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(sl<Connectivity>()));
 
@@ -47,6 +44,7 @@ Future<void> initDependencies() async {
   _initNutrition();
   _initProgress();
   _initProfile();
+  _initWorkoutLogger();
   _initHome();
 }
 
@@ -110,10 +108,27 @@ void _initProfile() {
   sl.registerFactory(() => ProfileSaveCubit(saveProfile: sl()));
 }
 
+void _initWorkoutLogger() {
+  sl.registerLazySingleton<WorkoutLoggerService>(
+      () => WorkoutLoggerServiceImpl(sl<SharedPreferences>()));
+  sl.registerLazySingleton<WorkoutLoggerRepository>(
+      () => WorkoutLoggerRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => GetActiveSessionUseCase(sl()));
+  sl.registerLazySingleton(() => SaveSessionUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteSessionUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllSessionsUseCase(sl()));
+  sl.registerFactory(() => WorkoutLoggerCubit(
+        getActiveSession: sl(),
+        saveSession: sl(),
+        deleteSession: sl(),
+        logWorkout: sl(),
+      ));
+}
+
 void _initHome() {
   sl.registerFactory(() => HomeCubit(
-        getProfile:         sl(),
-        getDailyNutrition:  sl(),
+        getProfile: sl(),
+        getDailyNutrition: sl(),
         getProgressSummary: sl(),
       ));
 }

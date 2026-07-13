@@ -30,94 +30,98 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.bgDeep,
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) => switch (state) {
             HomeInitial() || HomeLoading() => const _LoadingView(),
-            HomeError(:final message)      => _ErrorView(message: message),
-            HomeLoaded(:final summary)     => RefreshIndicator(
-                color: AppColors.accent,
-                backgroundColor: AppColors.bgSurface,
-                onRefresh: () => context.read<HomeCubit>().refresh(),
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    // ─── Greeting ──────────────────────────
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppConstants.screenPaddingH,
-                          AppConstants.spaceL,
-                          AppConstants.screenPaddingH,
-                          AppConstants.spaceXXL,
-                        ),
-                        child: HomeGreetingHeader(
-                          greeting: summary.greeting,
-                          profile: summary.profile,
-                        ),
+            HomeError(:final message) => _ErrorView(message: message),
+            HomeLoaded(:final summary) => RefreshIndicator(
+              color: AppColors.accent,
+              backgroundColor: AppColors.bgSurface,
+              onRefresh: () => context.read<HomeCubit>().refresh(),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  // ─── Greeting ──────────────────────────
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppConstants.screenPaddingH,
+                      AppConstants.spaceL,
+                      AppConstants.screenPaddingH,
+                      AppConstants.spaceXXL,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: HomeGreetingHeader(
+                        greeting: summary.greeting,
+                        profile: summary.profile,
                       ),
                     ),
+                  ),
 
-                    // ─── Calorie Card ──────────────────────
+                  // ─── Workout CTA Hero ──────────────────
+                  if (!summary.hasWorkedOutToday)
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.screenPaddingH),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppConstants.screenPaddingH,
+                        0,
+                        AppConstants.screenPaddingH,
+                        AppConstants.spaceL,
+                      ),
                       sliver: SliverToBoxAdapter(
-                        child: CalorieSummaryCard(
-                          consumed: summary.caloriesConsumed,
-                          goal: summary.caloriesGoal,
-                          protein: summary.dailyNutrition.totalProtein,
-                          carbs: summary.dailyNutrition.totalCarbs,
-                          fat: summary.dailyNutrition.totalFat,
+                        child: _WorkoutHeroCTA(
+                          onTap: () => context.go('/workout-logger'),
                         ),
                       ),
                     ),
 
-                    const SliverToBoxAdapter(
-                        child: SizedBox(height: AppConstants.spaceL)),
-
-                    // ─── Quick Stats ───────────────────────
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.screenPaddingH),
-                      sliver: SliverToBoxAdapter(
-                        child: QuickStatsRow(
-                          weeklyWorkouts: summary.weeklyWorkouts,
-                          todayMinutes: summary.todayWorkoutMinutes,
-                          hasWorkedOutToday: summary.hasWorkedOutToday,
-                        ),
+                  // ─── Calorie Card ──────────────────────
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppConstants.screenPaddingH),
+                    sliver: SliverToBoxAdapter(
+                      child: CalorieSummaryCard(
+                        consumed: summary.caloriesConsumed,
+                        goal: summary.caloriesGoal,
+                        protein: summary.dailyNutrition.totalProtein,
+                        carbs: summary.dailyNutrition.totalCarbs,
+                        fat: summary.dailyNutrition.totalFat,
                       ),
                     ),
+                  ),
 
-                    const SliverToBoxAdapter(
-                        child: SizedBox(height: AppConstants.spaceXXL)),
+                  const SliverToBoxAdapter(
+                      child: SizedBox(height: AppConstants.spaceL)),
 
-                    // ─── CTA — ابدأ التمرين ────────────────
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.screenPaddingH),
-                      sliver: SliverToBoxAdapter(
-                        child: _WorkoutCTA(
-                            hasWorkedOut: summary.hasWorkedOutToday),
+                  // ─── Quick Stats ───────────────────────
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppConstants.screenPaddingH),
+                    sliver: SliverToBoxAdapter(
+                      child: QuickStatsRow(
+                        weeklyWorkouts: summary.weeklyWorkouts,
+                        todayMinutes: summary.todayWorkoutMinutes,
+                        hasWorkedOutToday: summary.hasWorkedOutToday,
+                        currentStreak: summary.currentStreak,
                       ),
                     ),
+                  ),
 
-                    const SliverToBoxAdapter(
-                        child: SizedBox(height: AppConstants.spaceXXL)),
+                  const SliverToBoxAdapter(
+                      child: SizedBox(height: AppConstants.spaceXXL)),
 
-                    // ─── Quick Actions ─────────────────────
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.screenPaddingH),
-                      sliver: const SliverToBoxAdapter(
-                          child: QuickActions()),
-                    ),
+                  // ─── Quick Actions ─────────────────────
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppConstants.screenPaddingH),
+                    sliver: const SliverToBoxAdapter(child: QuickActions()),
+                  ),
 
-                    const SliverToBoxAdapter(
-                        child: SizedBox(height: AppConstants.space4XL)),
-                  ],
-                ),
+                  const SliverToBoxAdapter(
+                      child: SizedBox(height: AppConstants.space4XL)),
+                ],
               ),
+            ),
           },
         ),
       ),
@@ -125,82 +129,71 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ─── Workout CTA Card ─────────────────────────────────────────
-class _WorkoutCTA extends StatelessWidget {
-  const _WorkoutCTA({required this.hasWorkedOut});
-  final bool hasWorkedOut;
+// ─── Workout Hero CTA ─────────────────────────────────────────
+class _WorkoutHeroCTA extends StatelessWidget {
+  const _WorkoutHeroCTA({required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.spaceL),
-      decoration: BoxDecoration(
-        color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
-        border: Border.all(color: AppColors.borderAccent),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: AppColors.accentDim,
-              borderRadius: BorderRadius.circular(AppConstants.radiusM),
-            ),
-            child: Icon(
-              hasWorkedOut
-                  ? Icons.check_circle_rounded
-                  : Icons.fitness_center_rounded,
-              color: AppColors.accent,
-              size: AppConstants.iconL,
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppConstants.spaceXL),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF1A2A00), Color(0xFF0D1A00)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          const SizedBox(width: AppConstants.spaceM),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  hasWorkedOut ? 'أحسنت! تمرين رائع' : 'جاهز للتمرين؟',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  hasWorkedOut
-                      ? 'يمكنك إضافة تمرين آخر'
-                      : 'ابدأ تمرينك الآن',
-                  style: AppTextStyles.bodySmall,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppConstants.spaceM),
-          GestureDetector(
-            onTap: () => context.go('/exercises'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.spaceL,
-                vertical: AppConstants.spaceM,
-              ),
+          borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+          border: Border.all(color: AppColors.borderAccent, width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
                 color: AppColors.accent,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
-              child: Text(
-                'ابدأ',
-                style: AppTextStyles.labelLarge
-                    .copyWith(color: AppColors.textOnAccent),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: AppColors.textOnAccent,
+                size: 32,
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: AppConstants.spaceL),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'ابدأ تمرينك الآن 💪',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'لم تتمرن اليوم بعد — الآن الوقت المثالي',
+                    style: AppTextStyles.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: AppColors.accent,
+              size: 16,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// ─── Loading ─────────────────────────────────────────────────
+// ─── Loading ──────────────────────────────────────────────────
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
   @override
@@ -208,31 +201,31 @@ class _LoadingView extends StatelessWidget {
       child: CircularProgressIndicator(color: AppColors.accent));
 }
 
-// ─── Error ───────────────────────────────────────────────────
+// ─── Error ────────────────────────────────────────────────────
 class _ErrorView extends StatelessWidget {
   const _ErrorView({required this.message});
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppConstants.spaceXXL),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline_rounded,
-                  color: AppColors.danger, size: 48),
-              const SizedBox(height: AppConstants.spaceM),
-              Text(message,
-                  style: AppTextStyles.bodyMedium,
-                  textAlign: TextAlign.center),
-              const SizedBox(height: AppConstants.spaceXL),
-              PPButton(
-                label: 'حاول مجدداً',
-                size: PPButtonSize.medium,
-                onPressed: () => context.read<HomeCubit>().load(),
-              ),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(AppConstants.spaceXXL),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error_outline_rounded,
+              color: AppColors.danger, size: 48),
+          const SizedBox(height: AppConstants.spaceM),
+          Text(message,
+              style: AppTextStyles.bodyMedium,
+              textAlign: TextAlign.center),
+          const SizedBox(height: AppConstants.spaceXL),
+          PPButton(
+            label: 'حاول مجدداً',
+            size: PPButtonSize.medium,
+            onPressed: () => context.read<HomeCubit>().load(),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
