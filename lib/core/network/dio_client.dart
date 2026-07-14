@@ -4,11 +4,9 @@ import '../constants/app_constants.dart';
 import '../error/exceptions.dart';
 import 'api_endpoints.dart';
 
-/// Power Pulse — Dio HTTP Client
 class DioClient {
   DioClient._();
-
-  // ─── ExerciseDB instance ───────────────────────────────────
+//exercise
   static Dio get exerciseDb {
     final dio = Dio(
       BaseOptions(
@@ -16,15 +14,11 @@ class DioClient {
         connectTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
         receiveTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
         headers: {
-          'X-RapidAPI-Key': const String.fromEnvironment(
-            'RAPIDAPI_KEY',
-            defaultValue: 'YOUR_RAPIDAPI_KEY_HERE'
-          ),
-          'X-RapidAPI-Host': ApiEndpoints.exerciseDbHost,
+          'Accept': 'application/json',
         },
       ),
     );
-    _addInterceptors(dio, name: 'ExerciseDB');
+    _addInterceptors(dio, name: 'ExercisesCDN');
     return dio;
   }
 
