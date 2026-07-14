@@ -6,15 +6,11 @@ import '../../../../core/network/dio_client.dart';
 import '../models/exercise_entity.dart';
 import '../models/exercise_model.dart';
 
-/// ExerciseService — Data / Service Layer
-/// Raw API calls to ExerciseDB
-/// Catches DioException → throws AppException
+/// ExerciseRemoteService — Data / Service Layer
+/// يجيب الـ JSON الكاملة من jsDelivr CDN (مرة واحدة بس)
 abstract interface class ExerciseService {
-  Future<List<Exercise>> getExercises({int limit, int offset});
-  Future<List<Exercise>> getExercisesByBodyPart(String bodyPart, {int limit});
-  Future<List<Exercise>> searchExercisesByName(String name, {int limit});
-  Future<Exercise> getExerciseById(String id);
-  Future<List<String>> getBodyPartList();
+  /// جيب كل التمارين دفعة واحدة من CDN
+  Future<List<Exercise>> fetchAllExercises();
 }
 
 final class ExerciseServiceImpl implements ExerciseService {
@@ -23,71 +19,16 @@ final class ExerciseServiceImpl implements ExerciseService {
   final Dio _dio;
 
   @override
-  Future<List<Exercise>> getExercises({
-    int limit = 20,
-    int offset = 0,
-  }) async {
+  Future<List<Exercise>> fetchAllExercises() async {
     try {
-      final response = await _dio.get(
-        ApiEndpoints.exercises,
-        queryParameters: {'limit': limit, 'offset': offset},
-      );
-      return ExerciseModel.toEntityList(response.data as List);
-    } on DioException catch (e) {
-      throw mapDioException(e);
-    }
-  }
+      final response = await _dio.get(ApiEndpoints.exercisesJson);
+      final data = response.data;
 
-  @override
-  Future<List<Exercise>> getExercisesByBodyPart(
-    String bodyPart, {
-    int limit = 20,
-  }) async {
-    try {
-      final response = await _dio.get(
-        '${ApiEndpoints.exercisesByTarget}/$bodyPart',
-        queryParameters: {'limit': limit},
-      );
-      return ExerciseModel.toEntityList(response.data as List);
-    } on DioException catch (e) {
-      throw mapDioException(e);
-    }
-  }
-
-  @override
-  Future<List<Exercise>> searchExercisesByName(
-    String name, {
-    int limit = 20,
-  }) async {
-    try {
-      final response = await _dio.get(
-        '${ApiEndpoints.exercisesByName}/$name',
-        queryParameters: {'limit': limit},
-      );
-      return ExerciseModel.toEntityList(response.data as List);
-    } on DioException catch (e) {
-      throw mapDioException(e);
-    }
-  }
-
-  @override
-  Future<Exercise> getExerciseById(String id) async {
-    try {
-      final response = await _dio.get(
-        '${ApiEndpoints.exerciseById}/$id',
-      );
-      return ExerciseModel.fromJson(response.data as Map<String, dynamic>)
-          .toEntity();
-    } on DioException catch (e) {
-      throw mapDioException(e);
-    }
-  }
-
-  @override
-  Future<List<String>> getBodyPartList() async {
-    try {
-      final response = await _dio.get(ApiEndpoints.bodyPartList);
-      return (response.data as List).map((e) => e.toString()).toList();
+      // الـ response ممكن يكون List مباشرة أو String محتاج parse
+      if (data is List) {
+        return ExerciseModel.toEntityList(data);
+      }
+      throw const ServerException(message: 'Unexpected response format');
     } on DioException catch (e) {
       throw mapDioException(e);
     }

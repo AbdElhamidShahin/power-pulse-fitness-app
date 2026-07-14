@@ -9,11 +9,19 @@ final class GetExercisesUseCase {
   Future<ApiResult<List<Exercise>>> call({
     int limit = 20,
     int offset = 0,
-  }) =>
-      _repository.getExercises(limit: limit, offset: offset);
+  }) async {
+    // الداتا كلها محلية الآن — بنعمل pagination في الـ repository
+    final result = await _repository.getExercises();
+    return result.fold(
+      onFailure: (f) => Failure(f),
+      onSuccess: (all) {
+        final page = all.skip(offset).take(limit).toList();
+        return Success(page);
+      },
+    );
+  }
 }
 
-/// GetExercisesByBodyPartUseCase
 final class GetExercisesByBodyPartUseCase {
   const GetExercisesByBodyPartUseCase(this._repository);
   final ExerciseRepository _repository;
@@ -22,7 +30,6 @@ final class GetExercisesByBodyPartUseCase {
       _repository.getExercisesByBodyPart(bodyPart);
 }
 
-/// SearchExercisesUseCase
 final class SearchExercisesUseCase {
   const SearchExercisesUseCase(this._repository);
   final ExerciseRepository _repository;
@@ -31,7 +38,6 @@ final class SearchExercisesUseCase {
       _repository.searchExercises(query);
 }
 
-/// GetExerciseByIdUseCase
 final class GetExerciseByIdUseCase {
   const GetExerciseByIdUseCase(this._repository);
   final ExerciseRepository _repository;
@@ -40,10 +46,17 @@ final class GetExerciseByIdUseCase {
       _repository.getExerciseById(id);
 }
 
-/// GetBodyPartListUseCase
 final class GetBodyPartListUseCase {
   const GetBodyPartListUseCase(this._repository);
   final ExerciseRepository _repository;
 
   Future<ApiResult<List<String>>> call() => _repository.getBodyPartList();
+}
+
+/// RefreshExercisesUseCase — يمسح الـ cache ويحمّل من CDN
+final class RefreshExercisesUseCase {
+  const RefreshExercisesUseCase(this._repository);
+  final ExerciseRepository _repository;
+
+  Future<ApiResult<void>> call() => _repository.refreshExercises();
 }

@@ -127,7 +127,7 @@ class _Header extends StatelessWidget {
                         ? AppColors.accentDim
                         : AppColors.bgElevated,
                     borderRadius:
-                        BorderRadius.circular(AppConstants.radiusM),
+                    BorderRadius.circular(AppConstants.radiusM),
                     border: Border.all(
                       color: isSearching
                           ? AppColors.accent
@@ -172,9 +172,9 @@ class _ExercisesList extends StatelessWidget {
         ExercisesInitial() || ExercisesLoading() => const _LoadingList(),
         ExercisesError(:final message)            => _ErrorView(message: message),
         ExercisesLoaded()                         => _LoadedList(
-            state: state,
-            scrollController: scrollController,
-          ),
+          state: state,
+          scrollController: scrollController,
+        ),
       },
     );
   }
@@ -204,7 +204,7 @@ class _LoadedList extends StatelessWidget {
             ),
             itemCount: state.exercises.length + (state.hasMore ? 1 : 0),
             separatorBuilder: (_, __) =>
-                const SizedBox(height: AppConstants.spaceM),
+            const SizedBox(height: AppConstants.spaceM),
             itemBuilder: (context, i) {
               if (i == state.exercises.length) {
                 return const Padding(
@@ -237,19 +237,19 @@ class _SearchResults extends StatelessWidget {
         ExerciseSearchLoading()                     => const _LoadingList(),
         ExerciseSearchError(:final message)         => _ErrorView(message: message),
         ExerciseSearchLoaded(:final results) when results.isEmpty
-                                                    => const _EmptyView(),
+        => const _EmptyView(),
         ExerciseSearchLoaded(:final results)        => ListView.separated(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.screenPaddingH,
-            ),
-            itemCount: results.length,
-            separatorBuilder: (_, __) =>
-                const SizedBox(height: AppConstants.spaceM),
-            itemBuilder: (context, i) => ExerciseCard(
-              exercise: results[i],
-              onTap: () => context.push('/exercises/${results[i].id}'),
-            ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.screenPaddingH,
           ),
+          itemCount: results.length,
+          separatorBuilder: (_, __) =>
+          const SizedBox(height: AppConstants.spaceM),
+          itemBuilder: (context, i) => ExerciseCard(
+            exercise: results[i],
+            onTap: () => context.push('/exercises/${results[i].id}'),
+          ),
+        ),
       },
     );
   }

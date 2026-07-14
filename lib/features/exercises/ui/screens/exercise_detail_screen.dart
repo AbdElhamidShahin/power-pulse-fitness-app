@@ -117,10 +117,10 @@ class _DetailContent extends StatelessWidget {
                   runSpacing: AppConstants.spaceS,
                   children: exercise.secondaryMuscles
                       .map((m) => PPBadge(
-                            label: m,
-                            color: AppColors.textMuted,
-                            size: PPBadgeSize.small,
-                          ))
+                    label: m,
+                    color: AppColors.textMuted,
+                    size: PPBadgeSize.small,
+                  ))
                       .toList(),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
@@ -133,41 +133,41 @@ class _DetailContent extends StatelessWidget {
                 const SizedBox(height: AppConstants.spaceL),
                 ...exercise.instructions.asMap().entries.map(
                       (e) => Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: AppConstants.spaceM),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 26,
-                              height: 26,
-                              margin: const EdgeInsets.only(
-                                  left: AppConstants.spaceM),
-                              decoration: BoxDecoration(
-                                color: AppColors.accentDim,
-                                borderRadius: BorderRadius.circular(
-                                    AppConstants.radiusPill),
-                                border: Border.all(
-                                    color: AppColors.borderAccent),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${e.key + 1}',
-                                  style: AppTextStyles.labelSmall.copyWith(
-                                    color: AppColors.accent,
-                                    fontSize: 11,
-                                  ),
-                                ),
+                    padding: const EdgeInsets.only(
+                        bottom: AppConstants.spaceM),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 26,
+                          height: 26,
+                          margin: const EdgeInsets.only(
+                              left: AppConstants.spaceM),
+                          decoration: BoxDecoration(
+                            color: AppColors.accentDim,
+                            borderRadius: BorderRadius.circular(
+                                AppConstants.radiusPill),
+                            border: Border.all(
+                                color: AppColors.borderAccent),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${e.key + 1}',
+                              style: AppTextStyles.labelSmall.copyWith(
+                                color: AppColors.accent,
+                                fontSize: 11,
                               ),
                             ),
-                            Expanded(
-                              child: Text(e.value,
-                                  style: AppTextStyles.bodyMedium),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                        Expanded(
+                          child: Text(e.value,
+                              style: AppTextStyles.bodyMedium),
+                        ),
+                      ],
                     ),
+                  ),
+                ),
               ],
 
               const SizedBox(height: AppConstants.space3XL),

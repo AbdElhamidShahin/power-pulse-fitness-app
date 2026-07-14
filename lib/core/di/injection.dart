@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../features/exercises/data/services/local_exercises_data.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 import '../../features/exercises/data/services/exercise_service.dart';
@@ -21,11 +22,8 @@ import '../../features/profile/data/services/profile_local_service.dart';
 import '../../features/profile/data/repositories/profile_repository.dart';
 import '../../features/profile/logic/usecases/profile_usecases.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
+
 import '../../features/home/logic/cubit/home_cubit.dart';
-import '../../features/workout_logger/data/services/workout_logger_service.dart';
-import '../../features/workout_logger/data/repositories/workout_logger_repository.dart';
-import '../../features/workout_logger/logic/usecases/workout_logger_usecases.dart';
-import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -33,6 +31,7 @@ Future<void> initDependencies() async {
   final prefs = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(prefs);
   sl.registerSingleton<Connectivity>(Connectivity());
+
   sl.registerLazySingleton<Dio>(() => DioClient.exerciseDb,
       instanceName: 'exerciseDb');
   sl.registerLazySingleton<Dio>(() => DioClient.foodFacts,
@@ -44,20 +43,32 @@ Future<void> initDependencies() async {
   _initNutrition();
   _initProgress();
   _initProfile();
-  _initWorkoutLogger();
   _initHome();
 }
 
 void _initExercises() {
+  // Remote: يجيب من CDN
   sl.registerLazySingleton<ExerciseService>(
       () => ExerciseServiceImpl(sl<Dio>(instanceName: 'exerciseDb')));
-  sl.registerLazySingleton<ExerciseRepository>(
-      () => ExerciseRepositoryImpl(service: sl(), networkInfo: sl()));
+
+  // Local: cache في SharedPreferences
+  sl.registerLazySingleton<ExerciseLocalService>(
+      () => ExerciseLocalServiceImpl(sl<SharedPreferences>()));
+
+  // Repository: cache-first
+  sl.registerLazySingleton<ExerciseRepository>(() => ExerciseRepositoryImpl(
+        remoteService: sl(),
+        localService: sl(),
+        networkInfo: sl(),
+      ));
+
   sl.registerLazySingleton(() => GetExercisesUseCase(sl()));
   sl.registerLazySingleton(() => GetExercisesByBodyPartUseCase(sl()));
   sl.registerLazySingleton(() => SearchExercisesUseCase(sl()));
   sl.registerLazySingleton(() => GetExerciseByIdUseCase(sl()));
   sl.registerLazySingleton(() => GetBodyPartListUseCase(sl()));
+  sl.registerLazySingleton(() => RefreshExercisesUseCase(sl()));
+
   sl.registerFactory(() => ExercisesCubit(
       getExercises: sl(), getByBodyPart: sl(), getBodyParts: sl()));
   sl.registerFactory(() => ExerciseSearchCubit(sl()));
@@ -106,23 +117,6 @@ void _initProfile() {
   sl.registerLazySingleton(() => HasProfileUseCase(sl()));
   sl.registerFactory(() => ProfileCubit(getProfile: sl()));
   sl.registerFactory(() => ProfileSaveCubit(saveProfile: sl()));
-}
-
-void _initWorkoutLogger() {
-  sl.registerLazySingleton<WorkoutLoggerService>(
-      () => WorkoutLoggerServiceImpl(sl<SharedPreferences>()));
-  sl.registerLazySingleton<WorkoutLoggerRepository>(
-      () => WorkoutLoggerRepositoryImpl(sl()));
-  sl.registerLazySingleton(() => GetActiveSessionUseCase(sl()));
-  sl.registerLazySingleton(() => SaveSessionUseCase(sl()));
-  sl.registerLazySingleton(() => DeleteSessionUseCase(sl()));
-  sl.registerLazySingleton(() => GetAllSessionsUseCase(sl()));
-  sl.registerFactory(() => WorkoutLoggerCubit(
-        getActiveSession: sl(),
-        saveSession: sl(),
-        deleteSession: sl(),
-        logWorkout: sl(),
-      ));
 }
 
 void _initHome() {

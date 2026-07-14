@@ -7,93 +7,130 @@ import '../services/exercise_service.dart';
 import '../services/local_exercises_data.dart';
 
 abstract interface class ExerciseRepository {
-  Future<ApiResult<List<Exercise>>> getExercises({int limit, int offset});
+  Future<ApiResult<List<Exercise>>> getExercises();
   Future<ApiResult<List<Exercise>>> getExercisesByBodyPart(String bodyPart);
-  Future<ApiResult<List<Exercise>>> searchExercises(String name);
-  Future<ApiResult<Exercise>> getExerciseById(String id);
-  Future<ApiResult<List<String>>> getBodyPartList();
+  Future<ApiResult<List<Exercise>>>  searchExercises(String name);
+  Future<ApiResult<Exercise>>        getExerciseById(String id);
+  Future<ApiResult<List<String>>>    getBodyPartList();
+  Future<ApiResult<void>>            refreshExercises();
 }
 
 final class ExerciseRepositoryImpl implements ExerciseRepository {
   const ExerciseRepositoryImpl({
-    required this.service,
+    required this.remoteService,
+    required this.localService,
     required this.networkInfo,
   });
 
-  final ExerciseService service;
-  final NetworkInfo networkInfo;
+  final ExerciseService      remoteService;
+  final ExerciseLocalService localService;
+  final NetworkInfo          networkInfo;
+
+  // ─── Public Methods ────────────────────────────────────────
 
   @override
-  Future<ApiResult<List<Exercise>>> getExercises({
-    int limit = 20,
-    int offset = 0,
-  }) async {
-    try {
-      if (!await networkInfo.isConnected) {
-        return Success(LocalExercisesData.exercises);
-      }
-      final result = await service.getExercises(limit: limit, offset: offset);
-      return Success(result);
-    } catch (_) {
-      // API مش متاح — نرجع البيانات المحلية
-      return Success(LocalExercisesData.exercises);
+  Future<ApiResult<List<Exercise>>> getExercises() async {
+    // 1. Cache hit → رجّع فوراً
+    if (localService.isCached) {
+      final cached = localService.getAllExercises();
+      if (cached.isNotEmpty) return Success(cached);
     }
+
+    // 2. Cache miss → نزّل من CDN
+    return _fetchAndCache();
   }
 
   @override
-  Future<ApiResult<List<Exercise>>> getExercisesByBodyPart(String bodyPart) async {
-    try {
-      if (!await networkInfo.isConnected) {
-        return Success(LocalExercisesData.byBodyPart(bodyPart));
-      }
-      final result = await service.getExercisesByBodyPart(bodyPart);
-      return Success(result);
-    } catch (_) {
-      return Success(LocalExercisesData.byBodyPart(bodyPart));
-    }
+  Future<ApiResult<List<Exercise>>> getExercisesByBodyPart(
+      String bodyPart,
+      ) async {
+    final result = await getExercises();
+    return result.fold(
+      onFailure: (f) => Failure(f),
+      onSuccess: (all) {
+        final filtered = all
+            .where((e) =>
+        e.bodyPart.toLowerCase() == bodyPart.toLowerCase())
+            .toList();
+        return Success(filtered);
+      },
+    );
   }
 
   @override
   Future<ApiResult<List<Exercise>>> searchExercises(String name) async {
-    try {
-      if (!await networkInfo.isConnected) {
-        return Success(LocalExercisesData.search(name));
-      }
-      final result = await service.searchExercisesByName(name);
-      return Success(result);
-    } catch (_) {
-      return Success(LocalExercisesData.search(name));
-    }
+    final result = await getExercises();
+    return result.fold(
+      onFailure: (f) => Failure(f),
+      onSuccess: (all) {
+        final q = name.toLowerCase().trim();
+        final filtered = all
+            .where((e) =>
+        e.name.toLowerCase().contains(q) ||
+            e.target.toLowerCase().contains(q) ||
+            e.equipment.toLowerCase().contains(q))
+            .toList();
+        return Success(filtered);
+      },
+    );
   }
 
   @override
   Future<ApiResult<Exercise>> getExerciseById(String id) async {
-    try {
-      if (!await networkInfo.isConnected) {
-        final local = LocalExercisesData.byId(id);
-        if (local != null) return Success(local);
-        return const Failure(NotFoundFailure(message: 'التمرين غير موجود'));
-      }
-      final result = await service.getExerciseById(id);
-      return Success(result);
-    } catch (_) {
-      final local = LocalExercisesData.byId(id);
-      if (local != null) return Success(local);
-      return const Failure(NotFoundFailure(message: 'التمرين غير موجود'));
-    }
+    final result = await getExercises();
+    return result.fold(
+      onFailure: (f) => Failure(f),
+      onSuccess: (all) {
+        try {
+          final exercise = all.firstWhere((e) => e.id == id);
+          return Success(exercise);
+        } catch (_) {
+          return const Failure(NotFoundFailure(message: 'Exercise not found'));
+        }
+      },
+    );
   }
 
   @override
   Future<ApiResult<List<String>>> getBodyPartList() async {
+    final result = await getExercises();
+    return result.fold(
+      onFailure: (f) => Failure(f),
+      onSuccess: (all) {
+        final parts = all.map((e) => e.bodyPart).toSet().toList()..sort();
+        return Success(parts);
+      },
+    );
+  }
+
+  /// امسح الـ cache وحمّل من CDN من جديد
+  @override
+  Future<ApiResult<void>> refreshExercises() async {
+    await localService.clearCache();
+    final result = await _fetchAndCache();
+    return result.fold(
+      onFailure: (f) => Failure(f),
+      onSuccess: (_) => const Success(null),
+    );
+  }
+
+  // ─── Private ───────────────────────────────────────────────
+
+  Future<ApiResult<List<Exercise>>> _fetchAndCache() async {
+    if (!await networkInfo.isConnected) {
+      return const Failure(NetworkFailure());
+    }
     try {
-      if (!await networkInfo.isConnected) {
-        return Success(LocalExercisesData.bodyParts);
-      }
-      final result = await service.getBodyPartList();
-      return Success(result);
-    } catch (_) {
-      // API مش متاح (403/429) — نرجع القائمة المحلية
-      return Success(LocalExercisesData.bodyParts);
+      final exercises = await remoteService.fetchAllExercises();
+      await localService.saveExercises(exercises);
+      return Success(exercises);
+    } on ServerException catch (e) {
+      return Failure(
+          ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on NetworkException {
+      return const Failure(NetworkFailure());
+    } catch (e) {
+      return Failure(UnexpectedFailure(message: e.toString()));
     }
   }
 }
