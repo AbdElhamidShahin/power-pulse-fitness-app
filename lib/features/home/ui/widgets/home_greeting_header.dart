@@ -5,6 +5,8 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../profile/data/models/user_profile_entity.dart';
 
+/// Greeting Header — Updated Design v2
+/// الترحيب + الأفاتار على اليمين (RTL)
 class HomeGreetingHeader extends StatelessWidget {
   const HomeGreetingHeader({
     super.key,
@@ -20,51 +22,7 @@ class HomeGreetingHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                greeting,
-                style: AppTextStyles.bodyMedium
-                    .copyWith(color: AppColors.textMuted),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '👋 ${profile.name}',
-                style: Theme.of(context).textTheme.headlineLarge,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: AppConstants.spaceXS),
-              Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: AppColors.success,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'جاهز للتمرين اليوم؟',
-                    style: AppTextStyles.bodySmall
-                        .copyWith(color: AppColors.success),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: AppConstants.spaceM),
-        // Notification
-        _IconBtn(
-          icon: Icons.notifications_none_rounded,
-          onTap: () {},
-        ),
-        const SizedBox(width: AppConstants.spaceS),
-        // Avatar
+        // ─── Avatar (يسار في RTL = يمين على الشاشة) ──────
         GestureDetector(
           onTap: () => context.go('/profile'),
           child: Container(
@@ -72,26 +30,43 @@ class HomeGreetingHeader extends StatelessWidget {
             height: AppConstants.avatarM,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [AppColors.accent, AppColors.accentPressed],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: AppColors.bgDark,
             ),
             child: Center(
               child: Text(
-                profile.name.isNotEmpty
-                    ? profile.name[0].toUpperCase()
-                    : 'P',
+                profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'أ',
                 style: const TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.textOnAccent,
+                  color: AppColors.textOnDark,
                 ),
               ),
             ),
           ),
+        ),
+
+        const SizedBox(width: AppConstants.spaceM),
+
+        // ─── Notification bell ────────────────────────────
+        _IconBtn(icon: Icons.notifications_none_rounded, onTap: () {}),
+
+        const Spacer(),
+
+        // ─── Text (على اليمين — RTL) ──────────────────────
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              greeting,
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '${profile.name} 💪',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+          ],
         ),
       ],
     );

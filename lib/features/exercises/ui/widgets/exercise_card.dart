@@ -19,6 +19,17 @@ class ExerciseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayName =
+        exercise.nameAr.isNotEmpty ? exercise.nameAr : exercise.name;
+    final displayEquipment = exercise.equipmentAr.isNotEmpty
+        ? exercise.equipmentAr
+        : exercise.equipment;
+    final displayBodyPart = exercise.bodyPartAr.isNotEmpty
+        ? exercise.bodyPartAr
+        : exercise.bodyPart;
+    final displayTarget =
+        exercise.targetAr.isNotEmpty ? exercise.targetAr : exercise.target;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -64,32 +75,35 @@ class ExerciseCard extends StatelessWidget {
             // ─── Info ───────────────────────────────────────
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    exercise.name,
+                    displayName,
                     style: AppTextStyles.titleMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                    textDirection: TextDirection.rtl,
                   ),
                   const SizedBox(height: AppConstants.spaceXS),
                   Text(
-                    exercise.equipment,
+                    displayEquipment,
                     style: AppTextStyles.bodySmall,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                    textDirection: TextDirection.rtl,
                   ),
                   const SizedBox(height: AppConstants.spaceS),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      MuscleGroupBadge(
-                        muscle: exercise.bodyPart,
+                      PPBadge(
+                        label: displayTarget,
+                        color: AppColors.textMuted,
                         size: PPBadgeSize.small,
                       ),
                       const SizedBox(width: AppConstants.spaceXS),
-                      PPBadge(
-                        label: exercise.target,
-                        color: AppColors.textMuted,
+                      MuscleGroupBadge(
+                        muscle: displayBodyPart,
                         size: PPBadgeSize.small,
                       ),
                     ],

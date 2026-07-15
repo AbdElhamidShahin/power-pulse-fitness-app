@@ -1,5 +1,4 @@
-/// Power Pulse — App Constants
-/// Spacing — Radius — Padding — Durations — Sizes
+
 abstract class AppConstants {
   AppConstants._();
 

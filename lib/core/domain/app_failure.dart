@@ -1,6 +1,4 @@
-/// Power Pulse — AppFailure
-/// Pure Dart — Zero Flutter imports
-/// Used across domain + data layers
+
 sealed class AppFailure {
   const AppFailure({required this.message});
   final String message;
@@ -27,7 +25,6 @@ final class UnexpectedFailure extends AppFailure {
   const UnexpectedFailure({super.message = 'حدث خطأ غير متوقع'});
 }
 
-/// رسالة الـ Failure بالعربي — للـ UI
 String failureMessage(AppFailure failure) => switch (failure) {
       NetworkFailure()    => 'تحقق من اتصال الإنترنت',
       ServerFailure()     => 'خطأ في الخادم، حاول لاحقاً',

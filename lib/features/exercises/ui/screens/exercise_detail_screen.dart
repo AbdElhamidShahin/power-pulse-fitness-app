@@ -48,6 +48,14 @@ class _DetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // عربي لو موجود، وإلا إنجليزي
+    final displayName      = exercise.nameAr.isNotEmpty      ? exercise.nameAr      : exercise.name;
+    final displayBodyPart  = exercise.bodyPartAr.isNotEmpty  ? exercise.bodyPartAr  : exercise.bodyPart;
+    final displayTarget    = exercise.targetAr.isNotEmpty    ? exercise.targetAr    : exercise.target;
+    final displayEquipment = exercise.equipmentAr.isNotEmpty ? exercise.equipmentAr : exercise.equipment;
+    final steps            = exercise.instructionsAr.isNotEmpty ? exercise.instructionsAr : exercise.instructions;
+    final muscles          = exercise.secondaryMusclesAr.isNotEmpty ? exercise.secondaryMusclesAr : exercise.secondaryMuscles;
+
     return CustomScrollView(
       slivers: [
         // ─── GIF Header ─────────────────────────────────────
@@ -91,8 +99,11 @@ class _DetailContent extends StatelessWidget {
           padding: const EdgeInsets.all(AppConstants.screenPaddingH),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              Text(exercise.name,
-                  style: Theme.of(context).textTheme.headlineLarge),
+              Text(
+                displayName,
+                style: Theme.of(context).textTheme.headlineLarge,
+                textDirection: TextDirection.rtl,
+              ),
               const SizedBox(height: AppConstants.spaceM),
 
               // Badges
@@ -100,22 +111,22 @@ class _DetailContent extends StatelessWidget {
                 spacing: AppConstants.spaceS,
                 runSpacing: AppConstants.spaceS,
                 children: [
-                  MuscleGroupBadge(muscle: exercise.bodyPart),
-                  PPBadge(label: exercise.target, color: AppColors.info),
-                  PPBadge(label: exercise.equipment, color: AppColors.textMuted),
+                  MuscleGroupBadge(muscle: displayBodyPart),
+                  PPBadge(label: displayTarget,    color: AppColors.info),
+                  PPBadge(label: displayEquipment, color: AppColors.textMuted),
                 ],
               ),
               const SizedBox(height: AppConstants.spaceXXL),
 
               // Secondary muscles
-              if (exercise.secondaryMuscles.isNotEmpty) ...[
+              if (muscles.isNotEmpty) ...[
                 Text('العضلات الثانوية',
                     style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: AppConstants.spaceM),
                 Wrap(
                   spacing: AppConstants.spaceS,
                   runSpacing: AppConstants.spaceS,
-                  children: exercise.secondaryMuscles
+                  children: muscles
                       .map((m) => PPBadge(
                     label: m,
                     color: AppColors.textMuted,
@@ -127,28 +138,25 @@ class _DetailContent extends StatelessWidget {
               ],
 
               // Instructions
-              if (exercise.instructions.isNotEmpty) ...[
+              if (steps.isNotEmpty) ...[
                 Text('كيفية الأداء',
                     style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: AppConstants.spaceL),
-                ...exercise.instructions.asMap().entries.map(
+                ...steps.asMap().entries.map(
                       (e) => Padding(
-                    padding: const EdgeInsets.only(
-                        bottom: AppConstants.spaceM),
+                    padding: const EdgeInsets.only(bottom: AppConstants.spaceM),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      textDirection: TextDirection.rtl,
                       children: [
                         Container(
                           width: 26,
                           height: 26,
-                          margin: const EdgeInsets.only(
-                              left: AppConstants.spaceM),
+                          margin: const EdgeInsets.only(left: AppConstants.spaceM),
                           decoration: BoxDecoration(
                             color: AppColors.accentDim,
-                            borderRadius: BorderRadius.circular(
-                                AppConstants.radiusPill),
-                            border: Border.all(
-                                color: AppColors.borderAccent),
+                            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                            border: Border.all(color: AppColors.borderAccent),
                           ),
                           child: Center(
                             child: Text(
@@ -161,8 +169,11 @@ class _DetailContent extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                          child: Text(e.value,
-                              style: AppTextStyles.bodyMedium),
+                          child: Text(
+                            e.value,
+                            style: AppTextStyles.bodyMedium,
+                            textDirection: TextDirection.rtl,
+                          ),
                         ),
                       ],
                     ),

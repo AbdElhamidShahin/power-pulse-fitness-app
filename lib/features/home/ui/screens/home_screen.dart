@@ -9,9 +9,11 @@ import '../../../../../shared/widgets/pp_button.dart';
 import '../../logic/cubit/home_cubit.dart';
 import '../../logic/cubit/home_state.dart';
 import '../widgets/calorie_summary_card.dart';
+import '../widgets/daily_goals_card.dart';
 import '../widgets/home_greeting_header.dart';
 import '../widgets/quick_actions.dart';
-import '../widgets/quick_stats_row.dart';
+import '../widgets/stats_row.dart';
+import '../widgets/streak_progress_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
+
                   // ─── Greeting ──────────────────────────
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(
@@ -59,14 +62,64 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  // ─── Workout CTA Hero ──────────────────
+                  // ─── Streak + Progress Ring ─────────────
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppConstants.screenPaddingH, 0,
+                      AppConstants.screenPaddingH,
+                      AppConstants.spaceM,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: StreakProgressCard(
+                        currentStreak: summary.currentStreak,
+                        dailyProgress: summary.weeklyWorkouts > 0
+                            ? (summary.todayWorkoutMinutes / 60).clamp(0.0, 1.0)
+                            : 0.0,
+                      ),
+                    ),
+                  ),
+
+                  // ─── Calories + Active Time ─────────────
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppConstants.screenPaddingH, 0,
+                      AppConstants.screenPaddingH,
+                      AppConstants.spaceM,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: StatsRow(
+                        caloriesBurned: summary.caloriesConsumed.toInt(),
+                        activeMinutes: summary.todayWorkoutMinutes,
+                      ),
+                    ),
+                  ),
+
+                  // ─── Daily Goals (Rings) ────────────────
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppConstants.screenPaddingH, 0,
+                      AppConstants.screenPaddingH,
+                      AppConstants.spaceM,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: DailyGoalsCard(
+                        moveCurrent: summary.caloriesConsumed.toInt(),
+                        moveGoal: summary.caloriesGoal.toInt(),
+                        exerciseCurrent: summary.todayWorkoutMinutes,
+                        exerciseGoal: 60,
+                        standCurrent: summary.weeklyWorkouts,
+                        standGoal: 12,
+                      ),
+                    ),
+                  ),
+
+                  // ─── Workout CTA ────────────────────────
                   if (!summary.hasWorkedOutToday)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(
+                        AppConstants.screenPaddingH, 0,
                         AppConstants.screenPaddingH,
-                        0,
-                        AppConstants.screenPaddingH,
-                        AppConstants.spaceL,
+                        AppConstants.spaceM,
                       ),
                       sliver: SliverToBoxAdapter(
                         child: _WorkoutHeroCTA(
@@ -75,45 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                  // ─── Calorie Card ──────────────────────
+                  // ─── Quick Access Grid ──────────────────
                   SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.screenPaddingH),
-                    sliver: SliverToBoxAdapter(
-                      child: CalorieSummaryCard(
-                        consumed: summary.caloriesConsumed,
-                        goal: summary.caloriesGoal,
-                        protein: summary.dailyNutrition.totalProtein,
-                        carbs: summary.dailyNutrition.totalCarbs,
-                        fat: summary.dailyNutrition.totalFat,
-                      ),
+                    padding: const EdgeInsets.fromLTRB(
+                      AppConstants.screenPaddingH, 0,
+                      AppConstants.screenPaddingH,
+                      AppConstants.spaceM,
                     ),
-                  ),
-
-                  const SliverToBoxAdapter(
-                      child: SizedBox(height: AppConstants.spaceL)),
-
-                  // ─── Quick Stats ───────────────────────
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.screenPaddingH),
-                    sliver: SliverToBoxAdapter(
-                      child: QuickStatsRow(
-                        weeklyWorkouts: summary.weeklyWorkouts,
-                        todayMinutes: summary.todayWorkoutMinutes,
-                        hasWorkedOutToday: summary.hasWorkedOutToday,
-                        currentStreak: summary.currentStreak,
-                      ),
-                    ),
-                  ),
-
-                  const SliverToBoxAdapter(
-                      child: SizedBox(height: AppConstants.spaceXXL)),
-
-                  // ─── Quick Actions ─────────────────────
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.screenPaddingH),
                     sliver: const SliverToBoxAdapter(child: QuickActions()),
                   ),
 
@@ -151,9 +172,9 @@ class _WorkoutHeroCTA extends StatelessWidget {
         ),
         child: Row(
           children: [
+            // زر play
             Container(
-              width: 56,
-              height: 56,
+              width: 56, height: 56,
               decoration: BoxDecoration(
                 color: AppColors.accent,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -169,23 +190,17 @@ class _WorkoutHeroCTA extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'ابدأ تمرينك الآن 💪',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('ابدأ تمرينك الآن 💪',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: AppColors.textOnDark)),
                   const SizedBox(height: 2),
-                  Text(
-                    'لم تتمرن اليوم بعد — الآن الوقت المثالي',
-                    style: AppTextStyles.bodySmall,
-                  ),
+                  Text('لم تتمرن اليوم بعد — الآن الوقت المثالي',
+                      style: AppTextStyles.bodySmall),
                 ],
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: AppColors.accent,
-              size: 16,
-            ),
+            const Icon(Icons.arrow_forward_ios_rounded,
+                color: AppColors.accent, size: 16),
           ],
         ),
       ),
@@ -197,8 +212,8 @@ class _WorkoutHeroCTA extends StatelessWidget {
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
   @override
-  Widget build(BuildContext context) => const Center(
-      child: CircularProgressIndicator(color: AppColors.accent));
+  Widget build(BuildContext context) =>
+      const Center(child: CircularProgressIndicator(color: AppColors.accent));
 }
 
 // ─── Error ────────────────────────────────────────────────────

@@ -1,5 +1,4 @@
-/// Power Pulse — App Strings
-/// كل النصوص بالعربي في مكان واحد
+
 abstract class AppStrings {
   AppStrings._();
 

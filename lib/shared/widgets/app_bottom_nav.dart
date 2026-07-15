@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_constants.dart';
 
+/// Bottom Nav — Design v2
+/// شريط تنقل سفلي واحد بس (إزالة العلوي المكرر)
+/// الـ active indicator: نقطة خضراء صغيرة تحت الأيقونة
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
@@ -14,11 +16,11 @@ class AppBottomNav extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   static const _items = [
-    _NavItem(icon: Icons.home_rounded,        label: AppStrings.navHome),
-    _NavItem(icon: Icons.fitness_center,      label: AppStrings.navWorkouts),
-    _NavItem(icon: Icons.restaurant_rounded,  label: AppStrings.navNutrition),
-    _NavItem(icon: Icons.bar_chart_rounded,   label: AppStrings.navProgress),
-    _NavItem(icon: Icons.person_rounded,      label: AppStrings.navProfile),
+    _NavItem(icon: Icons.home_rounded,       label: 'الرئيسية'),
+    _NavItem(icon: Icons.fitness_center,     label: 'التمارين'),
+    _NavItem(icon: Icons.restaurant_rounded, label: 'التغذية'),
+    _NavItem(icon: Icons.bar_chart_rounded,  label: 'تقدمي'),
+    _NavItem(icon: Icons.person_rounded,     label: 'حسابي'),
   ];
 
   @override
@@ -27,13 +29,15 @@ class AppBottomNav extends StatelessWidget {
       height: AppConstants.bottomNavHeight,
       decoration: const BoxDecoration(
         color: AppColors.bgSurface,
-        border: Border(top: BorderSide(color: AppColors.borderSubtle, width: 0.5)),
+        border: Border(
+          top: BorderSide(color: AppColors.borderSubtle, width: 0.5),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(
           _items.length,
-          (i) => _NavButton(
+              (i) => _NavButton(
             item: _items[i],
             isActive: currentIndex == i,
             onTap: () => onTap(i),
@@ -67,7 +71,7 @@ class _NavButton extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width: 60,
+        width: 64,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -81,9 +85,9 @@ class _NavButton extends StatelessWidget {
               item.label,
               style: TextStyle(
                 fontFamily: 'Cairo',
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: isActive ? AppColors.accent : AppColors.textMuted,
+                fontSize: 9,
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
+                color: isActive ? AppColors.textPrimary : AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 3),

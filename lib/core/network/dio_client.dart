@@ -66,7 +66,6 @@ class DioClient {
   }
 }
 
-/// تحويل DioException → AppException
 Exception mapDioException(DioException e) {
   return switch (e.type) {
     DioExceptionType.connectionTimeout ||

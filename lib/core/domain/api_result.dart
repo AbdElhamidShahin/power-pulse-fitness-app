@@ -1,8 +1,5 @@
 import 'app_failure.dart';
 
-/// Power Pulse — ApiResult<T>
-/// Either-like type: Success or Failure
-/// Zero Flutter imports — domain layer pure Dart
 sealed class ApiResult<T> {
   const ApiResult();
 }

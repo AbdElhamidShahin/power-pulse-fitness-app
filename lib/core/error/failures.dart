@@ -1,5 +1,4 @@
-/// Power Pulse — Failures
-/// كل أنواع الأخطاء في التطبيق
+
 sealed class Failure {
   const Failure({required this.message});
   final String message;
