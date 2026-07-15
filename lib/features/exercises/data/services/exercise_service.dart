@@ -1,15 +1,12 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
-
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/exercise_entity.dart';
 import '../models/exercise_model.dart';
 
-/// ExerciseRemoteService — Data / Service Layer
-/// يجيب الـ JSON الكاملة من jsDelivr CDN (مرة واحدة بس)
 abstract interface class ExerciseService {
-  /// جيب كل التمارين دفعة واحدة من CDN
   Future<List<Exercise>> fetchAllExercises();
 }
 
@@ -21,10 +18,17 @@ final class ExerciseServiceImpl implements ExerciseService {
   @override
   Future<List<Exercise>> fetchAllExercises() async {
     try {
-      final response = await _dio.get(ApiEndpoints.exercisesJson);
-      final data = response.data;
+      final response = await _dio.get<List<int>>(
+        ApiEndpoints.exercisesJson,
+        options: Options(responseType: ResponseType.bytes),
+      );
 
-      // الـ response ممكن يكون List مباشرة أو String محتاج parse
+      if (response.data == null) {
+        throw const ServerException(message: 'Empty response');
+      }
+      final jsonString = utf8.decode(response.data!);
+      final data = jsonDecode(jsonString);
+
       if (data is List) {
         return ExerciseModel.toEntityList(data);
       }

@@ -4,20 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/exercise_entity.dart';
 import '../models/exercise_model.dart';
 
-/// ExerciseLocalService — Cache Layer
-/// يخزن الداتا في SharedPreferences
-/// الداتا تنزل مرة واحدة بس وتفضل محفوظة
 abstract interface class ExerciseLocalService {
-  /// هل الداتا محفوظة عندنا؟
   bool get isCached;
 
-  /// جيب كل التمارين من الـ cache
   List<Exercise> getAllExercises();
 
-  /// احفظ الداتا في الـ cache
   Future<void> saveExercises(List<Exercise> exercises);
 
-  /// امسح الـ cache (للـ refresh لو احتجنا)
   Future<void> clearCache();
 }
 
@@ -26,8 +19,8 @@ final class ExerciseLocalServiceImpl implements ExerciseLocalService {
 
   final SharedPreferences _prefs;
 
-  static const String _exercisesKey   = 'cached_exercises_v1';
-  static const String _cachedAtKey    = 'cached_exercises_at_v1';
+  static const String _exercisesKey = 'cached_exercises_v3';
+  static const String _cachedAtKey = 'cached_exercises_at_v3';
 
   @override
   bool get isCached => _prefs.containsKey(_exercisesKey);
@@ -47,19 +40,27 @@ final class ExerciseLocalServiceImpl implements ExerciseLocalService {
 
   @override
   Future<void> saveExercises(List<Exercise> exercises) async {
-    // نحول الـ entities لـ JSON قبل التخزين
     final list = exercises
         .map((e) => {
-      'id':                e.id,
-      'name':              e.name,
-      'category':          e.bodyPart,
-      'body_part':         e.bodyPart,
-      'target':            e.target,
-      'equipment':         e.equipment,
-      'gif_url':           _extractRelativeGif(e.gifUrl),
-      'secondary_muscles': e.secondaryMuscles,
-      'instruction_steps': {'en': e.instructions},
-    })
+              'id': e.id,
+              'name_en': e.name,
+              'name_ar': e.nameAr,
+              'category': e.bodyPart,
+              'category_ar': e.bodyPartAr,
+              'body_part': e.bodyPart,
+              'body_part_ar': e.bodyPartAr,
+              'target': e.target,
+              'target_ar': e.targetAr,
+              'equipment': e.equipment,
+              'equipment_ar': e.equipmentAr,
+              'gif_url': _extractRelativeGif(e.gifUrl),
+              'secondary_muscles': e.secondaryMuscles,
+              'secondary_muscles_ar': e.secondaryMusclesAr,
+              'instruction_steps': {
+                'en': e.instructions,
+                'ar': e.instructionsAr,
+              },
+            })
         .toList();
 
     await _prefs.setString(_exercisesKey, jsonEncode(list));
@@ -72,14 +73,11 @@ final class ExerciseLocalServiceImpl implements ExerciseLocalService {
     await _prefs.remove(_cachedAtKey);
   }
 
-  /// تاريخ آخر تحميل (للـ debug)
   DateTime? get cachedAt {
     final raw = _prefs.getString(_cachedAtKey);
     return raw != null ? DateTime.tryParse(raw) : null;
   }
 
-  // ─── Private ───────────────────────────────────────────────
-  /// لما نحفظ نرجع الـ path النسبي بس بدون الـ CDN base
   String _extractRelativeGif(String fullUrl) {
     const marker = 'exercises-dataset@main/';
     final idx = fullUrl.indexOf(marker);

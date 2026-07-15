@@ -32,10 +32,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) => switch (state) {
-            ProfileInitial() ||
-            ProfileLoading()                  => const _LoadingView(),
-            ProfileError(:final message)      => _ErrorView(message: message),
-            ProfileLoaded(:final profile)     => _LoadedView(profile: profile),
+            ProfileInitial() || ProfileLoading() => const _LoadingView(),
+            ProfileError(:final message) => _ErrorView(message: message),
+            ProfileLoaded(:final profile) => _LoadedView(profile: profile),
           },
         ),
       ),
@@ -45,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 class _LoadedView extends StatelessWidget {
   const _LoadedView({required this.profile});
-  final profile;
+  final UserProfile profile;
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +68,7 @@ class _LoadedView extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.bgElevated,
-                    border: Border.all(
-                        color: AppColors.accent, width: 2),
+                    border: Border.all(color: AppColors.accent, width: 2),
                   ),
                   child: const Icon(Icons.person_rounded,
                       color: AppColors.textMuted, size: 40),
@@ -93,10 +91,9 @@ class _LoadedView extends StatelessWidget {
                             horizontal: 10, vertical: 3),
                         decoration: BoxDecoration(
                           color: AppColors.accentDim,
-                          borderRadius: BorderRadius.circular(
-                              AppConstants.radiusPill),
-                          border:
-                          Border.all(color: AppColors.borderAccent),
+                          borderRadius:
+                              BorderRadius.circular(AppConstants.radiusPill),
+                          border: Border.all(color: AppColors.borderAccent),
                         ),
                         child: Text(
                           profile.goal.labelAr,
@@ -115,13 +112,11 @@ class _LoadedView extends StatelessWidget {
                     height: 42,
                     decoration: BoxDecoration(
                       color: AppColors.bgElevated,
-                      borderRadius:
-                      BorderRadius.circular(AppConstants.radiusM),
+                      borderRadius: BorderRadius.circular(AppConstants.radiusM),
                       border: Border.all(color: AppColors.borderSubtle),
                     ),
                     child: const Icon(Icons.edit_rounded,
-                        color: AppColors.textMuted,
-                        size: AppConstants.iconS),
+                        color: AppColors.textMuted, size: AppConstants.iconS),
                   ),
                 ),
               ],
@@ -136,19 +131,16 @@ class _LoadedView extends StatelessWidget {
           sliver: SliverToBoxAdapter(child: BmiCard(profile: profile)),
         ),
 
-        const SliverToBoxAdapter(
-            child: SizedBox(height: AppConstants.spaceL)),
+        const SliverToBoxAdapter(child: SizedBox(height: AppConstants.spaceL)),
 
         // ─── Daily Targets ─────────────────────────────────
         SliverPadding(
           padding: const EdgeInsets.symmetric(
               horizontal: AppConstants.screenPaddingH),
-          sliver: SliverToBoxAdapter(
-              child: DailyTargetsCard(profile: profile)),
+          sliver: SliverToBoxAdapter(child: DailyTargetsCard(profile: profile)),
         ),
 
-        const SliverToBoxAdapter(
-            child: SizedBox(height: AppConstants.spaceL)),
+        const SliverToBoxAdapter(child: SizedBox(height: AppConstants.spaceL)),
 
         // ─── Settings List ─────────────────────────────────
         SliverPadding(
@@ -246,8 +238,8 @@ class _SettingsRow extends StatelessWidget {
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
   @override
-  Widget build(BuildContext context) => const Center(
-      child: CircularProgressIndicator(color: AppColors.accent));
+  Widget build(BuildContext context) =>
+      const Center(child: CircularProgressIndicator(color: AppColors.accent));
 }
 
 class _ErrorView extends StatelessWidget {
@@ -255,17 +247,16 @@ class _ErrorView extends StatelessWidget {
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(Icons.error_outline_rounded,
-          color: AppColors.danger, size: 48),
-      const SizedBox(height: AppConstants.spaceM),
-      Text(message, style: AppTextStyles.bodyMedium),
-      const SizedBox(height: AppConstants.spaceL),
-      GestureDetector(
-        onTap: () => context.read<ProfileCubit>().load(),
-        child: Text(AppStrings.tryAgain,
-            style: AppTextStyles.accentLabel),
-      ),
-    ]),
-  );
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.error_outline_rounded,
+              color: AppColors.danger, size: 48),
+          const SizedBox(height: AppConstants.spaceM),
+          Text(message, style: AppTextStyles.bodyMedium),
+          const SizedBox(height: AppConstants.spaceL),
+          GestureDetector(
+            onTap: () => context.read<ProfileCubit>().load(),
+            child: Text(AppStrings.tryAgain, style: AppTextStyles.accentLabel),
+          ),
+        ]),
+      );
 }
