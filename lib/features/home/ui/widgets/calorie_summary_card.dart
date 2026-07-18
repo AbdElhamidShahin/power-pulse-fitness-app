@@ -31,81 +31,62 @@ class CalorieSummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-        border: Border.all(color: AppColors.borderAccent),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              // ─── Ring ───────────────────────────────────
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CustomPaint(
-                      size: const Size(100, 100),
-                      painter: _RingPainter(
-                        progress: _progress,
-                        color: _isOver ? AppColors.danger : AppColors.accent,
-                        trackColor: AppColors.bgElevated,
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          consumed.toInt().toString(),
-                          style: const TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.textPrimary,
-                            height: 1.0,
-                          ),
-                        ),
-                        Text('سعرة', style: AppTextStyles.bodySmall),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: AppConstants.spaceXL),
-
-              // ─── Info ────────────────────────────────────
+              // ─── Ring ──────────────────────────────────
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('السعرات اليومية',
+                    Text('الأهداف اليومية',
                         style: Theme.of(context).textTheme.headlineSmall),
-                    const SizedBox(height: AppConstants.spaceS),
-                    _InfoRow(
-                      label: 'الهدف',
-                      value: '${goal.toInt()} سعرة',
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(height: AppConstants.spaceXS),
-                    _InfoRow(
-                      label: _isOver ? 'تجاوزت' : 'متبقي',
-                      value: '${_isOver ? (consumed - goal).toInt() : _remaining.toInt()} سعرة',
-                      color: _isOver ? AppColors.danger : AppColors.accent,
-                    ),
                     const SizedBox(height: AppConstants.spaceM),
-                    // Progress bar thin
-                    ClipRRect(
-                      borderRadius:
-                      BorderRadius.circular(AppConstants.radiusPill),
-                      child: LinearProgressIndicator(
-                        value: _progress,
-                        minHeight: 5,
-                        color:
-                        _isOver ? AppColors.danger : AppColors.accent,
-                        backgroundColor: AppColors.bgElevated,
+                    // Triple rings زي التصميم الجديد
+                    SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CustomPaint(
+                            size: const Size(80, 80),
+                            painter: _RingPainter(
+                              progress: _progress,
+                              color: AppColors.accent,
+                              trackColor: AppColors.bgElevated,
+                              strokeWidth: 7,
+                            ),
+                          ),
+                          CustomPaint(
+                            size: const Size(62, 62),
+                            painter: _RingPainter(
+                              progress: (protein / 150).clamp(0.0, 1.0),
+                              color: AppColors.danger,
+                              trackColor: AppColors.bgElevated,
+                              strokeWidth: 6,
+                            ),
+                          ),
+                          CustomPaint(
+                            size: const Size(46, 46),
+                            painter: _RingPainter(
+                              progress: (carbs / 300).clamp(0.0, 1.0),
+                              color: AppColors.info,
+                              trackColor: AppColors.bgElevated,
+                              strokeWidth: 5,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    const SizedBox(height: AppConstants.spaceM),
+                    _StatLine(label: 'الحركة', value: '${consumed.toInt()}', goal: '${goal.toInt()}', color: AppColors.accent),
+                    const SizedBox(height: AppConstants.spaceS),
+                    _StatLine(label: 'بروتين', value: '${protein.toInt()}', goal: '150', color: AppColors.danger),
+                    const SizedBox(height: AppConstants.spaceS),
+                    _StatLine(label: 'كارب', value: '${carbs.toInt()}', goal: '300', color: AppColors.info),
                   ],
                 ),
               ),
@@ -113,17 +94,29 @@ class CalorieSummaryCard extends StatelessWidget {
           ),
 
           const SizedBox(height: AppConstants.spaceL),
-          const Divider(color: AppColors.borderSubtle, height: 1),
+          const Divider(color: AppColors.borderSubtle),
           const SizedBox(height: AppConstants.spaceL),
 
-          // ─── Macros Row ───────────────────────────────────
+          // ─── Macros Row ──────────────────────────────────
           Row(
             children: [
-              _MacroItem(label: 'بروتين', value: protein, color: AppColors.info),
-              _Divider(),
-              _MacroItem(label: 'كارب', value: carbs, color: AppColors.warning),
-              _Divider(),
-              _MacroItem(label: 'دهون', value: fat, color: AppColors.danger),
+              _MacroItem(
+                label: 'بروتين',
+                value: protein,
+                color: AppColors.info,
+              ),
+              Container(width: 1, height: 30, color: AppColors.borderSubtle),
+              _MacroItem(
+                label: 'كارب',
+                value: carbs,
+                color: AppColors.warning,
+              ),
+              Container(width: 1, height: 30, color: AppColors.borderSubtle),
+              _MacroItem(
+                label: 'دهون',
+                value: fat,
+                color: AppColors.danger,
+              ),
             ],
           ),
         ],
@@ -132,31 +125,56 @@ class CalorieSummaryCard extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  const _InfoRow(
-      {required this.label, required this.value, required this.color});
+class _StatLine extends StatelessWidget {
+  const _StatLine({
+    required this.label,
+    required this.value,
+    required this.goal,
+    required this.color,
+  });
+
   final String label;
   final String value;
+  final String goal;
   final Color color;
+
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: AppTextStyles.bodySmall),
-        const SizedBox(width: AppConstants.spaceXS),
-        Text(value,
-            style: AppTextStyles.labelSmall.copyWith(color: color)),
+        Text(
+          '$value/$goal',
+          style: TextStyle(
+            fontFamily: 'Cairo',
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+        Row(
+          children: [
+            Text(label,
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: AppColors.textMuted, fontWeight: FontWeight.w600)),
+            const SizedBox(width: AppConstants.spaceS),
+            Container(
+              width: 8, height: 8,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            ),
+          ],
+        ),
       ],
     );
   }
 }
 
 class _MacroItem extends StatelessWidget {
-  const _MacroItem(
-      {required this.label, required this.value, required this.color});
+  const _MacroItem({required this.label, required this.value, required this.color});
   final String label;
   final double value;
   final Color color;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -179,48 +197,37 @@ class _MacroItem extends StatelessWidget {
   }
 }
 
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Container(
-      width: 1, height: 30, color: AppColors.borderSubtle);
-}
-
-// ─── Ring Painter ─────────────────────────────────────────────
 class _RingPainter extends CustomPainter {
   _RingPainter({
     required this.progress,
     required this.color,
     required this.trackColor,
+    this.strokeWidth = 6,
   });
+
   final double progress;
   final Color color;
   final Color trackColor;
+  final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
-    const strokeWidth = 8.0;
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
-    const startAngle = -math.pi / 2;
 
-    // Track
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      0,
-      math.pi * 2,
-      false,
+      0, math.pi * 2, false,
       Paint()
         ..color = trackColor
         ..strokeWidth = strokeWidth
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round,
+        ..style = PaintingStyle.stroke,
     );
 
     if (progress > 0) {
-      // Progress
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
-        startAngle,
+        -math.pi / 2,
         math.pi * 2 * progress,
         false,
         Paint()

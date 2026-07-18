@@ -1,65 +1,68 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_text_styles.dart';
 
-/// دائرة السعرات في أعلى شاشة التغذية
-class CalorieRing extends StatelessWidget {
-  const CalorieRing({
+// ════════════════════════════════════════════════════════════════
+// NutritionCalorieRing — حلقة السعرات
+// مطابقة للصورة: حلقة خضراء رفيعة + رقم السعرات في المنتصف
+// + نص "kcal eaten" تحت الرقم
+// ════════════════════════════════════════════════════════════════
+class NutritionCalorieRing extends StatelessWidget {
+  const NutritionCalorieRing({
     super.key,
     required this.consumed,
     required this.goal,
-    this.size = 160,
+    this.size = 110,
   });
 
   final double consumed;
   final double goal;
   final double size;
 
+  double get _pct => goal > 0 ? (consumed / goal).clamp(0.0, 1.0) : 0;
+  bool get _isOver => consumed > goal;
+
   @override
   Widget build(BuildContext context) {
-    final progress = (consumed / goal).clamp(0.0, 1.0);
-    final remaining = (goal - consumed).clamp(0.0, goal);
-    final isOver = consumed > goal;
-
     return SizedBox(
-      width: size,
+      width:  size,
       height: size,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Ring
+          // ─── الحلقة ───────────────────────────────────────
           CustomPaint(
             size: Size(size, size),
             painter: _RingPainter(
-              progress: progress,
-              trackColor: AppColors.bgElevated,
-              progressColor: isOver ? AppColors.danger : AppColors.accent,
-              strokeWidth: 10,
+              progress:      _pct,
+              trackColor:    AppColors.bgElevated,
+              progressColor: _isOver ? AppColors.danger : AppColors.accent,
+              strokeWidth:   9,
             ),
           ),
-          // Center text
+
+          // ─── النص في المنتصف ──────────────────────────────
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 consumed.toInt().toString(),
-                style: AppTextStyles.statNumber.copyWith(fontSize: 28),
-              ),
-              Text(
-                'من ${goal.toInt()}',
-                style: AppTextStyles.bodySmall,
+                style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.textPrimary,
+                  height: 1.0,
+                ),
               ),
               const SizedBox(height: 2),
-              Text(
-                isOver
-                    ? 'تجاوزت الهدف!'
-                    : '${remaining.toInt()} متبقي',
-                style: AppTextStyles.labelSmall.copyWith(
-                  color: isOver ? AppColors.danger : AppColors.accent,
-                  fontSize: 10,
+              const Text(
+                'kcal eaten',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 9,
+                  color: AppColors.textMuted,
                 ),
               ),
             ],
@@ -70,6 +73,7 @@ class CalorieRing extends StatelessWidget {
   }
 }
 
+// ─── Ring Painter ─────────────────────────────────────────────
 class _RingPainter extends CustomPainter {
   const _RingPainter({
     required this.progress,
@@ -79,39 +83,31 @@ class _RingPainter extends CustomPainter {
   });
 
   final double progress;
-  final Color trackColor;
-  final Color progressColor;
+  final Color trackColor, progressColor;
   final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
-    const startAngle = -math.pi / 2;
-
-    final trackPaint = Paint()
-      ..color = trackColor
-      ..style = PaintingStyle.stroke
+    final basePaint = Paint()
+      ..style      = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
+      ..strokeCap  = StrokeCap.round;
 
-    final progressPaint = Paint()
-      ..color = progressColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
+    // Track (رمادي فاتح)
+    canvas.drawCircle(center, radius, basePaint..color = trackColor);
 
-    // Track
-    canvas.drawCircle(center, radius, trackPaint);
-
-    // Progress
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      startAngle,
-      2 * math.pi * progress,
-      false,
-      progressPaint,
-    );
+    // Progress (أخضر أو أحمر)
+    if (progress > 0) {
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -math.pi / 2,
+        2 * math.pi * progress,
+        false,
+        basePaint..color = progressColor,
+      );
+    }
   }
 
   @override
@@ -119,7 +115,31 @@ class _RingPainter extends CustomPainter {
       old.progress != progress || old.progressColor != progressColor;
 }
 
-/// بار صغيرة للماكروز — بروتين، كارب، دهون
+// ════════════════════════════════════════════════════════════════
+// CalorieRing — (اسم مبسّط للاستخدام من nutrition_screen القديم)
+// ════════════════════════════════════════════════════════════════
+class CalorieRing extends StatelessWidget {
+  const CalorieRing({
+    super.key,
+    required this.consumed,
+    required this.goal,
+    this.size = 110,
+  });
+
+  final double consumed, goal;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => NutritionCalorieRing(
+        consumed: consumed,
+        goal:     goal,
+        size:     size,
+      );
+}
+
+// ════════════════════════════════════════════════════════════════
+// MacroBar — شريط ماكرو مستقل (للاستخدام من الملفات الأخرى)
+// ════════════════════════════════════════════════════════════════
 class MacroBar extends StatelessWidget {
   const MacroBar({
     super.key,
@@ -130,11 +150,9 @@ class MacroBar extends StatelessWidget {
     required this.progress,
   });
 
-  final String label;
-  final double value;
-  final String unit;
+  final String label, unit;
+  final double value, progress;
   final Color color;
-  final double progress; // 0.0 → 1.0
 
   @override
   Widget build(BuildContext context) {
@@ -144,20 +162,23 @@ class MacroBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: AppTextStyles.labelSmall),
-            Text(
-              '${value.toInt()}$unit',
-              style: AppTextStyles.labelSmall.copyWith(color: color),
-            ),
+            Text('${value.toInt()} $unit',
+                style: TextStyle(
+                    fontFamily: 'Cairo', fontSize: 10,
+                    fontWeight: FontWeight.w600, color: color)),
+            Text(label,
+                style: const TextStyle(
+                    fontFamily: 'Cairo', fontSize: 10,
+                    color: AppColors.textMuted)),
           ],
         ),
         const SizedBox(height: AppConstants.spaceXS),
         ClipRRect(
           borderRadius: BorderRadius.circular(AppConstants.radiusPill),
           child: LinearProgressIndicator(
-            value: progress.clamp(0.0, 1.0),
-            minHeight: 4,
-            color: color,
+            value:           progress.clamp(0.0, 1.0),
+            minHeight:       4,
+            color:           color,
             backgroundColor: AppColors.bgElevated,
           ),
         ),

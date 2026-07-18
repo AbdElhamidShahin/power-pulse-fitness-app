@@ -5,8 +5,6 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../profile/data/models/user_profile_entity.dart';
 
-/// Greeting Header — Updated Design v2
-/// الترحيب + الأفاتار على اليمين (RTL)
 class HomeGreetingHeader extends StatelessWidget {
   const HomeGreetingHeader({
     super.key,
@@ -20,24 +18,23 @@ class HomeGreetingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // ─── Avatar (يسار في RTL = يمين على الشاشة) ──────
+        // Avatar داكن زي التصميم الجديد
         GestureDetector(
           onTap: () => context.go('/profile'),
           child: Container(
-            width: AppConstants.avatarM,
-            height: AppConstants.avatarM,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
+            width: 44,
+            height: 44,
+            decoration: const BoxDecoration(
               color: AppColors.bgDark,
+              shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
-                profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'أ',
+                profile.name.isNotEmpty ? profile.name[0] : 'P',
                 style: const TextStyle(
                   fontFamily: 'Cairo',
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w900,
                   color: AppColors.textOnDark,
                 ),
@@ -45,53 +42,44 @@ class HomeGreetingHeader extends StatelessWidget {
             ),
           ),
         ),
-
         const SizedBox(width: AppConstants.spaceM),
-
-        // ─── Notification bell ────────────────────────────
-        _IconBtn(icon: Icons.notifications_none_rounded, onTap: () {}),
-
-        const Spacer(),
-
-        // ─── Text (على اليمين — RTL) ──────────────────────
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              greeting,
-              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                greeting,
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+              ),
+              Text(
+                '${profile.name} 💪',
+                style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.textPrimary,
+                  height: 1.2,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+        // Notification icon
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.bgSurface,
+              borderRadius: BorderRadius.circular(AppConstants.radiusM),
             ),
-            const SizedBox(height: 2),
-            Text(
-              '${profile.name} 💪',
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-          ],
+            child: const Icon(Icons.notifications_none_rounded,
+                color: AppColors.textMuted, size: AppConstants.iconM),
+          ),
         ),
       ],
-    );
-  }
-}
-
-class _IconBtn extends StatelessWidget {
-  const _IconBtn({required this.icon, required this.onTap});
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: AppColors.bgElevated,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: AppColors.borderSubtle),
-        ),
-        child: Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
-      ),
     );
   }
 }

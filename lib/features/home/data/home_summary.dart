@@ -2,7 +2,6 @@ import '../../profile/data/models/user_profile_entity.dart';
 import '../../nutrition/data/models/food_entity.dart';
 import '../../progress/data/models/progress_entity.dart';
 
-/// تلخيص بيانات الهوم — يُحسب في HomeCubit
 final class HomeSummary {
   const HomeSummary({
     required this.profile,

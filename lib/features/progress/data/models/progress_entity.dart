@@ -55,6 +55,7 @@ final class ProgressSummary {
     required this.workoutLogs,
     required this.weeklyWorkoutPoints,
     required this.weightChartPoints,
+    this.currentStreak = 0,
   });
 
   final int totalWorkouts;
@@ -65,7 +66,14 @@ final class ProgressSummary {
   final List<WeightEntry> weightEntries;
   final List<WorkoutLog> workoutLogs;
   final List<ChartPoint> weeklyWorkoutPoints; // تمارين كل أسبوع
-  final List<ChartPoint> weightChartPoints;   // وزن على مدى الوقت
+  final List<ChartPoint> weightChartPoints;
+  final int currentStreak; // وزن على مدى الوقت
+
+  double? get bmi {
+    if (currentWeight == null) return null;
+    const heightInMeters = 1.78;
+    return currentWeight! / (heightInMeters * heightInMeters);
+  }
 
   double? get weightChange => (currentWeight != null && startWeight != null)
       ? currentWeight! - startWeight!
@@ -84,14 +92,14 @@ enum ProgressPeriod { week, month, threeMonths }
 
 extension ProgressPeriodX on ProgressPeriod {
   String get labelAr => switch (this) {
-        ProgressPeriod.week        => 'أسبوع',
-        ProgressPeriod.month       => 'شهر',
+        ProgressPeriod.week => 'أسبوع',
+        ProgressPeriod.month => 'شهر',
         ProgressPeriod.threeMonths => '3 أشهر',
       };
 
   int get days => switch (this) {
-        ProgressPeriod.week        => 7,
-        ProgressPeriod.month       => 30,
+        ProgressPeriod.week => 7,
+        ProgressPeriod.month => 30,
         ProgressPeriod.threeMonths => 90,
       };
 }

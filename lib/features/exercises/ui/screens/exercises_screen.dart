@@ -3,18 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_input.dart';
 import '../../logic/cubit/exercises_cubit.dart';
 import '../../logic/cubit/exercises_state.dart';
-import '../widgets/body_part_filter_tabs.dart';
 import '../widgets/exercise_card.dart';
 
 class ExercisesScreen extends StatefulWidget {
   const ExercisesScreen({super.key});
-
   @override
   State<ExercisesScreen> createState() => _ExercisesScreenState();
 }
@@ -23,12 +20,19 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   bool _isSearching = false;
+  String _selectedFilter = 'الكل';
+  final _filters = ['الكل', 'قوة', 'كارديو', 'مرونة', 'هيت'];
 
   @override
   void initState() {
     super.initState();
     context.read<ExercisesCubit>().loadInitial();
-    _scrollController.addListener(_onScroll);
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        context.read<ExercisesCubit>().loadMore();
+      }
+    });
   }
 
   @override
@@ -38,39 +42,142 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
     super.dispose();
   }
 
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      context.read<ExercisesCubit>().loadMore();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.bgDeep,
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Header(
-              searchController: _searchController,
-              isSearching: _isSearching,
-              onSearchToggle: () {
-                setState(() => _isSearching = !_isSearching);
-                if (!_isSearching) {
-                  _searchController.clear();
-                  context.read<ExerciseSearchCubit>().clear();
-                }
-              },
-              onSearchChanged: (q) =>
-                  context.read<ExerciseSearchCubit>().search(q),
-            ),
+            // ─── Header ────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Search icon
+                      GestureDetector(
+                        onTap: () {
+                          setState(() => _isSearching = !_isSearching);
+                          if (!_isSearching) {
+                            _searchController.clear();
+                            context.read<ExerciseSearchCubit>().clear();
+                          }
+                        },
+                        child: Container(
+                          width: 42, height: 42,
+                          decoration: BoxDecoration(
+                            color: _isSearching
+                                ? AppColors.bgDark : AppColors.bgElevated,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            _isSearching
+                                ? Icons.close_rounded : Icons.search_rounded,
+                            color: _isSearching
+                                ? AppColors.textOnDark : AppColors.textMuted,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text('مكتبة التمارين',
+                              style: TextStyle(fontSize: 11,
+                                  color: Color(0xFF8A8A8A), fontFamily: 'Cairo')),
+                          Text('التمارين 🏋️',
+                              style: TextStyle(fontSize: 26,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.textPrimary,
+                                  fontFamily: 'Cairo')),
+                        ],
+                      ),
+                    ],
+                  ),
 
-            // ─── Search Results ──────────────────────────────
-            if (_isSearching)
-              Expanded(child: _SearchResults())
-            else
-              Expanded(child: _ExercisesList(scrollController: _scrollController)),
+                  if (_isSearching) ...[
+                    const SizedBox(height: 12),
+                    PPSearchBar(
+                      hint: 'ابحث عن تمرين...',
+                      controller: _searchController,
+                      onChanged: (q) =>
+                          context.read<ExerciseSearchCubit>().search(q),
+                      autofocus: true,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+
+            if (!_isSearching) ...[
+              // ─── Stats Card ────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgDark,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _StatItem(value: '3', label: 'هذا الأسبوع'),
+                      _StatItem(value: '12', label: 'إجمالي'),
+                      _StatItem(value: '380', label: 'متوسط السعرات'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // ─── Filter Pills ──────────────────────────────────
+              SizedBox(
+                height: 38,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  reverse: true,
+                  itemCount: _filters.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  itemBuilder: (_, i) {
+                    final f = _filters[i];
+                    final active = _selectedFilter == f;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedFilter = f),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: active ? AppColors.bgDark : AppColors.bgElevated,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(f,
+                            style: TextStyle(
+                              fontFamily: 'Cairo', fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: active
+                                  ? AppColors.textOnDark : AppColors.textMuted,
+                            )),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            // ─── List ──────────────────────────────────────────
+            Expanded(
+              child: _isSearching
+                  ? _SearchResults()
+                  : _ExercisesList(scrollController: _scrollController),
+            ),
           ],
         ),
       ),
@@ -78,89 +185,25 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
   }
 }
 
-// ─── Header ─────────────────────────────────────────────────
-class _Header extends StatelessWidget {
-  const _Header({
-    required this.searchController,
-    required this.isSearching,
-    required this.onSearchToggle,
-    required this.onSearchChanged,
-  });
-
-  final TextEditingController searchController;
-  final bool isSearching;
-  final VoidCallback onSearchToggle;
-  final ValueChanged<String> onSearchChanged;
+class _StatItem extends StatelessWidget {
+  const _StatItem({required this.value, required this.label});
+  final String value;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppConstants.screenPaddingH,
-        AppConstants.spaceL,
-        AppConstants.screenPaddingH,
-        AppConstants.spaceL,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(AppStrings.workoutsTitle,
-                        style: Theme.of(context).textTheme.headlineLarge),
-                    Text(AppStrings.workoutsSub,
-                        style: AppTextStyles.bodySmall),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: onSearchToggle,
-                child: Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: isSearching
-                        ? AppColors.accentDim
-                        : AppColors.bgElevated,
-                    borderRadius:
-                    BorderRadius.circular(AppConstants.radiusM),
-                    border: Border.all(
-                      color: isSearching
-                          ? AppColors.accent
-                          : AppColors.borderSubtle,
-                    ),
-                  ),
-                  child: Icon(
-                    isSearching ? Icons.close_rounded : Icons.search_rounded,
-                    color: isSearching
-                        ? AppColors.accent
-                        : AppColors.textMuted,
-                    size: AppConstants.iconM,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          if (isSearching) ...[
-            const SizedBox(height: AppConstants.spaceM),
-            PPSearchBar(
-              hint: AppStrings.searchWorkout,
-              controller: searchController,
-              onChanged: onSearchChanged,
-              autofocus: true,
-            ),
-          ],
-        ],
-      ),
+    return Column(
+      children: [
+        Text(value, style: const TextStyle(
+            fontFamily: 'Cairo', fontSize: 24, fontWeight: FontWeight.w900,
+            color: AppColors.accent)),
+        Text(label, style: const TextStyle(
+            fontFamily: 'Cairo', fontSize: 10, color: Color(0xFF888888))),
+      ],
     );
   }
 }
 
-// ─── Main List ──────────────────────────────────────────────
 class _ExercisesList extends StatelessWidget {
   const _ExercisesList({required this.scrollController});
   final ScrollController scrollController;
@@ -169,12 +212,10 @@ class _ExercisesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ExercisesCubit, ExercisesState>(
       builder: (context, state) => switch (state) {
-        ExercisesInitial() || ExercisesLoading() => const _LoadingList(),
-        ExercisesError(:final message)            => _ErrorView(message: message),
-        ExercisesLoaded()                         => _LoadedList(
-          state: state,
-          scrollController: scrollController,
-        ),
+        ExercisesInitial() || ExercisesLoading() => const _Shimmer(),
+        ExercisesError(:final message)           => _ErrorView(message: message),
+        ExercisesLoaded()                        => _LoadedList(
+            state: state, scrollController: scrollController),
       },
     );
   }
@@ -188,30 +229,64 @@ class _LoadedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        BodyPartFilterTabs(
-          bodyParts: state.bodyParts,
-          selected: state.selectedBodyPart,
-          onSelect: (p) =>
-              context.read<ExercisesCubit>().filterByBodyPart(p),
+        // Body part filter
+        if (state.bodyParts.isNotEmpty)
+          SizedBox(
+            height: 38,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              reverse: true,
+              itemCount: state.bodyParts.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (_, i) {
+                final p = state.bodyParts[i];
+                final active = state.selectedBodyPart == p;
+                return GestureDetector(
+                  onTap: () =>
+                      context.read<ExercisesCubit>().filterByBodyPart(p),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: active ? AppColors.bgDark : AppColors.bgElevated,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(p,
+                        style: TextStyle(
+                          fontFamily: 'Cairo', fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: active
+                              ? AppColors.textOnDark : AppColors.textMuted,
+                        )),
+                  ),
+                );
+              },
+            ),
+          ),
+        const SizedBox(height: 12),
+
+        Padding(
+          padding: const EdgeInsets.only(right: 16, bottom: 8),
+          child: Text('${state.exercises.length} تمرين',
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700,
+                  color: Color(0xFF8A8A8A), fontFamily: 'Cairo')),
         ),
-        const SizedBox(height: AppConstants.spaceL),
+
         Expanded(
           child: ListView.separated(
             controller: scrollController,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.screenPaddingH,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: state.exercises.length + (state.hasMore ? 1 : 0),
-            separatorBuilder: (_, __) =>
-            const SizedBox(height: AppConstants.spaceM),
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, i) {
               if (i == state.exercises.length) {
                 return const Padding(
-                  padding: EdgeInsets.all(AppConstants.spaceXL),
-                  child: Center(
-                    child: CircularProgressIndicator(color: AppColors.accent),
-                  ),
+                  padding: EdgeInsets.all(20),
+                  child: Center(child: CircularProgressIndicator(
+                      color: AppColors.accent)),
                 );
               }
               final ex = state.exercises[i];
@@ -227,24 +302,24 @@ class _LoadedList extends StatelessWidget {
   }
 }
 
-// ─── Search Results ─────────────────────────────────────────
 class _SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ExerciseSearchCubit, ExerciseSearchState>(
       builder: (context, state) => switch (state) {
-        ExerciseSearchIdle()                        => const _SearchIdleView(),
-        ExerciseSearchLoading()                     => const _LoadingList(),
-        ExerciseSearchError(:final message)         => _ErrorView(message: message),
-        ExerciseSearchLoaded(:final results) when results.isEmpty
-        => const _EmptyView(),
-        ExerciseSearchLoaded(:final results)        => ListView.separated(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.screenPaddingH,
-          ),
+        ExerciseSearchIdle()    => const Center(
+            child: Text('ابحث عن تمرين...',
+                style: TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+        ExerciseSearchLoading() => const _Shimmer(),
+        ExerciseSearchError()   => const SizedBox(),
+        ExerciseSearchLoaded(:final results) when results.isEmpty =>
+        const Center(
+            child: Text('لا توجد نتائج',
+                style: TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+        ExerciseSearchLoaded(:final results) => ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: results.length,
-          separatorBuilder: (_, __) =>
-          const SizedBox(height: AppConstants.spaceM),
+          separatorBuilder: (_, __) => const SizedBox(height: 10),
           itemBuilder: (context, i) => ExerciseCard(
             exercise: results[i],
             onTap: () => context.push('/exercises/${results[i].id}'),
@@ -255,32 +330,20 @@ class _SearchResults extends StatelessWidget {
   }
 }
 
-// ─── States UI ──────────────────────────────────────────────
-class _LoadingList extends StatelessWidget {
-  const _LoadingList();
-
+class _Shimmer extends StatelessWidget {
+  const _Shimmer();
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.screenPaddingH,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: 8,
-      separatorBuilder: (_, __) => const SizedBox(height: AppConstants.spaceM),
-      itemBuilder: (_, __) => _ExerciseShimmer(),
-    );
-  }
-}
-
-class _ExerciseShimmer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
-        border: Border.all(color: AppColors.borderSubtle),
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      itemBuilder: (_, __) => Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppColors.bgSurface,
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
     );
   }
@@ -289,56 +352,17 @@ class _ExerciseShimmer extends StatelessWidget {
 class _ErrorView extends StatelessWidget {
   const _ErrorView({required this.message});
   final String message;
-
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.error_outline_rounded,
-              color: AppColors.danger, size: 48),
-          const SizedBox(height: AppConstants.spaceM),
-          Text(message, style: AppTextStyles.bodyMedium),
-          const SizedBox(height: AppConstants.spaceL),
-          GestureDetector(
-            onTap: () => context.read<ExercisesCubit>().loadInitial(),
-            child: Text(AppStrings.tryAgain,
-                style: AppTextStyles.accentLabel),
-          ),
-        ],
+  Widget build(BuildContext context) => Center(
+    child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.error_outline_rounded, color: AppColors.danger, size: 48),
+      const SizedBox(height: 16),
+      Text(message, style: AppTextStyles.bodyMedium),
+      const SizedBox(height: 16),
+      GestureDetector(
+        onTap: () => context.read<ExercisesCubit>().loadInitial(),
+        child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
       ),
-    );
-  }
-}
-
-class _EmptyView extends StatelessWidget {
-  const _EmptyView();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.search_off_rounded,
-              color: AppColors.textMuted, size: 48),
-          const SizedBox(height: AppConstants.spaceM),
-          Text(AppStrings.noResults, style: AppTextStyles.bodyMedium),
-        ],
-      ),
-    );
-  }
-}
-
-class _SearchIdleView extends StatelessWidget {
-  const _SearchIdleView();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(AppStrings.searchWorkout,
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted)),
-    );
-  }
+    ]),
+  );
 }

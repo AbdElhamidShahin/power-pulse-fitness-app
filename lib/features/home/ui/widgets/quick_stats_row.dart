@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -19,119 +20,206 @@ class QuickStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        // Streak
-        Expanded(
-          child: _StatCard(
-            icon: Icons.local_fire_department_rounded,
-            iconColor: AppColors.warning,
-            value: currentStreak.toString(),
-            label: 'يوم متتالي',
-            unit: '🔥',
-            bgColor: AppColors.warningDim,
+        // ─── Streak Card (داكن زي التصميم) ──────────────────
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.spaceXL,
+            vertical: AppConstants.spaceL,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.bgDark,
+            borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+          ),
+          child: Row(
+            children: [
+              // Progress Ring
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CustomPaint(
+                      size: const Size(60, 60),
+                      painter: _RingPainter(
+                        progress: (currentStreak / 30).clamp(0.0, 1.0),
+                        color: AppColors.accent,
+                        trackColor: const Color(0xFF333333),
+                        strokeWidth: 5,
+                      ),
+                    ),
+                    Text(
+                      '${((currentStreak / 30) * 100).toInt()}%',
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppConstants.spaceL),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'السلسلة الحالية',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: const Color(0xFF888888)),
+                    ),
+                    Text(
+                      '$currentStreak يوم 🔥',
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.textOnDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: AppConstants.spaceM),
-        // Weekly workouts
-        Expanded(
-          child: _StatCard(
-            icon: Icons.fitness_center_rounded,
-            iconColor: AppColors.accent,
-            value: weeklyWorkouts.toString(),
-            label: 'تمرين أسبوعي',
-            bgColor: AppColors.accentDim,
-          ),
-        ),
-        const SizedBox(width: AppConstants.spaceM),
-        // Today minutes
-        Expanded(
-          child: _StatCard(
-            icon: Icons.timer_rounded,
-            iconColor: hasWorkedOutToday
-                ? AppColors.success
-                : AppColors.textMuted,
-            value: hasWorkedOutToday ? todayMinutes.toString() : '--',
-            label: 'دقيقة اليوم',
-            bgColor: hasWorkedOutToday
-                ? AppColors.successDim
-                : AppColors.bgElevated,
-          ),
+
+        const SizedBox(height: AppConstants.spaceM),
+
+        // ─── وقت النشاط + السعرات ─────────────────────────────
+        Row(
+          children: [
+            // وقت النشاط (داكن)
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(AppConstants.spaceL),
+                decoration: BoxDecoration(
+                  color: AppColors.bgDark,
+                  borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'وقت النشاط',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: const Color(0xFF888888), fontSize: 10),
+                    ),
+                    const SizedBox(height: AppConstants.spaceXS),
+                    Text(
+                      hasWorkedOutToday ? '$todayMinutes' : '0',
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.accent,
+                        height: 1.0,
+                      ),
+                    ),
+                    Text(
+                      'دقيقة اليوم',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: const Color(0xFF888888), fontSize: 10),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(width: AppConstants.spaceM),
+
+            // التمارين الأسبوعية (فاتح)
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(AppConstants.spaceL),
+                decoration: BoxDecoration(
+                  color: AppColors.bgSurface,
+                  borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'التمارين الأسبوعية',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.textMuted, fontSize: 10),
+                    ),
+                    const SizedBox(height: AppConstants.spaceXS),
+                    Text(
+                      '$weeklyWorkouts',
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.textPrimary,
+                        height: 1.0,
+                      ),
+                    ),
+                    Text(
+                      'تمرين هذا الأسبوع',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.textMuted, fontSize: 10),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.value,
-    required this.label,
-    required this.bgColor,
-    this.unit,
+// ─── Ring Painter ─────────────────────────────────────────────
+class _RingPainter extends CustomPainter {
+  _RingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+    this.strokeWidth = 6,
   });
 
-  final IconData icon;
-  final Color iconColor;
-  final String value;
-  final String label;
-  final Color bgColor;
-  final String? unit;
+  final double progress;
+  final Color color;
+  final Color trackColor;
+  final double strokeWidth;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.spaceM,
-        vertical: AppConstants.spaceL,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
-        border: Border.all(color: AppColors.borderSubtle),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(AppConstants.radiusS),
-            ),
-            child: Icon(icon, color: iconColor, size: AppConstants.iconS),
-          ),
-          const SizedBox(height: AppConstants.spaceM),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary,
-                  height: 1.0,
-                ),
-              ),
-              if (unit != null) ...[
-                const SizedBox(width: 2),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(unit!, style: const TextStyle(fontSize: 14)),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: AppConstants.spaceXS),
-          Text(label, style: AppTextStyles.bodySmall,
-              maxLines: 1, overflow: TextOverflow.ellipsis),
-        ],
-      ),
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - strokeWidth) / 2;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      0, math.pi * 2, false,
+      Paint()
+        ..color = trackColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
     );
+
+    if (progress > 0) {
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -math.pi / 2,
+        math.pi * 2 * progress,
+        false,
+        Paint()
+          ..color = color
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round,
+      );
+    }
   }
+
+  @override
+  bool shouldRepaint(_RingPainter old) =>
+      old.progress != progress || old.color != color;
 }
