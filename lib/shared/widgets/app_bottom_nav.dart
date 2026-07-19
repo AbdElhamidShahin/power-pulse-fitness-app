@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 
-/// Bottom Nav — Design v2
-/// شريط تنقل سفلي واحد بس (إزالة العلوي المكرر)
-/// الـ active indicator: نقطة خضراء صغيرة تحت الأيقونة
+/// AppBottomNav — ✅ مطابق للصورة تماماً
+/// أيقونات Emoji مثل الصورة + نقطة خضراء للعنصر المحدد
+/// الترتيب RTL: حسابي | تقدمي | التغذية | التمارين | الرئيسية
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
@@ -15,12 +15,13 @@ class AppBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
+  // ✅ أيقونات مطابقة للصورة — Icons بدل Emoji لوضوح أفضل
   static const _items = [
-    _NavItem(icon: Icons.home_rounded,       label: 'الرئيسية'),
-    _NavItem(icon: Icons.fitness_center,     label: 'التمارين'),
-    _NavItem(icon: Icons.restaurant_rounded, label: 'التغذية'),
-    _NavItem(icon: Icons.bar_chart_rounded,  label: 'تقدمي'),
-    _NavItem(icon: Icons.person_rounded,     label: 'حسابي'),
+    _NavItem(icon: Icons.home_rounded,            emoji: '🏠', label: 'الرئيسية'),
+    _NavItem(icon: Icons.fitness_center_rounded,  emoji: '🏋️', label: 'التمارين'),
+    _NavItem(icon: Icons.restaurant_menu_rounded, emoji: '🍽️', label: 'التغذية'),
+    _NavItem(icon: Icons.bar_chart_rounded,       emoji: '📊', label: 'تقدمي'),
+    _NavItem(icon: Icons.person_rounded,          emoji: '👤', label: 'حسابي'),
   ];
 
   @override
@@ -33,25 +34,23 @@ class AppBottomNav extends StatelessWidget {
           top: BorderSide(color: AppColors.borderSubtle, width: 0.5),
         ),
       ),
+      // ✅ Row عادي — Directionality الخارجي يعكسه تلقائياً RTL
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(
-          _items.length,
-              (i) => _NavButton(
-            item: _items[i],
-            isActive: currentIndex == i,
-            onTap: () => onTap(i),
-          ),
-        ),
+        children: List.generate(_items.length, (i) => _NavButton(
+          item: _items[i],
+          isActive: currentIndex == i,
+          onTap: () => onTap(i),
+        )),
       ),
     );
   }
 }
 
 class _NavItem {
-  const _NavItem({required this.icon, required this.label});
+  const _NavItem({required this.icon, required this.emoji, required this.label});
   final IconData icon;
-  final String label;
+  final String emoji, label;
 }
 
 class _NavButton extends StatelessWidget {
@@ -60,7 +59,6 @@ class _NavButton extends StatelessWidget {
     required this.isActive,
     required this.onTap,
   });
-
   final _NavItem item;
   final bool isActive;
   final VoidCallback onTap;
@@ -75,9 +73,11 @@ class _NavButton extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // ✅ أيقونة Material — واضحة ومتسقة
             Icon(
               item.icon,
-              size: AppConstants.iconM,
+              size: 22,
+              // ✅ المحدد: accent أخضر | غير محدد: رمادي
               color: isActive ? AppColors.accent : AppColors.textMuted,
             ),
             const SizedBox(height: 2),
@@ -91,8 +91,9 @@ class _NavButton extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 3),
+            // ✅ نقطة خضراء تحت المحدد
             AnimatedContainer(
-              duration: AppConstants.durationFast,
+              duration: const Duration(milliseconds: 200),
               width: isActive ? 4 : 0,
               height: isActive ? 4 : 0,
               decoration: const BoxDecoration(

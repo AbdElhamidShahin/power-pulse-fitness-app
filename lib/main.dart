@@ -9,10 +9,12 @@ import 'core/constants/app_strings.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ✅ Status bar شفاف + أيقونات داكنة (Light Theme)
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
+      statusBarColor:            Colors.transparent,
+      statusBarIconBrightness:   Brightness.dark,  // داكن على خلفية فاتحة
+      statusBarBrightness:       Brightness.light,  // iOS
     ),
   );
 
@@ -34,14 +36,21 @@ class PowerPulseApp extends StatelessWidget {
     return MaterialApp.router(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
-      routerConfig: AppRouter.router,
+      theme: AppTheme.light,
+
+      // ✅ RTL عربي كامل
       locale: const Locale('ar', 'EG'),
       builder: (context, child) {
         return Directionality(
           textDirection: TextDirection.rtl,
-          child: child!,
+          child: MediaQuery(
+            // ✅ منع تكبير الخط من إعدادات الهاتف (ثبات التصميم)
+            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+            child: child!,
+          ),
         );
       },
+
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -50,6 +59,8 @@ class PowerPulseApp extends StatelessWidget {
       supportedLocales: const [
         Locale('ar', 'EG'),
       ],
+
+      routerConfig: AppRouter.router,
     );
   }
 }

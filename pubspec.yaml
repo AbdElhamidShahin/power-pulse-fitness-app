@@ -5,10 +5,11 @@ version: 2.0.0+1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations: # 1. تعديل الاسم هنا بإضافة حرف s
+  flutter_localizations:
     sdk: flutter
 
   # ─── State Management ───────────────────────────────────────
@@ -39,9 +40,15 @@ dependencies:
   fl_chart: ^0.69.0
   lottie: ^3.1.2
 
+  # ─── Fonts (Cairo عربي) ──────────────────────────────────────
+  # ✅ الحل الأسهل: google_fonts تحمّل Cairo تلقائياً من النت
+  # أو استخدم الـ assets fonts أدناه (الأفضل للإنتاج)
+  google_fonts: ^6.2.1
+
   # ─── Utils ──────────────────────────────────────────────────
-  intl: ^0.20.2 # 2. تحديث الإصدار هنا وحذف السطر المتداخل من الأعلى
+  intl: ^0.20.2
   connectivity_plus: ^6.0.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -52,21 +59,35 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  # ════════════════════════════════════════════════════════════
+  # FONTS — Cairo العربي
+  # ════════════════════════════════════════════════════════════
+  # خيار 1 (موصى به): ضع ملفات Cairo في assets/fonts/
+  # حمّل من: https://fonts.google.com/specimen/Cairo
+  # الملفات المطلوبة:
+  #   Cairo-Regular.ttf   (400)
+  #   Cairo-Medium.ttf    (500)
+  #   Cairo-SemiBold.ttf  (600)
+  #   Cairo-Bold.ttf      (700)
+  #   Cairo-ExtraBold.ttf (800)
+  #   Cairo-Black.ttf     (900)
   fonts:
     - family: Cairo
       fonts:
-        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Cairo-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Cairo-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Cairo-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Cairo-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Cairo-ExtraBold.ttf
           weight: 800
-        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Cairo-Black.ttf
           weight: 900
 
   assets:
     - assets/images/
+    - assets/fonts/
+    - assets/GIF/
