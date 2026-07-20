@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -20,28 +21,28 @@ class FoodSearchCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppConstants.spaceM),
+        padding: EdgeInsets.all(AppConstants.spaceM.r),
         decoration: BoxDecoration(
           color: AppColors.bgSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusL),
+          borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
           border: Border.all(color: AppColors.borderSubtle),
         ),
         child: Row(
           children: [
-            // Icon
             Container(
-              width: 48,
-              height: 48,
+              width: 48.w,
+              height: 48.h,
               decoration: BoxDecoration(
                 color: AppColors.bgElevated,
-                borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
               ),
-              child: const Icon(Icons.restaurant_rounded,
-                  color: AppColors.textMuted, size: AppConstants.iconM),
+              child: Icon(
+                Icons.restaurant_rounded,
+                color: AppColors.textMuted,
+                size: AppConstants.iconM.r,
+              ),
             ),
-            const SizedBox(width: AppConstants.spaceM),
-
-            // Info
+            SizedBox(width: AppConstants.spaceM.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,27 +54,37 @@ class FoodSearchCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (food.brand != null) ...[
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2.h),
                     Text(food.brand!, style: AppTextStyles.bodySmall),
                   ],
-                  const SizedBox(height: AppConstants.spaceXS),
-                  // Macros
+                  SizedBox(height: AppConstants.spaceXS.h),
                   Row(
                     children: [
                       _MacroChip(
-                          '${food.calories.toInt()} سعرة', AppColors.accent),
-                      const SizedBox(width: AppConstants.spaceXS),
-                      _MacroChip('ب ${food.protein.toInt()}g', AppColors.info),
-                      const SizedBox(width: AppConstants.spaceXS),
-                      _MacroChip('ك ${food.carbs.toInt()}g', AppColors.warning),
+                        '${food.calories.toInt()} سعرة',
+                        AppColors.accent,
+                      ),
+                      SizedBox(width: AppConstants.spaceXS.w),
+                      _MacroChip(
+                        'ب ${food.protein.toInt()}g',
+                        AppColors.info,
+                      ),
+                      SizedBox(width: AppConstants.spaceXS.w),
+                      _MacroChip(
+                        'ك ${food.carbs.toInt()}g',
+                        AppColors.warning,
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-
-            const Icon(Icons.add_circle_outline_rounded,
-                color: AppColors.accent, size: AppConstants.iconM),
+            SizedBox(width: 8.w),
+            Icon(
+              Icons.add_circle_outline_rounded,
+              color: AppColors.accent,
+              size: AppConstants.iconM.r,
+            ),
           ],
         ),
       ),
@@ -89,10 +100,10 @@ class _MacroChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppConstants.radiusXS),
+        borderRadius: BorderRadius.circular(AppConstants.radiusXS.r),
       ),
       child: Text(
         label,

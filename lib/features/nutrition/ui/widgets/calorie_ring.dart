@@ -1,13 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/constants/app_constants.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// ════════════════════════════════════════════════════════════════
-// NutritionCalorieRing — حلقة السعرات
-// مطابقة للصورة: حلقة خضراء رفيعة + رقم السعرات في المنتصف
-// + نص "سعرة محروقة" تحت الرقم
-// ════════════════════════════════════════════════════════════════
+import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/theme/app_colors.dart';
+
 class NutritionCalorieRing extends StatelessWidget {
   const NutritionCalorieRing({
     super.key,
@@ -26,42 +23,39 @@ class NutritionCalorieRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width:  size,
+      width: size,
       height: size,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // ─── الحلقة ───────────────────────────────────────
           CustomPaint(
             size: Size(size, size),
             painter: _RingPainter(
-              progress:      _pct,
-              trackColor:    AppColors.bgElevated,
+              progress: _pct,
+              trackColor: AppColors.bgElevated,
               progressColor: _isOver ? AppColors.danger : AppColors.accent,
-              strokeWidth:   9,
+              strokeWidth: 9.r,
             ),
           ),
-
-          // ─── النص في المنتصف ──────────────────────────────
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 consumed.toInt().toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Cairo',
-                  fontSize: 22,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.w900,
                   color: AppColors.textPrimary,
                   height: 1.0,
                 ),
               ),
-              const SizedBox(height: 2),
-              const Text(
+              SizedBox(height: 2.h),
+              Text(
                 'سعرة محروقة',
                 style: TextStyle(
                   fontFamily: 'Cairo',
-                  fontSize: 9,
+                  fontSize: 9.sp,
                   color: AppColors.textMuted,
                 ),
               ),
@@ -73,7 +67,6 @@ class NutritionCalorieRing extends StatelessWidget {
   }
 }
 
-// ─── Ring Painter ─────────────────────────────────────────────
 class _RingPainter extends CustomPainter {
   const _RingPainter({
     required this.progress,
@@ -83,7 +76,8 @@ class _RingPainter extends CustomPainter {
   });
 
   final double progress;
-  final Color trackColor, progressColor;
+  final Color trackColor;
+  final Color progressColor;
   final double strokeWidth;
 
   @override
@@ -91,14 +85,12 @@ class _RingPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
     final basePaint = Paint()
-      ..style      = PaintingStyle.stroke
+      ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
-      ..strokeCap  = StrokeCap.round;
+      ..strokeCap = StrokeCap.round;
 
-    // Track (رمادي فاتح)
     canvas.drawCircle(center, radius, basePaint..color = trackColor);
 
-    // Progress (أخضر أو أحمر)
     if (progress > 0) {
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
@@ -115,9 +107,6 @@ class _RingPainter extends CustomPainter {
       old.progress != progress || old.progressColor != progressColor;
 }
 
-// ════════════════════════════════════════════════════════════════
-// CalorieRing — (اسم مبسّط للاستخدام من nutrition_screen القديم)
-// ════════════════════════════════════════════════════════════════
 class CalorieRing extends StatelessWidget {
   const CalorieRing({
     super.key,
@@ -126,20 +115,18 @@ class CalorieRing extends StatelessWidget {
     this.size = 110,
   });
 
-  final double consumed, goal;
+  final double consumed;
+  final double goal;
   final double size;
 
   @override
   Widget build(BuildContext context) => NutritionCalorieRing(
-        consumed: consumed,
-        goal:     goal,
-        size:     size,
-      );
+    consumed: consumed,
+    goal: goal,
+    size: size,
+  );
 }
 
-// ════════════════════════════════════════════════════════════════
-// MacroBar — شريط ماكرو مستقل (للاستخدام من الملفات الأخرى)
-// ════════════════════════════════════════════════════════════════
 class MacroBar extends StatelessWidget {
   const MacroBar({
     super.key,
@@ -150,35 +137,46 @@ class MacroBar extends StatelessWidget {
     required this.progress,
   });
 
-  final String label, unit;
-  final double value, progress;
+  final String label;
+  final String unit;
+  final double value;
+  final double progress;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('${value.toInt()} $unit',
-                style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 10,
-                    fontWeight: FontWeight.w600, color: color)),
-            Text(label,
-                style: const TextStyle(
-                    fontFamily: 'Cairo', fontSize: 10,
-                    color: AppColors.textMuted)),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 10.sp,
+                color: AppColors.textMuted,
+              ),
+            ),
+            Text(
+              '${value.toInt()} $unit',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: AppConstants.spaceXS),
+        SizedBox(height: AppConstants.spaceXS.h),
         ClipRRect(
-          borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+          borderRadius: BorderRadius.circular(AppConstants.radiusPill.r),
           child: LinearProgressIndicator(
-            value:           progress.clamp(0.0, 1.0),
-            minHeight:       4,
-            color:           color,
+            value: progress.clamp(0.0, 1.0),
+            minHeight: 4.h,
+            color: color,
             backgroundColor: AppColors.bgElevated,
           ),
         ),

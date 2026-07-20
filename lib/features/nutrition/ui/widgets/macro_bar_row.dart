@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/constants/app_constants.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// ════════════════════════════════════════════════════════════════
-// MacroBarRow — شريط الماكرو
-// مطابق للصورة: Label يمين | "current / goal" يسار | بار ملون
-// مثال: Protein    142g / 180g  [══════░░░]
-// ════════════════════════════════════════════════════════════════
+import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/theme/app_colors.dart';
+
 class MacroBarRow extends StatelessWidget {
   const MacroBarRow({
     super.key,
@@ -17,7 +14,8 @@ class MacroBarRow extends StatelessWidget {
   });
 
   final String label;
-  final double current, goal;
+  final double current;
+  final double goal;
   final Color color;
 
   double get _pct => goal > 0 ? (current / goal).clamp(0.0, 1.0) : 0;
@@ -27,41 +25,36 @@ class MacroBarRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ─── Label + Values ────────────────────────────────
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // القيم يسار
             Text(
-              '${current.toInt()}g / ${goal.toInt()}g',
-              style: const TextStyle(
+              label,
+              style: TextStyle(
                 fontFamily: 'Cairo',
-                fontSize: 10,
+                fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textMuted,
               ),
             ),
-            // التسمية يمين
             Text(
-              label,
-              style: const TextStyle(
+              '${current.toInt()}g / ${goal.toInt()}g',
+              style: TextStyle(
                 fontFamily: 'Cairo',
-                fontSize: 10,
+                fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textMuted,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 4),
-
-        // ─── Progress Bar ──────────────────────────────────
+        SizedBox(height: 4.h),
         ClipRRect(
-          borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+          borderRadius: BorderRadius.circular(AppConstants.radiusPill.r),
           child: LinearProgressIndicator(
-            value:           _pct,
-            minHeight:       5,
-            color:           color,
+            value: _pct,
+            minHeight: 5.h,
+            color: color,
             backgroundColor: AppColors.bgElevated,
           ),
         ),
