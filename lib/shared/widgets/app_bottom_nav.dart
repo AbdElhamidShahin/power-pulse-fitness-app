@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/theme/app_colors.dart';
 
-/// Bottom Nav — مطابق للتصميم
-/// الترتيب RTL: الرئيسية يمين ← التمارين ← التغذية ← تقدمي ← حسابي يسار
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
@@ -13,7 +12,6 @@ class AppBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  // نفس ترتيب الـ routes في GoRouter
   static const _items = [
     _Item('🏠', 'الرئيسية'),
     _Item('🏋️', 'التمارين'),
@@ -25,17 +23,17 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 72,
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFEFEFEF), width: 1)),
+        border: Border(
+          top: BorderSide(color: Color(0xFFEFEFEF), width: 1),
+        ),
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: SizedBox(
+          height: 60.h,
           child: Row(
-            // RTL: الرئيسية على اليمين
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(_items.length, (i) {
               final active = currentIndex == i;
@@ -43,34 +41,41 @@ class AppBottomNav extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => onTap(i),
                   behavior: HitTestBehavior.opaque,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(_items[i].emoji,
-                          style: TextStyle(fontSize: active ? 22 : 20)),
-                      const SizedBox(height: 2),
-                      Text(
-                        _items[i].label,
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 9,
-                          fontWeight: active ? FontWeight.w700 : FontWeight.w400,
-                          color: active
-                              ? const Color(0xFF1A1A1A)
-                              : const Color(0xFF8A8A8A),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _items[i].emoji,
+                          style: TextStyle(fontSize: active ? 20.sp : 18.sp),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Container(
-                        width: active ? 4 : 0,
-                        height: active ? 4 : 0,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFA8E063),
-                          shape: BoxShape.circle,
+                        SizedBox(height: 2.h),
+                        Text(
+                          _items[i].label,
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10.sp,
+                            fontWeight:
+                            active ? FontWeight.w700 : FontWeight.w400,
+                            color: active
+                                ? const Color(0xFF1A1A1A)
+                                : const Color(0xFF8A8A8A),
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 3.h),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: active ? 4.r : 0,
+                          height: active ? 4.r : 0,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFA8E063),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
