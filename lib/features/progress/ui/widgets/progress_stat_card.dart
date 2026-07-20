@@ -1,87 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
 
 class ProgressStatCard extends StatelessWidget {
   const ProgressStatCard({
     super.key,
+    required this.emoji,
     required this.value,
     required this.label,
-    required this.icon,
-    this.iconColor,
-    this.suffix,
-    this.sub,
-    this.subColor,
+    required this.valueColor,
+    this.valueFontSize = 28,
   });
 
+  final String emoji;
   final String value;
   final String label;
-  final IconData icon;
-  final Color? iconColor;
-  final String? suffix;
-  final String? sub;
-  final Color? subColor;
+  final Color valueColor;
+  final double valueFontSize;
 
   @override
   Widget build(BuildContext context) {
-    final color = iconColor ?? AppColors.accent;
     return Container(
-      padding: const EdgeInsets.all(AppConstants.spaceL),
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
-        border: Border.all(color: AppColors.borderSubtle),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppConstants.radiusS),
-            ),
-            child: Icon(icon, color: color, size: AppConstants.iconS),
+          Text(
+            emoji,
+            style: TextStyle(fontSize: 20.sp),
           ),
-          const SizedBox(height: AppConstants.spaceM),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary,
-                  height: 1.0,
-                ),
-              ),
-              if (suffix != null) ...[
-                const SizedBox(width: 2),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(suffix!,
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.textMuted)),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: AppConstants.spaceXS),
-          Text(label, style: AppTextStyles.bodySmall),
-          if (sub != null) ...[
-            const SizedBox(height: 2),
-            Text(
-              sub!,
-              style: AppTextStyles.labelSmall.copyWith(
-                color: subColor ?? AppColors.accent,
-              ),
+          SizedBox(height: 8.h),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: valueFontSize.sp,
+              fontWeight: FontWeight.w900,
+              color: valueColor,
+              height: 1.0,
             ),
-          ],
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 11.sp,
+              color: const Color(0xFF8A8A8A),
+            ),
+          ),
         ],
       ),
     );

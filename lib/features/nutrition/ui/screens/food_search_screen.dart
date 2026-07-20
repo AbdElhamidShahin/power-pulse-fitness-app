@@ -66,7 +66,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       decoration: BoxDecoration(
                         color: AppColors.bgElevated,
                         borderRadius:
-                        BorderRadius.circular(AppConstants.radiusM.r),
+                            BorderRadius.circular(AppConstants.radiusM.r),
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
@@ -113,16 +113,16 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   FoodSearchIdle() => const _IdleView(),
                   FoodSearchLoading() => const _LoadingView(),
                   FoodSearchError(:final message) =>
-                      _ErrorView(message: message),
+                    _ErrorView(message: message),
                   FoodSearchLoaded(:final results) when results.isEmpty =>
-                  const _EmptyView(),
+                    const _EmptyView(),
                   FoodSearchLoaded(:final results, :final hasMore) =>
-                      _ResultsList(
-                        results: results,
-                        hasMore: hasMore,
-                        scroll: _scroll,
-                        mealType: widget.mealType,
-                      ),
+                    _ResultsList(
+                      results: results,
+                      hasMore: hasMore,
+                      scroll: _scroll,
+                      mealType: widget.mealType,
+                    ),
                 },
               ),
             ),
@@ -285,19 +285,19 @@ class _AddMealSheetState extends State<_AddMealSheet> {
                     onPressed: isLoading
                         ? null
                         : () => context.read<AddMealCubit>().addMeal(
-                      food: widget.food,
-                      mealType: widget.mealType,
-                      quantity: _quantity,
-                    ),
+                              food: widget.food,
+                              mealType: widget.mealType,
+                              quantity: _quantity,
+                            ),
                     child: isLoading
                         ? SizedBox(
-                      width: 20.w,
-                      height: 20.h,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.textOnAccent,
-                      ),
-                    )
+                            width: 20.w,
+                            height: 20.h,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.textOnAccent,
+                            ),
+                          )
                         : const Text('إضافة للوجبة'),
                   ),
                 );
@@ -315,23 +315,23 @@ class _IdleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.search_rounded,
-          color: AppColors.textMuted,
-          size: 48.r,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.search_rounded,
+              color: AppColors.textMuted,
+              size: 48.r,
+            ),
+            SizedBox(height: AppConstants.spaceM.h),
+            Text(
+              'ابحث عن طعام لإضافته',
+              style:
+                  AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+            ),
+          ],
         ),
-        SizedBox(height: AppConstants.spaceM.h),
-        Text(
-          'ابحث عن طعام لإضافته',
-          style: AppTextStyles.bodyMedium
-              .copyWith(color: AppColors.textMuted),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 class _LoadingView extends StatelessWidget {
@@ -339,8 +339,8 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Center(
-    child: CircularProgressIndicator(color: AppColors.accent),
-  );
+        child: CircularProgressIndicator(color: AppColors.accent),
+      );
 }
 
 class _EmptyView extends StatelessWidget {
@@ -348,23 +348,23 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.no_food_rounded,
-          color: AppColors.textMuted,
-          size: 48.r,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.no_food_rounded,
+              color: AppColors.textMuted,
+              size: 48.r,
+            ),
+            SizedBox(height: AppConstants.spaceM.h),
+            Text(
+              'لا توجد نتائج',
+              style:
+                  AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+            ),
+          ],
         ),
-        SizedBox(height: AppConstants.spaceM.h),
-        Text(
-          'لا توجد نتائج',
-          style: AppTextStyles.bodyMedium
-              .copyWith(color: AppColors.textMuted),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 class _ErrorView extends StatelessWidget {
@@ -373,6 +373,6 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Text(message, style: AppTextStyles.bodyMedium),
-  );
+        child: Text(message, style: AppTextStyles.bodyMedium),
+      );
 }
