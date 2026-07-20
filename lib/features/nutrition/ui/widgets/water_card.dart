@@ -62,7 +62,7 @@ class WaterCard extends StatelessWidget {
               const Row(
                 children: [
                   Text(
-                    'WATER',
+                    'الماء',
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 11,

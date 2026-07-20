@@ -60,14 +60,12 @@ class FoodSearchCard extends StatelessWidget {
                   // Macros
                   Row(
                     children: [
-                      _MacroChip('${food.calories.toInt()} سعرة',
-                          AppColors.accent),
+                      _MacroChip(
+                          '${food.calories.toInt()} سعرة', AppColors.accent),
                       const SizedBox(width: AppConstants.spaceXS),
-                      _MacroChip('ب ${food.protein.toInt()}g',
-                          AppColors.info),
+                      _MacroChip('ب ${food.protein.toInt()}g', AppColors.info),
                       const SizedBox(width: AppConstants.spaceXS),
-                      _MacroChip('ك ${food.carbs.toInt()}g',
-                          AppColors.warning),
+                      _MacroChip('ك ${food.carbs.toInt()}g', AppColors.warning),
                     ],
                   ),
                 ],

@@ -6,7 +6,7 @@ import '../../../../../core/constants/app_constants.dart';
 // ════════════════════════════════════════════════════════════════
 // NutritionCalorieRing — حلقة السعرات
 // مطابقة للصورة: حلقة خضراء رفيعة + رقم السعرات في المنتصف
-// + نص "kcal eaten" تحت الرقم
+// + نص "سعرة محروقة" تحت الرقم
 // ════════════════════════════════════════════════════════════════
 class NutritionCalorieRing extends StatelessWidget {
   const NutritionCalorieRing({
@@ -58,7 +58,7 @@ class NutritionCalorieRing extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               const Text(
-                'kcal eaten',
+                'سعرة محروقة',
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 9,
@@ -157,7 +157,7 @@ class MacroBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

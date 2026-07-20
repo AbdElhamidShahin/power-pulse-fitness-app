@@ -8,7 +8,7 @@ import '../../../../../shared/widgets/pp_input.dart';
 import '../../data/models/food_entity.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
-import '../widgets/food_search_card.dart';
+import '../widgets/food_search_card.dart' hide AppConstants;
 
 class FoodSearchScreen extends StatefulWidget {
   const FoodSearchScreen({super.key, required this.mealType});

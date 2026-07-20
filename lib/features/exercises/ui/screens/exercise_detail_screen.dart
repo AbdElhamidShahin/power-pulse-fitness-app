@@ -146,7 +146,7 @@ class _DetailContent extends StatelessWidget {
                       (e) => Padding(
                     padding: const EdgeInsets.only(bottom: AppConstants.spaceM),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       textDirection: TextDirection.rtl,
                       children: [
                         Container(

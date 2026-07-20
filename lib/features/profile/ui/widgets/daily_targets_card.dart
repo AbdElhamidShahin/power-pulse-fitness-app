@@ -20,7 +20,7 @@ class DailyTargetsCard extends StatelessWidget {
         border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(
             children: [
@@ -33,7 +33,7 @@ class DailyTargetsCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.accentDim,
                   borderRadius:
-                      BorderRadius.circular(AppConstants.radiusPill),
+                  BorderRadius.circular(AppConstants.radiusPill),
                   border: Border.all(color: AppColors.borderAccent),
                 ),
                 child: Text(

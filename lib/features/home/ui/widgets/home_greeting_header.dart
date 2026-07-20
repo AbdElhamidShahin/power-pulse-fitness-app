@@ -45,7 +45,7 @@ class HomeGreetingHeader extends StatelessWidget {
         const SizedBox(width: AppConstants.spaceM),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 greeting,

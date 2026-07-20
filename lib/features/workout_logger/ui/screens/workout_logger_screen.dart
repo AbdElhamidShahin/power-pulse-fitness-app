@@ -35,7 +35,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       builder: (context, state) => switch (state) {
         WorkoutLoggerInitial() ||
         WorkoutLoggerLoading() =>
-          const _LoadingView(),
+        const _LoadingView(),
         WorkoutLoggerIdle() => const _IdleView(),
         WorkoutLoggerActive(session: final s) => _ActiveView(session: s),
         WorkoutLoggerFinished() => const _LoadingView(),
@@ -51,7 +51,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+        BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => _SummarySheet(session: session),
     ).then((_) => context.read<WorkoutLoggerCubit>().reset());
@@ -83,7 +83,7 @@ class _IdleViewState extends State<_IdleView> {
         child: Padding(
           padding: const EdgeInsets.all(AppConstants.screenPaddingH),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Row(
                 children: [
@@ -130,19 +130,19 @@ class _IdleViewState extends State<_IdleView> {
                         fillColor: AppColors.bgSurface,
                         border: OutlineInputBorder(
                           borderRadius:
-                              BorderRadius.circular(AppConstants.radiusL),
+                          BorderRadius.circular(AppConstants.radiusL),
                           borderSide:
-                              const BorderSide(color: AppColors.borderSubtle),
+                          const BorderSide(color: AppColors.borderSubtle),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius:
-                              BorderRadius.circular(AppConstants.radiusL),
+                          BorderRadius.circular(AppConstants.radiusL),
                           borderSide:
-                              const BorderSide(color: AppColors.borderSubtle),
+                          const BorderSide(color: AppColors.borderSubtle),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius:
-                              BorderRadius.circular(AppConstants.radiusL),
+                          BorderRadius.circular(AppConstants.radiusL),
                           borderSide: const BorderSide(color: AppColors.accent),
                         ),
                       ),
@@ -192,37 +192,37 @@ class _ActiveView extends StatelessWidget {
             Expanded(
               child: session.exercises.isEmpty
                   ? _EmptyExercises(
-                      onAdd: () => _showAddExercise(context, cubit))
+                  onAdd: () => _showAddExercise(context, cubit))
                   : ListView.builder(
-                      padding:
-                          const EdgeInsets.all(AppConstants.screenPaddingH),
-                      itemCount: session.exercises.length,
-                      itemBuilder: (_, i) {
-                        final ex = session.exercises[i];
-                        return ExerciseLoggerCard(
-                          exercise: ex,
-                          onUpdateSet: ({
-                            required exerciseId,
-                            required setIndex,
-                            reps,
-                            weight,
-                            isCompleted,
-                          }) =>
-                              cubit.updateSet(
-                            exerciseId: exerciseId,
-                            setIndex: setIndex,
-                            reps: reps,
-                            weight: weight,
-                            isCompleted: isCompleted,
-                          ),
-                          onAddSet: () => cubit.addSet(ex.exerciseId),
-                          onRemoveSet: (idx) =>
-                              cubit.removeSet(ex.exerciseId, idx),
-                          onRemoveExercise: () =>
-                              cubit.removeExercise(ex.exerciseId),
-                        );
-                      },
-                    ),
+                padding:
+                const EdgeInsets.all(AppConstants.screenPaddingH),
+                itemCount: session.exercises.length,
+                itemBuilder: (_, i) {
+                  final ex = session.exercises[i];
+                  return ExerciseLoggerCard(
+                    exercise: ex,
+                    onUpdateSet: ({
+                      required exerciseId,
+                      required setIndex,
+                      reps,
+                      weight,
+                      isCompleted,
+                    }) =>
+                        cubit.updateSet(
+                          exerciseId: exerciseId,
+                          setIndex: setIndex,
+                          reps: reps,
+                          weight: weight,
+                          isCompleted: isCompleted,
+                        ),
+                    onAddSet: () => cubit.addSet(ex.exerciseId),
+                    onRemoveSet: (idx) =>
+                        cubit.removeSet(ex.exerciseId, idx),
+                    onRemoveExercise: () =>
+                        cubit.removeExercise(ex.exerciseId),
+                  );
+                },
+              ),
             ),
 
             // ─── Bottom Actions ───────────────────────────
@@ -244,7 +244,7 @@ class _ActiveView extends StatelessWidget {
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+        BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => _AddExerciseSheet(
         onAdd: (exercise) {
@@ -273,7 +273,7 @@ class _ActiveHeaderState extends State<_ActiveHeader> {
   void initState() {
     super.initState();
     _ticker = Stream.periodic(const Duration(seconds: 1),
-        (_) => DateTime.now().difference(widget.session.startTime).inSeconds);
+            (_) => DateTime.now().difference(widget.session.startTime).inSeconds);
   }
 
   String _fmt(int seconds) {
@@ -295,7 +295,7 @@ class _ActiveHeaderState extends State<_ActiveHeader> {
         children: [
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(widget.session.name,
                     style: Theme.of(context).textTheme.headlineMedium),
@@ -490,7 +490,7 @@ class _AddExerciseSheetState extends State<_AddExerciseSheet> {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text('إضافة تمرين',
               style: Theme.of(context).textTheme.headlineMedium),
@@ -523,7 +523,7 @@ class _AddExerciseSheetState extends State<_AddExerciseSheet> {
               scrollDirection: Axis.horizontal,
               itemCount: _bodyParts.length,
               separatorBuilder: (_, __) =>
-                  const SizedBox(width: AppConstants.spaceS),
+              const SizedBox(width: AppConstants.spaceS),
               itemBuilder: (_, i) {
                 final part = _bodyParts[i];
                 final selected = part == _selectedBodyPart;
@@ -536,7 +536,7 @@ class _AddExerciseSheetState extends State<_AddExerciseSheet> {
                     decoration: BoxDecoration(
                       color: selected ? AppColors.accent : AppColors.bgElevated,
                       borderRadius:
-                          BorderRadius.circular(AppConstants.radiusPill),
+                      BorderRadius.circular(AppConstants.radiusPill),
                     ),
                     alignment: Alignment.center,
                     child: Text(

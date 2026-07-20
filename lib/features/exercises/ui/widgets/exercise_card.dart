@@ -49,7 +49,7 @@ class ExerciseCard extends StatelessWidget {
             // ✅ المعلومات في المنتصف — نص يمين
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // ✅ start = يمين في RTL
+                crossAxisAlignment: CrossAxisAlignment.end, // ✅ start = يمين في RTL
                 children: [
                   Text(
                     displayName,

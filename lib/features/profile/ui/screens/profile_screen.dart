@@ -357,30 +357,30 @@ class _SettingRow extends StatelessWidget {
           children: [
             toggle != null
                 ? Container(
-                    width: 40,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: toggle! ? AppColors.accent : AppColors.bgElevated,
-                      borderRadius: BorderRadius.circular(11),
-                    ),
-                    child: AnimatedAlign(
-                      duration: const Duration(milliseconds: 200),
-                      alignment: toggle!
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        width: 18,
-                        height: 18,
-                        margin: const EdgeInsets.all(2),
-                        decoration: const BoxDecoration(
-                          color: AppColors.bgSurface,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  )
+              width: 40,
+              height: 22,
+              decoration: BoxDecoration(
+                color: toggle! ? AppColors.accent : AppColors.bgElevated,
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: AnimatedAlign(
+                duration: const Duration(milliseconds: 200),
+                alignment: toggle!
+                    ? Alignment.centerRight
+                    : Alignment.centerLeft,
+                child: Container(
+                  width: 18,
+                  height: 18,
+                  margin: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(
+                    color: AppColors.bgSurface,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            )
                 : const Icon(Icons.arrow_back_ios_rounded,
-                    color: AppColors.textMuted, size: AppConstants.iconXS),
+                color: AppColors.textMuted, size: AppConstants.iconXS),
             Row(
               children: [
                 Text(label, style: AppTextStyles.titleMedium),
@@ -410,16 +410,16 @@ class _ErrorView extends StatelessWidget {
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.error_outline_rounded,
-              color: AppColors.danger, size: 48),
-          const SizedBox(height: AppConstants.spaceM),
-          Text(message, style: AppTextStyles.bodyMedium),
-          const SizedBox(height: AppConstants.spaceL),
-          GestureDetector(
-            onTap: () => context.read<ProfileCubit>().load(),
-            child: Text(AppStrings.tryAgain, style: AppTextStyles.accentLabel),
-          ),
-        ]),
-      );
+    child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.error_outline_rounded,
+          color: AppColors.danger, size: 48),
+      const SizedBox(height: AppConstants.spaceM),
+      Text(message, style: AppTextStyles.bodyMedium),
+      const SizedBox(height: AppConstants.spaceL),
+      GestureDetector(
+        onTap: () => context.read<ProfileCubit>().load(),
+        child: Text(AppStrings.tryAgain, style: AppTextStyles.accentLabel),
+      ),
+    ]),
+  );
 }

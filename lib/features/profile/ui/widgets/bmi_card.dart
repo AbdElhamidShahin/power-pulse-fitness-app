@@ -11,11 +11,11 @@ class BmiCard extends StatelessWidget {
   final UserProfile profile;
 
   Color get _bmiColor => switch (profile.bmi) {
-        < 18.5 => AppColors.info,
-        < 25.0 => AppColors.success,
-        < 30.0 => AppColors.warning,
-        _      => AppColors.danger,
-      };
+    < 18.5 => AppColors.info,
+    < 25.0 => AppColors.success,
+    < 30.0 => AppColors.warning,
+    _      => AppColors.danger,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class BmiCard extends StatelessWidget {
         border: Border.all(color: AppColors.borderSubtle),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text('مؤشر كتلة الجسم (BMI)',
               style: Theme.of(context).textTheme.headlineSmall),
@@ -54,7 +54,7 @@ class BmiCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: _bmiColor.withValues(alpha: 0.15),
                     borderRadius:
-                        BorderRadius.circular(AppConstants.radiusPill),
+                    BorderRadius.circular(AppConstants.radiusPill),
                     border: Border.all(
                         color: _bmiColor.withValues(alpha: 0.3)),
                   ),
@@ -117,7 +117,7 @@ class _BmiScaleBar extends StatelessWidget {
               // Gradient track
               ClipRRect(
                 borderRadius:
-                    BorderRadius.circular(AppConstants.radiusPill),
+                BorderRadius.circular(AppConstants.radiusPill),
                 child: Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
@@ -209,10 +209,10 @@ class _QuickStat extends StatelessWidget {
 class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
-        width: 0.5,
-        height: 36,
-        color: AppColors.borderSubtle,
-        margin: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spaceS),
-      );
+    width: 0.5,
+    height: 36,
+    color: AppColors.borderSubtle,
+    margin: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spaceS),
+  );
 }

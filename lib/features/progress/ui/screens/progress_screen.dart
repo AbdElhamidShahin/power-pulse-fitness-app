@@ -30,7 +30,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ProgressInitial() || ProgressLoading() => const _LoadingView(),
             ProgressError(:final message) => _ErrorView(message: message),
             ProgressLoaded(:final summary, :final period) =>
-              _LoadedView(summary: summary, period: period),
+                _LoadedView(summary: summary, period: period),
           },
         ),
       ),
@@ -58,14 +58,14 @@ class _LoadedView extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 100),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             // ─── Header ──────────────────────────────────────
             const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'YOUR JOURNEY',
+                  'رحلتك الرياضية',
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11,
@@ -76,7 +76,7 @@ class _LoadedView extends StatelessWidget {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  'Progress 📈',
+                  'تقدمي 📈',
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 28,
@@ -93,7 +93,7 @@ class _LoadedView extends StatelessWidget {
               children: ProgressPeriod.values.map((p) {
                 final active = period == p;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.only(left: 8),
                   child: GestureDetector(
                     onTap: () => context.read<ProgressCubit>().changePeriod(p),
                     child: Container(
@@ -128,7 +128,7 @@ class _LoadedView extends StatelessWidget {
                   child: _StatCard(
                     emoji: '🔥',
                     value: '14',
-                    label: 'Day Streak',
+                    label: 'يوم متتالي',
                     valueColor: AppColors.warning,
                   ),
                 ),
@@ -137,7 +137,7 @@ class _LoadedView extends StatelessWidget {
                   child: _StatCard(
                     emoji: '🏋️',
                     value: summary.totalWorkouts.toString(),
-                    label: 'Workouts',
+                    label: 'تمرين',
                     valueColor: AppColors.accent,
                   ),
                 ),
@@ -152,7 +152,7 @@ class _LoadedView extends StatelessWidget {
                     value: summary.totalCaloriesBurned > 999
                         ? '${(summary.totalCaloriesBurned / 1000).toStringAsFixed(0)},${(summary.totalCaloriesBurned % 1000).toInt().toString().padLeft(3, '0')}'
                         : summary.totalCaloriesBurned.toInt().toString(),
-                    label: 'Total kcal',
+                    label: 'إجمالي السعرات',
                     valueColor: AppColors.danger,
                     valueFontSize: 22,
                   ),
@@ -162,7 +162,7 @@ class _LoadedView extends StatelessWidget {
                   child: _StatCard(
                     emoji: '⏱',
                     value: '${totalHours}h',
-                    label: 'Active Time',
+                    label: 'وقت النشاط',
                     valueColor: AppColors.info,
                   ),
                 ),
@@ -178,10 +178,10 @@ class _LoadedView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   const Text(
-                    'WORKOUTS THIS WEEK',
+                    'تمارين هذا الأسبوع',
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 10,
@@ -209,7 +209,7 @@ class _LoadedView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => _showWeightSheet(context),
                   child: const Text(
-                    'Update',
+                    'تحديث',
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 13,
@@ -219,7 +219,7 @@ class _LoadedView extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  'BODY STATS',
+                  'قياسات الجسم',
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 10,
@@ -235,23 +235,23 @@ class _LoadedView extends StatelessWidget {
             // Weight
             _BodyStatRow(
               emoji: '⚖️',
-              label: 'Weight',
+              label: 'الوزن',
               value: summary.currentWeight != null
-                  ? '${summary.currentWeight!.toStringAsFixed(0)} kg'
+                  ? '${summary.currentWeight!.toStringAsFixed(0)} كجم'
                   : '--',
               change: weightChange != null
-                  ? '${weightChange < 0 ? '' : '+'}${weightChange.toStringAsFixed(0)} kg'
+                  ? '${weightChange < 0 ? '' : '+'}${weightChange.toStringAsFixed(0)} كجم'
                   : null,
               changeColor:
-                  (weightChange ?? 0) < 0 ? AppColors.accent : AppColors.danger,
+              (weightChange ?? 0) < 0 ? AppColors.accent : AppColors.danger,
             ),
             const SizedBox(height: 8),
 
             // Height
             _BodyStatRow(
               emoji: '📏',
-              label: 'Height',
-              value: '178 cm',
+              label: 'الطول',
+              value: '178 سم',
               change: '—',
               changeColor: AppColors.textMuted,
             ),
@@ -260,11 +260,11 @@ class _LoadedView extends StatelessWidget {
             // BMI
             _BodyStatRow(
               emoji: '🧮',
-              label: 'BMI',
+              label: 'مؤشر كتلة الجسم',
               value: summary.currentWeight != null
                   ? (summary.currentWeight! / (1.78 * 1.78)).toStringAsFixed(1)
                   : '--',
-              change: 'Normal',
+              change: 'وزن طبيعي',
               changeColor: AppColors.accent,
             ),
             const SizedBox(height: 8),
@@ -325,7 +325,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(emoji, style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 8),
@@ -386,7 +386,7 @@ class _BodyStatRow extends StatelessWidget {
           const SizedBox(width: 14),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   label,
@@ -431,7 +431,7 @@ class _WeeklyBarChart extends StatelessWidget {
   const _WeeklyBarChart({required this.points});
   final List<ChartPoint> points;
 
-  static const _days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  static const _days = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
 
   @override
   Widget build(BuildContext context) {
@@ -439,11 +439,11 @@ class _WeeklyBarChart extends StatelessWidget {
     final data = points.isNotEmpty
         ? points
         : List.generate(
-            7,
+        7,
             (i) => ChartPoint(
-                  x: i.toDouble(),
-                  y: [1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.5][i],
-                ));
+          x: i.toDouble(),
+          y: [1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.5][i],
+        ));
 
     final maxY = data.fold(0.0, (m, p) => p.y > m ? p.y : m);
 
@@ -452,7 +452,7 @@ class _WeeklyBarChart extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: List.generate(7, (i) {
         final point =
-            i < data.length ? data[i] : ChartPoint(x: i.toDouble(), y: 0);
+        i < data.length ? data[i] : ChartPoint(x: i.toDouble(), y: 0);
         final hasWorkout = point.y > 0;
         final heightFraction = maxY > 0 ? (point.y / maxY) : 0.0;
 
@@ -516,7 +516,7 @@ class _WeightSheetState extends State<_WeightSheet> {
             16, 24, 16, MediaQuery.of(context).viewInsets.bottom + 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             // Handle
             Center(
@@ -545,7 +545,7 @@ class _WeightSheetState extends State<_WeightSheet> {
               autofocus: true,
               textDirection: TextDirection.ltr,
               keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              const TextInputType.numberWithOptions(decimal: true),
               style: const TextStyle(fontFamily: 'Cairo', fontSize: 16),
               decoration: InputDecoration(
                 labelText: 'الوزن',
@@ -573,25 +573,25 @@ class _WeightSheetState extends State<_WeightSheet> {
                   onPressed: state is WeightLogLoading
                       ? null
                       : () {
-                          final w = double.tryParse(_ctrl.text);
-                          if (w != null && w > 0) {
-                            context.read<WeightLogCubit>().addEntry(w);
-                          }
-                        },
+                    final w = double.tryParse(_ctrl.text);
+                    if (w != null && w > 0) {
+                      context.read<WeightLogCubit>().addEntry(w);
+                    }
+                  },
                   child: state is WeightLogLoading
                       ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              color: Colors.white, strokeWidth: 2),
-                        )
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 2),
+                  )
                       : const Text(
-                          'حفظ',
-                          style: TextStyle(
-                              fontFamily: 'Cairo',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700),
-                        ),
+                    'حفظ',
+                    style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
             ),
@@ -617,16 +617,16 @@ class _ErrorView extends StatelessWidget {
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.error_outline_rounded,
-              color: AppColors.danger, size: 48),
-          const SizedBox(height: 16),
-          Text(message, style: AppTextStyles.bodyMedium),
-          const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () => context.read<ProgressCubit>().load(),
-            child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
-          ),
-        ]),
-      );
+    child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.error_outline_rounded,
+          color: AppColors.danger, size: 48),
+      const SizedBox(height: 16),
+      Text(message, style: AppTextStyles.bodyMedium),
+      const SizedBox(height: 16),
+      GestureDetector(
+        onTap: () => context.read<ProgressCubit>().load(),
+        child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
+      ),
+    ]),
+  );
 }
