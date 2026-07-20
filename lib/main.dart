@@ -10,7 +10,6 @@ import 'core/constants/app_strings.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1. ضمان تهيئة قياسات الشاشة قبل بدء التطبيق
   await ScreenUtil.ensureScreenSize();
 
   SystemChrome.setSystemUIOverlayStyle(

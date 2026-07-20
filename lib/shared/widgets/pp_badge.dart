@@ -5,7 +5,6 @@ import '../../core/constants/app_strings.dart';
 
 enum PPBadgeSize { small, medium }
 
-/// Badge عام قابل للتخصيص
 class PPBadge extends StatelessWidget {
   const PPBadge({
     super.key,
@@ -57,7 +56,6 @@ class PPBadge extends StatelessWidget {
   }
 }
 
-/// Badge مجموعة العضلة
 class MuscleGroupBadge extends StatelessWidget {
   const MuscleGroupBadge({super.key, required this.muscle, this.size = PPBadgeSize.medium});
 
@@ -91,7 +89,6 @@ class MuscleGroupBadge extends StatelessWidget {
       PPBadge(label: _label(), color: _color(), size: size);
 }
 
-/// Badge مستوى الصعوبة
 class LevelBadge extends StatelessWidget {
   const LevelBadge({super.key, required this.level, this.size = PPBadgeSize.medium});
 

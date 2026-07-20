@@ -6,7 +6,6 @@ import '../../core/constants/app_constants.dart';
 enum PPButtonVariant { primary, outline, ghost }
 enum PPButtonSize { large, medium, small }
 
-/// الزرار الأساسي في Power Pulse
 class PPButton extends StatelessWidget {
   const PPButton({
     super.key,

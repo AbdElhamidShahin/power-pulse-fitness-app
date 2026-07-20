@@ -10,7 +10,6 @@ final class GetExercisesUseCase {
     int limit = 20,
     int offset = 0,
   }) async {
-    // الداتا كلها محلية الآن — بنعمل pagination في الـ repository
     final result = await _repository.getExercises();
     return result.fold(
       onFailure: (f) => Failure(f),
@@ -53,7 +52,6 @@ final class GetBodyPartListUseCase {
   Future<ApiResult<List<String>>> call() => _repository.getBodyPartList();
 }
 
-/// RefreshExercisesUseCase — يمسح الـ cache ويحمّل من CDN
 final class RefreshExercisesUseCase {
   const RefreshExercisesUseCase(this._repository);
   final ExerciseRepository _repository;
