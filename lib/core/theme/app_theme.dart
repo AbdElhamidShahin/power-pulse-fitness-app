@@ -172,6 +172,5 @@ abstract class AppTheme {
     ),
   );
 
-  // للتوافق مع الكود القديم
   static ThemeData get dark => light;
 }

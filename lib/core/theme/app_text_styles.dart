@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Power Pulse — Text Styles
-/// Font: Cairo — Arabic first
+
 abstract class AppTextStyles {
   AppTextStyles._();
 
