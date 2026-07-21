@@ -1,6 +1,5 @@
 import '../../data/models/food_entity.dart';
 
-/// NutritionState — شاشة التغذية الرئيسية
 sealed class NutritionState {
   const NutritionState();
 }
@@ -26,7 +25,6 @@ final class NutritionError extends NutritionState {
   final String message;
 }
 
-/// FoodSearchState — البحث عن طعام
 sealed class FoodSearchState {
   const FoodSearchState();
 }
@@ -69,7 +67,6 @@ final class FoodSearchError extends FoodSearchState {
   final String message;
 }
 
-/// AddMealState — إضافة وجبة
 sealed class AddMealState {
   const AddMealState();
 }

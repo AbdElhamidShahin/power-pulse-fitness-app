@@ -1,5 +1,5 @@
-/// Exercise Entity — Domain Layer
-/// Pure Dart — Zero Flutter imports
+
+
 final class Exercise {
   const Exercise({
     required this.id,

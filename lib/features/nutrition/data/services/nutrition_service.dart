@@ -29,7 +29,7 @@ final class NutritionServiceImpl implements NutritionService {
           'page': page,
           'page_size': 20,
           'fields':
-              '_id,product_name,product_name_ar,brands,nutriments,serving_quantity,image_url',
+          '_id,product_name,product_name_ar,brands,nutriments,serving_quantity,image_url',
         },
       );
 
@@ -38,6 +38,8 @@ final class NutritionServiceImpl implements NutritionService {
       return FoodModel.toEntityList(products);
     } on DioException catch (e) {
       throw mapDioException(e);
+    } catch (e) {
+      throw ServerException(message: 'خطأ في معالجة بيانات البحث: $e');
     }
   }
 
@@ -48,12 +50,18 @@ final class NutritionServiceImpl implements NutritionService {
         '${ApiEndpoints.foodByBarcode}/$barcode.json',
       );
       final data = response.data as Map<String, dynamic>;
-      if (data['status'] != 1) return null;
+
+      final status = data['status'];
+      if (status != 1 && status != '1') return null;
+
       final product = data['product'] as Map<String, dynamic>?;
       if (product == null) return null;
+
       return FoodModel.fromOpenFoodFacts(product).toEntity();
     } on DioException catch (e) {
       throw mapDioException(e);
+    } catch (e) {
+      throw ServerException(message: 'خطأ في معالجة الـ Barcode: $e');
     }
   }
 }
