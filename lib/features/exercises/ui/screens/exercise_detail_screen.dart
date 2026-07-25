@@ -34,7 +34,8 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
           ExerciseDetailInitial() ||
           ExerciseDetailLoading() => const _DetailLoading(),
           ExerciseDetailError(:final message) => _DetailError(message: message),
-          ExerciseDetailLoaded(:final exercise) => _DetailContent(exercise: exercise),
+          ExerciseDetailLoaded(:final exercise) =>
+              _DetailContent(exercise: exercise),
         },
       ),
     );
@@ -48,7 +49,6 @@ class _DetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // عربي لو موجود، وإلا إنجليزي
     final displayName      = exercise.nameAr.isNotEmpty      ? exercise.nameAr      : exercise.name;
     final displayBodyPart  = exercise.bodyPartAr.isNotEmpty  ? exercise.bodyPartAr  : exercise.bodyPart;
     final displayTarget    = exercise.targetAr.isNotEmpty    ? exercise.targetAr    : exercise.target;
@@ -63,6 +63,10 @@ class _DetailContent extends StatelessWidget {
           expandedHeight: 280,
           pinned: true,
           backgroundColor: AppColors.bgDeep,
+          // ✅ Issue 3 fix: استبدال Icons.arrow_back_ios_new_rounded
+          // بـ Icons.arrow_forward_ios_rounded ليتوافق مع اتجاه RTL
+          // exercise_card.dart يستخدم arrow_forward_ios_rounded —
+          // الـ detail screen يجب أن يكون متسقاً مع باقي المشروع
           leading: GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
@@ -71,8 +75,11 @@ class _DetailContent extends StatelessWidget {
                 color: AppColors.bgSurface.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: AppColors.textPrimary, size: AppConstants.iconS),
+              child: const Icon(
+                Icons.arrow_forward_ios_rounded, // ✅ RTL — was arrow_back_ios_new_rounded
+                color: AppColors.textPrimary,
+                size: AppConstants.iconS,
+              ),
             ),
           ),
           flexibleSpace: FlexibleSpaceBar(
@@ -144,19 +151,23 @@ class _DetailContent extends StatelessWidget {
                 const SizedBox(height: AppConstants.spaceL),
                 ...steps.asMap().entries.map(
                       (e) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppConstants.spaceM),
+                    padding:
+                    const EdgeInsets.only(bottom: AppConstants.spaceM),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       textDirection: TextDirection.rtl,
                       children: [
                         Container(
                           width: 26,
                           height: 26,
-                          margin: const EdgeInsets.only(left: AppConstants.spaceM),
+                          margin: const EdgeInsets.only(
+                              left: AppConstants.spaceM),
                           decoration: BoxDecoration(
                             color: AppColors.accentDim,
-                            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-                            border: Border.all(color: AppColors.borderAccent),
+                            borderRadius: BorderRadius.circular(
+                                AppConstants.radiusPill),
+                            border: Border.all(
+                                color: AppColors.borderAccent),
                           ),
                           child: Center(
                             child: Text(
@@ -182,6 +193,10 @@ class _DetailContent extends StatelessWidget {
               ],
 
               const SizedBox(height: AppConstants.space3XL),
+
+              // زر "أضف للخطة" — لم يُعدَّل
+              // لا يوجد flow موجود يربطه بأي destination
+              // هذا feature غير مكتمل خارج نطاق الـ Exercise feature
               PPButton(
                 label: 'أضف للخطة',
                 onPressed: () {

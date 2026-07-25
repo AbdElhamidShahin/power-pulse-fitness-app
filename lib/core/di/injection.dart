@@ -3,25 +3,35 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../features/exercises/data/repositories/exercise_repository.dart';
 import '../../features/exercises/data/services/exercise_service.dart';
 import '../../features/exercises/data/services/local_exercises_data.dart';
-import '../../features/exercises/logic/cubit/exercises_cubit.dart';
+import '../../features/exercises/data/repositories/exercise_repository.dart';
 import '../../features/exercises/logic/usecases/exercise_usecases.dart';
-import '../../features/home/logic/cubit/home_cubit.dart';
-import '../../features/nutrition/data/repositories/nutrition_repository.dart';
+import '../../features/exercises/logic/cubit/exercises_cubit.dart';
+
 import '../../features/nutrition/data/repositories/nutrition_repository_impl.dart';
-import '../../features/nutrition/data/services/nutrition_local_service.dart';
 import '../../features/nutrition/data/services/nutrition_service.dart';
+import '../../features/nutrition/data/services/nutrition_local_service.dart';
+import '../../features/nutrition/data/repositories/nutrition_repository.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
-import '../../features/profile/data/repositories/profile_repository.dart';
-import '../../features/profile/data/services/profile_local_service.dart';
-import '../../features/profile/logic/cubit/profile_cubit.dart';
-import '../../features/profile/logic/usecases/profile_usecases.dart';
-import '../../features/progress/data/repositories/progress_repository.dart';
+
 import '../../features/progress/data/services/progress_local_service.dart';
-import '../../features/progress/logic/cubit/progress_cubit.dart';
+import '../../features/progress/data/repositories/progress_repository.dart';
 import '../../features/progress/logic/usecases/progress_usecases.dart';
+import '../../features/progress/logic/cubit/progress_cubit.dart';
+
+import '../../features/profile/data/services/profile_local_service.dart';
+import '../../features/profile/data/repositories/profile_repository.dart';
+import '../../features/profile/logic/usecases/profile_usecases.dart';
+import '../../features/profile/logic/cubit/profile_cubit.dart';
+
+import '../../features/home/logic/cubit/home_cubit.dart';
+
+import '../../features/workout_logger/data/services/workout_logger_service.dart';
+import '../../features/workout_logger/data/repositories/workout_logger_repository.dart';
+import '../../features/workout_logger/logic/usecases/workout_logger_usecases.dart';
+import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
+
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 
@@ -32,33 +42,59 @@ Future<void> initDependencies() async {
   sl.registerSingleton<SharedPreferences>(prefs);
   sl.registerSingleton<Connectivity>(Connectivity());
 
-  sl.registerLazySingleton<Dio>(() => DioClient.exerciseDb,
-      instanceName: 'exerciseDb');
-  sl.registerLazySingleton<Dio>(() => DioClient.foodFacts,
-      instanceName: 'foodFacts');
+  sl.registerLazySingleton<Dio>(
+          () => DioClient.exerciseDb, instanceName: 'exerciseDb');
+  sl.registerLazySingleton<Dio>(
+          () => DioClient.foodFacts, instanceName: 'foodFacts');
   sl.registerLazySingleton<NetworkInfo>(
-      () => NetworkInfoImpl(sl<Connectivity>()));
+          () => NetworkInfoImpl(sl<Connectivity>()));
 
   _initExercises();
   _initNutrition();
   _initProgress();
   _initProfile();
   _initHome();
+  _initWorkoutLogger();
+}
+
+void _initExercises() {
+  sl.registerLazySingleton<ExerciseService>(
+          () => ExerciseServiceImpl(sl<Dio>(instanceName: 'exerciseDb')));
+  sl.registerLazySingleton<ExerciseLocalService>(
+          () => ExerciseLocalServiceImpl(sl<SharedPreferences>()));
+  sl.registerLazySingleton<ExerciseRepository>(() => ExerciseRepositoryImpl(
+    remoteService: sl(),
+    localService:  sl(),
+    networkInfo:   sl(),
+  ));
+  sl.registerLazySingleton(() => GetExercisesUseCase(sl()));
+  sl.registerLazySingleton(() => GetExercisesByBodyPartUseCase(sl()));
+  sl.registerLazySingleton(() => SearchExercisesUseCase(sl()));
+  sl.registerLazySingleton(() => GetExerciseByIdUseCase(sl()));
+  sl.registerLazySingleton(() => GetBodyPartListUseCase(sl()));
+  sl.registerLazySingleton(() => RefreshExercisesUseCase(sl()));
+  sl.registerFactory(() => ExercisesCubit(
+    getExercises:  sl(),
+    getByBodyPart: sl(),
+    getBodyParts:  sl(),
+  ));
+  sl.registerFactory(() => ExerciseSearchCubit(sl()));
+  sl.registerFactory(() => ExerciseDetailCubit(sl()));
 }
 
 void _initNutrition() {
   // ─── Services ────────────────────────────────────────────────
   sl.registerLazySingleton<NutritionService>(
-    () => NutritionServiceImpl(sl<Dio>(instanceName: 'foodFacts')),
+        () => NutritionServiceImpl(sl<Dio>(instanceName: 'foodFacts')),
   );
 
   sl.registerLazySingleton<NutritionLocalService>(
-    () => NutritionLocalServiceImpl(sl<SharedPreferences>()),
+        () => NutritionLocalServiceImpl(sl<SharedPreferences>()),
   );
 
   // ─── Repository ──────────────────────────────────────────────
   sl.registerLazySingleton<NutritionRepository>(
-    () => NutritionRepositoryImpl(
+        () => NutritionRepositoryImpl(
       remoteService: sl(),
       localService: sl(),
       networkInfo: sl(),
@@ -71,50 +107,25 @@ void _initNutrition() {
   sl.registerFactory(() => AddMealCubit(sl<NutritionRepository>()));
 }
 
-void _initExercises() {
-  sl.registerLazySingleton<ExerciseService>(
-      () => ExerciseServiceImpl(sl<Dio>(instanceName: 'exerciseDb')));
-
-  sl.registerLazySingleton<ExerciseLocalService>(
-      () => ExerciseLocalServiceImpl(sl<SharedPreferences>()));
-
-  sl.registerLazySingleton<ExerciseRepository>(() => ExerciseRepositoryImpl(
-        remoteService: sl(),
-        localService: sl(),
-        networkInfo: sl(),
-      ));
-
-  sl.registerLazySingleton(() => GetExercisesUseCase(sl()));
-  sl.registerLazySingleton(() => GetExercisesByBodyPartUseCase(sl()));
-  sl.registerLazySingleton(() => SearchExercisesUseCase(sl()));
-  sl.registerLazySingleton(() => GetExerciseByIdUseCase(sl()));
-  sl.registerLazySingleton(() => GetBodyPartListUseCase(sl()));
-  sl.registerLazySingleton(() => RefreshExercisesUseCase(sl()));
-
-  sl.registerFactory(() => ExercisesCubit(
-      getExercises: sl(), getByBodyPart: sl(), getBodyParts: sl()));
-  sl.registerFactory(() => ExerciseSearchCubit(sl()));
-  sl.registerFactory(() => ExerciseDetailCubit(sl()));
-}
-
 void _initProgress() {
   sl.registerLazySingleton<ProgressLocalService>(
-      () => ProgressLocalServiceImpl(sl<SharedPreferences>()));
+          () => ProgressLocalServiceImpl(sl<SharedPreferences>()));
   sl.registerLazySingleton<ProgressRepository>(
-      () => ProgressRepositoryImpl(localService: sl()));
+          () => ProgressRepositoryImpl(localService: sl()));
   sl.registerLazySingleton(() => GetProgressSummaryUseCase(sl()));
   sl.registerLazySingleton(() => AddWeightEntryUseCase(sl()));
   sl.registerLazySingleton(() => DeleteWeightEntryUseCase(sl()));
   sl.registerLazySingleton(() => LogWorkoutUseCase(sl()));
   sl.registerFactory(() => ProgressCubit(getSummary: sl()));
-  sl.registerFactory(() => WeightLogCubit(addWeight: sl(), deleteWeight: sl()));
+  sl.registerFactory(
+          () => WeightLogCubit(addWeight: sl(), deleteWeight: sl()));
 }
 
 void _initProfile() {
   sl.registerLazySingleton<ProfileLocalService>(
-      () => ProfileLocalServiceImpl(sl<SharedPreferences>()));
+          () => ProfileLocalServiceImpl(sl<SharedPreferences>()));
   sl.registerLazySingleton<ProfileRepository>(
-      () => ProfileRepositoryImpl(localService: sl()));
+          () => ProfileRepositoryImpl(localService: sl()));
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
   sl.registerLazySingleton(() => SaveProfileUseCase(sl()));
   sl.registerLazySingleton(() => HasProfileUseCase(sl()));
@@ -124,8 +135,25 @@ void _initProfile() {
 
 void _initHome() {
   sl.registerFactory(() => HomeCubit(
-        getProfile: sl(),
-        nutritionRepo: sl(),
-        getProgressSummary: sl(),
-      ));
+    getProfile:         sl(),
+    nutritionRepo:  sl(),
+    getProgressSummary: sl(),
+  ));
+}
+
+void _initWorkoutLogger() {
+  sl.registerLazySingleton<WorkoutLoggerService>(
+          () => WorkoutLoggerServiceImpl(sl<SharedPreferences>()));
+  sl.registerLazySingleton<WorkoutLoggerRepository>(
+          () => WorkoutLoggerRepositoryImpl(sl<WorkoutLoggerService>()));
+  sl.registerLazySingleton(() => GetActiveSessionUseCase(sl()));
+  sl.registerLazySingleton(() => SaveSessionUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteSessionUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllSessionsUseCase(sl()));
+  sl.registerFactory(() => WorkoutLoggerCubit(
+    getActiveSession: sl(),
+    saveSession:      sl(),
+    deleteSession:    sl(),
+    logWorkout:       sl(),
+  ));
 }

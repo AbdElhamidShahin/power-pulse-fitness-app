@@ -30,6 +30,11 @@ dependencies:
   connectivity_plus: ^6.0.5
   google_fonts: ^6.2.1
   flutter_screenutil: ^5.9.3
+  url_launcher: ^6.3.2
+  syncfusion_flutter_gauges: ^31.1.19
+  flutter_staggered_animations: ^1.1.1
+  flutter_custom_tab_bar: ^1.2.1
+  animations: ^2.1.1
 
 dev_dependencies:
   flutter_test:
