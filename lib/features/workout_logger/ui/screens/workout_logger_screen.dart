@@ -5,6 +5,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
+import '../../../exercises/data/models/exercise_entity.dart';
 import '../../data/models/workout_session_entity.dart';
 import '../../logic/cubit/workout_logger_cubit.dart';
 import '../../logic/cubit/workout_logger_state.dart';
@@ -35,7 +36,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       builder: (context, state) => switch (state) {
         WorkoutLoggerInitial() ||
         WorkoutLoggerLoading() =>
-          const _LoadingView(),
+        const _LoadingView(),
         WorkoutLoggerIdle() => const _IdleView(),
         WorkoutLoggerActive(session: final s) => _ActiveView(session: s),
         WorkoutLoggerFinished() => const _LoadingView(),
@@ -51,7 +52,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+        BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => _SummarySheet(session: session),
     ).then((_) => context.read<WorkoutLoggerCubit>().reset());
@@ -130,19 +131,19 @@ class _IdleViewState extends State<_IdleView> {
                         fillColor: AppColors.bgSurface,
                         border: OutlineInputBorder(
                           borderRadius:
-                              BorderRadius.circular(AppConstants.radiusL),
+                          BorderRadius.circular(AppConstants.radiusL),
                           borderSide:
-                              const BorderSide(color: AppColors.borderSubtle),
+                          const BorderSide(color: AppColors.borderSubtle),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius:
-                              BorderRadius.circular(AppConstants.radiusL),
+                          BorderRadius.circular(AppConstants.radiusL),
                           borderSide:
-                              const BorderSide(color: AppColors.borderSubtle),
+                          const BorderSide(color: AppColors.borderSubtle),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius:
-                              BorderRadius.circular(AppConstants.radiusL),
+                          BorderRadius.circular(AppConstants.radiusL),
                           borderSide: const BorderSide(color: AppColors.accent),
                         ),
                       ),
@@ -192,37 +193,37 @@ class _ActiveView extends StatelessWidget {
             Expanded(
               child: session.exercises.isEmpty
                   ? _EmptyExercises(
-                      onAdd: () => _showAddExercise(context, cubit))
+                  onAdd: () => _showAddExercise(context, cubit))
                   : ListView.builder(
-                      padding:
-                          const EdgeInsets.all(AppConstants.screenPaddingH),
-                      itemCount: session.exercises.length,
-                      itemBuilder: (_, i) {
-                        final ex = session.exercises[i];
-                        return ExerciseLoggerCard(
-                          exercise: ex,
-                          onUpdateSet: ({
-                            required exerciseId,
-                            required setIndex,
-                            reps,
-                            weight,
-                            isCompleted,
-                          }) =>
-                              cubit.updateSet(
-                            exerciseId: exerciseId,
-                            setIndex: setIndex,
-                            reps: reps,
-                            weight: weight,
-                            isCompleted: isCompleted,
-                          ),
-                          onAddSet: () => cubit.addSet(ex.exerciseId),
-                          onRemoveSet: (idx) =>
-                              cubit.removeSet(ex.exerciseId, idx),
-                          onRemoveExercise: () =>
-                              cubit.removeExercise(ex.exerciseId),
-                        );
-                      },
-                    ),
+                padding:
+                const EdgeInsets.all(AppConstants.screenPaddingH),
+                itemCount: session.exercises.length,
+                itemBuilder: (_, i) {
+                  final ex = session.exercises[i];
+                  return ExerciseLoggerCard(
+                    exercise: ex,
+                    onUpdateSet: ({
+                      required exerciseId,
+                      required setIndex,
+                      reps,
+                      weight,
+                      isCompleted,
+                    }) =>
+                        cubit.updateSet(
+                          exerciseId: exerciseId,
+                          setIndex: setIndex,
+                          reps: reps,
+                          weight: weight,
+                          isCompleted: isCompleted,
+                        ),
+                    onAddSet: () => cubit.addSet(ex.exerciseId),
+                    onRemoveSet: (idx) =>
+                        cubit.removeSet(ex.exerciseId, idx),
+                    onRemoveExercise: () =>
+                        cubit.removeExercise(ex.exerciseId),
+                  );
+                },
+              ),
             ),
 
             // ─── Bottom Actions ───────────────────────────
@@ -244,9 +245,10 @@ class _ActiveView extends StatelessWidget {
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+        BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => _AddExerciseSheet(
+        cubit: cubit,
         onAdd: (exercise) {
           cubit.addExercise(exercise);
           Navigator.pop(context);
@@ -273,7 +275,7 @@ class _ActiveHeaderState extends State<_ActiveHeader> {
   void initState() {
     super.initState();
     _ticker = Stream.periodic(const Duration(seconds: 1),
-        (_) => DateTime.now().difference(widget.session.startTime).inSeconds);
+            (_) => DateTime.now().difference(widget.session.startTime).inSeconds);
   }
 
   String _fmt(int seconds) {
@@ -449,127 +451,218 @@ class _EmptyExercises extends StatelessWidget {
   }
 }
 
-// ─── Add Exercise Sheet ────────────────────────────────────────
+// ─── Add Exercise Sheet (Library Picker) ──────────────────────
 class _AddExerciseSheet extends StatefulWidget {
-  const _AddExerciseSheet({required this.onAdd});
+  const _AddExerciseSheet({
+    required this.onAdd,
+    required this.cubit,
+  });
   final void Function(SessionExercise) onAdd;
+  final WorkoutLoggerCubit cubit;
 
   @override
   State<_AddExerciseSheet> createState() => _AddExerciseSheetState();
 }
 
 class _AddExerciseSheetState extends State<_AddExerciseSheet> {
-  final _nameCtrl = TextEditingController();
-  String _selectedBodyPart = 'صدر';
+  final _searchCtrl = TextEditingController();
+  List<Exercise> _results = [];
+  bool _loading = true;
 
-  static const _bodyParts = [
-    'صدر',
-    'ظهر',
-    'أكتاف',
-    'بايسبس',
-    'ترايسبس',
-    'أرجل',
-    'بطن',
-    'كارديو',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _load('');
+  }
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
+    _searchCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _load(String query) async {
+    setState(() => _loading = true);
+    final list = query.isEmpty
+        ? await widget.cubit.browseExercises()
+        : await widget.cubit.searchLibrary(query);
+    if (mounted) setState(() { _results = list; _loading = false; });
+  }
+
+  void _onChanged(String val) => _load(val);
+
+  void _pick(Exercise ex) {
+    final exercise = SessionExercise(
+      exerciseId: '${ex.id}_${DateTime.now().millisecondsSinceEpoch}',
+      exerciseName: ex.nameAr.isNotEmpty ? ex.nameAr : ex.name,
+      bodyPart: ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
+      sets: [const ExerciseSet(setNumber: 1)],
+    );
+    widget.onAdd(exercise);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: AppConstants.screenPaddingH,
-        right: AppConstants.screenPaddingH,
-        top: AppConstants.spaceXXL,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
+    return DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (_, scrollCtrl) => Column(
         children: [
-          Text('إضافة تمرين',
-              style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: AppConstants.spaceXL),
-
-          // اسم التمرين
-          TextField(
-            controller: _nameCtrl,
-            autofocus: true,
-            style: AppTextStyles.titleLarge,
-            decoration: InputDecoration(
-              hintText: 'اسم التمرين (مثال: بنش برس)',
-              hintStyle: AppTextStyles.bodyMedium,
-              filled: true,
-              fillColor: AppColors.bgElevated,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppConstants.radiusL),
-                borderSide: BorderSide.none,
+          // ─── Handle ──────────────────────────────────────
+          Container(
+            margin: const EdgeInsets.only(top: AppConstants.spaceM),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.borderMedium,
+              borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+            ),
+          ),
+          // ─── Title ───────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppConstants.screenPaddingH,
+              AppConstants.spaceL,
+              AppConstants.screenPaddingH,
+              AppConstants.spaceM,
+            ),
+            child: Row(
+              children: [
+                Text('اختر تمريناً',
+                    style: Theme.of(context).textTheme.headlineMedium),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(Icons.close_rounded,
+                      color: AppColors.textMuted),
+                ),
+              ],
+            ),
+          ),
+          // ─── Search Field ─────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.screenPaddingH),
+            child: TextField(
+              controller: _searchCtrl,
+              autofocus: false,
+              onChanged: _onChanged,
+              style: AppTextStyles.bodyMedium,
+              decoration: InputDecoration(
+                hintText: 'ابحث عن تمرين...',
+                hintStyle: AppTextStyles.bodyMedium,
+                prefixIcon: const Icon(Icons.search_rounded,
+                    color: AppColors.textMuted, size: 20),
+                filled: true,
+                fillColor: AppColors.bgElevated,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: AppConstants.spaceL),
-
-          // Body Part
-          Text('العضلة المستهدفة', style: AppTextStyles.labelMedium),
-          const SizedBox(height: AppConstants.spaceS),
-          SizedBox(
-            height: 40,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _bodyParts.length,
-              separatorBuilder: (_, __) =>
-                  const SizedBox(width: AppConstants.spaceS),
+          const SizedBox(height: AppConstants.spaceM),
+          // ─── Results ─────────────────────────────────────
+          Expanded(
+            child: _loading
+                ? const Center(
+                child: CircularProgressIndicator(color: AppColors.accent))
+                : _results.isEmpty
+                ? Center(
+                child: Text('لا توجد نتائج',
+                    style: AppTextStyles.bodyMedium))
+                : ListView.builder(
+              controller: scrollCtrl,
+              padding: const EdgeInsets.fromLTRB(
+                AppConstants.screenPaddingH,
+                0,
+                AppConstants.screenPaddingH,
+                AppConstants.spaceXXL,
+              ),
+              itemCount: _results.length,
               itemBuilder: (_, i) {
-                final part = _bodyParts[i];
-                final selected = part == _selectedBodyPart;
+                final Exercise ex = _results[i];
+                final name = ex.nameAr.isNotEmpty
+                    ? ex.nameAr
+                    : ex.name;
+                final part = ex.bodyPartAr.isNotEmpty
+                    ? ex.bodyPartAr
+                    : ex.bodyPart;
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedBodyPart = part),
-                  child: AnimatedContainer(
-                    duration: AppConstants.durationFast,
+                  onTap: () => _pick(ex),
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                        bottom: AppConstants.spaceS),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.spaceL),
-                    decoration: BoxDecoration(
-                      color: selected ? AppColors.accent : AppColors.bgElevated,
-                      borderRadius:
-                          BorderRadius.circular(AppConstants.radiusPill),
+                      horizontal: AppConstants.spaceL,
+                      vertical: AppConstants.spaceM,
                     ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      part,
-                      style: AppTextStyles.labelSmall.copyWith(
-                        color: selected
-                            ? AppColors.textOnAccent
-                            : AppColors.textMuted,
-                      ),
+                    decoration: BoxDecoration(
+                      color: AppColors.bgElevated,
+                      borderRadius: BorderRadius.circular(
+                          AppConstants.radiusL),
+                      border: Border.all(
+                          color: AppColors.borderSubtle),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name,
+                                style:
+                                AppTextStyles.labelMedium,
+                                maxLines: 1,
+                                overflow:
+                                TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(
+                                  height:
+                                  AppConstants.spaceXS),
+                              Container(
+                                padding:
+                                const EdgeInsets.symmetric(
+                                  horizontal:
+                                  AppConstants.spaceS,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accentDim,
+                                  borderRadius:
+                                  BorderRadius.circular(
+                                      AppConstants
+                                          .radiusPill),
+                                ),
+                                child: Text(
+                                  part,
+                                  style: AppTextStyles
+                                      .labelSmall
+                                      .copyWith(
+                                    color: AppColors.accent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.add_circle_outline_rounded,
+                          color: AppColors.accent,
+                          size: 22,
+                        ),
+                      ],
                     ),
                   ),
                 );
               },
             ),
           ),
-
-          const SizedBox(height: AppConstants.spaceXXL),
-          PPButton(
-            label: 'إضافة',
-            width: double.infinity,
-            onPressed: () {
-              final name = _nameCtrl.text.trim();
-              if (name.isEmpty) return;
-              final exercise = SessionExercise(
-                exerciseId: '${name}_${DateTime.now().millisecondsSinceEpoch}',
-                exerciseName: name,
-                bodyPart: _selectedBodyPart,
-                sets: [const ExerciseSet(setNumber: 1)],
-              );
-              widget.onAdd(exercise);
-            },
-          ),
-          const SizedBox(height: AppConstants.spaceXXL),
         ],
       ),
     );

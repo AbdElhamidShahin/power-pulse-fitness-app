@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
+import '../../../exercises/data/models/exercise_entity.dart';
+import '../../../exercises/logic/usecases/exercise_usecases.dart';
 import '../../../progress/data/models/progress_entity.dart';
 import '../../../progress/logic/usecases/progress_usecases.dart';
 import '../../data/models/workout_session_entity.dart';
@@ -12,16 +14,22 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     required SaveSessionUseCase saveSession,
     required DeleteSessionUseCase deleteSession,
     required LogWorkoutUseCase logWorkout,
-  })  : _getActive  = getActiveSession,
-        _save       = saveSession,
-        _delete     = deleteSession,
-        _logWorkout = logWorkout,
+    required SearchExercisesUseCase searchExercises,
+    required GetExercisesUseCase getExercises,
+  })  : _getActive       = getActiveSession,
+        _save            = saveSession,
+        _delete          = deleteSession,
+        _logWorkout      = logWorkout,
+        _searchExercises = searchExercises,
+        _getExercises    = getExercises,
         super(const WorkoutLoggerInitial());
 
   final GetActiveSessionUseCase _getActive;
   final SaveSessionUseCase      _save;
   final DeleteSessionUseCase    _delete;
   final LogWorkoutUseCase       _logWorkout;
+  final SearchExercisesUseCase  _searchExercises;
+  final GetExercisesUseCase     _getExercises;
 
   // ─── Load ──────────────────────────────────────────────────
   Future<void> load() async {
@@ -113,10 +121,10 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       final sets = [...ex.sets]..removeAt(setIndex);
       final renumbered = sets.asMap().entries
           .map((e) => ExerciseSet(
-              setNumber:   e.key + 1,
-              reps:        e.value.reps,
-              weight:      e.value.weight,
-              isCompleted: e.value.isCompleted))
+          setNumber:   e.key + 1,
+          reps:        e.value.reps,
+          weight:      e.value.weight,
+          isCompleted: e.value.isCompleted))
           .toList();
       return ex.copyWith(sets: renumbered);
     }).toList();
@@ -156,6 +164,27 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   }
 
   void reset() => emit(const WorkoutLoggerIdle());
+
+  // ─── Exercise Library ──────────────────────────────────────
+
+  /// جلب كل التمارين للعرض في الـ sheet
+  Future<List<Exercise>> browseExercises() async {
+    final result = await _getExercises(limit: 300, offset: 0);
+    return result.fold(
+      onFailure: (_) => [],
+      onSuccess: (list) => list,
+    );
+  }
+
+  /// بحث في مكتبة التمارين
+  Future<List<Exercise>> searchLibrary(String query) async {
+    if (query.trim().isEmpty) return browseExercises();
+    final result = await _searchExercises(query.trim());
+    return result.fold(
+      onFailure: (_) => [],
+      onSuccess: (list) => list,
+    );
+  }
 
   // ─── Helpers ───────────────────────────────────────────────
   WorkoutSession? get _active =>
