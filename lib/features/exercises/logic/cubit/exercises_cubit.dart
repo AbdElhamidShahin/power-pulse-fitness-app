@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
 
 import '../../../../core/domain/app_failure.dart';
+import '../../data/models/exercise_entity.dart';
 import '../../logic/usecases/exercise_usecases.dart';
 import 'exercises_state.dart';
 
@@ -10,14 +11,17 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     required GetExercisesUseCase getExercises,
     required GetExercisesByBodyPartUseCase getByBodyPart,
     required GetBodyPartListUseCase getBodyParts,
-  })  : _getExercises = getExercises,
-        _getByBodyPart = getByBodyPart,
-        _getBodyParts = getBodyParts,
+    required SearchExercisesUseCase searchExercises,
+  })  : _getExercises    = getExercises,
+        _getByBodyPart   = getByBodyPart,
+        _getBodyParts    = getBodyParts,
+        _searchExercises = searchExercises,
         super(const ExercisesInitial());
 
   final GetExercisesUseCase _getExercises;
   final GetExercisesByBodyPartUseCase _getByBodyPart;
   final GetBodyPartListUseCase _getBodyParts;
+  final SearchExercisesUseCase _searchExercises;
 
   static const String _allFilter = 'all';
   int _offset = 0;
@@ -105,14 +109,26 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     );
   }
 
+  // ─── Helpers for pickers ──────────────────────────────────
+  Future<List<Exercise>> browseAll() async {
+    final result = await _getExercises(limit: 300, offset: 0);
+    return result.fold(onFailure: (_) => [], onSuccess: (list) => list);
+  }
+
+  Future<List<Exercise>> search(String query) async {
+    if (query.trim().isEmpty) return browseAll();
+    final result = await _searchExercises(query.trim());
+    return result.fold(onFailure: (_) => [], onSuccess: (list) => list);
+  }
+
   // ─── Private ──────────────────────────────────────────────
   String _mapFailure(AppFailure f) => switch (f) {
-        NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
-        NotFoundFailure() => 'لم يتم العثور على التمارين',
-        CacheFailure() => 'خطأ في التخزين المحلي',
-        UnexpectedFailure() => 'حدث خطأ غير متوقع',
-      };
+    NetworkFailure() => 'تحقق من اتصال الإنترنت',
+    ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
+    NotFoundFailure() => 'لم يتم العثور على التمارين',
+    CacheFailure() => 'خطأ في التخزين المحلي',
+    UnexpectedFailure() => 'حدث خطأ غير متوقع',
+  };
 }
 
 /// ExerciseSearchCubit — Search only
@@ -139,10 +155,10 @@ final class ExerciseSearchCubit extends Cubit<ExerciseSearchState> {
   void clear() => emit(const ExerciseSearchIdle());
 
   String _mapFailure(AppFailure f) => switch (f) {
-        NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
-        _ => 'حدث خطأ غير متوقع',
-      };
+    NetworkFailure() => 'تحقق من اتصال الإنترنت',
+    ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
+    _ => 'حدث خطأ غير متوقع',
+  };
 }
 
 /// ExerciseDetailCubit — Single exercise detail
@@ -161,8 +177,8 @@ final class ExerciseDetailCubit extends Cubit<ExerciseDetailState> {
   }
 
   String _mapFailure(AppFailure f) => switch (f) {
-        NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        NotFoundFailure() => 'التمرين غير موجود',
-        _ => 'حدث خطأ غير متوقع',
-      };
+    NetworkFailure() => 'تحقق من اتصال الإنترنت',
+    NotFoundFailure() => 'التمرين غير موجود',
+    _ => 'حدث خطأ غير متوقع',
+  };
 }

@@ -20,6 +20,8 @@ import '../../features/profile/ui/screens/edit_profile_screen.dart';
 import '../../features/onboarding/ui/screens/onboarding_screen.dart';
 import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
 import '../../features/workout_logger/ui/screens/workout_logger_screen.dart';
+import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart';
+import '../../features/workout_plan/ui/screens/workout_plan_screen.dart';
 import '../../shared/shell/main_shell.dart';
 import '../di/injection.dart';
 
@@ -35,6 +37,7 @@ abstract class AppRouter {
   static const String profile       = '/profile';
   static const String profileEdit   = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
+  static const String workoutPlan   = '/workout-plan';
 
   static Future<String> _initialLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -70,8 +73,11 @@ abstract class AppRouter {
         routes: [
           GoRoute(
             path: home,
-            builder: (_, __) => BlocProvider(
-              create: (_) => sl<HomeCubit>(),
+            builder: (_, __) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => sl<HomeCubit>()),
+                BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
+              ],
               child: const HomeScreen(),
             ),
           ),
@@ -141,9 +147,24 @@ abstract class AppRouter {
 
       GoRoute(
         path: workoutLogger,
-        builder: (_, __) => BlocProvider(
-          create: (_) => sl<WorkoutLoggerCubit>(),
+        builder: (_, __) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
+          ],
           child: const WorkoutLoggerScreen(),
+        ),
+      ),
+
+      GoRoute(
+        path: workoutPlan,
+        builder: (_, __) => MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
+            BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
+            BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
+          ],
+          child: const WorkoutPlanScreen(),
         ),
       ),
 
