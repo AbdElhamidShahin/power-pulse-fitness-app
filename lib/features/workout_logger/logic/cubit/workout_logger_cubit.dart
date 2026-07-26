@@ -4,6 +4,7 @@ import '../../../exercises/data/models/exercise_entity.dart';
 import '../../../exercises/logic/usecases/exercise_usecases.dart';
 import '../../../progress/data/models/progress_entity.dart';
 import '../../../progress/logic/usecases/progress_usecases.dart';
+import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../data/models/workout_session_entity.dart';
 import '../usecases/workout_logger_usecases.dart';
 import 'workout_logger_state.dart';
@@ -44,12 +45,25 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   }
 
   // ─── Start ─────────────────────────────────────────────────
-  Future<void> startSession(String name) async {
+  Future<void> startSession(String name, {PlanDay? planDay}) async {
+    // لو عندنا خطة — نحوّل تمارين اليوم لـ SessionExercise تلقائياً
+    final exercises = planDay != null
+        ? planDay.exercises.map((pe) => SessionExercise(
+      exerciseId:   '${pe.exerciseId}_${DateTime.now().millisecondsSinceEpoch}',
+      exerciseName: pe.exerciseName,
+      bodyPart:     pe.bodyPart,
+      sets: List.generate(
+        pe.defaultSets,
+            (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
+      ),
+    )).toList()
+        : <SessionExercise>[];
+
     final session = WorkoutSession(
       id:        DateTime.now().millisecondsSinceEpoch.toString(),
       name:      name,
       startTime: DateTime.now(),
-      exercises: const [],
+      exercises: exercises,
     );
     await _save(session);
     emit(WorkoutLoggerActive(session));
