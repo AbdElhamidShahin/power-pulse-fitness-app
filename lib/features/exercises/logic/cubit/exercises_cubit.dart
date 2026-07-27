@@ -109,7 +109,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     );
   }
 
-  // ─── Helpers for pickers ──────────────────────────────────
   Future<List<Exercise>> browseAll() async {
     final result = await _getExercises(limit: 300, offset: 0);
     return result.fold(onFailure: (_) => [], onSuccess: (list) => list);
@@ -121,7 +120,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     return result.fold(onFailure: (_) => [], onSuccess: (list) => list);
   }
 
-  // ─── Private ──────────────────────────────────────────────
   String _mapFailure(AppFailure f) => switch (f) {
     NetworkFailure() => 'تحقق من اتصال الإنترنت',
     ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
@@ -131,7 +129,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
   };
 }
 
-/// ExerciseSearchCubit — Search only
 final class ExerciseSearchCubit extends Cubit<ExerciseSearchState> {
   ExerciseSearchCubit(this._searchExercises)
       : super(const ExerciseSearchIdle());
@@ -161,7 +158,6 @@ final class ExerciseSearchCubit extends Cubit<ExerciseSearchState> {
   };
 }
 
-/// ExerciseDetailCubit — Single exercise detail
 final class ExerciseDetailCubit extends Cubit<ExerciseDetailState> {
   ExerciseDetailCubit(this._getById) : super(const ExerciseDetailInitial());
 

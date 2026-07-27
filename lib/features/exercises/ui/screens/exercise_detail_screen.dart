@@ -32,41 +32,46 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
       body: BlocBuilder<ExerciseDetailCubit, ExerciseDetailState>(
         builder: (context, state) => switch (state) {
           ExerciseDetailInitial() ||
-          ExerciseDetailLoading() => const _DetailLoading(),
+          ExerciseDetailLoading() =>
+            const _DetailLoading(),
           ExerciseDetailError(:final message) => _DetailError(message: message),
           ExerciseDetailLoaded(:final exercise) =>
-              _DetailContent(exercise: exercise),
+            _DetailContent(exercise: exercise),
         },
       ),
     );
   }
 }
 
-// ─── Content ────────────────────────────────────────────────
 class _DetailContent extends StatelessWidget {
   const _DetailContent({required this.exercise});
   final Exercise exercise;
 
   @override
   Widget build(BuildContext context) {
-    final displayName      = exercise.nameAr.isNotEmpty      ? exercise.nameAr      : exercise.name;
-    final displayBodyPart  = exercise.bodyPartAr.isNotEmpty  ? exercise.bodyPartAr  : exercise.bodyPart;
-    final displayTarget    = exercise.targetAr.isNotEmpty    ? exercise.targetAr    : exercise.target;
-    final displayEquipment = exercise.equipmentAr.isNotEmpty ? exercise.equipmentAr : exercise.equipment;
-    final steps            = exercise.instructionsAr.isNotEmpty ? exercise.instructionsAr : exercise.instructions;
-    final muscles          = exercise.secondaryMusclesAr.isNotEmpty ? exercise.secondaryMusclesAr : exercise.secondaryMuscles;
+    final displayName =
+        exercise.nameAr.isNotEmpty ? exercise.nameAr : exercise.name;
+    final displayBodyPart = exercise.bodyPartAr.isNotEmpty
+        ? exercise.bodyPartAr
+        : exercise.bodyPart;
+    final displayTarget =
+        exercise.targetAr.isNotEmpty ? exercise.targetAr : exercise.target;
+    final displayEquipment = exercise.equipmentAr.isNotEmpty
+        ? exercise.equipmentAr
+        : exercise.equipment;
+    final steps = exercise.instructionsAr.isNotEmpty
+        ? exercise.instructionsAr
+        : exercise.instructions;
+    final muscles = exercise.secondaryMusclesAr.isNotEmpty
+        ? exercise.secondaryMusclesAr
+        : exercise.secondaryMuscles;
 
     return CustomScrollView(
       slivers: [
-        // ─── GIF Header ─────────────────────────────────────
         SliverAppBar(
           expandedHeight: 280,
           pinned: true,
           backgroundColor: AppColors.bgDeep,
-          // ✅ Issue 3 fix: استبدال Icons.arrow_back_ios_new_rounded
-          // بـ Icons.arrow_forward_ios_rounded ليتوافق مع اتجاه RTL
-          // exercise_card.dart يستخدم arrow_forward_ios_rounded —
-          // الـ detail screen يجب أن يكون متسقاً مع باقي المشروع
           leading: GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
@@ -76,7 +81,7 @@ class _DetailContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
               child: const Icon(
-                Icons.arrow_forward_ios_rounded, // ✅ RTL — was arrow_back_ios_new_rounded
+                Icons.arrow_forward_ios_rounded,
                 color: AppColors.textPrimary,
                 size: AppConstants.iconS,
               ),
@@ -119,13 +124,12 @@ class _DetailContent extends StatelessWidget {
                 runSpacing: AppConstants.spaceS,
                 children: [
                   MuscleGroupBadge(muscle: displayBodyPart),
-                  PPBadge(label: displayTarget,    color: AppColors.info),
+                  PPBadge(label: displayTarget, color: AppColors.info),
                   PPBadge(label: displayEquipment, color: AppColors.textMuted),
                 ],
               ),
               const SizedBox(height: AppConstants.spaceXXL),
 
-              // Secondary muscles
               if (muscles.isNotEmpty) ...[
                 Text('العضلات الثانوية',
                     style: Theme.of(context).textTheme.headlineSmall),
@@ -135,10 +139,10 @@ class _DetailContent extends StatelessWidget {
                   runSpacing: AppConstants.spaceS,
                   children: muscles
                       .map((m) => PPBadge(
-                    label: m,
-                    color: AppColors.textMuted,
-                    size: PPBadgeSize.small,
-                  ))
+                            label: m,
+                            color: AppColors.textMuted,
+                            size: PPBadgeSize.small,
+                          ))
                       .toList(),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
@@ -151,57 +155,52 @@ class _DetailContent extends StatelessWidget {
                 const SizedBox(height: AppConstants.spaceL),
                 ...steps.asMap().entries.map(
                       (e) => Padding(
-                    padding:
-                    const EdgeInsets.only(bottom: AppConstants.spaceM),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      textDirection: TextDirection.rtl,
-                      children: [
-                        Container(
-                          width: 26,
-                          height: 26,
-                          margin: const EdgeInsets.only(
-                              left: AppConstants.spaceM),
-                          decoration: BoxDecoration(
-                            color: AppColors.accentDim,
-                            borderRadius: BorderRadius.circular(
-                                AppConstants.radiusPill),
-                            border: Border.all(
-                                color: AppColors.borderAccent),
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${e.key + 1}',
-                              style: AppTextStyles.labelSmall.copyWith(
-                                color: AppColors.accent,
-                                fontSize: 11,
+                        padding:
+                            const EdgeInsets.only(bottom: AppConstants.spaceM),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          textDirection: TextDirection.rtl,
+                          children: [
+                            Container(
+                              width: 26,
+                              height: 26,
+                              margin: const EdgeInsets.only(
+                                  left: AppConstants.spaceM),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentDim,
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.radiusPill),
+                                border:
+                                    Border.all(color: AppColors.borderAccent),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${e.key + 1}',
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    color: AppColors.accent,
+                                    fontSize: 11,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            Expanded(
+                              child: Text(
+                                e.value,
+                                style: AppTextStyles.bodyMedium,
+                                textDirection: TextDirection.rtl,
+                              ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: Text(
-                            e.value,
-                            style: AppTextStyles.bodyMedium,
-                            textDirection: TextDirection.rtl,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
               ],
 
               const SizedBox(height: AppConstants.space3XL),
 
-              // زر "أضف للخطة" — لم يُعدَّل
-              // لا يوجد flow موجود يربطه بأي destination
-              // هذا feature غير مكتمل خارج نطاق الـ Exercise feature
               PPButton(
                 label: 'أضف للخطة',
-                onPressed: () {
-                  // Phase 3 - Workout Plan feature
-                },
+                onPressed: () {},
                 icon: Icons.add_rounded,
               ),
               const SizedBox(height: AppConstants.spaceXL),
@@ -213,7 +212,6 @@ class _DetailContent extends StatelessWidget {
   }
 }
 
-// ─── Loading ─────────────────────────────────────────────────
 class _DetailLoading extends StatelessWidget {
   const _DetailLoading();
 
@@ -225,7 +223,6 @@ class _DetailLoading extends StatelessWidget {
   }
 }
 
-// ─── Error ───────────────────────────────────────────────────
 class _DetailError extends StatelessWidget {
   const _DetailError({required this.message});
   final String message;

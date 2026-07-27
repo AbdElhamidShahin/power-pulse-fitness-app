@@ -22,9 +22,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
   final _scrollController = ScrollController();
   bool _isSearching = false;
 
-  // ✅ Issue 1 fix: حُذفت _selectedFilter و _filters الـ hardcoded
-  // الـ filter state الآن موجودة في ExercisesCubit فقط
-
   @override
   void initState() {
     super.initState();
@@ -51,7 +48,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ─── Header ────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
               child: Column(
@@ -60,7 +56,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Search icon
                       GestureDetector(
                         onTap: () {
                           setState(() => _isSearching = !_isSearching);
@@ -70,17 +65,21 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           }
                         },
                         child: Container(
-                          width: 42, height: 42,
+                          width: 42,
+                          height: 42,
                           decoration: BoxDecoration(
                             color: _isSearching
-                                ? AppColors.bgDark : AppColors.bgElevated,
+                                ? AppColors.bgDark
+                                : AppColors.bgElevated,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             _isSearching
-                                ? Icons.close_rounded : Icons.search_rounded,
+                                ? Icons.close_rounded
+                                : Icons.search_rounded,
                             color: _isSearching
-                                ? AppColors.textOnDark : AppColors.textMuted,
+                                ? AppColors.textOnDark
+                                : AppColors.textMuted,
                             size: 20,
                           ),
                         ),
@@ -89,10 +88,13 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text('مكتبة التمارين',
-                              style: TextStyle(fontSize: 11,
-                                  color: Color(0xFF8A8A8A), fontFamily: 'Cairo')),
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF8A8A8A),
+                                  fontFamily: 'Cairo')),
                           Text('التمارين 🏋️',
-                              style: TextStyle(fontSize: 26,
+                              style: TextStyle(
+                                  fontSize: 26,
                                   fontWeight: FontWeight.w900,
                                   color: AppColors.textPrimary,
                                   fontFamily: 'Cairo')),
@@ -100,7 +102,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                       ),
                     ],
                   ),
-
                   if (_isSearching) ...[
                     const SizedBox(height: 12),
                     PPSearchBar(
@@ -115,8 +116,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
               ),
             ),
             const SizedBox(height: 14),
-
-            // ─── Stats Card (only when not searching) ──────────
             if (!_isSearching) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -126,7 +125,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                     color: AppColors.bgDark,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _StatItem(value: '3', label: 'هذا الأسبوع'),
@@ -137,14 +136,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-
-              // ✅ Issue 1+2 fix:
-              // حُذف الـ hardcoded filter row الـ fake
-              // الـ BodyPartFilterTabs الحقيقي بيظهر هنا فقط لما يكون
-              // ExercisesLoaded — يُمرَّر للـ _ExercisesList عن طريق الـ Cubit state
             ],
-
-            // ─── List ──────────────────────────────────────────
             Expanded(
               child: _isSearching
                   ? _SearchResults()
@@ -166,11 +158,15 @@ class _StatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(value, style: const TextStyle(
-            fontFamily: 'Cairo', fontSize: 24, fontWeight: FontWeight.w900,
-            color: AppColors.accent)),
-        Text(label, style: const TextStyle(
-            fontFamily: 'Cairo', fontSize: 10, color: Color(0xFF888888))),
+        Text(value,
+            style: const TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                color: AppColors.accent)),
+        Text(label,
+            style: const TextStyle(
+                fontFamily: 'Cairo', fontSize: 10, color: Color(0xFF888888))),
       ],
     );
   }
@@ -185,9 +181,9 @@ class _ExercisesList extends StatelessWidget {
     return BlocBuilder<ExercisesCubit, ExercisesState>(
       builder: (context, state) => switch (state) {
         ExercisesInitial() || ExercisesLoading() => const _Shimmer(),
-        ExercisesError(:final message)           => _ErrorView(message: message),
-        ExercisesLoaded()                        => _LoadedList(
-            state: state, scrollController: scrollController),
+        ExercisesError(:final message) => _ErrorView(message: message),
+        ExercisesLoaded() =>
+          _LoadedList(state: state, scrollController: scrollController),
       },
     );
   }
@@ -203,25 +199,22 @@ class _LoadedList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        // ✅ Issue 1+2 fix:
-        // استبدل الـ inline ListView بـ BodyPartFilterTabs
-        // الـ widget ده عنده ترجمة عربية (_label) وـ animation جاهزين
         if (state.bodyParts.isNotEmpty)
           BodyPartFilterTabs(
             bodyParts: state.bodyParts,
-            selected:  state.selectedBodyPart,
-            onSelect:  (p) =>
-                context.read<ExercisesCubit>().filterByBodyPart(p),
+            selected: state.selectedBodyPart,
+            onSelect: (p) => context.read<ExercisesCubit>().filterByBodyPart(p),
           ),
         const SizedBox(height: 12),
-
         Padding(
           padding: const EdgeInsets.only(right: 16, bottom: 8),
           child: Text('${state.exercises.length} تمرين',
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700,
-                  color: Color(0xFF8A8A8A), fontFamily: 'Cairo')),
+              style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF8A8A8A),
+                  fontFamily: 'Cairo')),
         ),
-
         Expanded(
           child: ListView.separated(
             controller: scrollController,
@@ -232,8 +225,9 @@ class _LoadedList extends StatelessWidget {
               if (i == state.exercises.length) {
                 return const Padding(
                   padding: EdgeInsets.all(20),
-                  child: Center(child: CircularProgressIndicator(
-                      color: AppColors.accent)),
+                  child: Center(
+                      child:
+                          CircularProgressIndicator(color: AppColors.accent)),
                 );
               }
               final ex = state.exercises[i];
@@ -254,24 +248,27 @@ class _SearchResults extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ExerciseSearchCubit, ExerciseSearchState>(
       builder: (context, state) => switch (state) {
-        ExerciseSearchIdle()    => const Center(
+        ExerciseSearchIdle() => const Center(
             child: Text('ابحث عن تمرين...',
-                style: TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+                style:
+                    TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
         ExerciseSearchLoading() => const _Shimmer(),
-        ExerciseSearchError()   => const SizedBox(),
+        ExerciseSearchError() => const SizedBox(),
         ExerciseSearchLoaded(:final results) when results.isEmpty =>
-        const Center(
-            child: Text('لا توجد نتائج',
-                style: TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+          const Center(
+              child: Text(
+                  'لا توجد نتائج',
+                  style: TextStyle(
+                      color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
         ExerciseSearchLoaded(:final results) => ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: results.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
-          itemBuilder: (context, i) => ExerciseCard(
-            exercise: results[i],
-            onTap: () => context.push('/exercises/${results[i].id}'),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: results.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, i) => ExerciseCard(
+              exercise: results[i],
+              onTap: () => context.push('/exercises/${results[i].id}'),
+            ),
           ),
-        ),
       },
     );
   }
@@ -301,15 +298,16 @@ class _ErrorView extends StatelessWidget {
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(Icons.error_outline_rounded, color: AppColors.danger, size: 48),
-      const SizedBox(height: 16),
-      Text(message, style: AppTextStyles.bodyMedium),
-      const SizedBox(height: 16),
-      GestureDetector(
-        onTap: () => context.read<ExercisesCubit>().loadInitial(),
-        child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
-      ),
-    ]),
-  );
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.error_outline_rounded,
+              color: AppColors.danger, size: 48),
+          const SizedBox(height: 16),
+          Text(message, style: AppTextStyles.bodyMedium),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => context.read<ExercisesCubit>().loadInitial(),
+            child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
+          ),
+        ]),
+      );
 }

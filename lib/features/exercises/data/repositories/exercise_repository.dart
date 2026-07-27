@@ -26,17 +26,14 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
   final ExerciseLocalService localService;
   final NetworkInfo          networkInfo;
 
-  // ─── Public Methods ────────────────────────────────────────
 
   @override
   Future<ApiResult<List<Exercise>>> getExercises() async {
-    // 1. Cache hit → رجّع فوراً
     if (localService.isCached) {
       final cached = localService.getAllExercises();
       if (cached.isNotEmpty) return Success(cached);
     }
 
-    // 2. Cache miss → نزّل من CDN
     return _fetchAndCache();
   }
 
@@ -103,7 +100,6 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
     );
   }
 
-  /// امسح الـ cache وحمّل من CDN من جديد
   @override
   Future<ApiResult<void>> refreshExercises() async {
     await localService.clearCache();
@@ -114,7 +110,6 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
     );
   }
 
-  // ─── Private ───────────────────────────────────────────────
 
   Future<ApiResult<List<Exercise>>> _fetchAndCache() async {
     if (!await networkInfo.isConnected) {

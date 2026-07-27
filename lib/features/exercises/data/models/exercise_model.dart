@@ -1,8 +1,6 @@
 import '../../../../core/network/api_endpoints.dart';
 import 'exercise_entity.dart';
 
-/// ExerciseModel — Data Layer
-/// Parses JSON from power-pulse-exercises Arabic dataset
 final class ExerciseModel {
   const ExerciseModel({
     required this.id,
@@ -37,13 +35,11 @@ final class ExerciseModel {
   final List<String> instructionsAr;
 
   factory ExerciseModel.fromJson(Map<String, dynamic> json) {
-    // gif_url: path نسبي → CDN كامل
     final rawGif = json['gif_url']?.toString() ?? '';
     final gifUrl = rawGif.isNotEmpty
         ? '${ApiEndpoints.mediaCdnBase}/$rawGif'
         : '';
 
-    // instruction_steps
     List<String> _parseSteps(dynamic raw) {
       if (raw == null) return [];
       if (raw is List) return raw.map((e) => e.toString()).toList();

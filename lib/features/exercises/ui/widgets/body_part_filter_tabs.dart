@@ -16,7 +16,6 @@ class BodyPartFilterTabs extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onSelect;
 
-  // Translate API English → Arabic
   static String _label(String part) => switch (part.toLowerCase()) {
     'all'        => 'الكل',
     'chest'      => 'صدر',

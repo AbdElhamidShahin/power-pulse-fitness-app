@@ -64,14 +64,9 @@ Future<void> initDependencies() async {
 }
 
 void _initExercises() {
-  sl.registerLazySingleton<ExerciseService>(
-          () => ExerciseServiceImpl(sl<Dio>(instanceName: 'exerciseDb')));
-  sl.registerLazySingleton<ExerciseLocalService>(
-          () => ExerciseLocalServiceImpl(sl<SharedPreferences>()));
-  sl.registerLazySingleton<ExerciseRepository>(() => ExerciseRepositoryImpl(
-    remoteService: sl(),
-    localService:  sl(),
-    networkInfo:   sl(),
+  sl.registerLazySingleton<ExerciseService>(() => ExerciseServiceImpl(sl<Dio>(instanceName: 'exerciseDb')));
+  sl.registerLazySingleton<ExerciseLocalService>(() => ExerciseLocalServiceImpl(sl<SharedPreferences>()));
+  sl.registerLazySingleton<ExerciseRepository>(() => ExerciseRepositoryImpl(remoteService: sl(), localService:  sl(), networkInfo:   sl(),
   ));
   sl.registerLazySingleton(() => GetExercisesUseCase(sl()));
   sl.registerLazySingleton(() => GetExercisesByBodyPartUseCase(sl()));
@@ -90,7 +85,6 @@ void _initExercises() {
 }
 
 void _initNutrition() {
-  // ─── Services ────────────────────────────────────────────────
   sl.registerLazySingleton<NutritionService>(
         () => NutritionServiceImpl(sl<Dio>(instanceName: 'foodFacts')),
   );
@@ -99,7 +93,6 @@ void _initNutrition() {
         () => NutritionLocalServiceImpl(sl<SharedPreferences>()),
   );
 
-  // ─── Repository ──────────────────────────────────────────────
   sl.registerLazySingleton<NutritionRepository>(
         () => NutritionRepositoryImpl(
       remoteService: sl(),

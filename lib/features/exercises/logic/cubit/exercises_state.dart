@@ -1,7 +1,5 @@
 import '../../data/models/exercise_entity.dart';
 
-/// ExercisesState — sealed class, Dart 3+
-/// Zero Flutter imports — const constructors
 sealed class ExercisesState {
   const ExercisesState();
 }

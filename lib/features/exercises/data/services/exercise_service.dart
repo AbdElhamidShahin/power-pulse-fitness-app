@@ -32,7 +32,10 @@ final class ExerciseServiceImpl implements ExerciseService {
       if (data is List) {
         return ExerciseModel.toEntityList(data);
       }
-      throw const ServerException(message: 'Unexpected response format');
+      else{
+        throw const ServerException(message: "");
+      }
+      // throw const ServerException(message: 'Unexpected response format');
     } on DioException catch (e) {
       throw mapDioException(e);
     }
