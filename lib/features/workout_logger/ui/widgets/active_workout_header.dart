@@ -10,7 +10,6 @@ class ActiveWorkoutHeader extends StatefulWidget {
     required this.session,
     required this.onCancel,
   });
-
   final WorkoutSession session;
   final VoidCallback onCancel;
 
@@ -51,10 +50,8 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  widget.session.name,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
+                Text(widget.session.name,
+                    style: Theme.of(context).textTheme.headlineMedium),
                 StreamBuilder<int>(
                   stream: _ticker,
                   initialData: 0,
@@ -71,14 +68,10 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
               context: context,
               builder: (_) => AlertDialog(
                 backgroundColor: AppColors.bgSurface,
-                title: Text(
-                  'إلغاء التمرين؟',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                content: Text(
-                  'سيتم حذف التمرين الحالي',
-                  style: AppTextStyles.bodyMedium,
-                ),
+                title: Text('إلغاء التمرين؟',
+                    style: Theme.of(context).textTheme.headlineSmall),
+                content: Text('سيتم حذف التمرين الحالي',
+                    style: AppTextStyles.bodyMedium),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
@@ -89,29 +82,97 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                       Navigator.pop(context);
                       widget.onCancel();
                     },
-                    child: Text(
-                      'نعم',
-                      style: AppTextStyles.labelMedium
-                          .copyWith(color: AppColors.danger),
-                    ),
+                    child: Text('نعم',
+                        style: AppTextStyles.labelMedium
+                            .copyWith(color: AppColors.danger)),
                   ),
                 ],
               ),
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.spaceM,
-                vertical: AppConstants.spaceS,
-              ),
+                  horizontal: AppConstants.spaceM,
+                  vertical: AppConstants.spaceS),
               decoration: BoxDecoration(
                 color: AppColors.dangerDim,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
-              child: Text(
-                'إلغاء',
-                style: AppTextStyles.labelSmall
-                    .copyWith(color: AppColors.danger),
+              child: Text('إلغاء',
+                  style: AppTextStyles.labelSmall
+                      .copyWith(color: AppColors.danger)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Bottom Bar ─────────────────────────────────────────────────
+class WorkoutBottomBar extends StatelessWidget {
+  const WorkoutBottomBar({
+    super.key,
+    required this.session,
+    required this.onAddExercise,
+    required this.onFinish,
+  });
+  final WorkoutSession session;
+  final VoidCallback onAddExercise;
+  final VoidCallback onFinish;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppConstants.screenPaddingH,
+        AppConstants.spaceL,
+        AppConstants.screenPaddingH,
+        AppConstants.spaceXL,
+      ),
+      decoration: const BoxDecoration(
+        color: AppColors.bgSurface,
+        border: Border(top: BorderSide(color: AppColors.borderSubtle)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: onAddExercise,
+              child: Container(
+                height: AppConstants.buttonHeightMedium,
+                decoration: BoxDecoration(
+                  color: AppColors.bgElevated,
+                  borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                  border: Border.all(color: AppColors.borderMedium),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.add_rounded,
+                        color: AppColors.textMuted, size: 20),
+                    const SizedBox(width: AppConstants.spaceS),
+                    Text('إضافة تمرين',
+                        style: AppTextStyles.labelMedium
+                            .copyWith(color: AppColors.textMuted)),
+                  ],
+                ),
               ),
+            ),
+          ),
+          const SizedBox(width: AppConstants.spaceM),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: onFinish,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accent,
+                minimumSize: Size(double.infinity, AppConstants.buttonHeightMedium),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                ),
+              ),
+              child: Text('إنهاء التمرين ✅',
+                  style: AppTextStyles.labelMedium
+                      .copyWith(color: AppColors.textOnAccent)),
             ),
           ),
         ],

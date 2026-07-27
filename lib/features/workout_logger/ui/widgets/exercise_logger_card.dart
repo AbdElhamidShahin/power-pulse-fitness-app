@@ -16,67 +16,99 @@ class ExerciseLoggerCard extends StatelessWidget {
   });
 
   final SessionExercise exercise;
-  final void Function({required String exerciseId, required int setIndex,
-      int? reps, double? weight, bool? isCompleted}) onUpdateSet;
+  final void Function({
+  required String exerciseId,
+  required int setIndex,
+  int? reps,
+  double? weight,
+  bool? isCompleted,
+  }) onUpdateSet;
   final VoidCallback onAddSet;
   final void Function(int setIndex) onRemoveSet;
   final VoidCallback onRemoveExercise;
 
   @override
   Widget build(BuildContext context) {
-    final isFullyDone = exercise.isFullyDone;
+    final done      = exercise.isFullyDone;
+    final completed = exercise.completedSets;
+    final total     = exercise.sets.length;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: AppConstants.spaceM),
+      margin: const EdgeInsets.only(bottom: AppConstants.spaceL),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
         border: Border.all(
-          color: isFullyDone ? AppColors.borderAccent : AppColors.borderSubtle,
-          width: isFullyDone ? 1.5 : 1,
+          color: done ? AppColors.accent : AppColors.borderSubtle,
+          width: done ? 1.5 : 0.5,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─── Header ──────────────────────────────────────
+          // ─── Header ────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppConstants.spaceL,
-              AppConstants.spaceL,
-              AppConstants.spaceM,
-              AppConstants.spaceM,
-            ),
+            padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
             child: Row(
               children: [
-                // Body part chip
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppConstants.spaceS,
-                      vertical: AppConstants.spaceXS),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentDim,
-                    borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-                  ),
-                  child: Text(exercise.bodyPart,
-                      style: AppTextStyles.labelSmall
-                          .copyWith(color: AppColors.accent)),
-                ),
-                const SizedBox(width: AppConstants.spaceS),
+                // اسم + bodyPart
                 Expanded(
-                  child: Text(
-                    exercise.exerciseName,
-                    style: Theme.of(context).textTheme.titleLarge,
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        exercise.exerciseName,
+                        style: const TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 3),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentDim,
+                          borderRadius:
+                          BorderRadius.circular(AppConstants.radiusPill),
+                        ),
+                        child: Text(
+                          exercise.bodyPart,
+                          style: AppTextStyles.labelSmall
+                              .copyWith(color: AppColors.accent),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                // Progress
-                Text(
-                  '${exercise.completedSets}/${exercise.sets.length}',
-                  style: AppTextStyles.labelMedium
-                      .copyWith(color: AppColors.textMuted),
+                // progress badge
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: done ? AppColors.accent : AppColors.bgElevated,
+                    borderRadius:
+                    BorderRadius.circular(AppConstants.radiusPill),
+                  ),
+                  child: Text(
+                    done ? '✓ مكتمل' : '$completed / $total',
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: done
+                          ? AppColors.textOnAccent
+                          : AppColors.textMuted,
+                    ),
+                  ),
                 ),
-                const SizedBox(width: AppConstants.spaceS),
-                // Remove exercise
+                const SizedBox(width: 8),
+                // حذف
                 GestureDetector(
                   onTap: onRemoveExercise,
                   child: const Icon(Icons.delete_outline_rounded,
@@ -86,34 +118,34 @@ class ExerciseLoggerCard extends StatelessWidget {
             ),
           ),
 
-          // ─── Sets Header ──────────────────────────────────
+          // ─── Sets header ────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.spaceL),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                const SizedBox(width: 28),
-                const SizedBox(width: AppConstants.spaceM),
+                const SizedBox(width: 30),
                 Expanded(
-                  child: Text('الوزن', style: AppTextStyles.labelSmall,
+                  child: Text('وزن (كجم)',
+                      style: AppTextStyles.labelSmall
+                          .copyWith(color: AppColors.textMuted),
                       textAlign: TextAlign.center),
                 ),
-                const SizedBox(width: AppConstants.spaceM),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: Text('التكرارات', style: AppTextStyles.labelSmall,
+                  child: Text('رابس',
+                      style: AppTextStyles.labelSmall
+                          .copyWith(color: AppColors.textMuted),
                       textAlign: TextAlign.center),
                 ),
-                const SizedBox(width: AppConstants.spaceM),
-                const SizedBox(width: 36),
+                const SizedBox(width: 52),
               ],
             ),
           ),
-          const SizedBox(height: AppConstants.spaceS),
+          const SizedBox(height: 6),
 
-          // ─── Sets ─────────────────────────────────────────
+          // ─── Sets ───────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.spaceL),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Column(
               children: exercise.sets.asMap().entries.map((entry) {
                 return SetRowWidget(
@@ -127,32 +159,28 @@ class ExerciseLoggerCard extends StatelessWidget {
             ),
           ),
 
-          // ─── Add Set ──────────────────────────────────────
+          // ─── Add set ─────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppConstants.spaceL,
-              AppConstants.spaceXS,
-              AppConstants.spaceL,
-              AppConstants.spaceL,
-            ),
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
             child: GestureDetector(
               onTap: onAddSet,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    vertical: AppConstants.spaceM),
+                padding:
+                const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   color: AppColors.bgElevated,
                   borderRadius:
-                      BorderRadius.circular(AppConstants.radiusM),
-                  border: Border.all(color: AppColors.borderMedium),
+                  BorderRadius.circular(AppConstants.radiusM),
+                  border: Border.all(
+                      color: AppColors.borderMedium, width: 0.5),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.add_rounded,
-                        color: AppColors.textMuted, size: 18),
-                    const SizedBox(width: AppConstants.spaceXS),
+                        color: AppColors.textMuted, size: 16),
+                    const SizedBox(width: 4),
                     Text('إضافة مجموعة',
                         style: AppTextStyles.labelSmall
                             .copyWith(color: AppColors.textMuted)),

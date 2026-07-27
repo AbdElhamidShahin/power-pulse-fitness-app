@@ -24,9 +24,9 @@ class AppBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.bgSurface,
         border: Border(
-          top: BorderSide(color: Color(0xFFEFEFEF), width: 1),
+          top: BorderSide(color: AppColors.borderSubtle, width: 0.5),
         ),
       ),
       child: SafeArea(
@@ -58,10 +58,10 @@ class AppBottomNav extends StatelessWidget {
                             fontFamily: 'Cairo',
                             fontSize: 10.sp,
                             fontWeight:
-                            active ? FontWeight.w700 : FontWeight.w400,
+                                active ? FontWeight.w700 : FontWeight.w400,
                             color: active
-                                ? const Color(0xFF1A1A1A)
-                                : const Color(0xFF8A8A8A),
+                                ? AppColors.textPrimary
+                                : AppColors.textMuted,
                           ),
                         ),
                         SizedBox(height: 3.h),
@@ -70,7 +70,7 @@ class AppBottomNav extends StatelessWidget {
                           width: active ? 4.r : 0,
                           height: active ? 4.r : 0,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFA8E063),
+                            color: AppColors.accent,
                             shape: BoxShape.circle,
                           ),
                         ),

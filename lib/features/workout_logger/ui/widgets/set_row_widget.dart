@@ -15,8 +15,13 @@ class SetRowWidget extends StatefulWidget {
 
   final ExerciseSet exerciseSet;
   final String exerciseId;
-  final void Function({required String exerciseId, required int setIndex,
-      int? reps, double? weight, bool? isCompleted}) onUpdate;
+  final void Function({
+    required String exerciseId,
+    required int setIndex,
+    int? reps,
+    double? weight,
+    bool? isCompleted,
+  }) onUpdate;
   final VoidCallback onRemove;
 
   @override
@@ -30,11 +35,14 @@ class _SetRowWidgetState extends State<SetRowWidget> {
   @override
   void initState() {
     super.initState();
-    _repsCtrl   = TextEditingController(
-        text: widget.exerciseSet.reps?.toString() ?? '');
+    _repsCtrl =
+        TextEditingController(text: widget.exerciseSet.reps?.toString() ?? '');
     _weightCtrl = TextEditingController(
-        text: widget.exerciseSet.weight?.toStringAsFixed(
-            widget.exerciseSet.weight! % 1 == 0 ? 0 : 1) ?? '');
+        text: widget.exerciseSet.weight == null
+            ? ''
+            : widget.exerciseSet.weight! % 1 == 0
+                ? widget.exerciseSet.weight!.toInt().toString()
+                : widget.exerciseSet.weight!.toStringAsFixed(1));
   }
 
   @override
@@ -44,71 +52,75 @@ class _SetRowWidgetState extends State<SetRowWidget> {
     super.dispose();
   }
 
-  void _onChanged() {
-    final reps   = int.tryParse(_repsCtrl.text);
-    final weight = double.tryParse(_weightCtrl.text);
+  void _onChange() {
     widget.onUpdate(
       exerciseId: widget.exerciseId,
       setIndex: widget.exerciseSet.setNumber - 1,
-      reps: reps,
-      weight: weight,
+      reps: int.tryParse(_repsCtrl.text),
+      weight: double.tryParse(_weightCtrl.text),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final done = widget.exerciseSet.isCompleted;
+
     return AnimatedContainer(
-      duration: AppConstants.durationNormal,
-      margin: const EdgeInsets.only(bottom: AppConstants.spaceS),
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.spaceM, vertical: AppConstants.spaceS),
+      duration: const Duration(milliseconds: 250),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: done ? AppColors.accentDim : AppColors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         border: Border.all(
-          color: done ? AppColors.borderAccent : AppColors.borderSubtle,
+          color:
+              done ? AppColors.accent.withOpacity(0.4) : AppColors.borderSubtle,
+          width: 0.5,
         ),
       ),
       child: Row(
         children: [
-          // Set number
+          // رقم السيت
           SizedBox(
-            width: 28,
+            width: 22,
             child: Text(
-              widget.exerciseSet.setNumber.toString(),
-              style: AppTextStyles.labelMedium
-                  .copyWith(color: done ? AppColors.accent : AppColors.textMuted),
+              '${widget.exerciseSet.setNumber}',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: done ? AppColors.accent : AppColors.textMuted,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(width: AppConstants.spaceM),
+          const SizedBox(width: 8),
 
-          // Weight
+          // وزن
           Expanded(
-            child: _NumberField(
+            child: _NumField(
               controller: _weightCtrl,
               hint: '0',
-              suffix: 'كغ',
+              label: 'كجم',
               enabled: !done,
-              onChanged: (_) => _onChanged(),
+              onChanged: (_) => _onChange(),
             ),
           ),
-          const SizedBox(width: AppConstants.spaceM),
+          const SizedBox(width: 8),
 
-          // Reps
+          // رابس
           Expanded(
-            child: _NumberField(
+            child: _NumField(
               controller: _repsCtrl,
               hint: '0',
-              suffix: 'تكرار',
+              label: 'رابس',
               enabled: !done,
-              onChanged: (_) => _onChanged(),
+              onChanged: (_) => _onChange(),
             ),
           ),
-          const SizedBox(width: AppConstants.spaceM),
+          const SizedBox(width: 8),
 
-          // Done button
+          // زرار ✓ — كبير وواضح
           GestureDetector(
             onTap: () => widget.onUpdate(
               exerciseId: widget.exerciseId,
@@ -116,48 +128,58 @@ class _SetRowWidgetState extends State<SetRowWidget> {
               isCompleted: !done,
             ),
             child: AnimatedContainer(
-              duration: AppConstants.durationNormal,
-              width: 36,
-              height: 36,
+              duration: const Duration(milliseconds: 250),
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: done ? AppColors.accent : AppColors.bgHighest,
                 shape: BoxShape.circle,
+                boxShadow: done
+                    ? [
+                        BoxShadow(
+                          color: AppColors.accent.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        )
+                      ]
+                    : null,
               ),
               child: Icon(
-                done ? Icons.check_rounded : Icons.check_rounded,
+                Icons.check_rounded,
                 color: done ? AppColors.textOnAccent : AppColors.textMuted,
-                size: AppConstants.iconS,
+                size: 20,
               ),
             ),
           ),
 
-          // Delete
+          // حذف (بس لو مش مكتمل)
           if (!done) ...[
-            const SizedBox(width: AppConstants.spaceS),
+            const SizedBox(width: 4),
             GestureDetector(
               onTap: widget.onRemove,
               child: const Icon(Icons.close_rounded,
-                  color: AppColors.textMuted, size: 18),
+                  color: AppColors.textMuted, size: 16),
             ),
-          ],
+          ] else
+            const SizedBox(width: 20),
         ],
       ),
     );
   }
 }
 
-class _NumberField extends StatelessWidget {
-  const _NumberField({
+class _NumField extends StatelessWidget {
+  const _NumField({
     required this.controller,
     required this.hint,
-    required this.suffix,
+    required this.label,
     required this.enabled,
     required this.onChanged,
   });
 
   final TextEditingController controller;
   final String hint;
-  final String suffix;
+  final String label;
   final bool enabled;
   final ValueChanged<String> onChanged;
 
@@ -168,22 +190,31 @@ class _NumberField extends StatelessWidget {
       enabled: enabled,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       textAlign: TextAlign.center,
-      style: AppTextStyles.titleMedium,
+      style: const TextStyle(
+        fontFamily: 'Cairo',
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+      ),
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodySmall,
-        suffixText: suffix,
-        suffixStyle: AppTextStyles.bodySmall,
+        hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+        suffixText: label,
+        suffixStyle:
+            AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
         filled: true,
         fillColor: AppColors.bgDeep,
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spaceS, vertical: AppConstants.spaceS),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusS),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusS),
+          borderSide: BorderSide.none,
+        ),
+        disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusS),
           borderSide: BorderSide.none,
         ),
