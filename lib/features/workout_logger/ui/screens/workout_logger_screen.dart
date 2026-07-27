@@ -1,0 +1,232 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/pp_button.dart';
+import '../../../workout_plan/data/models/workout_plan_entity.dart';
+import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
+import '../../../workout_plan/logic/cubit/workout_plan_state.dart';
+import '../../data/models/workout_session_entity.dart';
+import '../../logic/cubit/workout_logger_cubit.dart';
+import '../../logic/cubit/workout_logger_state.dart';
+import '../widgets/active_workout_header.dart';
+import '../widgets/add_exercise_sheet.dart';
+import '../widgets/exercise_logger_card.dart';
+import '../widgets/workout_summary_sheet.dart';
+
+class WorkoutLoggerScreen extends StatefulWidget {
+  const WorkoutLoggerScreen({super.key});
+
+  @override
+  State<WorkoutLoggerScreen> createState() => _WorkoutLoggerScreenState();
+}
+
+class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _startWithPlan();
+    });
+  }
+
+  Future<void> _startWithPlan() async {
+    final cubit = context.read<WorkoutLoggerCubit>();
+    await cubit.load();
+    if (!mounted) return;
+    if (cubit.state is WorkoutLoggerIdle) {
+      final planState = context.read<WorkoutPlanCubit>().state;
+      WorkoutPlan? plan;
+      if (planState is WorkoutPlanLoaded) plan = planState.plan;
+      if (planState is WorkoutPlanEditing) plan = planState.draft;
+
+      final todayPlan = plan?.dayFor(DateTime.now());
+      final name =
+          (todayPlan != null && !todayPlan.isRest && todayPlan.name.isNotEmpty)
+              ? todayPlan.name
+              : 'تمريني اليوم';
+
+      await cubit.startSession(
+        name,
+        planDay: (todayPlan != null && !todayPlan.isRest) ? todayPlan : null,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<WorkoutLoggerCubit, WorkoutLoggerState>(
+      listener: (context, state) {
+        if (state is WorkoutLoggerFinished) {
+          _showSummarySheet(context, state.session);
+        }
+      },
+      builder: (context, state) => switch (state) {
+        WorkoutLoggerInitial() ||
+        WorkoutLoggerLoading() ||
+        WorkoutLoggerIdle() =>
+          const _LoadingView(),
+        WorkoutLoggerActive(session: final s) => _ActiveView(session: s),
+        WorkoutLoggerFinished() => const _LoadingView(),
+        WorkoutLoggerError(message: final m) => _ErrorView(message: m),
+      },
+    );
+  }
+
+  void _showSummarySheet(BuildContext context, WorkoutSession session) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.bgSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+      ),
+      builder: (_) => WorkoutSummarySheet(session: session),
+    ).then((_) => context.read<WorkoutLoggerCubit>().reset());
+  }
+}
+
+class _ActiveView extends StatelessWidget {
+  const _ActiveView({required this.session});
+  final WorkoutSession session;
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<WorkoutLoggerCubit>();
+
+    return Scaffold(
+      backgroundColor: AppColors.bgDeep,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ─── Header ──────────────────────────────────
+            ActiveWorkoutHeader(
+                session: session, onCancel: cubit.cancelSession),
+            const Divider(color: AppColors.borderSubtle, height: 1),
+
+            Expanded(
+              child: session.exercises.isEmpty
+                  ? _EmptyExercises(
+                      onAdd: () => _showAddExercise(context, cubit))
+                  : ListView.builder(
+                      padding:
+                          const EdgeInsets.all(AppConstants.screenPaddingH),
+                      itemCount: session.exercises.length,
+                      itemBuilder: (_, i) {
+                        final ex = session.exercises[i];
+                        return ExerciseLoggerCard(
+                          exercise: ex,
+                          onUpdateSet: ({
+                            required exerciseId,
+                            required setIndex,
+                            reps,
+                            weight,
+                            isCompleted,
+                          }) =>
+                              cubit.updateSet(
+                            exerciseId: exerciseId,
+                            setIndex: setIndex,
+                            reps: reps,
+                            weight: weight,
+                            isCompleted: isCompleted,
+                          ),
+                          onAddSet: () => cubit.addSet(ex.exerciseId),
+                          onRemoveSet: (idx) =>
+                              cubit.removeSet(ex.exerciseId, idx),
+                          onRemoveExercise: () =>
+                              cubit.removeExercise(ex.exerciseId),
+                        );
+                      },
+                    ),
+            ),
+
+            WorkoutBottomBar(
+              session: session,
+              onAddExercise: () => _showAddExercise(context, cubit),
+              onFinish: cubit.finishSession,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddExercise(BuildContext context, WorkoutLoggerCubit cubit) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.bgSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+      ),
+      builder: (_) => AddExerciseSheet(
+        cubit: cubit,
+        onAdd: (exercise) {
+          cubit.addExercise(exercise);
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+}
+
+// ─── Loading ────────────────────────────────────────────────────
+class _LoadingView extends StatelessWidget {
+  const _LoadingView();
+
+  @override
+  Widget build(BuildContext context) => const Scaffold(
+        backgroundColor: AppColors.bgDeep,
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.accent),
+        ),
+      );
+}
+
+// ─── Error ──────────────────────────────────────────────────────
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: AppColors.bgDeep,
+        body: Center(
+          child: Text(message, style: AppTextStyles.bodyMedium),
+        ),
+      );
+}
+
+// ─── Empty Exercises ────────────────────────────────────────────
+class _EmptyExercises extends StatelessWidget {
+  const _EmptyExercises({required this.onAdd});
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.add_circle_outline_rounded,
+              color: AppColors.textMuted, size: 56),
+          const SizedBox(height: AppConstants.spaceL),
+          Text('لا يوجد تمارين بعد',
+              style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: AppConstants.spaceS),
+          Text('اضغط "إضافة تمرين" للبدء', style: AppTextStyles.bodyMedium),
+          const SizedBox(height: AppConstants.spaceXXL),
+          PPButton(
+            label: '+ إضافة أول تمرين',
+            size: PPButtonSize.medium,
+            onPressed: onAdd,
+          ),
+        ],
+      ),
+    );
+  }
+}

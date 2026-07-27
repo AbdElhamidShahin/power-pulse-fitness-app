@@ -1,151 +1,162 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-class AppTextStyles {
+
+abstract class AppTextStyles {
   AppTextStyles._();
 
-  static TextStyle get displayHero => GoogleFonts.cairo(
-        fontSize: 52,
-        fontWeight: FontWeight.w900,
-        color: AppColors.textPrimary,
-        height: 1.0,
-        letterSpacing: -1.5,
-      );
+  static const String _font = 'Cairo';
 
-  static TextStyle get displayMetrics => GoogleFonts.cairo(
-        fontSize: 44,
-        fontWeight: FontWeight.w900,
-        color: AppColors.textPrimary,
-        height: 1.0,
-        letterSpacing: -1.0,
-      );
-
-  // ── Headlines ─────────────────────────────────────────────────────────────
-  static TextStyle get headlineHero => GoogleFonts.cairo(
-        fontSize: 34,
-        fontWeight: FontWeight.w900,
-        color: AppColors.textPrimary,
-        height: 1.1,
-        letterSpacing: -0.5,
-      );
-
-  static TextStyle get headlineLgMobile => GoogleFonts.cairo(
-        fontSize: 26,
-        fontWeight: FontWeight.w800,
-        color: AppColors.textPrimary,
-        height: 1.2,
-      );
-
-  static TextStyle get headlineLg => headlineLgMobile;
-
-  static TextStyle get headlineMd => GoogleFonts.cairo(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        height: 1.3,
-      );
-
-  static TextStyle get headingSmall => GoogleFonts.cairo(
-        fontSize: 17,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        height: 1.3,
-      );
-
-  static TextStyle get headingLarge => headlineLgMobile;
-  static TextStyle get headingMedium => headlineMd;
-
-  // ── Body ──────────────────────────────────────────────────────────────────
-  static TextStyle get bodyLg => GoogleFonts.cairo(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-        height: 1.6,
-      );
-  static TextStyle get bodyMd => GoogleFonts.cairo(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-        height: 1.5,
-      );
-  static TextStyle get bodySmall => GoogleFonts.cairo(
-        fontSize: 13,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-        height: 1.5,
-      );
-  static TextStyle get bodyMuted => GoogleFonts.cairo(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-        height: 1.5,
-      );
-
-  // ── Labels ────────────────────────────────────────────────────────────────
-  static TextStyle get labelCaps => GoogleFonts.cairo(
-        fontSize: 11,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-        letterSpacing: 1.4,
-        height: 1.0,
-      );
-  static TextStyle get labelMuted => GoogleFonts.cairo(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textSecondary,
-        letterSpacing: 0.8,
-        height: 1.0,
-      );
-  static TextStyle get labelPrimary =>
-      labelCaps.copyWith(color: AppColors.primary);
-
-  // ── App bar / navigation ──────────────────────────────────────────────────
-  static TextStyle get appBarTitle => GoogleFonts.cairo(
-        fontSize: 22,
-        fontWeight: FontWeight.w900,
-        color: AppColors.textPrimary,
-        letterSpacing: -0.3,
-      );
-  static TextStyle get appBarTitleSmall => GoogleFonts.cairo(
-        fontSize: 17,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      );
-  static const TextStyle appBarThemeTitle = TextStyle(
+  // ─── Display ───────────────────────────────────────────────
+  /// شاشة الـ splash والـ onboarding - 36px bold
+  static const TextStyle displayLarge = TextStyle(
+    fontFamily: _font,
+    fontSize: 36,
+    fontWeight: FontWeight.w900,
     color: AppColors.textPrimary,
-    fontSize: 20,
-    fontWeight: FontWeight.w800,
+    height: 1.1,
+    letterSpacing: -0.5,
   );
 
-  // ── Buttons ───────────────────────────────────────────────────────────────
-  static TextStyle get buttonLabel => GoogleFonts.cairo(
-        fontSize: 16,
-        fontWeight: FontWeight.w800,
-        color: AppColors.onPrimary,
-        letterSpacing: 0.2,
-      );
+  /// عناوين كبيرة - 28px
+  static const TextStyle displayMedium = TextStyle(
+    fontFamily: _font,
+    fontSize: 28,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
+    height: 1.15,
+    letterSpacing: -0.3,
+  );
 
-  // ── Tool / calc screens ───────────────────────────────────────────────────
-  static TextStyle get toolCardTitle => headingSmall;
-  static TextStyle get calcLabel => headingSmall;
-  static TextStyle get calcResult =>
-      displayMetrics.copyWith(color: AppColors.success);
-  static TextStyle get calcHeading =>
-      headlineLgMobile.copyWith(color: AppColors.primary);
+  // ─── Headline ──────────────────────────────────────────────
+  /// عنوان الشاشة - 22px
+  static const TextStyle headlineLarge = TextStyle(
+    fontFamily: _font,
+    fontSize: 22,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
+    height: 1.2,
+  );
 
-  // ── Exercise / workout ─────────────────────────────────────────────────────
-  static TextStyle get exerciseTitle =>
-      headingSmall.copyWith(color: AppColors.primary);
-  static TextStyle get exerciseDetails =>
-      bodyMd.copyWith(color: AppColors.textSecondary);
-  static TextStyle get exerciseListHeader => headlineLgMobile;
+  /// عنوان section - 18px
+  static const TextStyle headlineMedium = TextStyle(
+    fontFamily: _font,
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    height: 1.25,
+  );
 
-  // ── Cards ──────────────────────────────────────────────────────────────────
-  static TextStyle get cardTitle => headlineMd.copyWith(fontSize: 18);
-  static TextStyle get cardSubtitle => bodyMd;
-  static TextStyle get workoutOptionTitle => headingSmall;
-  static TextStyle tabBarItem(Color color) =>
-      bodyMd.copyWith(color: color, fontWeight: FontWeight.w700);
-  static TextStyle get metricValue => displayMetrics.copyWith(fontSize: 28);
+  /// عنوان card - 16px
+  static const TextStyle headlineSmall = TextStyle(
+    fontFamily: _font,
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    height: 1.3,
+  );
+
+  // ─── Title ─────────────────────────────────────────────────
+  /// اسم التمرين - 15px
+  static const TextStyle titleLarge = TextStyle(
+    fontFamily: _font,
+    fontSize: 15,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    height: 1.3,
+  );
+
+  /// عناصر القوائم - 14px
+  static const TextStyle titleMedium = TextStyle(
+    fontFamily: _font,
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary,
+    height: 1.35,
+  );
+
+  /// labels - 13px
+  static const TextStyle titleSmall = TextStyle(
+    fontFamily: _font,
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary,
+    height: 1.4,
+  );
+
+  // ─── Body ──────────────────────────────────────────────────
+  /// نص اساسي - 14px
+  static const TextStyle bodyLarge = TextStyle(
+    fontFamily: _font,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textSecondary,
+    height: 1.5,
+  );
+
+  /// نص ثانوي - 13px
+  static const TextStyle bodyMedium = TextStyle(
+    fontFamily: _font,
+    fontSize: 13,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textSecondary,
+    height: 1.5,
+  );
+
+  /// نص صغير - 12px
+  static const TextStyle bodySmall = TextStyle(
+    fontFamily: _font,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textMuted,
+    height: 1.5,
+  );
+
+  // ─── Label ─────────────────────────────────────────────────
+  /// buttons - 14px bold
+  static const TextStyle labelLarge = TextStyle(
+    fontFamily: _font,
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    height: 1.2,
+  );
+
+  /// badges & tabs - 12px
+  static const TextStyle labelMedium = TextStyle(
+    fontFamily: _font,
+    fontSize: 12,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+    height: 1.2,
+  );
+
+  /// caption & nav labels - 10px
+  static const TextStyle labelSmall = TextStyle(
+    fontFamily: _font,
+    fontSize: 10,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textMuted,
+    height: 1.2,
+    letterSpacing: 0.2,
+  );
+
+  // ─── Special ───────────────────────────────────────────────
+  /// أرقام Stats الكبيرة - 32px
+  static const TextStyle statNumber = TextStyle(
+    fontFamily: _font,
+    fontSize: 32,
+    fontWeight: FontWeight.w900,
+    color: AppColors.textPrimary,
+    height: 1.0,
+  );
+
+  /// accent text - أخضر bold
+  static const TextStyle accentLabel = TextStyle(
+    fontFamily: _font,
+    fontSize: 13,
+    fontWeight: FontWeight.w700,
+    color: AppColors.accent,
+    height: 1.2,
+  );
 }
