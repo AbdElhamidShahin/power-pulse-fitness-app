@@ -145,6 +145,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               exerciseId: ex.id,
               exerciseName: ex.nameAr.isNotEmpty ? ex.nameAr : ex.name,
               bodyPart: ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
+              gifUrl: ex.gifUrl,
               defaultSets: 3,
               defaultReps: 10,
             ),

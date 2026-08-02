@@ -11,6 +11,7 @@ import '../../features/nutrition/data/models/food_entity.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
 import '../../features/nutrition/ui/screens/nutrition_screen.dart';
 import '../../features/nutrition/ui/screens/food_search_screen.dart';
+import '../../features/profile/logic/cubit/settings_cubit.dart';
 import '../../features/progress/logic/cubit/progress_cubit.dart';
 import '../../features/progress/ui/screens/progress_screen.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
@@ -120,8 +121,11 @@ abstract class AppRouter {
           ),
           GoRoute(
             path: profile,
-            builder: (_, __) => BlocProvider(
-              create: (_) => sl<ProfileCubit>(),
+            builder: (_, __) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => sl<ProfileCubit>()),
+                BlocProvider.value(value: sl<AppSettingsCubit>()),
+              ],
               child: const ProfileScreen(),
             ),
           ),
@@ -171,7 +175,8 @@ abstract class AppRouter {
       GoRoute(
         path: profileEdit,
         builder: (context, state) {
-          final profileState = context.read<ProfileCubit>().state;
+          final profileCubit = sl<ProfileCubit>();
+          final profileState = profileCubit.state;
           final profile = profileState is ProfileLoaded
               ? profileState.profile
               : null;
@@ -185,7 +190,7 @@ abstract class AppRouter {
           return MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
-              BlocProvider.value(value: context.read<ProfileCubit>()),
+              BlocProvider.value(value: profileCubit),
             ],
             child: EditProfileScreen(profile: profile),
           );
