@@ -94,8 +94,11 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: ':id',
-                builder: (_, state) => BlocProvider(
-                  create: (_) => sl<ExerciseDetailCubit>(),
+                builder: (_, state) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (_) => sl<ExerciseDetailCubit>()),
+                    BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
+                  ],
                   child: ExerciseDetailScreen(
                       exerciseId: state.pathParameters['id']!),
                 ),

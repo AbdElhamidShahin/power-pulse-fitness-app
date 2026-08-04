@@ -23,6 +23,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
       final weights  = await localService.getWeightEntries(limitDays: days);
       final workouts = await localService.getWorkoutLogs(limitDays: days);
 
+      // نحسب الـ streak من كل السجلات (مش مقيدة بالفترة)
+      final allWorkouts = await localService.getWorkoutLogs(limitDays: 3650);
+      final streak = _calcStreak(allWorkouts);
+
       final summary = ProgressSummary(
         totalWorkouts:      workouts.length,
         totalMinutes:       workouts.fold(0, (s, w) => s + w.durationMinutes),
@@ -33,6 +37,7 @@ final class ProgressRepositoryImpl implements ProgressRepository {
         workoutLogs:        workouts,
         weeklyWorkoutPoints:_buildWeeklyPoints(workouts, days),
         weightChartPoints:  _buildWeightPoints(weights),
+        currentStreak:      streak,
       );
 
       return Success(summary);
@@ -73,6 +78,29 @@ final class ProgressRepositoryImpl implements ProgressRepository {
     }
   }
 
+  // ─── Streak Calculator ─────────────────────────────────────
+  int _calcStreak(List<WorkoutLog> logs) {
+    if (logs.isEmpty) return 0;
+    final days = logs.map((l) {
+      final d = l.date;
+      return DateTime(d.year, d.month, d.day);
+    }).toSet().toList()..sort((a, b) => b.compareTo(a)); // أحدث أول
+
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    int streak = 0;
+    DateTime expected = today;
+
+    for (final day in days) {
+      if (day == expected) {
+        streak++;
+        expected = expected.subtract(const Duration(days: 1));
+      } else if (day.isBefore(expected)) {
+        break; // انقطع الـ streak
+      }
+    }
+    return streak;
+  }
+
   // ─── Chart Builders ─────────────────────────────────────────
   /// تمارين لكل يوم خلال الفترة
   List<ChartPoint> _buildWeeklyPoints(List<WorkoutLog> logs, int days) {
@@ -100,10 +128,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
         .asMap()
         .entries
         .map((e) => ChartPoint(
-              x:     e.key.toDouble(),
-              y:     e.value.weight,
-              label: '${e.value.date.day}/${e.value.date.month}',
-            ))
+      x:     e.key.toDouble(),
+      y:     e.value.weight,
+      label: '${e.value.date.day}/${e.value.date.month}',
+    ))
         .toList();
   }
 }

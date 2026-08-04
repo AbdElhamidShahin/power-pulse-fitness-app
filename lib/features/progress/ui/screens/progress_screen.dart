@@ -36,7 +36,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ProgressInitial() || ProgressLoading() => const _LoadingView(),
             ProgressError(:final message) => _ErrorView(message: message),
             ProgressLoaded(:final summary, :final period) =>
-              _LoadedView(summary: summary, period: period),
+                _LoadedView(summary: summary, period: period),
           },
         ),
       ),
@@ -70,10 +70,10 @@ class _LoadedView extends StatelessWidget {
             SizedBox(height: 14.h),
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: ProgressStatCard(
                     emoji: '🔥',
-                    value: '14',
+                    value: summary.currentStreak.toString(),
                     label: 'يوم متتالي',
                     valueColor: AppColors.warning,
                   ),
@@ -173,22 +173,22 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.error_outline_rounded,
-              color: AppColors.danger,
-              size: 48.r,
-            ),
-            SizedBox(height: 16.h),
-            Text(message, style: AppTextStyles.bodyMedium),
-            SizedBox(height: 16.h),
-            GestureDetector(
-              onTap: () => context.read<ProgressCubit>().load(),
-              child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
-            ),
-          ],
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.error_outline_rounded,
+          color: AppColors.danger,
+          size: 48.r,
         ),
-      );
+        SizedBox(height: 16.h),
+        Text(message, style: AppTextStyles.bodyMedium),
+        SizedBox(height: 16.h),
+        GestureDetector(
+          onTap: () => context.read<ProgressCubit>().load(),
+          child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
+        ),
+      ],
+    ),
+  );
 }
