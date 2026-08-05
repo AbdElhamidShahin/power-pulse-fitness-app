@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -10,6 +9,7 @@ import '../../../../../shared/widgets/pp_button.dart';
 import '../../data/models/exercise_entity.dart';
 import '../../logic/cubit/exercises_cubit.dart';
 import '../../logic/cubit/exercises_state.dart';
+import '../widgets/add_to_plan_sheet.dart';
 
 class ExerciseDetailScreen extends StatefulWidget {
   const ExerciseDetailScreen({super.key, required this.exerciseId});
@@ -46,6 +46,18 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
 class _DetailContent extends StatelessWidget {
   const _DetailContent({required this.exercise});
   final Exercise exercise;
+
+  void _showAddToPlanSheet(BuildContext context, Exercise ex) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.bgSurface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => AddToPlanSheet(exercise: ex),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +117,6 @@ class _DetailContent extends StatelessWidget {
             ),
           ),
         ),
-
-        // ─── Info ────────────────────────────────────────────
         SliverPadding(
           padding: const EdgeInsets.all(AppConstants.screenPaddingH),
           sliver: SliverList(
@@ -148,7 +158,6 @@ class _DetailContent extends StatelessWidget {
                 const SizedBox(height: AppConstants.spaceXXL),
               ],
 
-              // Instructions
               if (steps.isNotEmpty) ...[
                 Text('كيفية الأداء',
                     style: Theme.of(context).textTheme.headlineSmall),
@@ -200,7 +209,7 @@ class _DetailContent extends StatelessWidget {
 
               PPButton(
                 label: 'أضف للخطة',
-                onPressed: () {},
+                onPressed: () => _showAddToPlanSheet(context, exercise),
                 icon: Icons.add_rounded,
               ),
               const SizedBox(height: AppConstants.spaceXL),

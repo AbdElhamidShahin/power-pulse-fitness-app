@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_button.dart';
@@ -23,20 +25,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _heightCtrl;
   late final TextEditingController _weightCtrl;
 
-  late Gender        _gender;
-  late FitnessGoal   _goal;
+  late Gender _gender;
+  late FitnessGoal _goal;
   late ActivityLevel _activity;
 
   @override
   void initState() {
     super.initState();
     final p = widget.profile;
-    _nameCtrl   = TextEditingController(text: p.name);
-    _ageCtrl    = TextEditingController(text: p.age.toString());
+    _nameCtrl = TextEditingController(text: p.name);
+    _ageCtrl = TextEditingController(text: p.age.toString());
     _heightCtrl = TextEditingController(text: p.heightCm.toStringAsFixed(0));
     _weightCtrl = TextEditingController(text: p.weightKg.toStringAsFixed(1));
-    _gender   = p.gender;
-    _goal     = p.goal;
+    _gender = p.gender;
+    _goal = p.goal;
     _activity = p.activityLevel;
   }
 
@@ -50,12 +52,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   UserProfile get _built => widget.profile.copyWith(
-        name:          _nameCtrl.text.trim(),
-        age:           int.tryParse(_ageCtrl.text) ?? widget.profile.age,
-        heightCm:      double.tryParse(_heightCtrl.text) ?? widget.profile.heightCm,
-        weightKg:      double.tryParse(_weightCtrl.text) ?? widget.profile.weightKg,
-        gender:        _gender,
-        goal:          _goal,
+        name: _nameCtrl.text.trim(),
+        age: int.tryParse(_ageCtrl.text) ?? widget.profile.age,
+        heightCm: double.tryParse(_heightCtrl.text) ?? widget.profile.heightCm,
+        weightKg: double.tryParse(_weightCtrl.text) ?? widget.profile.weightKg,
+        gender: _gender,
+        goal: _goal,
         activityLevel: _activity,
       );
 
@@ -65,6 +67,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       listener: (context, state) {
         if (state is ProfileSaveSuccess) {
           context.read<ProfileCubit>().onProfileSaved(_built);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('✓ تم حفظ البيانات',
+                  style: TextStyle(fontFamily: 'Cairo')),
+              backgroundColor: AppColors.success,
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
           Navigator.of(context).pop();
         } else if (state is ProfileSaveError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -90,13 +101,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
                         child: Container(
-                          width: 40, height: 40,
+                          width: 40,
+                          height: 40,
                           decoration: BoxDecoration(
                             color: AppColors.bgElevated,
-                            borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusM),
                           ),
                           child: const Icon(Icons.arrow_back_ios_new_rounded,
-                              color: AppColors.textPrimary, size: AppConstants.iconS),
+                              color: AppColors.textPrimary,
+                              size: AppConstants.iconS),
                         ),
                       ),
                       const SizedBox(width: AppConstants.spaceM),
@@ -112,27 +126,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     horizontal: AppConstants.screenPaddingH),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-
                     // ─── Basic Info ──────────────────────────
                     _SectionTitle('المعلومات الأساسية'),
                     const SizedBox(height: AppConstants.spaceM),
-                    _Field(label: 'الاسم', controller: _nameCtrl,
-                        hint: 'اسمك', type: TextInputType.name),
+                    _Field(
+                        label: 'الاسم',
+                        controller: _nameCtrl,
+                        hint: 'اسمك',
+                        type: TextInputType.name),
                     const SizedBox(height: AppConstants.spaceM),
 
                     Row(children: [
-                      Expanded(child: _Field(
-                          label: 'العمر', controller: _ageCtrl,
-                          hint: '25', type: TextInputType.number, suffix: 'سنة')),
+                      Expanded(
+                          child: _Field(
+                              label: 'العمر',
+                              controller: _ageCtrl,
+                              hint: '25',
+                              type: TextInputType.number,
+                              suffix: 'سنة')),
                       const SizedBox(width: AppConstants.spaceM),
-                      Expanded(child: _Field(
-                          label: 'الطول', controller: _heightCtrl,
-                          hint: '175', type: TextInputType.number, suffix: 'سم')),
+                      Expanded(
+                          child: _Field(
+                              label: 'الطول',
+                              controller: _heightCtrl,
+                              hint: '175',
+                              type: TextInputType.number,
+                              suffix: 'سم')),
                     ]),
                     const SizedBox(height: AppConstants.spaceM),
 
-                    _Field(label: 'الوزن', controller: _weightCtrl,
-                        hint: '75.0', type: const TextInputType.numberWithOptions(decimal: true),
+                    _Field(
+                        label: 'الوزن',
+                        controller: _weightCtrl,
+                        hint: '75.0',
+                        type: const TextInputType.numberWithOptions(
+                            decimal: true),
                         suffix: 'كج'),
                     const SizedBox(height: AppConstants.spaceXXL),
 
@@ -151,26 +179,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _SectionTitle('هدفك'),
                     const SizedBox(height: AppConstants.spaceM),
                     ...FitnessGoal.values.map((g) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                      child: _OptionTile(
-                        label: g.labelAr,
-                        selected: _goal == g,
-                        onTap: () => setState(() => _goal = g),
-                      ),
-                    )),
+                          padding: const EdgeInsets.only(
+                              bottom: AppConstants.spaceS),
+                          child: _OptionTile(
+                            label: g.labelAr,
+                            selected: _goal == g,
+                            onTap: () => setState(() => _goal = g),
+                          ),
+                        )),
                     const SizedBox(height: AppConstants.spaceL),
 
                     // ─── Activity ────────────────────────────
                     _SectionTitle('مستوى النشاط'),
                     const SizedBox(height: AppConstants.spaceM),
                     ...ActivityLevel.values.map((a) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                      child: _OptionTile(
-                        label: a.labelAr,
-                        selected: _activity == a,
-                        onTap: () => setState(() => _activity = a),
-                      ),
-                    )),
+                          padding: const EdgeInsets.only(
+                              bottom: AppConstants.spaceS),
+                          child: _OptionTile(
+                            label: a.labelAr,
+                            selected: _activity == a,
+                            onTap: () => setState(() => _activity = a),
+                          ),
+                        )),
                     const SizedBox(height: AppConstants.spaceXXL),
 
                     // ─── Save ────────────────────────────────
@@ -194,13 +224,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 }
 
-// ─── Small Reusable Widgets ──────────────────────────────────
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle(this.title);
   final String title;
   @override
-  Widget build(BuildContext context) => Text(title,
-      style: Theme.of(context).textTheme.headlineSmall);
+  Widget build(BuildContext context) =>
+      Text(title, style: Theme.of(context).textTheme.headlineSmall);
 }
 
 class _Field extends StatelessWidget {
@@ -229,8 +258,8 @@ class _Field extends StatelessWidget {
           controller: controller,
           keyboardType: type,
           textDirection: TextDirection.rtl,
-          style: AppTextStyles.bodyMedium
-              .copyWith(color: AppColors.textPrimary),
+          style:
+              AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             suffixText: suffix,
@@ -270,8 +299,8 @@ class _SegmentedPicker<T> extends StatelessWidget {
               onTap: () => onSelect(v),
               child: AnimatedContainer(
                 duration: AppConstants.durationFast,
-                padding: const EdgeInsets.symmetric(
-                    vertical: AppConstants.spaceS),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.accent : Colors.transparent,
                   borderRadius: BorderRadius.circular(AppConstants.radiusS),
@@ -303,6 +332,7 @@ class _OptionTile extends StatelessWidget {
 
   final String label;
   final bool selected;
+
   final VoidCallback onTap;
 
   @override
@@ -328,9 +358,7 @@ class _OptionTile extends StatelessWidget {
             Expanded(
               child: Text(label,
                   style: AppTextStyles.titleMedium.copyWith(
-                    color: selected
-                        ? AppColors.accent
-                        : AppColors.textPrimary,
+                    color: selected ? AppColors.accent : AppColors.textPrimary,
                   )),
             ),
             if (selected)

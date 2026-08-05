@@ -12,6 +12,9 @@ import '../widgets/progress_period_selector.dart';
 import '../widgets/progress_stat_card.dart';
 import '../widgets/progress_weekly_chart_card.dart';
 
+final RouteObserver<ModalRoute<void>> progressRouteObserver =
+RouteObserver<ModalRoute<void>>();
+
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
 
@@ -19,10 +22,28 @@ class ProgressScreen extends StatefulWidget {
   State<ProgressScreen> createState() => _ProgressScreenState();
 }
 
-class _ProgressScreenState extends State<ProgressScreen> {
+class _ProgressScreenState extends State<ProgressScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
+    context.read<ProgressCubit>().load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != null) progressRouteObserver.subscribe(this, route);
+  }
+
+  @override
+  void dispose() {
+    progressRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
     context.read<ProgressCubit>().load();
   }
 

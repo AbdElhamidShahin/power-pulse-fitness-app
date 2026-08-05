@@ -35,7 +35,8 @@ final class HomeCubit extends Cubit<HomeState> {
     }
     final UserProfile profile = profileResult.dataOrNull!;
 
-    final nutritionResult = await _nutritionRepo.getDailyNutrition(DateTime.now());
+    final nutritionResult =
+        await _nutritionRepo.getDailyNutrition(DateTime.now());
     final progressResult = await _getProgressSummary(ProgressPeriod.week);
 
     final nutrition = nutritionResult.dataOrNull;
@@ -45,11 +46,11 @@ final class HomeCubit extends Cubit<HomeState> {
 
     // ─── Today's workouts ──────────────────────────────────────
     final todayLogs = progress?.workoutLogs
-        .where((l) =>
-    l.date.year == today.year &&
-        l.date.month == today.month &&
-        l.date.day == today.day)
-        .toList() ??
+            .where((l) =>
+                l.date.year == today.year &&
+                l.date.month == today.month &&
+                l.date.day == today.day)
+            .toList() ??
         [];
 
     // ─── Streak حساب ───────────────────────────────────────────
@@ -107,9 +108,9 @@ final class HomeCubit extends Cubit<HomeState> {
   }
 
   String _map(AppFailure f) => switch (f) {
-    NetworkFailure() => 'لا يوجد اتصال بالإنترنت',
-    CacheFailure() => 'خطأ في قراءة البيانات المحلية',
-    UnexpectedFailure() => 'حدث خطأ غير متوقع',
-    _ => 'حدث خطأ، حاول مجدداً',
-  };
+        NetworkFailure() => 'لا يوجد اتصال بالإنترنت',
+        CacheFailure() => 'خطأ في قراءة البيانات المحلية',
+        UnexpectedFailure() => 'حدث خطأ غير متوقع',
+        _ => 'حدث خطأ، حاول مجدداً',
+      };
 }

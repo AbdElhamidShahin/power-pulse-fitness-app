@@ -25,7 +25,7 @@ class QuickAccessGrid extends StatelessWidget {
       children: _items
           .map(
             (item) => GestureDetector(
-          onTap: () => context.go(item.route),
+          onTap: () => context.push(item.route),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             decoration: BoxDecoration(

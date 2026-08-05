@@ -21,7 +21,6 @@ import '../../features/profile/ui/screens/edit_profile_screen.dart';
 import '../../features/onboarding/ui/screens/onboarding_screen.dart';
 import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
 import '../../features/workout_logger/ui/screens/workout_logger_screen.dart';
-import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../features/workout_plan/ui/screens/workout_plan_screen.dart';
 import '../../shared/shell/main_shell.dart';
 import '../di/injection.dart';
@@ -56,6 +55,7 @@ abstract class AppRouter {
       return null;
     },
     debugLogDiagnostics: true,
+    observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
       // ─── Onboarding ────────────────────────────────────────
       GoRoute(
@@ -74,11 +74,8 @@ abstract class AppRouter {
         routes: [
           GoRoute(
             path: home,
-            builder: (_, __) => MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (_) => sl<HomeCubit>()),
-                BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
-              ],
+            builder: (_, __) => BlocProvider(
+              create: (_) => sl<HomeCubit>(),
               child: const HomeScreen(),
             ),
           ),
@@ -154,20 +151,20 @@ abstract class AppRouter {
 
       GoRoute(
         path: workoutLogger,
-        builder: (_, __) => MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
-            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
-          ],
+        // WorkoutPlanCubit موجود فعلاً في مستوى الـ app من main.dart
+        // مش محتاجين نعمله inject هنا — الـ WorkoutLoggerScreen يقدر يعمل
+        // context.read<WorkoutPlanCubit>() مباشرة
+        builder: (_, __) => BlocProvider(
+          create: (_) => sl<WorkoutLoggerCubit>(),
           child: const WorkoutLoggerScreen(),
         ),
       ),
 
       GoRoute(
         path: workoutPlan,
+        // WorkoutPlanCubit موجود من الـ app level — نحتاج بس ExercisesCubit
         builder: (_, __) => MultiBlocProvider(
           providers: [
-            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
             BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
             BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
           ],
@@ -177,27 +174,13 @@ abstract class AppRouter {
 
       GoRoute(
         path: profileEdit,
-        builder: (context, state) {
-          final profileCubit = sl<ProfileCubit>();
-          final profileState = profileCubit.state;
-          final profile = profileState is ProfileLoaded
-              ? profileState.profile
-              : null;
-          if (profile == null) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(color: Color(0xFFBFFF00)),
-              ),
-            );
-          }
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
-              BlocProvider.value(value: profileCubit),
-            ],
-            child: EditProfileScreen(profile: profile),
-          );
-        },
+        builder: (context, state) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
+            BlocProvider.value(value: sl<ProfileCubit>()),
+          ],
+          child: const _ProfileEditGate(),
+        ),
       ),
     ],
     errorBuilder: (_, state) => Scaffold(
@@ -207,4 +190,77 @@ abstract class AppRouter {
       ),
     ),
   );
+}
+
+// ─── Profile Edit Gate ────────────────────────────────────────────
+// ينتظر ProfileCubit يكون loaded قبل ما يعرض صفحة التعديل
+// يحل مشكلة race condition لما اليوزر يضغط "تعديل" بسرعة
+class _ProfileEditGate extends StatefulWidget {
+  const _ProfileEditGate();
+
+  @override
+  State<_ProfileEditGate> createState() => _ProfileEditGateState();
+}
+
+class _ProfileEditGateState extends State<_ProfileEditGate> {
+  @override
+  void initState() {
+    super.initState();
+    // لو الـ profile لسه مش loaded، نعمل load
+    final cubit = context.read<ProfileCubit>();
+    if (cubit.state is! ProfileLoaded) {
+      cubit.load();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileLoaded) {
+          return BlocProvider(
+            create: (_) => sl<ProfileSaveCubit>(),
+            child: EditProfileScreen(profile: state.profile),
+          );
+        }
+        if (state is ProfileError) {
+          return Scaffold(
+            backgroundColor: const Color(0xFF0D0D0D),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline_rounded,
+                      color: Color(0xFFBFFF00), size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    'تعذّر تحميل البيانات',
+                    style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => context.read<ProfileCubit>().load(),
+                    child: const Text('إعادة المحاولة',
+                        style: TextStyle(
+                            fontFamily: 'Cairo', color: Color(0xFFBFFF00))),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        // Loading or Initial — spinner
+        return const Scaffold(
+          backgroundColor: Color(0xFF0D0D0D),
+          body: Center(
+            child: CircularProgressIndicator(color: Color(0xFFBFFF00)),
+          ),
+        );
+      },
+    );
+  }
 }
