@@ -18,7 +18,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
   final SaveWorkoutPlanUseCase   _savePlan;
   final DeleteWorkoutPlanUseCase _deletePlan;
 
-  // ─── Load ────────────────────────────────────────────────────
   Future<void> load() async {
     emit(const WorkoutPlanLoading());
     final result = await _getPlan();
@@ -30,7 +29,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     );
   }
 
-  // ─── Start editing (new or existing) ─────────────────────────
   void startEditing() {
     final draft = state is WorkoutPlanLoaded
         ? (state as WorkoutPlanLoaded).plan
@@ -38,7 +36,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(WorkoutPlanEditing(draft));
   }
 
-  // ─── Toggle day rest/active ───────────────────────────────────
   void toggleDayRest(int weekday) {
     final draft = _draft;
     if (draft == null) return;
@@ -49,7 +46,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
 
-  // ─── Set day name ─────────────────────────────────────────────
   void setDayName(int weekday, String name) {
     final draft = _draft;
     if (draft == null) return;
@@ -60,7 +56,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
 
-  // ─── Add exercise to a day ────────────────────────────────────
   void addExerciseToDay(int weekday, PlanExercise exercise) {
     final draft = _draft;
     if (draft == null) return;
@@ -71,7 +66,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
 
-  // ─── Remove exercise from a day ───────────────────────────────
   void removeExerciseFromDay(int weekday, String exerciseId) {
     final draft = _draft;
     if (draft == null) return;
@@ -84,7 +78,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
 
-  // ─── Update sets/reps for an exercise ─────────────────────────
   void updateExerciseDefaults(int weekday, String exerciseId, {int? sets, int? reps}) {
     final draft = _draft;
     if (draft == null) return;
@@ -99,7 +92,6 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
 
-  // ─── Save draft ───────────────────────────────────────────────
   Future<void> saveDraft() async {
     final draft = _draft;
     if (draft == null) return;
@@ -110,17 +102,14 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     );
   }
 
-  // ─── Delete plan ──────────────────────────────────────────────
   Future<void> deletePlan() async {
     await _deletePlan();
     emit(const WorkoutPlanEmpty());
   }
 
-  // ─── Helper ───────────────────────────────────────────────────
   WorkoutPlan? get _draft =>
       state is WorkoutPlanEditing ? (state as WorkoutPlanEditing).draft : null;
 
-  // الخطة المحفوظة أو null
   WorkoutPlan? get currentPlan =>
       state is WorkoutPlanLoaded ? (state as WorkoutPlanLoaded).plan : null;
 }
