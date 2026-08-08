@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../home/logic/cubit/home_cubit.dart';
+import '../../../home/logic/cubit/home_state.dart';
 import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_state.dart';
@@ -78,10 +80,18 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
                 onEdit: () => context.push(AppRouter.workoutPlan),
               )
             else
-              _WorkoutDayCard(
-                day: selectedDay,
-                isToday: selectedDay.weekday == DateTime.now().weekday,
-                dayName: _dayNamesFull[selectedDay.weekday - 1],
+              BlocBuilder<HomeCubit, HomeState>(
+                builder: (context, homeState) {
+                  final completedToday = homeState is HomeLoaded
+                      ? homeState.summary.hasWorkedOutToday
+                      : false;
+                  return _WorkoutDayCard(
+                    day: selectedDay,
+                    isToday: selectedDay.weekday == DateTime.now().weekday,
+                    dayName: _dayNamesFull[selectedDay.weekday - 1],
+                    completedToday: completedToday,
+                  );
+                },
               ),
           ],
         );
@@ -317,16 +327,23 @@ class _WorkoutDayCard extends StatelessWidget {
     required this.day,
     required this.isToday,
     required this.dayName,
+    this.completedToday = false,
   });
   final PlanDay day;
   final bool isToday;
   final String dayName;
+  final bool completedToday;
 
   @override
   Widget build(BuildContext context) {
     final exCount = day.exercises.length;
     final setCount = day.exercises.fold(0, (s, e) => s + e.defaultSets);
     final mins = day.estimatedMinutes;
+
+    // ── اليوزر خلص تمرين النهارده ─────────────────────────────
+    if (isToday && completedToday) {
+      return _CompletedTodayCard(day: day, dayName: dayName);
+    }
 
     return Container(
       width: double.infinity,
@@ -438,6 +455,133 @@ class _WorkoutDayCard extends StatelessWidget {
       ...visible.map((e) => _Chip(label: e.exerciseName)),
       if (extra > 0) _Chip(label: '+$extra', muted: true),
     ];
+  }
+}
+
+// ─── كارد "أتمرنت النهارده ✓" ──────────────────────────────────────
+class _CompletedTodayCard extends StatelessWidget {
+  const _CompletedTodayCard({required this.day, required this.dayName});
+  final PlanDay day;
+  final String dayName;
+
+  @override
+  Widget build(BuildContext context) {
+    final exCount = day.exercises.length;
+    final mins = day.estimatedMinutes;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(18.r),
+      decoration: BoxDecoration(
+        color: AppColors.bgSurface,
+        borderRadius: BorderRadius.circular(20.r),
+        border:
+            Border.all(color: AppColors.success.withOpacity(0.4), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── header ──────────────────────────────────────────
+          Row(
+            children: [
+              Container(
+                width: 40.r,
+                height: 40.r,
+                decoration: const BoxDecoration(
+                  color: AppColors.successDim,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check_rounded,
+                    color: AppColors.success, size: 24),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'أتمرنت النهارده 🎉',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      day.name.isNotEmpty ? day.name : 'تمرين $dayName',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12.sp,
+                        color: AppColors.success,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+
+          // ── stats ────────────────────────────────────────────
+          Row(children: [
+            _Stat(emoji: '💪', label: '$exCount تمارين'),
+            SizedBox(width: 14.w),
+            _Stat(emoji: '🕐', label: '$mins دقيقة'),
+          ]),
+          SizedBox(height: 16.h),
+
+          // ── زراير — أعد تاني أو تعديل ─────────────────────
+          Row(children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => context.push(AppRouter.workoutPlan),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgElevated,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: AppColors.borderMedium),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text('تعديل الخطة',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textSecondary,
+                      )),
+                ),
+              ),
+            ),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => context.push(AppRouter.workoutLogger, extra: day),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.successDim,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border:
+                        Border.all(color: AppColors.success.withOpacity(0.4)),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text('أعد تاني 🔥',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.success,
+                      )),
+                ),
+              ),
+            ),
+          ]),
+        ],
+      ),
+    );
   }
 }
 

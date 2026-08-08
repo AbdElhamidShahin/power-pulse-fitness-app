@@ -692,7 +692,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                               margin: const EdgeInsets.only(
                                   bottom: AppConstants.spaceS),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: AppConstants.spaceL,
+                                horizontal: AppConstants.spaceM,
                                 vertical: AppConstants.spaceM,
                               ),
                               decoration: BoxDecoration(
@@ -702,6 +702,24 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                               ),
                               child: Row(
                                 children: [
+                                  // ── صورة التمرين ──────────────────────
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        AppConstants.radiusM),
+                                    child: ex.gifUrl.isNotEmpty
+                                        ? Image.network(
+                                            ex.gifUrl,
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, __, ___) =>
+                                                _ExercisePlaceholder(
+                                                    bodyPart: ex.bodyPart),
+                                          )
+                                        : _ExercisePlaceholder(
+                                            bodyPart: ex.bodyPart),
+                                  ),
+                                  const SizedBox(width: AppConstants.spaceM),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -711,7 +729,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                                             style: AppTextStyles.labelMedium,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis),
-                                        const SizedBox(height: 2),
+                                        const SizedBox(height: 4),
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: AppConstants.spaceS,
@@ -790,6 +808,54 @@ class _StartTodayWorkoutButton extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ─── Exercise Image Placeholder ────────────────────────────────────
+// يظهر لما الـ gifUrl فاضي أو فيه error في التحميل
+class _ExercisePlaceholder extends StatelessWidget {
+  const _ExercisePlaceholder({required this.bodyPart});
+  final String bodyPart;
+
+  // لون كل مجموعة عضلية
+  Color _colorFor(String part) {
+    final p = part.toLowerCase();
+    if (p.contains('chest')) return AppColors.muscleChest;
+    if (p.contains('back')) return AppColors.muscleBack;
+    if (p.contains('leg')) return AppColors.muscleLegs;
+    if (p.contains('shoulder')) return AppColors.muscleShoulder;
+    if (p.contains('arm') || p.contains('bicep') || p.contains('tricep'))
+      return AppColors.muscleArms;
+    if (p.contains('core') || p.contains('abs') || p.contains('waist'))
+      return AppColors.muscleCore;
+    return AppColors.accent;
+  }
+
+  String _emojiFor(String part) {
+    final p = part.toLowerCase();
+    if (p.contains('chest')) return '🫁';
+    if (p.contains('back')) return '🔙';
+    if (p.contains('leg')) return '🦵';
+    if (p.contains('shoulder')) return '💪';
+    if (p.contains('arm') || p.contains('bicep') || p.contains('tricep'))
+      return '💪';
+    if (p.contains('core') || p.contains('abs')) return '🎯';
+    return '🏋️';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _colorFor(bodyPart);
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+      ),
+      alignment: Alignment.center,
+      child: Text(_emojiFor(bodyPart), style: const TextStyle(fontSize: 26)),
     );
   }
 }

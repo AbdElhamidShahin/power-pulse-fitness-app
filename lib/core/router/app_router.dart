@@ -28,16 +28,16 @@ import '../di/injection.dart';
 abstract class AppRouter {
   AppRouter._();
 
-  static const String onboarding = '/onboarding';
-  static const String home = '/home';
-  static const String exercises = '/exercises';
-  static const String nutrition = '/nutrition';
+  static const String onboarding    = '/onboarding';
+  static const String home          = '/home';
+  static const String exercises     = '/exercises';
+  static const String nutrition     = '/nutrition';
   static const String nutritionSearch = '/nutrition/search';
-  static const String progress = '/progress';
-  static const String profile = '/profile';
-  static const String profileEdit = '/profile/edit';
+  static const String progress      = '/progress';
+  static const String profile       = '/profile';
+  static const String profileEdit   = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
-  static const String workoutPlan = '/workout-plan';
+  static const String workoutPlan   = '/workout-plan';
 
   static Future<String> _initialLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -115,6 +115,8 @@ abstract class AppRouter {
               providers: [
                 BlocProvider(create: (_) => sl<ProgressCubit>()),
                 BlocProvider(create: (_) => sl<WeightLogCubit>()),
+                // ProfileCubit عشان BodyStatsSection يقدر يقرأ الطول والوزن
+                BlocProvider(create: (_) => sl<ProfileCubit>()..load()),
               ],
               child: const ProgressScreen(),
             ),
