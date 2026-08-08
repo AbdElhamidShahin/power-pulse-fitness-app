@@ -28,16 +28,16 @@ import '../di/injection.dart';
 abstract class AppRouter {
   AppRouter._();
 
-  static const String onboarding    = '/onboarding';
-  static const String home          = '/home';
-  static const String exercises     = '/exercises';
-  static const String nutrition     = '/nutrition';
+  static const String onboarding = '/onboarding';
+  static const String home = '/home';
+  static const String exercises = '/exercises';
+  static const String nutrition = '/nutrition';
   static const String nutritionSearch = '/nutrition/search';
-  static const String progress      = '/progress';
-  static const String profile       = '/profile';
-  static const String profileEdit   = '/profile/edit';
+  static const String progress = '/progress';
+  static const String profile = '/profile';
+  static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
-  static const String workoutPlan   = '/workout-plan';
+  static const String workoutPlan = '/workout-plan';
 
   static Future<String> _initialLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -121,11 +121,8 @@ abstract class AppRouter {
           ),
           GoRoute(
             path: profile,
-            builder: (_, __) => MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (_) => sl<ProfileCubit>()),
-                BlocProvider.value(value: sl<AppSettingsCubit>()),
-              ],
+            builder: (_, __) => BlocProvider(
+              create: (_) => sl<ProfileCubit>(),
               child: const ProfileScreen(),
             ),
           ),

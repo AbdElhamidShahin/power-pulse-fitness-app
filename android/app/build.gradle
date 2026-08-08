@@ -12,11 +12,10 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.powerteam.powerpulse"
+    // نستخدم أعلى NDK مطلوب — backward compatible مع كل الـ plugins
     ndkVersion "27.0.12077973"
 
     compileSdk = 35   // لازم 35
-
-    ndkVersion = flutter.ndkVersion
 
     defaultConfig {
         applicationId = "com.powerteam.powerpulse"
