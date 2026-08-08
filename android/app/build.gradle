@@ -12,16 +12,14 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.powerteam.powerpulse"
-    // نستخدم أعلى NDK مطلوب — backward compatible مع كل الـ plugins
-    ndkVersion "27.0.12077973"
-
-    compileSdk = 35   // لازم 35
+    compileSdk = 35
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.powerteam.powerpulse"
-        minSdk = 21 // أو flutter.minSdkVersion لو معرفه
+        minSdk = 21
         targetSdk = 35
-        versionCode = 22
+        versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
@@ -43,6 +41,7 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -50,6 +49,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools.build:desugaring:2.0.3'
 }
 
 flutter {

@@ -1,7 +1,7 @@
 name: power_pulse
 description: تطبيق اللياقة البدنية المتكامل
 publish_to: 'none'
-version: 2.0.0+2
+version: 2.0.0+23
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -28,13 +28,14 @@ dependencies:
   lottie: ^3.1.2
   intl: ^0.20.2
   connectivity_plus: ^6.0.5
-  google_fonts: ^6.2.1
   flutter_screenutil: ^5.9.3
   url_launcher: ^6.3.2
-  syncfusion_flutter_gauges: ^31.1.19
   flutter_staggered_animations: ^1.1.1
   flutter_custom_tab_bar: ^1.2.1
   animations: ^2.1.1
+  pedometer: ^4.0.2
+  flutter_local_notifications: ^17.2.4
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_test:
@@ -45,7 +46,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
 
   fonts:
     - family: Cairo
@@ -62,3 +62,6 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+    - assets/animation/
+    - assets/langs/
+    - assets/exercises.json
