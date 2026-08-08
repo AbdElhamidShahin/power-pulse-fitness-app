@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -10,9 +9,7 @@ import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
 import '../widgets/food_search_card.dart';
 
-// ════════════════════════════════════════════════════════════════
-// FoodSearchScreen
-// ════════════════════════════════════════════════════════════════
+
 class FoodSearchScreen extends StatefulWidget {
   const FoodSearchScreen({super.key, required this.mealType});
   final MealType mealType;
@@ -132,9 +129,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   }
 }
 
-// ════════════════════════════════════════════════════════════════
-// Results List
-// ════════════════════════════════════════════════════════════════
 class _ResultsList extends StatelessWidget {
   const _ResultsList({
     required this.results,
@@ -195,9 +189,6 @@ class _ResultsList extends StatelessWidget {
   }
 }
 
-// ════════════════════════════════════════════════════════════════
-// Add Meal Bottom Sheet
-// ════════════════════════════════════════════════════════════════
 class _AddMealSheet extends StatefulWidget {
   const _AddMealSheet({
     required this.food,
@@ -233,7 +224,6 @@ class _AddMealSheetState extends State<_AddMealSheet> {
       widget.food.fat      * _quantity / widget.food.servingSize;
 
   void _adjustQty(double delta) {
-    // ✅ Fix: explicit toDouble() بعد clamp
     final next = (_quantity + delta).clamp(1.0, 9999.0).toDouble();
     setState(() {
       _quantity = next;
@@ -292,7 +282,6 @@ class _AddMealSheetState extends State<_AddMealSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // ─── Handle ───────────────────────────────────
             Center(
               child: Container(
                 width: 40, height: 4,
@@ -304,7 +293,6 @@ class _AddMealSheetState extends State<_AddMealSheet> {
             ),
             const SizedBox(height: AppConstants.spaceL),
 
-            // ─── اسم الطعام ───────────────────────────────
             Text(
               widget.food.displayName,
               textAlign: TextAlign.right,
@@ -318,7 +306,6 @@ class _AddMealSheetState extends State<_AddMealSheet> {
             ],
             const SizedBox(height: AppConstants.spaceL),
 
-            // ─── معاينة المكرو ────────────────────────────
             _MacroPreview(
               calories: _calories,
               protein:  _protein,
@@ -327,7 +314,6 @@ class _AddMealSheetState extends State<_AddMealSheet> {
             ),
             const SizedBox(height: AppConstants.spaceL),
 
-            // ─── حقل الكمية + أزرار +/- ───────────────────
             Row(
               children: [
                 Expanded(

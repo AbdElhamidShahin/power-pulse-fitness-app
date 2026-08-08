@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
 import '../../logic/cubit/profile_state.dart';
-import '../widgets/profile_header.dart' show ProfileHeader;
+import '../../logic/cubit/settings_cubit.dart';
+import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_items.dart';
 
 
@@ -53,13 +55,10 @@ class _ProfileContent extends StatefulWidget {
 }
 
 class _ProfileContentState extends State<_ProfileContent> {
-  bool _notificationsEnabled = true;
-  bool _darkModeEnabled = false;
-  bool _metricUnitsEnabled = true;
-
   @override
   Widget build(BuildContext context) {
     final profile = widget.profile;
+    final settings = context.watch<AppSettingsCubit>().state;
 
     return CustomScrollView(
       slivers: [
@@ -153,27 +152,27 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.notifications_rounded,
                         iconColor: const Color(0xFFF59E0B),
                         label: 'الإشعارات',
-                        value: _notificationsEnabled,
+                        value: settings.notificationsEnabled,
                         onChanged: (val) =>
-                            setState(() => _notificationsEnabled = val),
+                            context.read<AppSettingsCubit>().toggleNotifications(val),
                       ),
                       const ProfileDivider(),
                       ProfileToggleRow(
                         icon: Icons.nightlight_round,
-                        iconColor: const Color(0xFFF59E0B),
+                        iconColor: const Color(0xFF6366F1),
                         label: 'الوضع الليلي',
-                        value: _darkModeEnabled,
+                        value: settings.isDarkMode,
                         onChanged: (val) =>
-                            setState(() => _darkModeEnabled = val),
+                            context.read<AppSettingsCubit>().toggleDarkMode(val),
                       ),
                       const ProfileDivider(),
                       ProfileToggleRow(
                         icon: Icons.square_foot_rounded,
                         iconColor: const Color(0xFF10B981),
                         label: 'الوحدات (كجم/سم)',
-                        value: _metricUnitsEnabled,
+                        value: settings.isMetricUnits,
                         onChanged: (val) =>
-                            setState(() => _metricUnitsEnabled = val),
+                            context.read<AppSettingsCubit>().toggleMetricUnits(val),
                       ),
                       const ProfileDivider(),
                       ProfileInfoRow(
@@ -181,7 +180,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: const Color(0xFFF59E0B),
                         label: 'الخصوصية',
                         value: '',
-                        onTap: () {},
+                        onTap: () => _showPrivacySheet(context),
                       ),
                     ],
                   ),
@@ -198,7 +197,7 @@ class _ProfileContentState extends State<_ProfileContent> {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: SliverToBoxAdapter(
             child: InkWell(
-              onTap: () {},
+              onTap: () => _confirmLogout(context),
               borderRadius: BorderRadius.circular(14.r),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -229,6 +228,125 @@ class _ProfileContentState extends State<_ProfileContent> {
         ),
 
         SliverToBoxAdapter(child: SizedBox(height: 32.h)),
+      ],
+    );
+  }
+
+  void _showPrivacySheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.bgSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('الخصوصية والبيانات',
+                style: TextStyle(
+                    fontFamily: 'Cairo', fontSize: 18,
+                    fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+            const SizedBox(height: 16),
+            _PrivacyItem(
+              icon: Icons.phone_android_rounded,
+              title: 'البيانات محفوظة محلياً',
+              desc: 'كل بياناتك محفوظة على جهازك فقط ولا تُرسل لأي خادم',
+            ),
+            const SizedBox(height: 12),
+            _PrivacyItem(
+              icon: Icons.block_rounded,
+              title: 'لا إعلانات',
+              desc: 'التطبيق خالي من الإعلانات وتتبع البيانات',
+            ),
+            const SizedBox(height: 12),
+            _PrivacyItem(
+              icon: Icons.delete_forever_rounded,
+              title: 'حذف البيانات',
+              desc: 'يمكنك حذف كل بياناتك من خلال تسجيل الخروج',
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('تسجيل الخروج',
+            style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+        content: const Text('هل أنت متأكد؟ سيتم مسح جميع البيانات المحفوظة.',
+            style: TextStyle(fontFamily: 'Cairo')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء',
+                style: TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await context.read<AppSettingsCubit>().logout();
+              if (context.mounted) context.go('/onboarding');
+            },
+            child: const Text('تسجيل الخروج',
+                style: TextStyle(
+                    fontFamily: 'Cairo', color: Color(0xFFEF4444),
+                    fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+class _PrivacyItem extends StatelessWidget {
+  const _PrivacyItem({
+    required this.icon,
+    required this.title,
+    required this.desc,
+  });
+  final IconData icon;
+  final String title;
+  final String desc;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 36, height: 36,
+          decoration: BoxDecoration(
+            color: AppColors.accentDim,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: AppColors.accent, size: 18),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style: const TextStyle(
+                    fontFamily: 'Cairo', fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  )),
+              const SizedBox(height: 2),
+              Text(desc,
+                  style: const TextStyle(
+                    fontFamily: 'Cairo', fontSize: 12,
+                    color: AppColors.textMuted,
+                  )),
+            ],
+          ),
+        ),
       ],
     );
   }

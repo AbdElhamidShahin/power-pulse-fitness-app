@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
@@ -112,10 +114,20 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 AppConstants.screenPaddingH,
                 AppConstants.spaceM,
               ),
-              child: PPButton(
-                label: 'حفظ الخطة',
-                width: double.infinity,
-                onPressed: () => context.read<WorkoutPlanCubit>().saveDraft(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // ─── زرار ابدأ التمرين ────────────────────────
+                  _StartTodayWorkoutButton(draft: draft),
+                  const SizedBox(height: AppConstants.spaceS),
+                  // ─── زرار حفظ الخطة ──────────────────────────
+                  PPButton(
+                    label: 'حفظ الخطة',
+                    width: double.infinity,
+                    onPressed: () =>
+                        context.read<WorkoutPlanCubit>().saveDraft(),
+                  ),
+                ],
               ),
             ),
           ),
@@ -145,6 +157,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               exerciseId: ex.id,
               exerciseName: ex.nameAr.isNotEmpty ? ex.nameAr : ex.name,
               bodyPart: ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
+              gifUrl: ex.gifUrl,
               defaultSets: 3,
               defaultReps: 10,
             ),
@@ -726,6 +739,56 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                       ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Start Today Workout Button ───────────────────────────────────────
+// يعرض زرار "ابدأ تمرين اليوم" لو اليوم مش راحة
+class _StartTodayWorkoutButton extends StatelessWidget {
+  const _StartTodayWorkoutButton({required this.draft});
+  final WorkoutPlan draft;
+
+  @override
+  Widget build(BuildContext context) {
+    final today = draft.dayFor(DateTime.now());
+    final hasWorkout =
+        today != null && !today.isRest && today.exercises.isNotEmpty;
+
+    if (!hasWorkout) return const SizedBox.shrink();
+
+    return GestureDetector(
+      onTap: () => context.push(AppRouter.workoutLogger),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.accentDim,
+          borderRadius: BorderRadius.circular(AppConstants.radiusL),
+          border: Border.all(color: AppColors.accent, width: 1.2),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.play_arrow_rounded,
+                color: AppColors.accent, size: 22),
+            const SizedBox(width: 8),
+            Text(
+              'ابدأ تمرين اليوم',
+              style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent),
+            ),
+            if (today != null && today.name.isNotEmpty) ...[
+              const SizedBox(width: 6),
+              Text(
+                '— ${today.name}',
+                style: AppTextStyles.labelSmall.copyWith(
+                  color: AppColors.accent.withOpacity(0.7),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

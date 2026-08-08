@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_button.dart';
@@ -50,14 +52,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   UserProfile get _built => widget.profile.copyWith(
-        name:          _nameCtrl.text.trim(),
-        age:           int.tryParse(_ageCtrl.text) ?? widget.profile.age,
-        heightCm:      double.tryParse(_heightCtrl.text) ?? widget.profile.heightCm,
-        weightKg:      double.tryParse(_weightCtrl.text) ?? widget.profile.weightKg,
-        gender:        _gender,
-        goal:          _goal,
-        activityLevel: _activity,
-      );
+    name:          _nameCtrl.text.trim(),
+    age:           int.tryParse(_ageCtrl.text) ?? widget.profile.age,
+    heightCm:      double.tryParse(_heightCtrl.text) ?? widget.profile.heightCm,
+    weightKg:      double.tryParse(_weightCtrl.text) ?? widget.profile.weightKg,
+    gender:        _gender,
+    goal:          _goal,
+    activityLevel: _activity,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +67,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       listener: (context, state) {
         if (state is ProfileSaveSuccess) {
           context.read<ProfileCubit>().onProfileSaved(_built);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('✓ تم حفظ البيانات',
+                  style: TextStyle(fontFamily: 'Cairo')),
+              backgroundColor: AppColors.success,
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
           Navigator.of(context).pop();
         } else if (state is ProfileSaveError) {
           ScaffoldMessenger.of(context).showSnackBar(

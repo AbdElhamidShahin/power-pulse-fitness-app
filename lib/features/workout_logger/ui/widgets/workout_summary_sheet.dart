@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
@@ -96,7 +98,10 @@ class WorkoutSummarySheet extends StatelessWidget {
           PPButton(
             label: 'ممتاز! 🎉',
             width: double.infinity,
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);    // نقفل الـ sheet
+              context.go(AppRouter.home); // نرجع للـ Home عشان يتحدث
+            },
           ),
           const SizedBox(height: AppConstants.spaceL),
         ],

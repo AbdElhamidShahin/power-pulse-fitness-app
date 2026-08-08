@@ -6,6 +6,7 @@ final class PlanExercise {
     required this.exerciseId,
     required this.exerciseName,
     required this.bodyPart,
+    this.gifUrl = '',
     this.defaultSets = 3,
     this.defaultReps = 10,
   });
@@ -13,6 +14,7 @@ final class PlanExercise {
   final String exerciseId;
   final String exerciseName;
   final String bodyPart;
+  final String gifUrl;
   final int defaultSets;
   final int defaultReps;
 
@@ -20,6 +22,7 @@ final class PlanExercise {
     exerciseId: exerciseId,
     exerciseName: exerciseName,
     bodyPart: bodyPart,
+    gifUrl: gifUrl,
     defaultSets: defaultSets ?? this.defaultSets,
     defaultReps: defaultReps ?? this.defaultReps,
   );
@@ -28,6 +31,7 @@ final class PlanExercise {
     'exerciseId': exerciseId,
     'exerciseName': exerciseName,
     'bodyPart': bodyPart,
+    'gifUrl': gifUrl,
     'defaultSets': defaultSets,
     'defaultReps': defaultReps,
   };
@@ -36,6 +40,7 @@ final class PlanExercise {
     exerciseId: j['exerciseId'] as String,
     exerciseName: j['exerciseName'] as String,
     bodyPart: j['bodyPart'] as String,
+    gifUrl: j['gifUrl'] as String? ?? '',
     defaultSets: j['defaultSets'] as int? ?? 3,
     defaultReps: j['defaultReps'] as int? ?? 10,
   );

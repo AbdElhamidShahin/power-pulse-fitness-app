@@ -17,51 +17,50 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     required LogWorkoutUseCase logWorkout,
     required SearchExercisesUseCase searchExercises,
     required GetExercisesUseCase getExercises,
-  })  : _getActive       = getActiveSession,
-        _save            = saveSession,
-        _delete          = deleteSession,
-        _logWorkout      = logWorkout,
+  })  : _getActive = getActiveSession,
+        _save = saveSession,
+        _delete = deleteSession,
+        _logWorkout = logWorkout,
         _searchExercises = searchExercises,
-        _getExercises    = getExercises,
+        _getExercises = getExercises,
         super(const WorkoutLoggerInitial());
 
   final GetActiveSessionUseCase _getActive;
-  final SaveSessionUseCase      _save;
-  final DeleteSessionUseCase    _delete;
-  final LogWorkoutUseCase       _logWorkout;
-  final SearchExercisesUseCase  _searchExercises;
-  final GetExercisesUseCase     _getExercises;
+  final SaveSessionUseCase _save;
+  final DeleteSessionUseCase _delete;
+  final LogWorkoutUseCase _logWorkout;
+  final SearchExercisesUseCase _searchExercises;
+  final GetExercisesUseCase _getExercises;
 
   // ─── Load ──────────────────────────────────────────────────
   Future<void> load() async {
     emit(const WorkoutLoggerLoading());
-    final result = await _getActive();
-    result.fold(
-      onFailure: (_) => emit(const WorkoutLoggerIdle()),
-      onSuccess: (session) => emit(
-        session != null ? WorkoutLoggerActive(session) : const WorkoutLoggerIdle(),
-      ),
-    );
+    // دايماً جلسة نظيفة — مش بنرجع جلسة قديمة محفوظة
+    emit(const WorkoutLoggerIdle());
   }
 
   // ─── Start ─────────────────────────────────────────────────
   Future<void> startSession(String name, {PlanDay? planDay}) async {
     // لو عندنا خطة — نحوّل تمارين اليوم لـ SessionExercise تلقائياً
     final exercises = planDay != null
-        ? planDay.exercises.map((pe) => SessionExercise(
-      exerciseId:   '${pe.exerciseId}_${DateTime.now().millisecondsSinceEpoch}',
-      exerciseName: pe.exerciseName,
-      bodyPart:     pe.bodyPart,
-      sets: List.generate(
-        pe.defaultSets,
-            (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
-      ),
-    )).toList()
+        ? planDay.exercises
+            .map((pe) => SessionExercise(
+                  exerciseId:
+                      '${pe.exerciseId}_${DateTime.now().millisecondsSinceEpoch}',
+                  exerciseName: pe.exerciseName,
+                  bodyPart: pe.bodyPart,
+                  gifPath: pe.gifUrl,
+                  sets: List.generate(
+                    pe.defaultSets,
+                    (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
+                  ),
+                ))
+            .toList()
         : <SessionExercise>[];
 
     final session = WorkoutSession(
-      id:        DateTime.now().millisecondsSinceEpoch.toString(),
-      name:      name,
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name,
       startTime: DateTime.now(),
       exercises: exercises,
     );
@@ -73,17 +72,16 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   void addExercise(SessionExercise exercise) {
     final current = _active;
     if (current == null) return;
-    _updateActive(current.copyWith(
-        exercises: [...current.exercises, exercise]));
+    _updateActive(
+        current.copyWith(exercises: [...current.exercises, exercise]));
   }
 
   void removeExercise(String exerciseId) {
     final current = _active;
     if (current == null) return;
     _updateActive(current.copyWith(
-      exercises: current.exercises
-          .where((e) => e.exerciseId != exerciseId)
-          .toList(),
+      exercises:
+          current.exercises.where((e) => e.exerciseId != exerciseId).toList(),
     ));
   }
 
@@ -133,16 +131,37 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     final exercises = current.exercises.map((ex) {
       if (ex.exerciseId != exerciseId) return ex;
       final sets = [...ex.sets]..removeAt(setIndex);
-      final renumbered = sets.asMap().entries
+      final renumbered = sets
+          .asMap()
+          .entries
           .map((e) => ExerciseSet(
-          setNumber:   e.key + 1,
-          reps:        e.value.reps,
-          weight:      e.value.weight,
-          isCompleted: e.value.isCompleted))
+              setNumber: e.key + 1,
+              reps: e.value.reps,
+              weight: e.value.weight,
+              isCompleted: e.value.isCompleted))
           .toList();
       return ex.copyWith(sets: renumbered);
     }).toList();
     _updateActive(current.copyWith(exercises: exercises));
+  }
+
+  // ─── Mark Exercise Done ────────────────────────────────────
+  Future<void> markExerciseDone(String exerciseId) async {
+    final current = _active;
+    if (current == null) return;
+    final exercises = current.exercises.map((ex) {
+      if (ex.exerciseId != exerciseId) return ex;
+      final doneSets = ex.sets
+          .map((s) => ExerciseSet(
+                setNumber: s.setNumber,
+                reps: s.reps,
+                weight: s.weight,
+                isCompleted: true,
+              ))
+          .toList();
+      return ex.copyWith(sets: doneSets, isDone: true);
+    }).toList();
+    await _updateActive(current.copyWith(exercises: exercises));
   }
 
   // ─── Finish ────────────────────────────────────────────────
@@ -151,7 +170,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     if (current == null) return;
 
     final finished = current.copyWith(
-      endTime:        DateTime.now(),
+      endTime: DateTime.now(),
       caloriesBurned: current.durationMinutes * 5.0,
     );
 
@@ -159,12 +178,12 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
 
     // سجّل في Progress feature
     await _logWorkout(WorkoutLog(
-      id:              finished.id,
-      name:            finished.name,
-      date:            finished.startTime,
+      id: finished.id,
+      name: finished.name,
+      date: finished.startTime,
       durationMinutes: finished.durationMinutes,
-      caloriesBurned:  finished.caloriesBurned,
-      exerciseCount:   finished.exercises.length,
+      caloriesBurned: finished.caloriesBurned,
+      exerciseCount: finished.exercises.length,
     ));
 
     emit(WorkoutLoggerFinished(finished));
@@ -201,8 +220,9 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   }
 
   // ─── Helpers ───────────────────────────────────────────────
-  WorkoutSession? get _active =>
-      state is WorkoutLoggerActive ? (state as WorkoutLoggerActive).session : null;
+  WorkoutSession? get _active => state is WorkoutLoggerActive
+      ? (state as WorkoutLoggerActive).session
+      : null;
 
   Future<void> _updateActive(WorkoutSession session) async {
     await _save(session);

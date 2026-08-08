@@ -12,6 +12,10 @@ import '../widgets/progress_period_selector.dart';
 import '../widgets/progress_stat_card.dart';
 import '../widgets/progress_weekly_chart_card.dart';
 
+// RouteObserver عالمي — بيُسجَّل في GoRouter
+final RouteObserver<ModalRoute<void>> progressRouteObserver =
+RouteObserver<ModalRoute<void>>();
+
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
 
@@ -19,10 +23,29 @@ class ProgressScreen extends StatefulWidget {
   State<ProgressScreen> createState() => _ProgressScreenState();
 }
 
-class _ProgressScreenState extends State<ProgressScreen> {
+class _ProgressScreenState extends State<ProgressScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
+    context.read<ProgressCubit>().load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != null) progressRouteObserver.subscribe(this, route);
+  }
+
+  @override
+  void dispose() {
+    progressRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  // بيتنادى لما اليوزر يرجع من WorkoutLogger لـ Progress
+  @override
+  void didPopNext() {
     context.read<ProgressCubit>().load();
   }
 
@@ -36,7 +59,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ProgressInitial() || ProgressLoading() => const _LoadingView(),
             ProgressError(:final message) => _ErrorView(message: message),
             ProgressLoaded(:final summary, :final period) =>
-              _LoadedView(summary: summary, period: period),
+                _LoadedView(summary: summary, period: period),
           },
         ),
       ),
@@ -70,10 +93,10 @@ class _LoadedView extends StatelessWidget {
             SizedBox(height: 14.h),
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: ProgressStatCard(
                     emoji: '🔥',
-                    value: '14',
+                    value: summary.currentStreak.toString(),
                     label: 'يوم متتالي',
                     valueColor: AppColors.warning,
                   ),
@@ -173,22 +196,22 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.error_outline_rounded,
-              color: AppColors.danger,
-              size: 48.r,
-            ),
-            SizedBox(height: 16.h),
-            Text(message, style: AppTextStyles.bodyMedium),
-            SizedBox(height: 16.h),
-            GestureDetector(
-              onTap: () => context.read<ProgressCubit>().load(),
-              child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
-            ),
-          ],
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.error_outline_rounded,
+          color: AppColors.danger,
+          size: 48.r,
         ),
-      );
+        SizedBox(height: 16.h),
+        Text(message, style: AppTextStyles.bodyMedium),
+        SizedBox(height: 16.h),
+        GestureDetector(
+          onTap: () => context.read<ProgressCubit>().load(),
+          child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
+        ),
+      ],
+    ),
+  );
 }

@@ -11,11 +11,27 @@ final class NutritionCubit extends Cubit<NutritionState> {
 
   final NutritionRepository _repository;
   DateTime _today = DateTime.now();
+  DateTime get selectedDate => _today;
 
   Future<void> loadToday() async {
     _today = DateTime.now();
     emit(const NutritionLoading());
     await _silentReload(showLoading: false);
+  }
+
+  Future<void> loadDate(DateTime date) async {
+    _today = date;
+    emit(const NutritionLoading());
+    await _silentReload(showLoading: false);
+  }
+
+  void goToPreviousDay() => loadDate(_today.subtract(const Duration(days: 1)));
+  void goToNextDay()     => loadDate(_today.add(const Duration(days: 1)));
+  bool get isToday {
+    final now = DateTime.now();
+    return _today.year == now.year &&
+        _today.month == now.month &&
+        _today.day == now.day;
   }
 
   Future<void> _silentReload({bool showLoading = false}) async {
@@ -103,12 +119,12 @@ final class NutritionCubit extends Cubit<NutritionState> {
   }
 
   String _msg(AppFailure f) => switch (f) {
-        NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        CacheFailure() => 'خطأ في حفظ البيانات',
-        ServerFailure() => 'خطأ في الخادم',
-        NotFoundFailure() => 'البيانات غير موجودة',
-        UnexpectedFailure() => 'حدث خطأ غير متوقع',
-      };
+    NetworkFailure() => 'تحقق من اتصال الإنترنت',
+    CacheFailure() => 'خطأ في حفظ البيانات',
+    ServerFailure() => 'خطأ في الخادم',
+    NotFoundFailure() => 'البيانات غير موجودة',
+    UnexpectedFailure() => 'حدث خطأ غير متوقع',
+  };
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -147,7 +163,7 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
 
     _isLoadingMore = true;
     final result =
-        await _repository.searchFood(current.query, page: current.page + 1);
+    await _repository.searchFood(current.query, page: current.page + 1);
     switch (result) {
       case Success(:final data):
         emit(current.copyWith(
@@ -164,9 +180,9 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
   void clear() => emit(const FoodSearchIdle());
 
   String _msg(AppFailure f) => switch (f) {
-        NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        _ => 'حدث خطأ غير متوقع',
-      };
+    NetworkFailure() => 'تحقق من اتصال الإنترنت',
+    _ => 'حدث خطأ غير متوقع',
+  };
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -204,8 +220,8 @@ final class AddMealCubit extends Cubit<AddMealState> {
   void reset() => emit(const AddMealIdle());
 
   String _msg(AppFailure f) => switch (f) {
-        CacheFailure() => 'خطأ في حفظ الوجبة',
-        UnexpectedFailure() => 'حدث خطأ غير متوقع',
-        _ => 'حدث خطأ',
-      };
+    CacheFailure() => 'خطأ في حفظ الوجبة',
+    UnexpectedFailure() => 'حدث خطأ غير متوقع',
+    _ => 'حدث خطأ',
+  };
 }

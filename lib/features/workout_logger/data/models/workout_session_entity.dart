@@ -47,6 +47,7 @@ final class SessionExercise {
     required this.sets,
     this.notes,
     this.gifPath,
+    this.isDone = false,
   });
 
   final String exerciseId;
@@ -55,23 +56,26 @@ final class SessionExercise {
   final List<ExerciseSet> sets;
   final String? notes;
   final String? gifPath;
+  final bool isDone;
 
   int get completedSets => sets.where((s) => s.isCompleted).length;
-  bool get isFullyDone  => sets.isNotEmpty && completedSets == sets.length;
+  bool get isFullyDone  => isDone || (sets.isNotEmpty && completedSets == sets.length);
   double get totalVolume => sets
       .where((s) => s.isCompleted && s.weight != null && s.reps != null)
       .fold(0.0, (sum, s) => sum + (s.weight! * s.reps!));
 
-  SessionExercise copyWith({List<ExerciseSet>? sets, String? notes}) =>
+  SessionExercise copyWith({List<ExerciseSet>? sets, String? notes, bool? isDone}) =>
       SessionExercise(
         exerciseId: exerciseId, exerciseName: exerciseName,
         bodyPart: bodyPart, gifPath: gifPath,
         sets: sets ?? this.sets, notes: notes ?? this.notes,
+        isDone: isDone ?? this.isDone,
       );
 
   Map<String, dynamic> toJson() => {
     'exerciseId': exerciseId, 'exerciseName': exerciseName,
     'bodyPart': bodyPart, 'gifPath': gifPath, 'notes': notes,
+    'isDone': isDone,
     'sets': sets.map((s) => s.toJson()).toList(),
   };
 

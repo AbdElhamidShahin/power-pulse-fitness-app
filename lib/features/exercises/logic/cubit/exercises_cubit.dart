@@ -89,7 +89,7 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     );
   }
 
-  /// Load more — pagination (all filter only)
+
   Future<void> loadMore() async {
     final current = state;
     if (current is! ExercisesLoaded) return;
@@ -98,7 +98,7 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
 
     final result = await _getExercises(limit: 20, offset: _offset);
     result.fold(
-      onFailure: (_) {}, // silent — don't break existing list
+      onFailure: (_) {},
       onSuccess: (more) {
         _offset += more.length;
         emit(current.copyWith(
@@ -119,7 +119,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     final result = await _searchExercises(query.trim());
     return result.fold(onFailure: (_) => [], onSuccess: (list) => list);
   }
-
   String _mapFailure(AppFailure f) => switch (f) {
     NetworkFailure() => 'تحقق من اتصال الإنترنت',
     ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
