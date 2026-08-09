@@ -6,7 +6,8 @@ class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
   static const _chWorkout = 'workout_reminder';
@@ -23,6 +24,7 @@ class NotificationService {
   // ─── Init ─────────────────────────────────────────────────
   Future<void> init() async {
     if (_initialized) return;
+
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
 
@@ -33,12 +35,27 @@ class NotificationService {
       requestSoundPermission: true,
     );
 
+    // v20.1.0: initialize() — ALL named parameters.
+    // Signature: initialize({required InitializationSettings settings, ...})
     await _plugin.initialize(
       settings: const InitializationSettings(android: android, iOS: ios),
+      onDidReceiveNotificationResponse: _onNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          _onBackgroundNotificationResponse,
     );
 
     await _createChannels();
     _initialized = true;
+  }
+
+  // Must be static (top-level equivalent) for background isolate use.
+  @pragma('vm:entry-point')
+  static void _onBackgroundNotificationResponse(NotificationResponse response) {
+    // Background tap — add navigation logic here if needed.
+  }
+
+  void _onNotificationResponse(NotificationResponse response) {
+    // Foreground tap — add navigation logic here if needed.
   }
 
   Future<void> _createChannels() async {
@@ -137,10 +154,14 @@ class NotificationService {
     }
   }
 
+  // ─── Achievement Notifications ────────────────────────────
   Future<void> showWorkoutCompleted({
     required String workoutName,
     required int durationMinutes,
   }) async {
+    // v20.1.0: show() — ALL named parameters.
+    // Signature: show({required int id, String? title, String? body,
+    //                  NotificationDetails? notificationDetails, String? payload})
     await _plugin.show(
       id: idAchievement,
       title: '🎉 أنهيت تمرينك!',
@@ -176,6 +197,9 @@ class NotificationService {
     );
   }
 
+  // ─── Cancel ───────────────────────────────────────────────
+  // v20.1.0: cancel() — named parameter.
+  // Signature: cancel({required int id, String? tag})
   Future<void> cancelWorkoutReminders() async {
     await _plugin.cancel(id: idWorkoutMorning);
     await _plugin.cancel(id: idWorkoutEvening);
@@ -193,6 +217,7 @@ class NotificationService {
 
   Future<void> cancelAll() => _plugin.cancelAll();
 
+  // ─── Internal helper ──────────────────────────────────────
   Future<void> _scheduleDailyAt({
     required int id,
     required String title,
@@ -214,6 +239,15 @@ class NotificationService {
       scheduled = scheduled.add(const Duration(days: 1));
     }
 
+    // v20.1.0: zonedSchedule() — ALL named parameters.
+    // Signature: zonedSchedule({required int id,
+    //                           required TZDateTime scheduledDate,
+    //                           required NotificationDetails notificationDetails,
+    //                           required AndroidScheduleMode androidScheduleMode,
+    //                           String? title, String? body, String? payload,
+    //                           DateTimeComponents? matchDateTimeComponents})
+    // NOTE: `title` and `body` come AFTER the three required params.
+    // NOTE: `uiLocalNotificationDateInterpretation` is REMOVED in v20.
     await _plugin.zonedSchedule(
       id: id,
       title: title,
@@ -232,4 +266,5 @@ class NotificationService {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );
-  }}
+  }
+}

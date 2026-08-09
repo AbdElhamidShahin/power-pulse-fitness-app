@@ -19,7 +19,12 @@ pluginManagement {
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
     id("com.android.application") version "8.7.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.8.22" apply false
+    // FIX: Upgraded from 1.8.22 → 2.1.21
+    // Root cause: pedometer v4.2.0 and flutter_local_notifications v20 ship
+    // dependencies compiled with Kotlin stdlib 2.2.0 metadata. Kotlin 1.8.22
+    // can only read metadata up to 1.9.0, causing the compilation crash.
+    // Kotlin 2.1.21 is the latest stable version fully compatible with AGP 8.7.
+    id("org.jetbrains.kotlin.android") version "2.1.21" apply false
 }
 
 include ":app"
