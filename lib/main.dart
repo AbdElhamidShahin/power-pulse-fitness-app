@@ -69,7 +69,7 @@ class PowerPulseApp extends StatelessWidget {
                 theme: AppTheme.light,
                 darkTheme: AppTheme.dark,
                 themeMode:
-                settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+                    settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
                 routerConfig: AppRouter.router,
                 locale: const Locale('ar', 'EG'),
                 localizationsDelegates: const [
