@@ -38,6 +38,13 @@ import '../../features/workout_plan/data/repositories/workout_plan_repository.da
 import '../../features/workout_plan/logic/usecases/workout_plan_usecases.dart';
 import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart';
 
+// ─── Pedometer ───────────────────────────────────────────────────────
+import '../../features/pedometer/data/pedometer_service.dart';
+import '../../features/pedometer/logic/cubit/pedometer_cubit.dart';
+
+// ─── Notifications ───────────────────────────────────────────────────
+import '../notifications/notification_service.dart';
+
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 
@@ -63,6 +70,8 @@ Future<void> initDependencies() async {
   _initWorkoutLogger();
   _initWorkoutPlan();
   _initSettings();
+  await _initPedometer();
+  await _initNotifications();
 }
 
 void _initExercises() {
@@ -186,4 +195,15 @@ void _initWorkoutLogger() {
     searchExercises:  sl(),
     getExercises:     sl(),
   ));
+}
+
+Future<void> _initPedometer() async {
+  sl.registerLazySingleton<PedometerService>(
+          () => PedometerService(sl<SharedPreferences>()));
+  sl.registerLazySingleton<PedometerCubit>(
+          () => PedometerCubit(service: sl<PedometerService>()));
+}
+
+Future<void> _initNotifications() async {
+  await NotificationService.instance.init();
 }

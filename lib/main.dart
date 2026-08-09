@@ -9,6 +9,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_strings.dart';
 import 'features/nutrition/ui/screens/nutrition_screen.dart';
+import 'features/pedometer/logic/cubit/pedometer_cubit.dart';
 import 'features/profile/logic/cubit/settings_cubit.dart';
 import 'features/profile/logic/cubit/settings_state.dart';
 import 'features/workout_plan/logic/cubit/workout_plan_cubit.dart';
@@ -34,6 +35,9 @@ Future<void> main() async {
   // WorkoutPlanCubit singleton — يتحمل مرة واحدة طول عمر الـ app
   sl<WorkoutPlanCubit>().load();
 
+  // PedometerCubit — يبدأ عداد الخطوات فوراً
+  sl<PedometerCubit>().start();
+
   runApp(const PowerPulseApp());
 }
 
@@ -54,6 +58,7 @@ class PowerPulseApp extends StatelessWidget {
           providers: [
             BlocProvider.value(value: sl<AppSettingsCubit>()),
             BlocProvider.value(value: sl<WorkoutPlanCubit>()),
+            BlocProvider.value(value: sl<PedometerCubit>()),
           ],
           child: BlocBuilder<AppSettingsCubit, AppSettings>(
             buildWhen: (prev, curr) => prev.isDarkMode != curr.isDarkMode,
@@ -64,7 +69,7 @@ class PowerPulseApp extends StatelessWidget {
                 theme: AppTheme.light,
                 darkTheme: AppTheme.dark,
                 themeMode:
-                settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+                    settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
                 routerConfig: AppRouter.router,
                 locale: const Locale('ar', 'EG'),
                 localizationsDelegates: const [

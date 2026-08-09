@@ -12,17 +12,18 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.powerteam.powerpulse"
-    // نستخدم أعلى NDK مطلوب — backward compatible مع كل الـ plugins
-    ndkVersion "27.0.12077973"
-
-    compileSdk = 35   // لازم 35
+    compileSdk = 35
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.powerteam.powerpulse"
-        minSdk = 21 // أو flutter.minSdkVersion لو معرفه
+        minSdk = 21
         targetSdk = 35
-        versionCode = 22
+        versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Required when coreLibraryDesugaringEnabled = true and minSdk < 26
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -43,13 +44,23 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+        // FIX: Upgraded from VERSION_1_8 → VERSION_17
+        // Kotlin 2.x requires JVM target 17. Using 1.8 with Kotlin 2.1.21
+        // causes "JVM target compatibility mismatch" build errors.
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        // FIX: Must match compileOptions above — "17" pairs with VERSION_17
+        jvmTarget = "17"
     }
+}
+
+dependencies {
+    // FIX: correct group + artifact + minimum version for flutter_local_notifications v20+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
 
 flutter {

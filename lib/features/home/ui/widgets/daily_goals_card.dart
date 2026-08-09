@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
+import '../../logic/cubit/home_cubit.dart';
+import '../../logic/cubit/home_state.dart';
 import 'RingPainter.dart';
 
 class DailyGoalsCard extends StatelessWidget {
@@ -19,8 +22,15 @@ class DailyGoalsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final workoutMins = () {
+      final state = context.watch<HomeCubit>().state;
+      if (state is HomeLoaded)
+        return state.summary.todayWorkoutMinutes.toDouble();
+      return minutes;
+    }();
+
     final movePct = (calories / caloriesGoal.clamp(1, 9999)).clamp(0.0, 1.0);
-    final exPct = (minutes / 60).clamp(0.0, 1.0);
+    final exPct = (workoutMins / 60).clamp(0.0, 1.0);
     final standPct = (protein / 150).clamp(0.0, 1.0);
 
     return Container(
@@ -55,20 +65,25 @@ class DailyGoalsCard extends StatelessWidget {
                       label: 'الحركة',
                       value: calories.toInt(),
                       goal: caloriesGoal.toInt(),
+                      unit: 'سعر',
                     ),
                     SizedBox(height: 12.h),
                     _GoalRow(
                       dot: AppColors.danger,
                       label: 'التمرين',
-                      value: minutes.toInt(),
+                      value: workoutMins.toInt(),
                       goal: 60,
+                      unit: 'دقيقة',
+                      // يظهر ✓ لو حقق الهدف
+                      done: workoutMins >= 60,
                     ),
                     SizedBox(height: 12.h),
                     _GoalRow(
                       dot: AppColors.info,
-                      label: 'الوقوف',
+                      label: 'بروتين',
                       value: protein.toInt(),
                       goal: 150,
+                      unit: 'جم',
                     ),
                   ],
                 ),
@@ -107,6 +122,16 @@ class DailyGoalsCard extends StatelessWidget {
                         strokeWidth: 6.w,
                       ),
                     ),
+                    // نسبة الإنجاز الكلية في المنتصف
+                    Text(
+                      '${((movePct + exPct + standPct) / 3 * 100).toInt()}%',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -124,12 +149,16 @@ class _GoalRow extends StatelessWidget {
     required this.label,
     required this.value,
     required this.goal,
+    this.unit = '',
+    this.done = false,
   });
 
   final Color dot;
   final String label;
   final int value;
   final int goal;
+  final String unit;
+  final bool done;
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +183,11 @@ class _GoalRow extends StatelessWidget {
                 letterSpacing: 0.3,
               ),
             ),
+            if (done) ...[
+              SizedBox(width: 4.w),
+              Icon(Icons.check_circle_rounded,
+                  color: AppColors.success, size: 14.r),
+            ],
           ],
         ),
         RichText(
@@ -172,7 +206,7 @@ class _GoalRow extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w800,
-                  color: dot,
+                  color: done ? AppColors.success : dot,
                 ),
               ),
             ],

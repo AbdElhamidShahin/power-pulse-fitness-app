@@ -11,7 +11,6 @@ import '../../features/nutrition/data/models/food_entity.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
 import '../../features/nutrition/ui/screens/nutrition_screen.dart';
 import '../../features/nutrition/ui/screens/food_search_screen.dart';
-import '../../features/profile/logic/cubit/settings_cubit.dart';
 import '../../features/progress/logic/cubit/progress_cubit.dart';
 import '../../features/progress/ui/screens/progress_screen.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
@@ -21,6 +20,8 @@ import '../../features/profile/ui/screens/edit_profile_screen.dart';
 import '../../features/onboarding/ui/screens/onboarding_screen.dart';
 import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
 import '../../features/workout_logger/ui/screens/workout_logger_screen.dart';
+import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart'
+    show WorkoutPlanCubit;
 import '../../features/workout_plan/ui/screens/workout_plan_screen.dart';
 import '../../shared/shell/main_shell.dart';
 import '../di/injection.dart';
@@ -57,7 +58,6 @@ abstract class AppRouter {
     debugLogDiagnostics: true,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
-      // ─── Onboarding ────────────────────────────────────────
       GoRoute(
         path: onboarding,
         builder: (_, __) => MultiBlocProvider(
@@ -67,24 +67,26 @@ abstract class AppRouter {
           child: const OnboardingScreen(),
         ),
       ),
-
-      // ─── Main Shell ────────────────────────────────────────
       ShellRoute(
-        builder: (context, state, child) => MainShell(child: child),
+        builder: (context, state, child) => MultiBlocProvider(
+          providers: [
+            BlocProvider<HomeCubit>(
+              create: (_) => sl<HomeCubit>(),
+            ),
+          ],
+          child: MainShell(child: child),
+        ),
         routes: [
           GoRoute(
             path: home,
-            builder: (_, __) => BlocProvider(
-              create: (_) => sl<HomeCubit>(),
-              child: const HomeScreen(),
-            ),
+            builder: (_, __) => const HomeScreen(),
           ),
           GoRoute(
             path: exercises,
             builder: (_, __) => MultiBlocProvider(
               providers: [
                 BlocProvider(create: (_) => sl<ExercisesCubit>()),
-                BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
+                BlocProvider.value(value: sl<WorkoutPlanCubit>()),
               ],
               child: const ExercisesScreen(),
             ),
@@ -115,6 +117,8 @@ abstract class AppRouter {
               providers: [
                 BlocProvider(create: (_) => sl<ProgressCubit>()),
                 BlocProvider(create: (_) => sl<WeightLogCubit>()),
+                // ProfileCubit عشان BodyStatsSection يقدر يقرأ الطول والوزن
+                BlocProvider(create: (_) => sl<ProfileCubit>()..load()),
               ],
               child: const ProgressScreen(),
             ),
@@ -128,8 +132,6 @@ abstract class AppRouter {
           ),
         ],
       ),
-
-      // ─── خارج الـ Shell ────────────────────────────────────
       GoRoute(
         path: nutritionSearch,
         builder: (context, state) {
@@ -138,28 +140,21 @@ abstract class AppRouter {
             providers: [
               BlocProvider(create: (_) => sl<FoodSearchCubit>()),
               BlocProvider(create: (_) => sl<AddMealCubit>()),
-              // NutritionCubit خارج الـ ShellRoute فبنعمل instance جديد
               BlocProvider(create: (_) => sl<NutritionCubit>()),
             ],
             child: FoodSearchScreen(mealType: mealType),
           );
         },
       ),
-
       GoRoute(
         path: workoutLogger,
-        // WorkoutPlanCubit موجود فعلاً في مستوى الـ app من main.dart
-        // مش محتاجين نعمله inject هنا — الـ WorkoutLoggerScreen يقدر يعمل
-        // context.read<WorkoutPlanCubit>() مباشرة
         builder: (_, __) => BlocProvider(
           create: (_) => sl<WorkoutLoggerCubit>(),
           child: const WorkoutLoggerScreen(),
         ),
       ),
-
       GoRoute(
         path: workoutPlan,
-        // WorkoutPlanCubit موجود من الـ app level — نحتاج بس ExercisesCubit
         builder: (_, __) => MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
@@ -168,7 +163,6 @@ abstract class AppRouter {
           child: const WorkoutPlanScreen(),
         ),
       ),
-
       GoRoute(
         path: profileEdit,
         builder: (context, state) => MultiBlocProvider(
@@ -190,8 +184,6 @@ abstract class AppRouter {
 }
 
 // ─── Profile Edit Gate ────────────────────────────────────────────
-// ينتظر ProfileCubit يكون loaded قبل ما يعرض صفحة التعديل
-// يحل مشكلة race condition لما اليوزر يضغط "تعديل" بسرعة
 class _ProfileEditGate extends StatefulWidget {
   const _ProfileEditGate();
 
@@ -203,7 +195,6 @@ class _ProfileEditGateState extends State<_ProfileEditGate> {
   @override
   void initState() {
     super.initState();
-    // لو الـ profile لسه مش loaded، نعمل load
     final cubit = context.read<ProfileCubit>();
     if (cubit.state is! ProfileLoaded) {
       cubit.load();
@@ -230,9 +221,9 @@ class _ProfileEditGateState extends State<_ProfileEditGate> {
                   const Icon(Icons.error_outline_rounded,
                       color: Color(0xFFBFFF00), size: 48),
                   const SizedBox(height: 16),
-                  Text(
+                  const Text(
                     'تعذّر تحميل البيانات',
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Cairo',
                         color: Colors.white,
                         fontSize: 16,
@@ -250,7 +241,6 @@ class _ProfileEditGateState extends State<_ProfileEditGate> {
             ),
           );
         }
-        // Loading or Initial — spinner
         return const Scaffold(
           backgroundColor: Color(0xFF0D0D0D),
           body: Center(
