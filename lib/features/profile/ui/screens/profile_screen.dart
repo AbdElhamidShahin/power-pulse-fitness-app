@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/notifications/notification_settings_section.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
@@ -187,6 +188,16 @@ class _ProfileContentState extends State<_ProfileContent> {
                 ),
               ],
             ),
+          ),
+        ),
+
+        SliverToBoxAdapter(child: SizedBox(height: 20.h)),
+
+        // ─── إعدادات الإشعارات التفصيلية ────────────────────────
+        SliverPadding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          sliver: const SliverToBoxAdapter(
+            child: NotificationSettingsSection(),
           ),
         ),
 
