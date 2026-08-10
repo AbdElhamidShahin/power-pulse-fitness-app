@@ -55,8 +55,20 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 AppConstants.screenPaddingH, AppConstants.spaceM,
               ),
               child: Row(
-                children: [
-                  GestureDetector(
+                children: [    Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('إضافة وجبة',
+                          style: Theme.of(context).textTheme.headlineSmall),
+                      Text(widget.mealType.labelAr,
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: AppColors.accent)),
+                    ],
+                  ),
+                ),
+                  const SizedBox(width: AppConstants.spaceM),
+                               GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       width: 40, height: 40,
@@ -72,24 +84,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppConstants.spaceM),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('إضافة وجبة',
-                            style: Theme.of(context).textTheme.headlineSmall),
-                        Text(widget.mealType.labelAr,
-                            style: AppTextStyles.bodySmall
-                                .copyWith(color: AppColors.accent)),
-                      ],
-                    ),
-                  ),
+
                 ],
               ),
             ),
 
-            // ─── Search Bar ─────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: AppConstants.screenPaddingH),
@@ -101,8 +100,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               ),
             ),
             const SizedBox(height: AppConstants.spaceL),
-
-            // ─── النتائج ────────────────────────────────────
             Expanded(
               child: BlocBuilder<FoodSearchCubit, FoodSearchState>(
                 builder: (context, state) => switch (state) {
