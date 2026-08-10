@@ -2,26 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../features/exercises/logic/cubit/exercises_cubit.dart';
+import '../../features/exercises/ui/screens/exercise_detail_screen.dart';
+import '../../features/exercises/ui/screens/exercises_screen.dart';
 import '../../features/home/logic/cubit/home_cubit.dart';
 import '../../features/home/ui/screens/home_screen.dart';
-import '../../features/exercises/logic/cubit/exercises_cubit.dart';
-import '../../features/exercises/ui/screens/exercises_screen.dart';
-import '../../features/exercises/ui/screens/exercise_detail_screen.dart';
 import '../../features/nutrition/data/models/food_entity.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
-import '../../features/nutrition/ui/screens/nutrition_screen.dart';
 import '../../features/nutrition/ui/screens/food_search_screen.dart';
-import '../../features/progress/logic/cubit/progress_cubit.dart';
-import '../../features/progress/ui/screens/progress_screen.dart';
+import '../../features/nutrition/ui/screens/nutrition_screen.dart';
+import '../../features/onboarding/ui/screens/onboarding_screen.dart';
+import '../../features/pedometer/logic/cubit/pedometer_cubit.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
 import '../../features/profile/logic/cubit/profile_state.dart';
-import '../../features/profile/ui/screens/profile_screen.dart';
+import '../../features/profile/logic/cubit/settings_cubit.dart';
 import '../../features/profile/ui/screens/edit_profile_screen.dart';
-import '../../features/onboarding/ui/screens/onboarding_screen.dart';
+import '../../features/profile/ui/screens/profile_screen.dart';
+import '../../features/progress/logic/cubit/progress_cubit.dart';
+import '../../features/progress/ui/screens/progress_screen.dart';
 import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
 import '../../features/workout_logger/ui/screens/workout_logger_screen.dart';
-import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart'
-    show WorkoutPlanCubit;
+import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../features/workout_plan/ui/screens/workout_plan_screen.dart';
 import '../../shared/shell/main_shell.dart';
 import '../di/injection.dart';
@@ -60,19 +62,19 @@ abstract class AppRouter {
     routes: [
       GoRoute(
         path: onboarding,
-        builder: (_, __) => MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
-          ],
+        builder: (_, __) => BlocProvider(
+          create: (_) => sl<ProfileSaveCubit>(),
           child: const OnboardingScreen(),
         ),
       ),
+
       ShellRoute(
         builder: (context, state, child) => MultiBlocProvider(
           providers: [
-            BlocProvider<HomeCubit>(
-              create: (_) => sl<HomeCubit>(),
-            ),
+            BlocProvider(create: (_) => sl<HomeCubit>()),
+            BlocProvider(create: (_) => sl<AppSettingsCubit>()),
+            BlocProvider(create: (_) => sl<PedometerCubit>()..start()),
+            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
           ],
           child: MainShell(child: child),
         ),
@@ -83,11 +85,8 @@ abstract class AppRouter {
           ),
           GoRoute(
             path: exercises,
-            builder: (_, __) => MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (_) => sl<ExercisesCubit>()),
-                BlocProvider.value(value: sl<WorkoutPlanCubit>()),
-              ],
+            builder: (_, __) => BlocProvider(
+              create: (_) => sl<ExercisesCubit>(),
               child: const ExercisesScreen(),
             ),
             routes: [
@@ -99,7 +98,8 @@ abstract class AppRouter {
                     BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
                   ],
                   child: ExerciseDetailScreen(
-                      exerciseId: state.pathParameters['id']!),
+                    exerciseId: state.pathParameters['id']!,
+                  ),
                 ),
               ),
             ],
@@ -117,7 +117,6 @@ abstract class AppRouter {
               providers: [
                 BlocProvider(create: (_) => sl<ProgressCubit>()),
                 BlocProvider(create: (_) => sl<WeightLogCubit>()),
-                // ProfileCubit عشان BodyStatsSection يقدر يقرأ الطول والوزن
                 BlocProvider(create: (_) => sl<ProfileCubit>()..load()),
               ],
               child: const ProgressScreen(),
@@ -132,6 +131,8 @@ abstract class AppRouter {
           ),
         ],
       ),
+
+      // ─── Independent Routes ──────────────────────────────────────────────
       GoRoute(
         path: nutritionSearch,
         builder: (context, state) {
@@ -159,6 +160,7 @@ abstract class AppRouter {
           providers: [
             BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
             BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
+            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
           ],
           child: const WorkoutPlanScreen(),
         ),
@@ -168,16 +170,18 @@ abstract class AppRouter {
         builder: (context, state) => MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
-            BlocProvider.value(value: sl<ProfileCubit>()),
+            BlocProvider(create: (_) => sl<ProfileCubit>()),
           ],
           child: const _ProfileEditGate(),
         ),
       ),
     ],
-    errorBuilder: (_, state) => Scaffold(
+    errorBuilder: (_, state) => const Scaffold(
       body: Center(
-        child: Text('الصفحة غير موجودة',
-            style: const TextStyle(fontFamily: 'Cairo', color: Colors.white)),
+        child: Text(
+          'الصفحة غير موجودة',
+          style: TextStyle(fontFamily: 'Cairo', color: Colors.white),
+        ),
       ),
     ),
   );
