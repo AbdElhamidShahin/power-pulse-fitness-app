@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_input.dart';
@@ -60,6 +59,23 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('مكتبة التمارين  ',
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF8A8A8A),
+                                  fontFamily: 'Cairo')),
+                          Text('التمارين 🏋️',
+                              style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.textPrimary,
+                                  fontFamily: 'Cairo')),
+                        ],
+                      ),
+
                       GestureDetector(
                         onTap: () {
                           setState(() => _isSearching = !_isSearching);
@@ -87,22 +103,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                             size: 20,
                           ),
                         ),
-                      ),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text('مكتبة التمارين',
-                              style: TextStyle(
-                                  fontSize: 11,
-                                  color: Color(0xFF8A8A8A),
-                                  fontFamily: 'Cairo')),
-                          Text('التمارين 🏋️',
-                              style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary,
-                                  fontFamily: 'Cairo')),
-                        ],
                       ),
                     ],
                   ),
@@ -232,16 +232,8 @@ class _LoadedList extends StatelessWidget {
             selected: state.selectedBodyPart,
             onSelect: (p) => context.read<ExercisesCubit>().filterByBodyPart(p),
           ),
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.only(right: 16, bottom: 8),
-          child: Text('${state.exercises.length} تمرين',
-              style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF8A8A8A),
-                  fontFamily: 'Cairo')),
-        ),
+        const SizedBox(height: 16),
+
         Expanded(
           child: ListView.separated(
             controller: scrollController,
