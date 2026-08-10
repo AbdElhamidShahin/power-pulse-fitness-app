@@ -53,10 +53,8 @@ final class HomeCubit extends Cubit<HomeState> {
             .toList() ??
         [];
 
-    // ─── Streak حساب ───────────────────────────────────────────
     final streak = _calcStreak(progress?.workoutLogs ?? []);
 
-    // ─── Daily Nutrition default ───────────────────────────────
     final dailyNutrition = nutrition ??
         DailyNutrition(
           date: today,
@@ -75,7 +73,6 @@ final class HomeCubit extends Cubit<HomeState> {
 
   Future<void> refresh() => load();
 
-  // ─── Streak حسابها من الـ logs ─────────────────────────────
   int _calcStreak(List<WorkoutLog> logs) {
     if (logs.isEmpty) return 0;
 

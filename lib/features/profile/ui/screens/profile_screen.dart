@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/notifications/notification_settings_section.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/models/user_profile_entity.dart';
@@ -70,7 +69,6 @@ class _ProfileContentState extends State<_ProfileContent> {
 
         SliverToBoxAdapter(child: SizedBox(height: 16.h)),
 
-        // ─── البيانات الشخصية ─────────────────────────────────
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: SliverToBoxAdapter(
@@ -134,7 +132,6 @@ class _ProfileContentState extends State<_ProfileContent> {
 
         SliverToBoxAdapter(child: SizedBox(height: 16.h)),
 
-        // ─── الإعدادات ─────────────────────────────────────────
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: SliverToBoxAdapter(

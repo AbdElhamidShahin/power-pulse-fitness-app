@@ -20,22 +20,22 @@ class TodayWorkoutCard extends StatefulWidget {
 class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
   int _selectedWeekday = DateTime.now().weekday;
 
-  static const _dayNamesShort = ['إث', 'ث', 'أر', 'خ', 'ج', 'س', 'أح'];
+  static const _dayNamesShort = ['س', 'أح', 'إث', 'ث', 'أر', 'خ', 'ج'];
+
   static const _dayNamesFull = [
+    'السبت',
+    'الأحد',
     'الإثنين',
     'الثلاثاء',
     'الأربعاء',
     'الخميس',
     'الجمعة',
-    'السبت',
-    'الأحد',
   ];
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<WorkoutPlanCubit, WorkoutPlanState>(
       builder: (context, state) {
-        // ── مفيش خطة ────────────────────────────────────────
         if (state is WorkoutPlanEmpty || state is WorkoutPlanInitial) {
           return _NoPlantCard(
             onSetup: () => context.push(AppRouter.workoutPlan),
@@ -63,7 +63,6 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Week Strip ──────────────────────────────────
             _WeekStrip(
               days: plan.days,
               selectedWeekday: _selectedWeekday,
@@ -100,7 +99,6 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
   }
 }
 
-// ─── Week Strip ─────────────────────────────────────────────────────
 class _WeekStrip extends StatelessWidget {
   const _WeekStrip({
     required this.days,
@@ -162,7 +160,6 @@ class _WeekStrip extends StatelessWidget {
                     day.isRest ? '😴' : '💪',
                     style: TextStyle(fontSize: 13.sp),
                   ),
-                  // نقطة صغيرة لو فيه تمارين
                   if (!day.isRest && day.exercises.isNotEmpty) ...[
                     SizedBox(height: 3.h),
                     Container(
@@ -186,7 +183,6 @@ class _WeekStrip extends StatelessWidget {
   }
 }
 
-// ─── مفيش خطة ───────────────────────────────────────────────────────
 class _NoPlantCard extends StatelessWidget {
   const _NoPlantCard({required this.onSetup});
   final VoidCallback onSetup;
@@ -246,7 +242,6 @@ class _NoPlantCard extends StatelessWidget {
   }
 }
 
-// ─── يوم راحة ───────────────────────────────────────────────────────
 class _RestDayCard extends StatelessWidget {
   const _RestDayCard({
     required this.dayName,
@@ -321,7 +316,6 @@ class _RestDayCard extends StatelessWidget {
   }
 }
 
-// ─── يوم تمرين ──────────────────────────────────────────────────────
 class _WorkoutDayCard extends StatelessWidget {
   const _WorkoutDayCard({
     required this.day,
@@ -458,7 +452,6 @@ class _WorkoutDayCard extends StatelessWidget {
   }
 }
 
-// ─── كارد "أتمرنت النهارده ✓" ──────────────────────────────────────
 class _CompletedTodayCard extends StatelessWidget {
   const _CompletedTodayCard({required this.day, required this.dayName});
   final PlanDay day;
@@ -532,7 +525,6 @@ class _CompletedTodayCard extends StatelessWidget {
           ]),
           SizedBox(height: 16.h),
 
-          // ── زراير — أعد تاني أو تعديل ─────────────────────
           Row(children: [
             Expanded(
               child: GestureDetector(
