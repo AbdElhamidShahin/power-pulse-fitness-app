@@ -21,9 +21,7 @@ final class SignUpSuccess extends SignUpState {
 }
 
 final class SignUpVerificationRequired extends SignUpState {
-  const SignUpVerificationRequired({
-    required this.email,
-  });
+  const SignUpVerificationRequired({required this.email});
 
   final String email;
 }

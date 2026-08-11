@@ -7,5 +7,6 @@ abstract interface class SignUpRepository {
     required String name,
   });
 
+  /// يبدأ OAuth flow لـ Google ثم ينتظر Auth event ويرجع النتيجة
   Future<SignUpResult> signInWithGoogle();
 }

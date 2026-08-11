@@ -300,7 +300,7 @@ class _ProfileContentState extends State<_ProfileContent> {
             onPressed: () async {
               Navigator.pop(context);
               await context.read<AppSettingsCubit>().logout();
-              if (context.mounted) context.go('/onboarding');
+              if (context.mounted) context.go('/login');
             },
             child: const Text('تسجيل الخروج',
                 style: TextStyle(

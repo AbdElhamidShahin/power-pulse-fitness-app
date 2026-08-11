@@ -3,6 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/exercises/logic/cubit/exercises_cubit.dart';
+import '../../features/login/logic/cubit/login_cubit.dart';
+import '../../features/login/ui/login_screen.dart';
+import '../../features/sign_up/logic/cubit/sign_up_cubit.dart';
+import '../../features/sign_up/ui/sign_up_screen.dart';
 import '../../features/exercises/ui/screens/exercise_detail_screen.dart';
 import '../../features/exercises/ui/screens/exercises_screen.dart';
 import '../../features/home/logic/cubit/home_cubit.dart';
@@ -30,6 +34,8 @@ import '../di/injection.dart';
 abstract class AppRouter {
   AppRouter._();
 
+  static const String login = '/login';
+  static const String signUp = '/sign-up';
   static const String onboarding = '/onboarding';
   static const String home = '/home';
   static const String exercises = '/exercises';
@@ -44,21 +50,42 @@ abstract class AppRouter {
   static Future<String> _initialLocation() async {
     final prefs = await SharedPreferences.getInstance();
     final hasProfile = prefs.containsKey('user_profile');
-    return hasProfile ? home : onboarding;
+    if (!hasProfile) return login;
+    return home;
   }
 
   static final GoRouter router = GoRouter(
     initialLocation: home,
     redirect: (context, state) async {
       final initial = await _initialLocation();
-      if (state.uri.path == home && initial == onboarding) {
-        return onboarding;
+      final path = state.uri.path;
+      // إذا مفيش profile، ونحاول ندخل أي حاجة غير login/signup → روح للـ login
+      if (initial == login && path != login && path != signUp) {
+        return login;
+      }
+      // إذا عندنا profile وحاولنا ندخل login/signup → روح للـ home
+      if (initial == home && (path == login || path == signUp)) {
+        return home;
       }
       return null;
     },
     debugLogDiagnostics: true,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
+      GoRoute(
+        path: login,
+        builder: (_, __) => BlocProvider(
+          create: (_) => sl<LoginCubit>(),
+          child: const LoginScreen(),
+        ),
+      ),
+      GoRoute(
+        path: signUp,
+        builder: (_, __) => BlocProvider(
+          create: (_) => sl<SignUpCubit>(),
+          child: const SignUpScreen(),
+        ),
+      ),
       GoRoute(
         path: onboarding,
         builder: (_, __) => BlocProvider(

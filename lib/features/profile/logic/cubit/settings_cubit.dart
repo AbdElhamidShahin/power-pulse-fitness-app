@@ -1,3 +1,4 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,6 +43,12 @@ class AppSettingsCubit extends Cubit<AppSettings> {
 
   // ─── Logout — يمسح كل البيانات ────────────────────────────
   Future<void> logout() async {
+    try {
+      // سجّل الخروج من Supabase أولاً
+      await Supabase.instance.client.auth.signOut();
+    } catch (_) {
+      // حتى لو فشل الـ signOut، نمسح البيانات المحلية
+    }
     await _prefs.clear();
     emit(const AppSettings());
   }

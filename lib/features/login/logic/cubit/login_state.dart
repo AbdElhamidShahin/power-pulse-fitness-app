@@ -1,33 +1,31 @@
-
 sealed class LoginState {
-const LoginState();
+  const LoginState();
 }
 
 final class LoginInitial extends LoginState {
-const LoginInitial();
+  const LoginInitial();
 }
 
 final class LoginLoading extends LoginState {
-const LoginLoading();
+  const LoginLoading();
 }
 
 final class LoginSuccess extends LoginState {
-const LoginSuccess({
-required this.userId,
-required this.name,
-required this.email,
-this.avatarUrl,
-});
+  const LoginSuccess({
+    required this.userId,
+    required this.name,
+    required this.email,
+    this.avatarUrl,
+  });
 
-final String userId;
-final String name;
-final String email;
-final String? avatarUrl;
+  final String userId;
+  final String name;
+  final String email;
+  final String? avatarUrl;
 }
 
 final class LoginError extends LoginState {
-const LoginError(this.errorMessage);
+  const LoginError(this.errorMessage);
 
-final String errorMessage;
+  final String errorMessage;
 }
-

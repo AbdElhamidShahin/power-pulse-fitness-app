@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../sign_up/logic/cubit/sign_up_cubit.dart';
+import '../../logic/cubit/login_cubit.dart';
 
 class SocialLoginSection extends StatelessWidget {
   const SocialLoginSection({super.key});
@@ -14,11 +14,11 @@ class SocialLoginSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onTap: () => context.read<SignUpCubit>().signUpWithGoogle(),
+          onTap: () => context.read<LoginCubit>().loginWithGoogle(),
           child: iconSocial(
             context,
             'assets/icons/google.svg',
-            'التسجيل حساب جوجل',
+            'الدخول بحساب جوجل',
           ),
         ),
         SizedBox(height: 8.w),
