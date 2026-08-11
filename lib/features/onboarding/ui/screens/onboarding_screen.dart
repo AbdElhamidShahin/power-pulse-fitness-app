@@ -255,7 +255,7 @@ class _SetupFormState extends State<_SetupForm> {
         weightKg:      double.tryParse(_weightCtrl.text) ?? 75,
         gender:        _gender,
         goal:          _goal,
-        activityLevel: _activity,
+        activityLevel: _activity, email: '',
       );
 
   @override

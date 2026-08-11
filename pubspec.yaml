@@ -38,6 +38,8 @@ dependencies:
   pedometer: ^4.2.0
   flutter_local_notifications: ^20.1.0
   timezone: ^0.10.1
+  supabase_flutter: ^2.15.4
+  awesome_snackbar_content: ^0.1.7
 
 dev_dependencies:
   flutter_test:

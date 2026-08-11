@@ -1,0 +1,143 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:power_pulse/features/login/ui/widget/EmailAndPassword.dart';
+import 'package:power_pulse/features/login/ui/widget/divider_with_text.dart';
+import 'package:power_pulse/features/login/ui/widget/social_login_section.dart';
+import '../../../core/router/app_router.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../custom_show_snackbar.dart';
+import '../logic/cubit/login_cubit.dart';
+import '../logic/cubit/login_state.dart';
+
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<LoginCubit, LoginState>(
+      listener: _handleState,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              _buildBackgroundGradient(context),
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          final isDark =
+                              Theme.of(context).brightness == Brightness.dark;
+                          return Image.asset(
+                            isDark
+                                ? 'assets/images/logo/logo_new.png'
+                                : 'assets/images/logo/logo-light.png',
+                            height: 150.h,
+                            width: 150.w,
+                          );
+                        },
+                      ),
+                      SizedBox(height: 15.h),
+                      Text(
+                        'بوابتك لتجربة فندقية استثنائية',
+                        style: AppTextStyles.bodySmall
+                            .copyWith(
+                              fontSize: 26.sp,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                        maxLines: 1,
+                      ),
+                      SizedBox(height: 30.h),
+
+                      const EmailAndPassword(),
+
+                      SizedBox(height: 20.h),
+                      const DividerWithText(),
+                      SizedBox(height: 20.h),
+                      const SocialLoginSection(),
+                      SizedBox(height: 30.h),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () => context.push(AppRouter.home),
+                            child: Text(
+                              'إنشاء حساب',
+                              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary),
+                            ),
+                          ),
+                          Text(
+                            'لا تمتلك حساب؟',
+                            style: AppTextStyles.bodySmall
+                                .copyWith(
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : null,
+                                ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 40.h),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleState(BuildContext context, LoginState state) {
+    if (state is LoginSuccess) {
+      showCustomSnackbar(
+        context,
+        ContentType.success,
+        'مرحباً بعودتك! ✅',
+        'تم تسجيل الدخول بنجاح يا ${state.name}',
+      );
+      context.go(AppRouter.home);
+    } else if (state is LoginError) {
+      showCustomSnackbar(
+        context,
+        ContentType.failure,
+        'خطأ في الدخول 🚨',
+        state.errorMessage,
+      );
+    }
+  }
+
+  Widget _buildBackgroundGradient(BuildContext context) {
+    final bg = Theme.of(context).scaffoldBackgroundColor;
+    return Container(
+      width: double.infinity,
+      height: 0.25.sh,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            bg.withOpacity(0.0),
+            const Color(0xFF83809F).withOpacity(0.6),
+            bg.withOpacity(0.0),
+          ],
+          stops: const [0.0, 0.5, 1.0],
+        ),
+      ),
+    );
+  }
+}
