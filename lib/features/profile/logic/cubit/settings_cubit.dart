@@ -1,7 +1,9 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/auth/user_mode_service.dart';
 import 'settings_state.dart';
 
 class AppSettingsCubit extends Cubit<AppSettings> {
@@ -41,19 +43,31 @@ class AppSettingsCubit extends Cubit<AppSettings> {
     emit(state.copyWith(notificationsEnabled: val));
   }
 
-  // ─── Logout — يمسح كل البيانات ────────────────────────────
+  // ─── Logout — Flow 6 ──────────────────────────────────────
+  //
+  // 1. Signs out from Firebase Auth.
+  // 2. Switches app to Guest mode (does NOT delete Firestore data).
+  // 3. Clears local profile cache so guest has a fresh start.
+  // 4. Keeps all other local data intact.
   Future<void> logout() async {
     try {
-      // سجّل الخروج من Supabase أولاً
-      await Supabase.instance.client.auth.signOut();
+      await FirebaseAuth.instance.signOut();
     } catch (_) {
-      // حتى لو فشل الـ signOut، نمسح البيانات المحلية
+      // Even if sign-out fails, continue switching to guest locally.
     }
-    await _prefs.clear();
+
+    // Switch to guest mode — Firestore data is untouched and preserved.
+    await UserModeService.setGuestAfterLogout(_prefs);
+
+    // Remove local auth identity cache so the guest has a clean slate.
+    // Data features (nutrition, workout, etc.) remain in SharedPreferences
+    // for the guest session, but the profile is cleared.
+    await _prefs.remove('user_profile');
+
     emit(const AppSettings());
   }
 
-  // Helper للشاشات الأخرى
+  // ─── Helpers for UI ───────────────────────────────────────
   ThemeMode get themeMode =>
       state.isDarkMode ? ThemeMode.dark : ThemeMode.light;
 

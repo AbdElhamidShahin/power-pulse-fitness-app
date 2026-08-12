@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/auth/user_mode_service.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -174,6 +176,27 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+
+                const SizedBox(height: AppConstants.spaceL),
+
+                // ── Guest option ───────────────────────────────────
+                Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await UserModeService.setGuest(prefs);
+                      if (context.mounted) context.go(AppRouter.home);
+                    },
+                    child: Text(
+                      'متابعة كضيف بدون حساب',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: const Color(0xFF4B4B4B),
+                        decoration: TextDecoration.underline,
+                        decorationColor: const Color(0xFF4B4B4B),
+                      ),
+                    ),
                   ),
                 ),
 

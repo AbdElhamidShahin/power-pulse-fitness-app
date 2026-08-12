@@ -1,14 +1,14 @@
-import 'dart:async';
-
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../repo/sign_up_repo.dart';
 import '../repo/sign_up_result.dart';
 
 final class SignUpRepositoryImpl implements SignUpRepository {
-  const SignUpRepositoryImpl(this._supabase);
+  SignUpRepositoryImpl(this._auth, this._googleSignIn);
 
-  final SupabaseClient _supabase;
+  final FirebaseAuth _auth;
+  final GoogleSignIn _googleSignIn;
 
   @override
   Future<SignUpResult> signUp({
@@ -16,85 +16,70 @@ final class SignUpRepositoryImpl implements SignUpRepository {
     required String password,
     required String name,
   }) async {
-    final response = await _supabase.auth.signUp(
+    final credential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
-      data: {
-        'name': name,
-        'full_name': name,
-      },
     );
 
-    final user = response.user;
+    final user = credential.user;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'null-user',
+        message: 'فشل إنشاء الحساب، يرجى المحاولة مرة أخرى',
+      );
+    }
+
+    // Update display name
+    await user.updateDisplayName(name);
+
+    return SignUpResult(
+      userId: user.uid,
+      email: user.email ?? email,
+      name: name,
+      avatarUrl: user.photoURL,
+      // Firebase sends a verification email when email verification is enabled.
+      // If emailVerified is false, it means verification is pending.
+      requiresEmailVerification: !user.emailVerified,
+    );
+  }
+
+  @override
+  Future<SignUpResult> signInWithGoogle() async {
+    // Trigger the Google Sign In flow
+    final googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      throw FirebaseAuthException(
+        code: 'google-sign-in-cancelled',
+        message: 'تم إلغاء تسجيل الدخول بجوجل',
+      );
+    }
+
+    // Obtain the auth details
+    final googleAuth = await googleUser.authentication;
+
+    // Create a new Firebase credential
+    final oauthCredential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Sign in to Firebase
+    final userCredential = await _auth.signInWithCredential(oauthCredential);
+    final user = userCredential.user;
 
     if (user == null) {
-      throw Exception('فشل إنشاء الحساب، يرجى المحاولة مرة أخرى');
+      throw FirebaseAuthException(
+        code: 'null-user',
+        message: 'فشل التسجيل بجوجل',
+      );
     }
 
     return SignUpResult(
-      userId: user.id,
-      email: user.email ?? email,
-      name: name,
-      avatarUrl: _getAvatarUrl(user),
-      requiresEmailVerification: response.session == null,
+      userId: user.uid,
+      email: user.email ?? googleUser.email,
+      name: user.displayName ?? googleUser.displayName ?? 'مستخدم جديد',
+      avatarUrl: user.photoURL ?? googleUser.photoUrl,
+      requiresEmailVerification: false, // Google accounts are pre-verified
     );
-  }
-
-  /// يبدأ Google OAuth ثم ينتظر AuthChangeEvent.signedIn من Supabase.
-  /// كل منطق الـ listener هنا داخل الـ Repository — الـ Cubit مش بيعرف Supabase.
-  @override
-  Future<SignUpResult> signInWithGoogle() async {
-    final completer = Completer<SignUpResult>();
-
-    StreamSubscription<AuthState>? sub;
-
-    sub = _supabase.auth.onAuthStateChange.listen((data) async {
-      if (data.event != AuthChangeEvent.signedIn) return;
-
-      final user = data.session?.user;
-      if (user == null) {
-        completer.completeError(Exception('فشل الحصول على بيانات المستخدم'));
-        await sub?.cancel();
-        return;
-      }
-
-      final name =
-          user.userMetadata?['full_name'] as String? ??
-              user.userMetadata?['name'] as String? ??
-              user.userMetadata?['display_name'] as String? ??
-              'مستخدم جديد';
-
-      completer.complete(
-        SignUpResult(
-          userId: user.id,
-          email: user.email ?? '',
-          name: name,
-          avatarUrl: _getAvatarUrl(user),
-          requiresEmailVerification: false,
-        ),
-      );
-
-      await sub?.cancel();
-    });
-
-    // ابدأ OAuth — النتيجة تيجي عبر الـ listener فوق
-    await _supabase.auth.signInWithOAuth(
-      OAuthProvider.google,
-      redirectTo: 'io.supabase.hotelguide://login-callback',
-    );
-
-    // انتظر النتيجة أو timeout بعد 2 دقيقة
-    return completer.future.timeout(
-      const Duration(minutes: 2),
-      onTimeout: () {
-        sub?.cancel();
-        throw Exception('انتهت مهلة تسجيل الدخول بجوجل، يرجى المحاولة مرة أخرى');
-      },
-    );
-  }
-
-  String? _getAvatarUrl(User user) {
-    final metadata = user.userMetadata;
-    return metadata?['avatar_url'] as String? ?? metadata?['picture'] as String?;
   }
 }

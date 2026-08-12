@@ -1,4 +1,4 @@
-+abstract class ApiEndpoints {
+abstract class ApiEndpoints {
   ApiEndpoints._();
 
   static const String exerciseDbBaseUrl =

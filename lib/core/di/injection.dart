@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/login/data/repo/login_repoImpl.dart';
 import '../../features/login/data/repo/login_repostry.dart';
@@ -97,27 +99,38 @@ Future<void> initDependencies() async {
 }
 
 void _initAuth() {
-  final supabase = Supabase.instance.client;
+  // Firebase singletons
+  sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn());
 
   sl.registerLazySingleton<LoginRepository>(
-        () => LoginRepositoryImpl(supabase),
+    () => LoginRepositoryImpl(
+      sl<FirebaseAuth>(),
+      sl<GoogleSignIn>(),
+    ),
   );
 
   sl.registerFactory<LoginCubit>(
-        () => LoginCubit(
+    () => LoginCubit(
       sl<LoginRepository>(),
       sl<SharedPreferences>(),
+      sl<FirebaseFirestore>(),
     ),
   );
 
   sl.registerLazySingleton<SignUpRepository>(
-        () => SignUpRepositoryImpl(supabase),
+    () => SignUpRepositoryImpl(
+      sl<FirebaseAuth>(),
+      sl<GoogleSignIn>(),
+    ),
   );
 
   sl.registerFactory<SignUpCubit>(
-        () => SignUpCubit(
+    () => SignUpCubit(
       sl<SignUpRepository>(),
       sl<SharedPreferences>(),
+      sl<FirebaseFirestore>(),
     ),
   );
 }

@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/auth/user_mode_service.dart';
 import '../../../../core/notifications/notification_settings_section.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
@@ -200,6 +204,66 @@ class _ProfileContentState extends State<_ProfileContent> {
 
         SliverToBoxAdapter(child: SizedBox(height: 20.h)),
 
+        // ─── زر تسجيل الدخول للضيف ──────────────────────────────
+        FutureBuilder<bool>(
+          future: _isGuest(),
+          builder: (context, snap) {
+            if (snap.data != true) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            return SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              sliver: SliverToBoxAdapter(
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 16.h),
+                  padding: EdgeInsets.all(16.r),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFECFCCC),
+                    borderRadius: BorderRadius.circular(14.r),
+                    border: Border.all(color: const Color(0xFFA3E635).withOpacity(0.4)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.cloud_upload_outlined,
+                          color: Color(0xFF65A30D), size: 22),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Text(
+                          'أنت في وضع الضيف. أنشئ حسابًا لحفظ بياناتك على السحابة.',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 12.sp,
+                            color: const Color(0xFF3F6212),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      TextButton(
+                        onPressed: () => context.push(AppRouter.login),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.w, vertical: 6.h),
+                          backgroundColor: const Color(0xFFA3E635),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                        child: Text(
+                          'تسجيل الدخول',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF1A2E05),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+
         // ─── تسجيل الخروج ──────────────────────────────────────
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -238,6 +302,13 @@ class _ProfileContentState extends State<_ProfileContent> {
         SliverToBoxAdapter(child: SizedBox(height: 32.h)),
       ],
     );
+  }
+
+  Future<bool> _isGuest() async {
+    if (FirebaseAuth.instance.currentUser != null) return false;
+    final prefs = await SharedPreferences.getInstance();
+    final mode = await UserModeService.getMode(prefs);
+    return mode == UserMode.guest;
   }
 
   void _showPrivacySheet(BuildContext context) {
@@ -288,7 +359,7 @@ class _ProfileContentState extends State<_ProfileContent> {
       builder: (_) => AlertDialog(
         title: const Text('تسجيل الخروج',
             style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
-        content: const Text('هل أنت متأكد؟ سيتم مسح جميع البيانات المحفوظة.',
+        content: const Text('هل أنت متأكد؟ ستستمر بياناتك محفوظة على السحابة ويمكنك تسجيل الدخول مجددًا لاستعادتها.',
             style: TextStyle(fontFamily: 'Cairo')),
         actions: [
           TextButton(
@@ -300,7 +371,9 @@ class _ProfileContentState extends State<_ProfileContent> {
             onPressed: () async {
               Navigator.pop(context);
               await context.read<AppSettingsCubit>().logout();
-              if (context.mounted) context.go('/login');
+              // After logout → switch to guest mode → go to home
+              // (user can still use the app as a guest; can sign in again from profile)
+              if (context.mounted) context.go(AppRouter.home);
             },
             child: const Text('تسجيل الخروج',
                 style: TextStyle(

@@ -6,7 +6,7 @@ import 'dart:convert';
 abstract class AuthProfileSync {
   static const String _key = 'user_profile';
 
-  /// نحفظ الـ name و email من Supabase كـ UserProfile أساسي
+  /// نحفظ الـ name و email من Firebase Auth كـ UserProfile أساسي
   static Future<void> saveFromAuth({
     required SharedPreferences prefs,
     required String name,
@@ -30,7 +30,7 @@ abstract class AuthProfileSync {
       return;
     }
 
-    // مفيش profile — نكتب الـ default بالبيانات من Supabase
+    // مفيش profile — نكتب الـ default بالبيانات من Firebase Auth
     await _writeDefault(prefs, name: name, email: email, avatarUrl: avatarUrl);
   }
 

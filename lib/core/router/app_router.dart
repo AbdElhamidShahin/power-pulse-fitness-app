@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../features/entry/ui/entry_choice_screen.dart';
 import '../../features/exercises/logic/cubit/exercises_cubit.dart';
 import '../../features/login/logic/cubit/login_cubit.dart';
 import '../../features/login/ui/login_screen.dart';
@@ -29,29 +33,68 @@ import '../../features/workout_logger/ui/screens/workout_logger_screen.dart';
 import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../features/workout_plan/ui/screens/workout_plan_screen.dart';
 import '../../shared/shell/main_shell.dart';
+import '../auth/guest_migration_service.dart';
+import '../auth/user_mode_service.dart';
 import '../di/injection.dart';
 
 abstract class AppRouter {
   AppRouter._();
 
-  static const String login = '/login';
-  static const String signUp = '/sign-up';
+  static const String entry      = '/entry';
+  static const String login      = '/login';
+  static const String signUp     = '/sign-up';
   static const String onboarding = '/onboarding';
-  static const String home = '/home';
-  static const String exercises = '/exercises';
-  static const String nutrition = '/nutrition';
+  static const String home       = '/home';
+  static const String exercises  = '/exercises';
+  static const String nutrition  = '/nutrition';
   static const String nutritionSearch = '/nutrition/search';
-  static const String progress = '/progress';
-  static const String profile = '/profile';
+  static const String progress   = '/progress';
+  static const String profile    = '/profile';
   static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
-  static const String workoutPlan = '/workout-plan';
+  static const String workoutPlan   = '/workout-plan';
 
+  // ─── Startup routing logic ───────────────────────────────────────────────
+  //
+  // Flow 5: On every app launch:
+  //   1. Check Firebase Auth state.
+  //   2. If authenticated → restore Firestore data → home (authenticated mode).
+  //   3. If not authenticated:
+  //      a. If mode == guest → home (guest mode, local data).
+  //      b. If mode == none  → entry choice screen (first launch).
+  //
   static Future<String> _initialLocation() async {
     final prefs = await SharedPreferences.getInstance();
-    final hasProfile = prefs.containsKey('user_profile');
-    if (!hasProfile) return login;
-    return home;
+
+    // Check Firebase Auth — currentUser is non-null when a session is active.
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      // Authenticated — refresh local cache from Firestore.
+      // Failure (network offline) is silent; local cache acts as fallback.
+      try {
+        await GuestMigrationService.restoreCloudDataToLocal(
+          prefs: prefs,
+          firestore: FirebaseFirestore.instance,
+          uid: currentUser.uid,
+        );
+      } catch (_) {
+        // Network failure → continue with local cache
+      }
+      await UserModeService.setAuthenticated(prefs);
+      return home;
+    }
+
+    // Not authenticated — check saved mode preference.
+    final mode = await UserModeService.getMode(prefs);
+    if (mode == UserMode.guest) return home; // Guest → straight to app
+
+    if (mode == UserMode.authenticated) {
+      // Mode was authenticated but Firebase session is gone (e.g. expired).
+      // Reset mode so the user sees the entry screen and can sign in again.
+      await UserModeService.clearMode(prefs);
+    }
+
+    return entry; // No mode chosen yet → entry choice screen
   }
 
   static final GoRouter router = GoRouter(
@@ -59,19 +102,30 @@ abstract class AppRouter {
     redirect: (context, state) async {
       final initial = await _initialLocation();
       final path = state.uri.path;
-      // إذا مفيش profile، ونحاول ندخل أي حاجة غير login/signup → روح للـ login
-      if (initial == login && path != login && path != signUp) {
-        return login;
+
+      final authRoutes = {login, signUp, entry};
+
+      // If no mode chosen: force entry screen (except auth routes)
+      if (initial == entry && !authRoutes.contains(path)) {
+        return entry;
       }
-      // إذا عندنا profile وحاولنا ندخل login/signup → روح للـ home
-      if (initial == home && (path == login || path == signUp)) {
+
+      // If authenticated/guest and trying to access auth screens → home
+      if (initial == home && authRoutes.contains(path)) {
         return home;
       }
+
       return null;
     },
     debugLogDiagnostics: true,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
+      // ─── Entry choice screen (first launch) ─────────────────
+      GoRoute(
+        path: entry,
+        builder: (_, __) => const EntryChoiceScreen(),
+      ),
+
       GoRoute(
         path: login,
         builder: (_, __) => BlocProvider(

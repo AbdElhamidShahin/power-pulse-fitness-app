@@ -6,6 +6,6 @@ abstract interface class LoginRepository {
     required String password,
   });
 
-  /// تسجيل الدخول بـ Google — يُستدعى من LoginCubit
-  Future<void> signInWithGoogle();
+  /// Sign in with Google — returns the result directly (no OAuth redirect needed on mobile).
+  Future<LoginResult> signInWithGoogle();
 }
