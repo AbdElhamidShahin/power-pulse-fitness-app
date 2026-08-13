@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../core/auth/user_mode_service.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_router.dart';
@@ -46,18 +46,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
-          _showBanner(
-            context,
-            message: 'مرحباً بعودتك، ${state.name} 👋',
-            isError: false,
-          );
+          _showSnack(context, isError: false, message: 'مرحباً بعودتك ${state.name} 👋');
           context.go(AppRouter.home);
         } else if (state is LoginError) {
-          _showBanner(context, message: state.errorMessage, isError: true);
+          _showSnack(context,  isError: true, message: state.errorMessage);
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF0D0D0D),
+        backgroundColor: AppColors.bgDeep,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -69,12 +65,12 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: AppConstants.space3XL),
 
-                // ── Logo + headline ────────────────────────────────
-                _Header(),
+                // ── Header ──────────────────────────────────────
+                _buildHeader(),
 
                 const SizedBox(height: AppConstants.space4XL),
 
-                // ── Form ──────────────────────────────────────────
+                // ── Form ────────────────────────────────────────
                 Form(
                   key: _formKey,
                   child: Column(
@@ -127,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppConstants.space3XL),
 
-                // ── Login button ───────────────────────────────────
+                // ── Login button ─────────────────────────────────
                 BlocBuilder<LoginCubit, LoginState>(
                   builder: (context, state) => PPButton(
                     label: 'تسجيل الدخول',
@@ -138,12 +134,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppConstants.spaceXL),
 
-                // ── Divider ────────────────────────────────────────
+                // ── Divider ──────────────────────────────────────
                 _OrDivider(),
 
                 const SizedBox(height: AppConstants.spaceXL),
 
-                // ── Google ─────────────────────────────────────────
+                // ── Google ───────────────────────────────────────
                 BlocBuilder<LoginCubit, LoginState>(
                   builder: (context, state) => _GoogleButton(
                     isLoading: state is LoginLoading,
@@ -153,27 +149,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppConstants.space4XL),
 
-                // ── Sign up link ───────────────────────────────────
+                // ── Sign up link ─────────────────────────────────
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'ليس لديك حساب؟',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF6B6B6B),
-                        ),
-                      ),
+                      Text('ليس لديك حساب؟', style: AppTextStyles.bodyMedium),
                       const SizedBox(width: AppConstants.spaceXS),
                       GestureDetector(
                         onTap: () => context.push(AppRouter.signUp),
-                        child: Text(
-                          'إنشاء حساب',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        child: Text('إنشاء حساب',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w700,
+                            )),
                       ),
                     ],
                   ),
@@ -181,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppConstants.spaceL),
 
-                // ── Guest option ───────────────────────────────────
+                // ── Guest link ───────────────────────────────────
                 Center(
                   child: GestureDetector(
                     onTap: () async {
@@ -192,9 +181,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'متابعة كضيف بدون حساب',
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: const Color(0xFF4B4B4B),
+                        color: AppColors.textMuted,
                         decoration: TextDecoration.underline,
-                        decorationColor: const Color(0xFF4B4B4B),
+                        decorationColor: AppColors.textMuted,
                       ),
                     ),
                   ),
@@ -208,17 +197,12 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-}
 
-// ─── Header Widget ────────────────────────────────────────────────────────────
-
-class _Header extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Accent pill
+        // Brand pill
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spaceM,
@@ -233,47 +217,41 @@ class _Header extends StatelessWidget {
             style: AppTextStyles.labelSmall.copyWith(
               color: AppColors.accent,
               letterSpacing: 1.2,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
         const SizedBox(height: AppConstants.spaceM),
         Text(
           'أهلاً بعودتك\nمجدداً 💪',
-          style: AppTextStyles.displayMedium.copyWith(
-            color: const Color(0xFFF5F5F0),
-            height: 1.2,
-          ),
+          style: AppTextStyles.displayMedium.copyWith(height: 1.25),
         ),
         const SizedBox(height: AppConstants.spaceS),
         Text(
           'سجّل دخولك وواصل رحلتك نحو اللياقة',
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: const Color(0xFF6B6B6B),
-          ),
+          style: AppTextStyles.bodyMedium,
         ),
       ],
     );
   }
 }
 
-// ─── Field Label ─────────────────────────────────────────────────────────────
+// ─── Field Label ──────────────────────────────────────────────────────────────
 
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel(this.text);
   final String text;
 
   @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: AppTextStyles.titleSmall.copyWith(
-        color: const Color(0xFFB0B0B0),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Text(
+        text,
+        style: AppTextStyles.titleSmall.copyWith(
+          color: AppColors.textSecondary,
+        ),
+      );
 }
 
-// ─── Auth Text Field ─────────────────────────────────────────────────────────
+// ─── Auth Text Field ──────────────────────────────────────────────────────────
 
 class _AuthField extends StatelessWidget {
   const _AuthField({
@@ -303,16 +281,15 @@ class _AuthField extends StatelessWidget {
       validator: validator,
       textDirection: TextDirection.ltr,
       style: AppTextStyles.bodyMedium.copyWith(
-        color: const Color(0xFFF5F5F0),
+        color: AppColors.textPrimary,
         letterSpacing: obscureText ? 2.0 : 0,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: const Color(0xFF3A3A3A),
-        ),
-        prefixIcon: Icon(icon,
-            color: const Color(0xFF4B4B4B), size: AppConstants.iconM),
+        hintStyle:
+            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+        prefixIcon:
+            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
                 padding: const EdgeInsets.only(left: AppConstants.spaceM),
@@ -320,26 +297,26 @@ class _AuthField extends StatelessWidget {
               )
             : null,
         filled: true,
-        fillColor: const Color(0xFF1A1A1A),
+        fillColor: AppColors.bgSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          borderSide: const BorderSide(color: AppColors.borderSubtle),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          borderSide: const BorderSide(color: AppColors.borderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColors.accent, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColors.danger),
+          borderSide: const BorderSide(color: AppColors.danger),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColors.danger, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
         ),
         errorStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.danger),
         contentPadding: const EdgeInsets.symmetric(
@@ -358,22 +335,20 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+        const Expanded(
+            child: Divider(color: AppColors.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
-          child: Text(
-            'أو',
-            style: AppTextStyles.bodySmall
-                .copyWith(color: const Color(0xFF4B4B4B)),
-          ),
+          child: Text('أو', style: AppTextStyles.bodySmall),
         ),
-        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+        const Expanded(
+            child: Divider(color: AppColors.borderSubtle, thickness: 1)),
       ],
     );
   }
 }
 
-// ─── Google Button ─────────────────────────────────────────────────────────────
+// ─── Google Button ────────────────────────────────────────────────────────────
 
 class _GoogleButton extends StatelessWidget {
   const _GoogleButton({required this.isLoading, required this.onTap});
@@ -387,9 +362,16 @@ class _GoogleButton extends StatelessWidget {
       child: Container(
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: AppColors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: const Color(0xFF2A2A2A)),
+          border: Border.all(color: AppColors.borderMedium),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -406,12 +388,10 @@ class _GoogleButton extends StatelessWidget {
             else ...[
               _GoogleIcon(),
               const SizedBox(width: AppConstants.spaceM),
-              Text(
-                'الدخول بحساب جوجل',
-                style: AppTextStyles.labelLarge.copyWith(
-                  color: const Color(0xFFB0B0B0),
-                ),
-              ),
+              Text('الدخول بحساب جوجل',
+                  style: AppTextStyles.labelLarge.copyWith(
+                    color: AppColors.textSecondary,
+                  )),
             ],
           ],
         ),
@@ -422,92 +402,53 @@ class _GoogleButton extends StatelessWidget {
 
 class _GoogleIcon extends StatelessWidget {
   @override
+  Widget build(BuildContext context) => const SizedBox(
+        width: 22,
+        height: 22,
+        child: _GoogleLetterG(),
+      );
+}
+
+class _GoogleLetterG extends StatelessWidget {
+  const _GoogleLetterG();
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 20,
-      height: 20,
-      child: CustomPaint(painter: _GooglePainter()),
-    );
-  }
-}
-
-class _GooglePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final r = size.width / 2;
-
-    // Blue arc
-    canvas.drawArc(
-      Rect.fromCircle(center: Offset(cx, cy), radius: r),
-      -0.5,
-      3.8,
-      false,
-      Paint()
-        ..color = const Color(0xFF4285F4)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.8,
-    );
-    // Red arc
-    canvas.drawArc(
-      Rect.fromCircle(center: Offset(cx, cy), radius: r),
-      3.3,
-      1.0,
-      false,
-      Paint()
-        ..color = const Color(0xFFEA4335)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.8,
-    );
-    // Bar
-    canvas.drawLine(
-      Offset(cx, cy),
-      Offset(cx + r, cy),
-      Paint()
-        ..color = const Color(0xFF4285F4)
-        ..strokeWidth = 2.8,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// ─── Banner helper ────────────────────────────────────────────────────────────
-
-void _showBanner(BuildContext context,
-    {required String message, required bool isError}) {
-  ScaffoldMessenger.of(context).showMaterialBanner(
-    MaterialBanner(
-      backgroundColor: isError ? AppColors.dangerDim : AppColors.accentDim,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.spaceXXL,
-        vertical: AppConstants.spaceM,
-      ),
-      content: Text(
-        message,
-        style: AppTextStyles.bodyMedium.copyWith(
-          color: isError ? AppColors.danger : AppColors.accent,
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () =>
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
-          child: Text(
-            'حسناً',
-            style: AppTextStyles.labelMedium.copyWith(
-              color: isError ? AppColors.danger : AppColors.accent,
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Colored G using text (simple & crisp)
+        RichText(
+          text: const TextSpan(
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'sans-serif',
             ),
+            children: [
+              TextSpan(text: 'G', style: TextStyle(color: Color(0xFF4285F4))),
+            ],
           ),
         ),
       ],
+    );
+  }
+}
+
+// ─── Snackbar ─────────────────────────────────────────────────────────────────
+
+void _showSnack(BuildContext context,
+    {required String message, required bool isError}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message,
+          style: AppTextStyles.bodyMedium.copyWith(color: Colors.white)),
+      backgroundColor: isError ? AppColors.danger : AppColors.success,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+      ),
+      margin: const EdgeInsets.all(AppConstants.spaceL),
+      duration: const Duration(seconds: 3),
     ),
   );
-  Future.delayed(const Duration(seconds: 3), () {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-    }
-  });
 }

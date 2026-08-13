@@ -22,7 +22,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.linux:
         throw UnsupportedError('Linux is not supported by this app.');
       case TargetPlatform.windows:
-        throw UnsupportedError('Windows is not supported by this app.');
+        return windows;
       default:
         throw UnsupportedError('Unknown platform: $defaultTargetPlatform');
     }
@@ -32,39 +32,53 @@ class DefaultFirebaseOptions {
   // Run `flutterfire configure` to auto-generate this file.
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY',
-    appId: 'YOUR_WEB_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyCn1qC0dGtqUt9G91ne4muBaCqlF4lGXUI',
+    appId: '1:569679674083:web:d8af6249ea3a97fa5ae3d6',
+    messagingSenderId: '569679674083',
+    projectId: 'abdo-1689344702677',
+    authDomain: 'abdo-1689344702677.firebaseapp.com',
+    storageBucket: 'abdo-1689344702677.firebasestorage.app',
+    measurementId: 'G-493BRCXHZH',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: 'YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyCCEatOzRpGnuYXFK4ErAQDXMksFaCktkw',
+    appId: '1:569679674083:android:ad48a13aba5815745ae3d6',
+    messagingSenderId: '569679674083',
+    projectId: 'abdo-1689344702677',
+    storageBucket: 'abdo-1689344702677.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_IOS_API_KEY',
-    appId: 'YOUR_IOS_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    iosClientId: 'YOUR_IOS_CLIENT_ID',
-    iosBundleId: 'YOUR_BUNDLE_ID',
+    apiKey: 'AIzaSyCADO_03Jxy-Lk9k5SLJxwO6PgZH2CGhcQ',
+    appId: '1:569679674083:ios:1b67b212d6ea9a1d5ae3d6',
+    messagingSenderId: '569679674083',
+    projectId: 'abdo-1689344702677',
+    storageBucket: 'abdo-1689344702677.firebasestorage.app',
+    androidClientId: '569679674083-hnen5h457tb1c09qga9ombh4vobspncv.apps.googleusercontent.com',
+    iosClientId: '569679674083-celm39j3eph6e6prdalst747j899e11b.apps.googleusercontent.com',
+    iosBundleId: 'com.example.task',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'YOUR_MACOS_API_KEY',
-    appId: 'YOUR_MACOS_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    iosClientId: 'YOUR_MACOS_CLIENT_ID',
-    iosBundleId: 'YOUR_BUNDLE_ID',
+    apiKey: 'AIzaSyCADO_03Jxy-Lk9k5SLJxwO6PgZH2CGhcQ',
+    appId: '1:569679674083:ios:1b67b212d6ea9a1d5ae3d6',
+    messagingSenderId: '569679674083',
+    projectId: 'abdo-1689344702677',
+    storageBucket: 'abdo-1689344702677.firebasestorage.app',
+    androidClientId: '569679674083-hnen5h457tb1c09qga9ombh4vobspncv.apps.googleusercontent.com',
+    iosClientId: '569679674083-celm39j3eph6e6prdalst747j899e11b.apps.googleusercontent.com',
+    iosBundleId: 'com.example.task',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCn1qC0dGtqUt9G91ne4muBaCqlF4lGXUI',
+    appId: '1:569679674083:web:ecb07f8accf4a6bf5ae3d6',
+    messagingSenderId: '569679674083',
+    projectId: 'abdo-1689344702677',
+    authDomain: 'abdo-1689344702677.firebaseapp.com',
+    storageBucket: 'abdo-1689344702677.firebasestorage.app',
+    measurementId: 'G-PZDZ77VSHE',
+  );
+
 }

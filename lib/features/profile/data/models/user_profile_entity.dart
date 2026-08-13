@@ -5,7 +5,7 @@ enum FitnessGoal {
   loseFat,
   buildMuscle,
   endurance,
-  maintain,
+  maintain, lose, gain,
 }
 
 enum ActivityLevel {
@@ -27,6 +27,10 @@ extension FitnessGoalX on FitnessGoal {
     FitnessGoal.buildMuscle => 'بناء العضلات',
     FitnessGoal.endurance => 'تحسين اللياقة',
     FitnessGoal.maintain => 'الحفاظ على الوزن',
+    // TODO: Handle this case.
+    FitnessGoal.lose => throw UnimplementedError(),
+    // TODO: Handle this case.
+    FitnessGoal.gain => throw UnimplementedError(),
   };
 }
 
@@ -104,6 +108,10 @@ final class UserProfile {
     FitnessGoal.buildMuscle => tdee + 300,
     FitnessGoal.endurance => tdee,
     FitnessGoal.maintain => tdee,
+    // TODO: Handle this case.
+    FitnessGoal.lose => throw UnimplementedError(),
+    // TODO: Handle this case.
+    FitnessGoal.gain => throw UnimplementedError(),
   };
 
   double get dailyProteinGoal => switch (goal) {

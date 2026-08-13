@@ -10,6 +10,7 @@ final class SignUpRepositoryImpl implements SignUpRepository {
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
 
+// ... inside SignUpRepositoryImpl
   @override
   Future<SignUpResult> signUp({
     required String email,
@@ -37,12 +38,9 @@ final class SignUpRepositoryImpl implements SignUpRepository {
       email: user.email ?? email,
       name: name,
       avatarUrl: user.photoURL,
-      // Firebase sends a verification email when email verification is enabled.
-      // If emailVerified is false, it means verification is pending.
-      requiresEmailVerification: !user.emailVerified,
+      requiresEmailVerification: false,
     );
   }
-
   @override
   Future<SignUpResult> signInWithGoogle() async {
     // Trigger the Google Sign In flow

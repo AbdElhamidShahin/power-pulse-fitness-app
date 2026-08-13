@@ -22,6 +22,7 @@ final class SignUpCubit extends Cubit<SignUpState> {
 
   // ─── Email / Password Sign-Up ─────────────────────────────────────────────
 
+// ... inside SignUpCubit
   Future<void> signUpUser({
     required String name,
     required String email,
@@ -44,12 +45,9 @@ final class SignUpCubit extends Cubit<SignUpState> {
 
       if (isClosed) return;
 
-      if (result.requiresEmailVerification) {
-        emit(SignUpVerificationRequired(email: result.email));
-        return;
-      }
+      // ⬇️ تم حذف/تعطيل شرط Verification المباشر
 
-      // Flow 3: new account — migrate guest data to Firestore
+      // Flow 3: new account — migrate guest data & sync profile
       await _postSignUpSync(
         uid: result.userId,
         name: result.name,

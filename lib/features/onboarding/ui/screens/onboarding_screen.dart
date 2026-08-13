@@ -10,39 +10,43 @@ import '../../../profile/data/models/user_profile_entity.dart';
 import '../../../profile/logic/cubit/profile_cubit.dart';
 import '../../../profile/logic/cubit/profile_state.dart';
 
+// ─── Onboarding pages data ────────────────────────────────────────────────────
+
 class _PageData {
   const _PageData({
-    required this.icon,
+    required this.emoji,
     required this.title,
     required this.subtitle,
-    required this.color,
+    required this.accentColor,
   });
-  final IconData icon;
+  final String emoji;
   final String title;
   final String subtitle;
-  final Color color;
+  final Color  accentColor;
 }
 
 const _pages = [
   _PageData(
-    icon: Icons.fitness_center_rounded,
-    title: 'مرحباً بك في\nPower Pulse',
-    subtitle: 'تطبيقك المتكامل للياقة البدنية\nتمارين • تغذية • تتبع التقدم',
-    color: AppColors.accent,
+    emoji:       '💪',
+    title:       'مرحباً بك في\nPower Pulse',
+    subtitle:    'تطبيقك المتكامل للياقة البدنية\nتمارين • تغذية • تتبع التقدم',
+    accentColor: AppColors.accent,
   ),
   _PageData(
-    icon: Icons.restaurant_rounded,
-    title: 'تتبع تغذيتك\nبدقة',
-    subtitle: 'آلاف الأطعمة متاحة\nتتبع السعرات والماكروز يومياً',
-    color: AppColors.info,
+    emoji:       '🥗',
+    title:       'تتبع تغذيتك\nبدقة',
+    subtitle:    'آلاف الأطعمة متاحة\nتتبع السعرات والماكروز يومياً',
+    accentColor: Color(0xFF34D399),
   ),
   _PageData(
-    icon: Icons.bar_chart_rounded,
-    title: 'شاهد تقدمك\nيوماً بيوم',
-    subtitle: 'رسوم بيانية واضحة\nتوضح رحلتك نحو هدفك',
-    color: AppColors.warning,
+    emoji:       '📈',
+    title:       'شاهد تقدمك\nيوماً بيوم',
+    subtitle:    'رسوم بيانية واضحة\nتوضح رحلتك نحو هدفك',
+    accentColor: Color(0xFF60A5FA),
   ),
 ];
+
+// ─── Main Screen ──────────────────────────────────────────────────────────────
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -53,7 +57,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pageCtrl = PageController();
-  int _current = 0;
+  int  _current  = 0;
   bool _showSetup = false;
 
   @override
@@ -66,7 +70,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (_current < _pages.length - 1) {
       _pageCtrl.nextPage(
         duration: AppConstants.durationPage,
-        curve: Curves.easeInOut,
+        curve:    Curves.easeInOut,
       );
     } else {
       setState(() => _showSetup = true);
@@ -76,20 +80,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.bgDeep,
       body: SafeArea(
-        child: _showSetup ? const _SetupForm() : _IntroPages(
-          pageCtrl: _pageCtrl,
-          current: _current,
-          onPageChanged: (i) => setState(() => _current = i),
-          onNext: _next,
-          onSkip: () => setState(() => _showSetup = true),
-        ),
+        child: _showSetup
+            ? const _SetupForm()
+            : _IntroPages(
+                pageCtrl:      _pageCtrl,
+                current:       _current,
+                onPageChanged: (i) => setState(() => _current = i),
+                onNext:        _next,
+                onSkip:        () => setState(() => _showSetup = true),
+              ),
       ),
     );
   }
 }
 
-// ─── Intro Pages ─────────────────────────────────────────────
+// ─── Intro Slides ─────────────────────────────────────────────────────────────
+
 class _IntroPages extends StatelessWidget {
   const _IntroPages({
     required this.pageCtrl,
@@ -99,56 +107,94 @@ class _IntroPages extends StatelessWidget {
     required this.onSkip,
   });
 
-  final PageController pageCtrl;
-  final int current;
+  final PageController    pageCtrl;
+  final int               current;
   final ValueChanged<int> onPageChanged;
-  final VoidCallback onNext;
-  final VoidCallback onSkip;
+  final VoidCallback      onNext;
+  final VoidCallback      onSkip;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Skip
-        Align(
-          alignment: Alignment.topLeft,
-          child: TextButton(
-            onPressed: onSkip,
-            child: Text('تخطي',
-                style: AppTextStyles.labelMedium
-                    .copyWith(color: AppColors.textMuted)),
+        // ── Top bar ──────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.screenPaddingH,
+            vertical:   AppConstants.spaceM,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Brand
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.spaceM,
+                  vertical:   AppConstants.spaceXXS + 2,
+                ),
+                decoration: BoxDecoration(
+                  color:        AppColors.accentDim,
+                  borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                ),
+                child: Text(
+                  'Power Pulse',
+                  style: AppTextStyles.labelSmall.copyWith(
+                    color:         AppColors.accent,
+                    fontWeight:    FontWeight.w700,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+              // Skip
+              TextButton(
+                onPressed: onSkip,
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.textMuted,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppConstants.spaceM,
+                    vertical:   AppConstants.spaceXS,
+                  ),
+                ),
+                child: Text('تخطي', style: AppTextStyles.labelMedium),
+              ),
+            ],
           ),
         ),
 
-        // Pages
+        // ── Pages ─────────────────────────────────────────────
         Expanded(
           child: PageView.builder(
-            controller: pageCtrl,
+            controller:    pageCtrl,
             onPageChanged: onPageChanged,
-            itemCount: _pages.length,
-            itemBuilder: (_, i) => _OnboardingPage(page: _pages[i]),
+            itemCount:     _pages.length,
+            itemBuilder:   (_, i) => _OnboardingPage(page: _pages[i]),
           ),
         ),
 
-        // Dots + button
+        // ── Bottom controls ───────────────────────────────────
         Padding(
-          padding: const EdgeInsets.all(AppConstants.screenPaddingH),
+          padding: const EdgeInsets.fromLTRB(
+            AppConstants.screenPaddingH,
+            AppConstants.spaceXL,
+            AppConstants.screenPaddingH,
+            AppConstants.spaceXXL,
+          ),
           child: Column(
             children: [
-              // Dots
+              // Dot indicators
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   _pages.length,
                   (i) => AnimatedContainer(
                     duration: AppConstants.durationFast,
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    width: current == i ? 20 : 6,
-                    height: 6,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width:  current == i ? 24 : 8,
+                    height: 8,
                     decoration: BoxDecoration(
                       color: current == i
                           ? AppColors.accent
-                          : AppColors.bgElevated,
+                          : AppColors.borderMedium,
                       borderRadius:
                           BorderRadius.circular(AppConstants.radiusPill),
                     ),
@@ -170,6 +216,8 @@ class _IntroPages extends StatelessWidget {
   }
 }
 
+// ─── Single Onboarding Page ───────────────────────────────────────────────────
+
 class _OnboardingPage extends StatelessWidget {
   const _OnboardingPage({required this.page});
   final _PageData page;
@@ -177,36 +225,43 @@ class _OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppConstants.spaceXXL),
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceXXL),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icon circle
+          // ── Emoji in styled circle ────────────────────────
           Container(
-            width: 140,
-            height: 140,
+            width:  160,
+            height: 160,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: page.color.withValues(alpha: 0.12),
+              color: page.accentColor.withOpacity(0.10),
               border: Border.all(
-                  color: page.color.withValues(alpha: 0.3), width: 2),
+                color: page.accentColor.withOpacity(0.25),
+                width: 2,
+              ),
             ),
-            child: Icon(page.icon, color: page.color, size: 64),
+            child: Center(
+              child: Text(
+                page.emoji,
+                style: const TextStyle(fontSize: 72),
+              ),
+            ),
           ),
+
           const SizedBox(height: AppConstants.space3XL),
+
           Text(
             page.title,
-            style: Theme.of(context)
-                .textTheme
-                .displayMedium!
-                .copyWith(color: AppColors.textPrimary),
+            style: AppTextStyles.displayMedium,
             textAlign: TextAlign.center,
           ),
+
           const SizedBox(height: AppConstants.spaceL),
+
           Text(
             page.subtitle,
-            style: AppTextStyles.bodyLarge
-                .copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.bodyLarge,
             textAlign: TextAlign.center,
           ),
         ],
@@ -215,7 +270,8 @@ class _OnboardingPage extends StatelessWidget {
   }
 }
 
-// ─── Setup Form ──────────────────────────────────────────────
+// ─── Setup Form ───────────────────────────────────────────────────────────────
+
 class _SetupForm extends StatefulWidget {
   const _SetupForm();
 
@@ -255,150 +311,188 @@ class _SetupFormState extends State<_SetupForm> {
         weightKg:      double.tryParse(_weightCtrl.text) ?? 75,
         gender:        _gender,
         goal:          _goal,
-        activityLevel: _activity, email: '',
+        activityLevel: _activity,
+        email:         '',
       );
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProfileSaveCubit, ProfileSaveState>(
       listener: (context, state) {
-        if (state is ProfileSaveSuccess) {
-          context.go('/home');
-        }
+        if (state is ProfileSaveSuccess) context.go('/home');
       },
       child: CustomScrollView(
         slivers: [
+          // ── Header ─────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppConstants.screenPaddingH,
-                AppConstants.spaceXL,
+                AppConstants.spaceXXL,
                 AppConstants.screenPaddingH,
                 AppConstants.spaceXXL,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('أخبرنا عن نفسك',
-                      style: Theme.of(context).textTheme.displayMedium),
+                  // Step indicator
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppConstants.spaceM,
+                      vertical:   AppConstants.spaceXXS + 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color:        AppColors.accentDim,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                    ),
+                    child: Text(
+                      'إعداد الملف الشخصي',
+                      style: AppTextStyles.labelSmall.copyWith(
+                        color:      AppColors.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppConstants.spaceM),
+                  Text('أخبرنا عن\nnفسك 🙋',
+                      style: AppTextStyles.displayMedium.copyWith(height: 1.25)),
                   const SizedBox(height: AppConstants.spaceS),
                   Text('لنحسب أهدافك اليومية بدقة',
-                      style: AppTextStyles.bodyMedium
-                          .copyWith(color: AppColors.textMuted)),
+                      style: AppTextStyles.bodyMedium),
                 ],
               ),
             ),
           ),
 
+          // ── Fields ─────────────────────────────────────────
           SliverPadding(
             padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.screenPaddingH),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Name
-                _Label('الاسم'),
+                _SectionLabel('الاسم'),
                 const SizedBox(height: AppConstants.spaceS),
-                TextField(
-                  controller: _nameCtrl,
+                _SetupField(
+                  controller:    _nameCtrl,
+                  hint:          'اسمك',
                   textDirection: TextDirection.rtl,
-                  onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(hintText: 'اسمك'),
+                  onChanged:     (_) => setState(() {}),
                 ),
-                const SizedBox(height: AppConstants.spaceL),
+                const SizedBox(height: AppConstants.spaceXL),
 
-                // Age + Height
-                Row(children: [
-                  Expanded(child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Label('العمر'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      TextField(
-                        controller: _ageCtrl,
-                        keyboardType: TextInputType.number,
-                        textDirection: TextDirection.ltr,
-                        onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(
-                            hintText: '25', suffixText: 'سنة'),
+                // Age + Height row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionLabel('العمر'),
+                          const SizedBox(height: AppConstants.spaceS),
+                          _SetupField(
+                            controller:  _ageCtrl,
+                            hint:        '25',
+                            suffix:      'سنة',
+                            keyboardType: TextInputType.number,
+                            onChanged:   (_) => setState(() {}),
+                          ),
+                        ],
                       ),
-                    ],
-                  )),
-                  const SizedBox(width: AppConstants.spaceM),
-                  Expanded(child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Label('الطول'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      TextField(
-                        controller: _heightCtrl,
-                        keyboardType: TextInputType.number,
-                        textDirection: TextDirection.ltr,
-                        onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(
-                            hintText: '175', suffixText: 'سم'),
+                    ),
+                    const SizedBox(width: AppConstants.spaceM),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionLabel('الطول'),
+                          const SizedBox(height: AppConstants.spaceS),
+                          _SetupField(
+                            controller:  _heightCtrl,
+                            hint:        '175',
+                            suffix:      'سم',
+                            keyboardType: TextInputType.number,
+                            onChanged:   (_) => setState(() {}),
+                          ),
+                        ],
                       ),
-                    ],
-                  )),
-                ]),
-                const SizedBox(height: AppConstants.spaceL),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppConstants.spaceXL),
 
                 // Weight
-                _Label('الوزن'),
+                _SectionLabel('الوزن'),
                 const SizedBox(height: AppConstants.spaceS),
-                TextField(
-                  controller: _weightCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  textDirection: TextDirection.ltr,
+                _SetupField(
+                  controller:  _weightCtrl,
+                  hint:        '75.0',
+                  suffix:      'كجم',
+                  keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true),
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
-                      hintText: '75.0', suffixText: 'كج'),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Gender
-                _Label('الجنس'),
+                _SectionLabel('الجنس'),
                 const SizedBox(height: AppConstants.spaceM),
                 _SegmentRow<Gender>(
-                  values: Gender.values,
+                  values:   Gender.values,
                   selected: _gender,
-                  label: (g) => g.labelAr,
+                  label:    (g) => g.labelAr,
                   onSelect: (g) => setState(() => _gender = g),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
+                // Divider
+                const Divider(color: AppColors.borderSubtle),
+                const SizedBox(height: AppConstants.spaceXL),
+
                 // Goal
-                _Label('هدفك'),
+                _SectionLabel('هدفك'),
                 const SizedBox(height: AppConstants.spaceM),
                 ...FitnessGoal.values.map((g) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                  child: _OptionTile(
-                    label: g.labelAr,
-                    selected: _goal == g,
-                    onTap: () => setState(() => _goal = g),
-                  ),
-                )),
-                const SizedBox(height: AppConstants.spaceL),
+                      padding: const EdgeInsets.only(
+                          bottom: AppConstants.spaceS),
+                      child: _OptionTile(
+                        label:    g.labelAr,
+                        icon:     _goalIcon(g),
+                        selected: _goal == g,
+                        onTap:    () => setState(() => _goal = g),
+                      ),
+                    )),
+                const SizedBox(height: AppConstants.spaceXL),
+
+                // Divider
+                const Divider(color: AppColors.borderSubtle),
+                const SizedBox(height: AppConstants.spaceXL),
 
                 // Activity
-                _Label('مستوى النشاط'),
+                _SectionLabel('مستوى النشاط'),
                 const SizedBox(height: AppConstants.spaceM),
                 ...ActivityLevel.values.map((a) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                  child: _OptionTile(
-                    label: a.labelAr,
-                    selected: _activity == a,
-                    onTap: () => setState(() => _activity = a),
-                  ),
-                )),
+                      padding: const EdgeInsets.only(
+                          bottom: AppConstants.spaceS),
+                      child: _OptionTile(
+                        label:    a.labelAr,
+                        icon:     _activityIcon(a),
+                        selected: _activity == a,
+                        onTap:    () => setState(() => _activity = a),
+                      ),
+                    )),
                 const SizedBox(height: AppConstants.spaceXXL),
 
+                // Submit
                 BlocBuilder<ProfileSaveCubit, ProfileSaveState>(
                   builder: (context, state) => PPButton(
-                    label: 'ابدأ رحلتك 🚀',
-                    isLoading: state is ProfileSaveLoading,
+                    label:      'ابدأ رحلتك 🚀',
+                    isLoading:  state is ProfileSaveLoading,
                     isDisabled: !_isValid,
                     onPressed: _isValid
-                        ? () => context.read<ProfileSaveCubit>().save(_profile)
+                        ? () => context
+                            .read<ProfileSaveCubit>()
+                            .save(_profile)
                         : null,
                   ),
                 ),
@@ -410,16 +504,95 @@ class _SetupFormState extends State<_SetupForm> {
       ),
     );
   }
+
+  IconData _goalIcon(FitnessGoal g) => switch (g) {
+        FitnessGoal.lose     => Icons.trending_down_rounded,
+        FitnessGoal.gain     => Icons.trending_up_rounded,
+        FitnessGoal.maintain => Icons.balance_rounded,
+        _                    => Icons.flag_rounded,
+      };
+
+  IconData _activityIcon(ActivityLevel a) => switch (a) {
+        ActivityLevel.sedentary   => Icons.chair_rounded,
+        ActivityLevel.light       => Icons.directions_walk_rounded,
+        ActivityLevel.moderate    => Icons.directions_bike_rounded,
+        ActivityLevel.active      => Icons.directions_run_rounded,
+        ActivityLevel.veryActive  => Icons.sports_gymnastics_rounded,
+        _                         => Icons.fitness_center_rounded,
+      };
 }
 
-// ─── Small helpers ────────────────────────────────────────────
-class _Label extends StatelessWidget {
-  const _Label(this.text);
+// ─── Section Label ────────────────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
   final String text;
+
   @override
-  Widget build(BuildContext context) =>
-      Text(text, style: AppTextStyles.labelMedium);
+  Widget build(BuildContext context) => Text(
+        text,
+        style: AppTextStyles.titleSmall.copyWith(
+          color: AppColors.textSecondary,
+        ),
+      );
 }
+
+// ─── Setup Text Field ─────────────────────────────────────────────────────────
+
+class _SetupField extends StatelessWidget {
+  const _SetupField({
+    required this.controller,
+    required this.hint,
+    this.suffix,
+    this.keyboardType,
+    this.textDirection = TextDirection.ltr,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final String                hint;
+  final String?               suffix;
+  final TextInputType?        keyboardType;
+  final TextDirection         textDirection;
+  final ValueChanged<String>  onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller:    controller,
+      keyboardType:  keyboardType,
+      textDirection: textDirection,
+      onChanged:     onChanged,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+      decoration: InputDecoration(
+        hintText:    hint,
+        hintStyle:   AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+        suffixText:  suffix,
+        suffixStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+        filled:      true,
+        fillColor:   AppColors.bgSurface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.spaceL,
+          vertical:   AppConstants.spaceM,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: AppColors.borderSubtle),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: AppColors.borderSubtle),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Segment Row ─────────────────────────────────────────────────────────────
 
 class _SegmentRow<T> extends StatelessWidget {
   const _SegmentRow({
@@ -428,17 +601,18 @@ class _SegmentRow<T> extends StatelessWidget {
     required this.label,
     required this.onSelect,
   });
-  final List<T> values;
-  final T selected;
+
+  final List<T>            values;
+  final T                  selected;
   final String Function(T) label;
-  final ValueChanged<T> onSelect;
+  final ValueChanged<T>    onSelect;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color:        AppColors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       child: Row(
@@ -453,7 +627,8 @@ class _SegmentRow<T> extends StatelessWidget {
                     vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
                   color: active ? AppColors.accent : Colors.transparent,
-                  borderRadius: BorderRadius.circular(AppConstants.radiusS),
+                  borderRadius:
+                      BorderRadius.circular(AppConstants.radiusS),
                 ),
                 child: Text(
                   label(v),
@@ -473,14 +648,19 @@ class _SegmentRow<T> extends StatelessWidget {
   }
 }
 
+// ─── Option Tile ─────────────────────────────────────────────────────────────
+
 class _OptionTile extends StatelessWidget {
   const _OptionTile({
     required this.label,
+    required this.icon,
     required this.selected,
     required this.onTap,
   });
-  final String label;
-  final bool selected;
+
+  final String       label;
+  final IconData     icon;
+  final bool         selected;
   final VoidCallback onTap;
 
   @override
@@ -491,7 +671,7 @@ class _OptionTile extends StatelessWidget {
         duration: AppConstants.durationFast,
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.spaceL,
-          vertical: AppConstants.spaceM,
+          vertical:   AppConstants.spaceM + 2,
         ),
         decoration: BoxDecoration(
           color: selected ? AppColors.accentDim : AppColors.bgSurface,
@@ -503,17 +683,36 @@ class _OptionTile extends StatelessWidget {
         ),
         child: Row(
           children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: selected
+                    ? AppColors.accent.withOpacity(0.15)
+                    : AppColors.bgElevated,
+                borderRadius: BorderRadius.circular(AppConstants.radiusS),
+              ),
+              child: Icon(
+                icon,
+                size:  AppConstants.iconS,
+                color: selected ? AppColors.accent : AppColors.textMuted,
+              ),
+            ),
+            const SizedBox(width: AppConstants.spaceM),
             Expanded(
-              child: Text(label,
-                  style: AppTextStyles.titleMedium.copyWith(
-                    color: selected
-                        ? AppColors.accent
-                        : AppColors.textPrimary,
-                  )),
+              child: Text(
+                label,
+                style: AppTextStyles.titleMedium.copyWith(
+                  color: selected
+                      ? AppColors.accent
+                      : AppColors.textPrimary,
+                ),
+              ),
             ),
             if (selected)
               const Icon(Icons.check_circle_rounded,
-                  color: AppColors.accent, size: AppConstants.iconS),
+                  color: AppColors.accent,
+                  size:  AppConstants.iconS),
           ],
         ),
       ),

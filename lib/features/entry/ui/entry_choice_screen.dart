@@ -4,9 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/auth/user_mode_service.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/router/app_router.dart';
 import '../../../shared/widgets/pp_button.dart';
 
 class EntryChoiceScreen extends StatelessWidget {
@@ -21,88 +21,74 @@ class EntryChoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
+      backgroundColor: AppColors.bgDeep,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppConstants.screenPaddingH + 4,
-            vertical: AppConstants.screenPaddingV,
+            vertical:   AppConstants.screenPaddingV,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: AppConstants.space4XL),
+              const Spacer(flex: 2),
 
-              // ── Brand pill ─────────────────────────────────────────
+              // ── App icon + brand ──────────────────────────────
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.spaceM,
-                  vertical: AppConstants.spaceXXS + 2,
-                ),
+                width: 64, height: 64,
                 decoration: BoxDecoration(
-                  color: AppColors.accentDim,
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.radiusPill),
+                  color:        AppColors.accentDim,
+                  borderRadius: BorderRadius.circular(AppConstants.radiusL),
                 ),
-                child: Text(
-                  'Power Pulse',
-                  style: AppTextStyles.labelSmall.copyWith(
-                    color: AppColors.accent,
-                    letterSpacing: 1.2,
-                  ),
+                child: const Icon(
+                  Icons.fitness_center_rounded,
+                  color: AppColors.accent,
+                  size:  AppConstants.iconXL,
                 ),
               ),
-
-              const SizedBox(height: AppConstants.spaceM),
+              const SizedBox(height: AppConstants.spaceXL),
 
               Text(
                 'مرحباً بك 👋',
-                style: AppTextStyles.displayMedium.copyWith(
-                  color: const Color(0xFFF5F5F0),
-                  height: 1.2,
-                ),
+                style: AppTextStyles.displayMedium,
               ),
-
               const SizedBox(height: AppConstants.spaceS),
-
               Text(
                 'ابدأ رحلتك نحو اللياقة البدنية',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFF6B6B6B),
-                ),
+                style: AppTextStyles.bodyMedium,
               ),
 
-              const Spacer(),
+              const Spacer(flex: 3),
 
-              // ── Account Card ────────────────────────────────────────
+              // ── Account card ──────────────────────────────────
               _OptionCard(
-                icon: Icons.cloud_done_rounded,
-                iconColor: AppColors.accent,
-                iconBg: AppColors.accentDim,
-                title: 'إنشاء حساب / تسجيل الدخول',
-                description:
-                    'أنشئ حسابًا أو سجّل دخولك لحفظ بياناتك (الملف الشخصي، التقدم، التمارين، التغذية) بأمان على السحابة واستعادتها متى أعدت تثبيت التطبيق.',
+                icon:        Icons.cloud_done_rounded,
+                iconColor:   AppColors.accent,
+                iconBg:      AppColors.accentDim,
+                title:       'إنشاء حساب / تسجيل الدخول',
+                description: 'أنشئ حسابًا لحفظ بياناتك على السحابة واستعادتها '
+                    'في أي وقت على أي جهاز.',
                 actionLabel: 'متابعة بحساب',
-                onTap: () => context.go(AppRouter.login),
-                isPrimary: true,
+                onTap:       () => context.go(AppRouter.login),
+                isPrimary:   true,
               ),
 
               const SizedBox(height: AppConstants.spaceL),
 
-              // ── Guest Card ──────────────────────────────────────────
+              // ── Guest card ────────────────────────────────────
               _OptionCard(
-                icon: Icons.person_outline_rounded,
-                iconColor: const Color(0xFF9CA3AF),
-                iconBg: const Color(0xFF1F2937),
-                title: 'متابعة كضيف',
-                description:
-                    'ستُحفظ بياناتك على هذا الجهاز فقط. يمكنك إنشاء حساب لاحقًا لحفظها على السحابة واستعادتها.',
+                icon:        Icons.person_outline_rounded,
+                iconColor:   AppColors.textMuted,
+                iconBg:      AppColors.bgElevated,
+                title:       'متابعة كضيف',
+                description: 'ستُحفظ بياناتك على هذا الجهاز فقط. '
+                    'يمكنك إنشاء حساب لاحقًا.',
                 actionLabel: 'متابعة بدون حساب',
-                onTap: () => _continueAsGuest(context),
-                isPrimary: false,
+                onTap:       () => _continueAsGuest(context),
+                isPrimary:   false,
               ),
 
-              const SizedBox(height: AppConstants.space3XL),
+              const Spacer(flex: 2),
             ],
           ),
         ),
@@ -110,6 +96,8 @@ class EntryChoiceScreen extends StatelessWidget {
     );
   }
 }
+
+// ─── Option Card ──────────────────────────────────────────────────────────────
 
 class _OptionCard extends StatelessWidget {
   const _OptionCard({
@@ -124,25 +112,34 @@ class _OptionCard extends StatelessWidget {
   });
 
   final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final String title;
-  final String description;
-  final String actionLabel;
+  final Color    iconColor;
+  final Color    iconBg;
+  final String   title;
+  final String   description;
+  final String   actionLabel;
   final VoidCallback onTap;
-  final bool isPrimary;
+  final bool     isPrimary;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppConstants.spaceXL),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color:        AppColors.bgSurface,
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
         border: Border.all(
-          color: isPrimary ? AppColors.accent.withOpacity(0.4) : const Color(0xFF2A2A2A),
+          color: isPrimary
+              ? AppColors.accent.withOpacity(0.4)
+              : AppColors.borderSubtle,
           width: isPrimary ? 1.5 : 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color:      Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset:     const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,32 +147,23 @@ class _OptionCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 44, height: 44,
                 decoration: BoxDecoration(
-                  color: iconBg,
+                  color:        iconBg,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                 ),
                 child: Icon(icon, color: iconColor, size: AppConstants.iconM),
               ),
               const SizedBox(width: AppConstants.spaceM),
               Expanded(
-                child: Text(
-                  title,
-                  style: AppTextStyles.titleMedium.copyWith(
-                    color: const Color(0xFFF5F5F0),
-                  ),
-                ),
+                child: Text(title, style: AppTextStyles.titleMedium),
               ),
             ],
           ),
           const SizedBox(height: AppConstants.spaceM),
           Text(
             description,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: const Color(0xFF6B6B6B),
-              height: 1.6,
-            ),
+            style: AppTextStyles.bodySmall.copyWith(height: 1.6),
           ),
           const SizedBox(height: AppConstants.spaceXL),
           SizedBox(
@@ -185,8 +173,8 @@ class _OptionCard extends StatelessWidget {
                 : OutlinedButton(
                     onPressed: onTap,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF3A3A3A)),
-                      foregroundColor: const Color(0xFF9CA3AF),
+                      side: const BorderSide(color: AppColors.borderMedium),
+                      foregroundColor: AppColors.textSecondary,
                       padding: const EdgeInsets.symmetric(
                           vertical: AppConstants.spaceM),
                       shape: RoundedRectangleBorder(
@@ -195,8 +183,9 @@ class _OptionCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(actionLabel,
-                        style: AppTextStyles.labelLarge
-                            .copyWith(color: const Color(0xFF9CA3AF))),
+                        style: AppTextStyles.labelLarge.copyWith(
+                          color: AppColors.textSecondary,
+                        )),
                   ),
           ),
         ],
