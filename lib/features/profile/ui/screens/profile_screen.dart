@@ -15,7 +15,6 @@ import '../../logic/cubit/settings_cubit.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_items.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -39,8 +38,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) => switch (state) {
             ProfileInitial() || ProfileLoading() => const Center(
-              child: CircularProgressIndicator(color: Color(0xFFA3E635)),
-            ),
+                child: CircularProgressIndicator(color: Color(0xFFA3E635)),
+              ),
             ProfileError(:final message) => Center(child: Text(message)),
             ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
           },
@@ -155,8 +154,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: const Color(0xFFF59E0B),
                         label: 'الإشعارات',
                         value: settings.notificationsEnabled,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleNotifications(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleNotifications(val),
                       ),
                       const ProfileDivider(),
                       ProfileToggleRow(
@@ -164,8 +164,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: const Color(0xFF6366F1),
                         label: 'الوضع الليلي',
                         value: settings.isDarkMode,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleDarkMode(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleDarkMode(val),
                       ),
                       const ProfileDivider(),
                       ProfileToggleRow(
@@ -173,8 +174,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: const Color(0xFF10B981),
                         label: 'الوحدات (كجم/سم)',
                         value: settings.isMetricUnits,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleMetricUnits(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleMetricUnits(val),
                       ),
                       const ProfileDivider(),
                       ProfileInfoRow(
@@ -208,7 +210,8 @@ class _ProfileContentState extends State<_ProfileContent> {
         FutureBuilder<bool>(
           future: _isGuest(),
           builder: (context, snap) {
-            if (snap.data != true) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            if (snap.data != true)
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
             return SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               sliver: SliverToBoxAdapter(
@@ -218,7 +221,8 @@ class _ProfileContentState extends State<_ProfileContent> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFECFCCC),
                     borderRadius: BorderRadius.circular(14.r),
-                    border: Border.all(color: const Color(0xFFA3E635).withOpacity(0.4)),
+                    border: Border.all(
+                        color: const Color(0xFFA3E635).withOpacity(0.4)),
                   ),
                   child: Row(
                     children: [
@@ -326,8 +330,10 @@ class _ProfileContentState extends State<_ProfileContent> {
           children: [
             const Text('الخصوصية والبيانات',
                 style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 18,
-                    fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+                    fontFamily: 'Cairo',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.textPrimary)),
             const SizedBox(height: 16),
             _PrivacyItem(
               icon: Icons.phone_android_rounded,
@@ -356,35 +362,58 @@ class _ProfileContentState extends State<_ProfileContent> {
   void _confirmLogout(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('تسجيل الخروج',
-            style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
-        content: const Text('هل أنت متأكد؟ ستستمر بياناتك محفوظة على السحابة ويمكنك تسجيل الدخول مجددًا لاستعادتها.',
-            style: TextStyle(fontFamily: 'Cairo')),
+      builder: (dialogContext) => AlertDialog(
+        title: const Text(
+          'تسجيل الخروج',
+          style: TextStyle(
+            fontFamily: 'Cairo',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'هل أنت متأكد؟ ستستمر بياناتك محفوظة على السحابة ويمكنك تسجيل الدخول مجددًا لاستعادتها.',
+          style: TextStyle(fontFamily: 'Cairo'),
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء',
-                style: TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'إلغاء',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                color: Colors.grey,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
+              // Close the dialog only
+              Navigator.of(dialogContext).pop();
+
+              // Logout
               await context.read<AppSettingsCubit>().logout();
-              // After logout → switch to guest mode → go to home
-              // (user can still use the app as a guest; can sign in again from profile)
-              if (context.mounted) context.go(AppRouter.home);
+
+              if (!context.mounted) return;
+
+              // Replace current route instead of pushing on top
+              context.go(AppRouter.entry);
             },
-            child: const Text('تسجيل الخروج',
-                style: TextStyle(
-                    fontFamily: 'Cairo', color: Color(0xFFEF4444),
-                    fontWeight: FontWeight.bold)),
+            child: const Text(
+              'تسجيل الخروج',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                color: Color(0xFFEF4444),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
     );
-  }
-}
+  }}
+
 class _PrivacyItem extends StatelessWidget {
   const _PrivacyItem({
     required this.icon,
@@ -401,7 +430,8 @@ class _PrivacyItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 36, height: 36,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             color: AppColors.accentDim,
             borderRadius: BorderRadius.circular(10),
@@ -415,14 +445,16 @@ class _PrivacyItem extends StatelessWidget {
             children: [
               Text(title,
                   style: const TextStyle(
-                    fontFamily: 'Cairo', fontSize: 13,
+                    fontFamily: 'Cairo',
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
                   )),
               const SizedBox(height: 2),
               Text(desc,
                   style: const TextStyle(
-                    fontFamily: 'Cairo', fontSize: 12,
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
                     color: AppColors.textMuted,
                   )),
             ],

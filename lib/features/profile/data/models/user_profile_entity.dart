@@ -5,7 +5,9 @@ enum FitnessGoal {
   loseFat,
   buildMuscle,
   endurance,
-  maintain, lose, gain,
+  maintain,
+  lose,
+  gain,
 }
 
 enum ActivityLevel {
@@ -23,40 +25,40 @@ enum Gender {
 
 extension FitnessGoalX on FitnessGoal {
   String get labelAr => switch (this) {
-    FitnessGoal.loseFat => 'حرق الدهون',
-    FitnessGoal.buildMuscle => 'بناء العضلات',
-    FitnessGoal.endurance => 'تحسين اللياقة',
-    FitnessGoal.maintain => 'الحفاظ على الوزن',
-    // TODO: Handle this case.
-    FitnessGoal.lose => throw UnimplementedError(),
-    // TODO: Handle this case.
-    FitnessGoal.gain => throw UnimplementedError(),
-  };
+        FitnessGoal.loseFat => 'حرق الدهون',
+        FitnessGoal.buildMuscle => 'بناء العضلات',
+        FitnessGoal.endurance => 'تحسين اللياقة',
+        FitnessGoal.maintain => 'الحفاظ على الوزن',
+        // TODO: Handle this case.
+        FitnessGoal.lose => throw UnimplementedError(),
+        // TODO: Handle this case.
+        FitnessGoal.gain => throw UnimplementedError(),
+      };
 }
 
 extension ActivityLevelX on ActivityLevel {
   String get labelAr => switch (this) {
-    ActivityLevel.sedentary => 'خامل (مكتب)',
-    ActivityLevel.light => 'خفيف (1-3 أيام)',
-    ActivityLevel.moderate => 'معتدل (3-5 أيام)',
-    ActivityLevel.active => 'نشيط (6-7 أيام)',
-    ActivityLevel.veryActive => 'نشيط جداً (رياضي)',
-  };
+        ActivityLevel.sedentary => 'خامل (مكتب)',
+        ActivityLevel.light => 'خفيف (1-3 أيام)',
+        ActivityLevel.moderate => 'معتدل (3-5 أيام)',
+        ActivityLevel.active => 'نشيط (6-7 أيام)',
+        ActivityLevel.veryActive => 'نشيط جداً (رياضي)',
+      };
 
   double get multiplier => switch (this) {
-    ActivityLevel.sedentary => 1.2,
-    ActivityLevel.light => 1.375,
-    ActivityLevel.moderate => 1.55,
-    ActivityLevel.active => 1.725,
-    ActivityLevel.veryActive => 1.9,
-  };
+        ActivityLevel.sedentary => 1.2,
+        ActivityLevel.light => 1.375,
+        ActivityLevel.moderate => 1.55,
+        ActivityLevel.active => 1.725,
+        ActivityLevel.veryActive => 1.9,
+      };
 }
 
 extension GenderX on Gender {
   String get labelAr => switch (this) {
-    Gender.male => 'ذكر',
-    Gender.female => 'أنثى',
-  };
+        Gender.male => 'ذكر',
+        Gender.female => 'أنثى',
+      };
 }
 
 final class UserProfile {
@@ -88,37 +90,35 @@ final class UserProfile {
   }
 
   String get bmiCategory => switch (bmi) {
-    < 18.5 => 'نقص في الوزن',
-    < 25.0 => 'وزن طبيعي',
-    < 30.0 => 'زيادة في الوزن',
-    _ => 'سمنة',
-  };
+        < 18.5 => 'نقص في الوزن',
+        < 25.0 => 'وزن طبيعي',
+        < 30.0 => 'زيادة في الوزن',
+        _ => 'سمنة',
+      };
 
   double get bmr => switch (gender) {
-    Gender.male =>
-    (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5,
-    Gender.female =>
-    (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161,
-  };
+        Gender.male => (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5,
+        Gender.female => (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161,
+      };
 
   double get tdee => bmr * activityLevel.multiplier;
 
   double get dailyCalorieGoal => switch (goal) {
-    FitnessGoal.loseFat => tdee - 500,
-    FitnessGoal.buildMuscle => tdee + 300,
-    FitnessGoal.endurance => tdee,
-    FitnessGoal.maintain => tdee,
-    // TODO: Handle this case.
-    FitnessGoal.lose => throw UnimplementedError(),
-    // TODO: Handle this case.
-    FitnessGoal.gain => throw UnimplementedError(),
-  };
+        FitnessGoal.loseFat => tdee - 500,
+        FitnessGoal.buildMuscle => tdee + 300,
+        FitnessGoal.endurance => tdee,
+        FitnessGoal.maintain => tdee,
+        // TODO: Handle this case.
+        FitnessGoal.lose => throw UnimplementedError(),
+        // TODO: Handle this case.
+        FitnessGoal.gain => throw UnimplementedError(),
+      };
 
   double get dailyProteinGoal => switch (goal) {
-    FitnessGoal.buildMuscle => weightKg * 2.2,
-    FitnessGoal.loseFat => weightKg * 2.0,
-    _ => weightKg * 1.6,
-  };
+        FitnessGoal.buildMuscle => weightKg * 2.2,
+        FitnessGoal.loseFat => weightKg * 2.0,
+        _ => weightKg * 1.6,
+      };
 
   UserProfile copyWith({
     String? name,
