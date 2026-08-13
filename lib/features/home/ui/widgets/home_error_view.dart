@@ -32,7 +32,7 @@ class HomeErrorView extends StatelessWidget {
             SizedBox(height: 16.h),
             GestureDetector(
               onTap: () => context.read<HomeCubit>().load(),
-              child: Text(
+              child: const Text(
                 'حاول مجدداً',
                 style: AppTextStyles.accentLabel,
               ),

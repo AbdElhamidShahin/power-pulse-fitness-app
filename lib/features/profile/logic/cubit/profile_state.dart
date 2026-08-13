@@ -14,15 +14,20 @@ final class ProfileLoading extends ProfileState {
 
 final class ProfileLoaded extends ProfileState {
   const ProfileLoaded(this.profile);
+
   final UserProfile profile;
 }
 
 final class ProfileError extends ProfileState {
   const ProfileError(this.message);
+
   final String message;
 }
 
-// ─── Save State ───────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// Save State
+// ─────────────────────────────────────────────────────────────
+
 sealed class ProfileSaveState {
   const ProfileSaveState();
 }
@@ -41,5 +46,6 @@ final class ProfileSaveSuccess extends ProfileSaveState {
 
 final class ProfileSaveError extends ProfileSaveState {
   const ProfileSaveError(this.message);
+
   final String message;
 }

@@ -6,12 +6,16 @@ import '../services/profile_local_service.dart';
 
 abstract interface class ProfileRepository {
   Future<ApiResult<UserProfile>> getProfile();
+
   Future<ApiResult<void>> saveProfile(UserProfile profile);
+
   Future<ApiResult<bool>> hasProfile();
 }
 
 final class ProfileRepositoryImpl implements ProfileRepository {
-  const ProfileRepositoryImpl({required this.localService});
+  const ProfileRepositoryImpl({
+    required this.localService,
+  });
 
   final ProfileLocalService localService;
 
@@ -19,33 +23,50 @@ final class ProfileRepositoryImpl implements ProfileRepository {
   Future<ApiResult<UserProfile>> getProfile() async {
     try {
       final profile = await localService.getProfile();
-      return Success(profile ?? kDefaultProfile);
+
+      return Success(
+        profile ?? kDefaultProfile,
+      );
     } on CacheException catch (e) {
-      return Failure(CacheFailure(message: e.message));
+      return Failure(
+        CacheFailure(message: e.message),
+      );
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(
+        UnexpectedFailure(message: e.toString()),
+      );
     }
   }
 
   @override
-  Future<ApiResult<void>> saveProfile(UserProfile profile) async {
+  Future<ApiResult<void>> saveProfile(
+      UserProfile profile,
+      ) async {
     try {
       await localService.saveProfile(profile);
+
       return const Success(null);
     } on CacheException catch (e) {
-      return Failure(CacheFailure(message: e.message));
+      return Failure(
+        CacheFailure(message: e.message),
+      );
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(
+        UnexpectedFailure(message: e.toString()),
+      );
     }
   }
 
   @override
   Future<ApiResult<bool>> hasProfile() async {
     try {
-      final has = await localService.hasProfile();
-      return Success(has);
+      final hasProfile = await localService.hasProfile();
+
+      return Success(hasProfile);
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(
+        UnexpectedFailure(message: e.toString()),
+      );
     }
   }
 }

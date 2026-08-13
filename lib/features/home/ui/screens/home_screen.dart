@@ -80,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       minutes: summary.todayWorkoutMinutes.toDouble(),
                     ),
                     SizedBox(height: 12.h),
-                    // ── عداد الخطوات ───────────────────────
                     const StepCounterCard(),
                     SizedBox(height: 20.h),
                     const SectionLabel(label: 'الوصول السريع'),

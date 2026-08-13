@@ -99,9 +99,9 @@ class _DetailContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
               child: const Icon(
-                Icons.arrow_forward_ios_rounded,
+                Icons.arrow_back_ios,
                 color: AppColors.textPrimary,
-                size: AppConstants.iconS,
+                size: AppConstants.iconL,
               ),
             ),
           ),
