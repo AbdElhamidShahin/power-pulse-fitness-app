@@ -36,7 +36,6 @@ final class ProgressCubit extends Cubit<ProgressState> {
       };
 }
 
-/// WeightLogCubit — إضافة / حذف الوزن
 final class WeightLogCubit extends Cubit<WeightLogState> {
   WeightLogCubit({
     required AddWeightEntryUseCase addWeight,

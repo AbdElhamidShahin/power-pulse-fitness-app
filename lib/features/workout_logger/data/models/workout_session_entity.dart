@@ -1,4 +1,3 @@
-/// Workout Logger Entities — Pure Dart, Zero Flutter
 
 final class ExerciseSet {
   const ExerciseSet({

@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../core/error/exceptions.dart';
 import '../models/user_profile_entity.dart';
 
@@ -63,10 +61,6 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
   Future<bool> hasProfile() async {
     return _prefs.containsKey(_key);
   }
-
-  // ─────────────────────────────────────────────────────────────
-  // JSON
-  // ─────────────────────────────────────────────────────────────
 
   Map<String, dynamic> _toJson(UserProfile profile) {
     return {

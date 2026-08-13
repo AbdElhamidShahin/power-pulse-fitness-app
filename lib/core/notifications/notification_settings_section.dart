@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import 'notification_service.dart';
 
-/// قسم إعدادات الإشعارات — بيتحط في صفحة الـ Profile
 class NotificationSettingsSection extends StatefulWidget {
   const NotificationSettingsSection({super.key});
 

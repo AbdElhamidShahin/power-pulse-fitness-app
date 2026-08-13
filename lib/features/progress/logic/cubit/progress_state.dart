@@ -33,7 +33,6 @@ final class ProgressError extends ProgressState {
   final String message;
 }
 
-// ─── Weight Log State ─────────────────────────────────────────
 sealed class WeightLogState {
   const WeightLogState();
 }

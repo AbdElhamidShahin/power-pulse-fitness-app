@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, // لضمان صحة الاتجاهات عربيًا
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: const Color(0xFFF6F6F4),
         body: BlocBuilder<ProfileCubit, ProfileState>(
@@ -65,7 +65,6 @@ class _ProfileContentState extends State<_ProfileContent> {
 
     return CustomScrollView(
       slivers: [
-        // ─── Header ──────────────────────────────────────────
         SliverToBoxAdapter(
           child: ProfileHeader(profile: profile),
         ),
@@ -196,7 +195,6 @@ class _ProfileContentState extends State<_ProfileContent> {
 
         SliverToBoxAdapter(child: SizedBox(height: 20.h)),
 
-        // ─── إعدادات الإشعارات التفصيلية ────────────────────────
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: const SliverToBoxAdapter(
@@ -206,7 +204,6 @@ class _ProfileContentState extends State<_ProfileContent> {
 
         SliverToBoxAdapter(child: SizedBox(height: 20.h)),
 
-        // ─── زر تسجيل الدخول للضيف ──────────────────────────────
         FutureBuilder<bool>(
           future: _isGuest(),
           builder: (context, snap) {
@@ -268,7 +265,6 @@ class _ProfileContentState extends State<_ProfileContent> {
           },
         ),
 
-        // ─── تسجيل الخروج ──────────────────────────────────────
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: SliverToBoxAdapter(
@@ -322,37 +318,37 @@ class _ProfileContentState extends State<_ProfileContent> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.all(24),
+      builder: (_) => const Padding(
+        padding:  EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('الخصوصية والبيانات',
+             Text('الخصوصية والبيانات',
                 style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: AppColors.textPrimary)),
-            const SizedBox(height: 16),
+             SizedBox(height: 16),
             _PrivacyItem(
               icon: Icons.phone_android_rounded,
               title: 'البيانات محفوظة محلياً',
               desc: 'كل بياناتك محفوظة على جهازك فقط ولا تُرسل لأي خادم',
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12),
             _PrivacyItem(
               icon: Icons.block_rounded,
               title: 'لا إعلانات',
               desc: 'التطبيق خالي من الإعلانات وتتبع البيانات',
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12),
             _PrivacyItem(
               icon: Icons.delete_forever_rounded,
               title: 'حذف البيانات',
               desc: 'يمكنك حذف كل بياناتك من خلال تسجيل الخروج',
             ),
-            const SizedBox(height: 24),
+             SizedBox(height: 24),
           ],
         ),
       ),
@@ -389,15 +385,9 @@ class _ProfileContentState extends State<_ProfileContent> {
           ),
           TextButton(
             onPressed: () async {
-              // Close the dialog only
               Navigator.of(dialogContext).pop();
-
-              // Logout
               await context.read<AppSettingsCubit>().logout();
-
               if (!context.mounted) return;
-
-              // Replace current route instead of pushing on top
               context.go(AppRouter.entry);
             },
             child: const Text(

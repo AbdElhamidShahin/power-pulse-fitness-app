@@ -95,12 +95,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 const SizedBox(height: AppConstants.spaceXXL),
 
-                // ── Header ─────────────────────────────────────────
                 _buildHeader(),
 
                 const SizedBox(height: AppConstants.space3XL),
 
-                // ── Form ───────────────────────────────────────────
                 Form(
                   key: _formKey,
                   child: Column(
@@ -193,7 +191,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 const SizedBox(height: AppConstants.space3XL),
 
-                // ── Create account button ──────────────────────────
                 BlocBuilder<SignUpCubit, SignUpState>(
                   builder: (context, state) => PPButton(
                     label: 'إنشاء الحساب',
@@ -204,10 +201,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 const SizedBox(height: AppConstants.spaceXL),
 
-                // ── Divider ────────────────────────────────────────
-                Row(
+                const Row(
                   children: [
-                    const Expanded(
+                     Expanded(
                         child: Divider(
                             color: AppColors.borderSubtle, thickness: 1)),
                     Padding(
@@ -223,7 +219,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 const SizedBox(height: AppConstants.spaceXL),
 
-                // ── Google ─────────────────────────────────────────
                 BlocBuilder<SignUpCubit, SignUpState>(
                   builder: (context, state) => _GoogleButton(
                     isLoading: state is SignUpLoading,
@@ -234,12 +229,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 const SizedBox(height: AppConstants.space3XL),
 
-                // ── Login link ─────────────────────────────────────
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('لديك حساب بالفعل؟',
+                      const Text('لديك حساب بالفعل؟',
                           style: AppTextStyles.bodyMedium),
                       const SizedBox(width: AppConstants.spaceXS),
                       GestureDetector(
@@ -295,7 +289,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           style: AppTextStyles.displayMedium.copyWith(height: 1.25),
         ),
         const SizedBox(height: AppConstants.spaceS),
-        Text(
+        const Text(
           'أنشئ حسابك وانضم لآلاف الرياضيين',
           style: AppTextStyles.bodyMedium,
         ),
@@ -304,7 +298,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-// ─── Field Label ──────────────────────────────────────────────────────────────
 
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel(this.text);
@@ -319,7 +312,6 @@ class _FieldLabel extends StatelessWidget {
       );
 }
 
-// ─── Auth Text Field ──────────────────────────────────────────────────────────
 
 class _AuthField extends StatelessWidget {
   const _AuthField({
@@ -398,7 +390,6 @@ class _AuthField extends StatelessWidget {
   }
 }
 
-// ─── Google Button ────────────────────────────────────────────────────────────
 
 class _GoogleButton extends StatelessWidget {
   const _GoogleButton({

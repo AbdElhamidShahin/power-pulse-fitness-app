@@ -1,6 +1,3 @@
-/// UserProfile Entity — Domain Layer
-/// Pure Dart — Zero Flutter imports
-
 enum FitnessGoal {
   loseFat,
   buildMuscle,
@@ -29,9 +26,7 @@ extension FitnessGoalX on FitnessGoal {
         FitnessGoal.buildMuscle => 'بناء العضلات',
         FitnessGoal.endurance => 'تحسين اللياقة',
         FitnessGoal.maintain => 'الحفاظ على الوزن',
-        // TODO: Handle this case.
         FitnessGoal.lose => throw UnimplementedError(),
-        // TODO: Handle this case.
         FitnessGoal.gain => throw UnimplementedError(),
       };
 }
@@ -108,9 +103,7 @@ final class UserProfile {
         FitnessGoal.buildMuscle => tdee + 300,
         FitnessGoal.endurance => tdee,
         FitnessGoal.maintain => tdee,
-        // TODO: Handle this case.
         FitnessGoal.lose => throw UnimplementedError(),
-        // TODO: Handle this case.
         FitnessGoal.gain => throw UnimplementedError(),
       };
 
@@ -144,7 +137,6 @@ final class UserProfile {
       );
 }
 
-/// Default profile للمستخدم الجديد
 const kDefaultProfile = UserProfile(
   name: 'المستخدم',
   email: '',

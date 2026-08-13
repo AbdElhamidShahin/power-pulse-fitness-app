@@ -20,7 +20,6 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
   static const _weightKey  = 'weight_entries';
   static const _workoutKey = 'workout_logs';
 
-  // ─── Weight ─────────────────────────────────────────────────
   @override
   Future<List<WeightEntry>> getWeightEntries({int limitDays = 90}) async {
     try {
@@ -69,7 +68,6 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
     return list.map((e) => _weightFromJson(e as Map<String, dynamic>)).toList();
   }
 
-  // ─── Workouts ────────────────────────────────────────────────
   @override
   Future<List<WorkoutLog>> getWorkoutLogs({int limitDays = 90}) async {
     try {
@@ -103,7 +101,6 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
     }
   }
 
-  // ─── JSON ────────────────────────────────────────────────────
   Map<String, dynamic> _weightToJson(WeightEntry e) => {
         'id': e.id, 'weight': e.weight,
         'date': e.date.toIso8601String(), 'note': e.note,

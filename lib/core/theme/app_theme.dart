@@ -117,7 +117,6 @@ abstract class AppTheme {
 }
 
 // ─── Dark Mode Colors ──────────────────────────────────────────────
-// ألوان منفصلة للـ dark mode — الـ widgets تستخدم Theme.of(context) للتبديل
 abstract class AppColorsDark {
   AppColorsDark._();
 

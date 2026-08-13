@@ -1,7 +1,4 @@
-/// Progress Entities — Domain Layer
-/// Pure Dart — Zero Flutter imports
 
-/// تسجيل وزن يومي
 final class WeightEntry {
   const WeightEntry({
     required this.id,
@@ -11,12 +8,11 @@ final class WeightEntry {
   });
 
   final String id;
-  final double weight; // kg
+  final double weight;
   final DateTime date;
   final String? note;
 }
 
-/// تمرين مكتمل
 final class WorkoutLog {
   const WorkoutLog({
     required this.id,
@@ -35,7 +31,6 @@ final class WorkoutLog {
   final int exerciseCount;
 }
 
-/// نقطة بيانات للرسم البياني
 final class ChartPoint {
   const ChartPoint({required this.x, required this.y, this.label});
   final double x;
@@ -43,7 +38,6 @@ final class ChartPoint {
   final String? label;
 }
 
-/// ملخص أسبوعي / شهري
 final class ProgressSummary {
   const ProgressSummary({
     required this.totalWorkouts,
@@ -65,9 +59,9 @@ final class ProgressSummary {
   final double? startWeight;
   final List<WeightEntry> weightEntries;
   final List<WorkoutLog> workoutLogs;
-  final List<ChartPoint> weeklyWorkoutPoints; // تمارين كل أسبوع
+  final List<ChartPoint> weeklyWorkoutPoints;
   final List<ChartPoint> weightChartPoints;
-  final int currentStreak; // وزن على مدى الوقت
+  final int currentStreak;
 
   double? get bmi {
     if (currentWeight == null) return null;

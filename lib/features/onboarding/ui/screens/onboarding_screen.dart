@@ -10,7 +10,6 @@ import '../../../profile/data/models/user_profile_entity.dart';
 import '../../../profile/logic/cubit/profile_cubit.dart';
 import '../../../profile/logic/cubit/profile_state.dart';
 
-// ─── Onboarding pages data ────────────────────────────────────────────────────
 
 class _PageData {
   const _PageData({
@@ -96,7 +95,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-// ─── Intro Slides ─────────────────────────────────────────────────────────────
 
 class _IntroPages extends StatelessWidget {
   const _IntroPages({
@@ -117,7 +115,6 @@ class _IntroPages extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // ── Top bar ──────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppConstants.screenPaddingH,
@@ -161,7 +158,6 @@ class _IntroPages extends StatelessWidget {
           ),
         ),
 
-        // ── Pages ─────────────────────────────────────────────
         Expanded(
           child: PageView.builder(
             controller:    pageCtrl,
@@ -171,7 +167,6 @@ class _IntroPages extends StatelessWidget {
           ),
         ),
 
-        // ── Bottom controls ───────────────────────────────────
         Padding(
           padding: const EdgeInsets.fromLTRB(
             AppConstants.screenPaddingH,
@@ -216,7 +211,6 @@ class _IntroPages extends StatelessWidget {
   }
 }
 
-// ─── Single Onboarding Page ───────────────────────────────────────────────────
 
 class _OnboardingPage extends StatelessWidget {
   const _OnboardingPage({required this.page});
@@ -229,7 +223,6 @@ class _OnboardingPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // ── Emoji in styled circle ────────────────────────
           Container(
             width:  160,
             height: 160,
@@ -270,7 +263,6 @@ class _OnboardingPage extends StatelessWidget {
   }
 }
 
-// ─── Setup Form ───────────────────────────────────────────────────────────────
 
 class _SetupForm extends StatefulWidget {
   const _SetupForm();

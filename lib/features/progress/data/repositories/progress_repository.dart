@@ -23,7 +23,6 @@ final class ProgressRepositoryImpl implements ProgressRepository {
       final weights  = await localService.getWeightEntries(limitDays: days);
       final workouts = await localService.getWorkoutLogs(limitDays: days);
 
-      // نحسب الـ streak من كل السجلات (مش مقيدة بالفترة)
       final allWorkouts = await localService.getWorkoutLogs(limitDays: 3650);
       final streak = _calcStreak(allWorkouts);
 
@@ -78,13 +77,12 @@ final class ProgressRepositoryImpl implements ProgressRepository {
     }
   }
 
-  // ─── Streak Calculator ─────────────────────────────────────
   int _calcStreak(List<WorkoutLog> logs) {
     if (logs.isEmpty) return 0;
     final days = logs.map((l) {
       final d = l.date;
       return DateTime(d.year, d.month, d.day);
-    }).toSet().toList()..sort((a, b) => b.compareTo(a)); // أحدث أول
+    }).toSet().toList()..sort((a, b) => b.compareTo(a));
 
     final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     int streak = 0;
@@ -95,19 +93,17 @@ final class ProgressRepositoryImpl implements ProgressRepository {
         streak++;
         expected = expected.subtract(const Duration(days: 1));
       } else if (day.isBefore(expected)) {
-        break; // انقطع الـ streak
+        break;
       }
     }
     return streak;
   }
 
-  // ─── Chart Builders ─────────────────────────────────────────
-  /// تمارين لكل يوم خلال الفترة
+
   List<ChartPoint> _buildWeeklyPoints(List<WorkoutLog> logs, int days) {
     final now = DateTime.now();
     final points = <ChartPoint>[];
 
-    // آخر 7 أيام أو كل أسبوع حسب الفترة
     final buckets = days <= 7 ? days : (days / 7).ceil();
     final bucketDays = days <= 7 ? 1 : 7;
 
@@ -122,7 +118,6 @@ final class ProgressRepositoryImpl implements ProgressRepository {
     return points;
   }
 
-  /// وزن على مدار الوقت
   List<ChartPoint> _buildWeightPoints(List<WeightEntry> entries) {
     return entries
         .asMap()
