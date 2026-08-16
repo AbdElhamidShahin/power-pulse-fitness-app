@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
+import '../../../exercises/data/models/exercise_entity.dart';
 import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_state.dart';
@@ -13,7 +15,9 @@ import '../../logic/cubit/workout_logger_cubit.dart';
 import '../../logic/cubit/workout_logger_state.dart';
 import '../widgets/active_workout_header.dart';
 import '../widgets/add_exercise_sheet.dart';
+import '../widgets/exercise_logger_card.dart';
 import '../widgets/set_row_widget.dart';
+import '../widgets/workout_logger_idle_view.dart';
 import '../widgets/workout_summary_sheet.dart';
 
 class WorkoutLoggerScreen extends StatefulWidget {
@@ -27,6 +31,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
   @override
   void initState() {
     super.initState();
+    // نبدأ الجلسة مباشرة مع تمارين اليوم من الخطة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _startWithPlan();
@@ -35,9 +40,12 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
 
   Future<void> _startWithPlan() async {
     final cubit = context.read<WorkoutLoggerCubit>();
+
+    // أول نشوف لو في جلسة نشطة موجودة أصلاً
     await cubit.load();
     if (!mounted) return;
 
+    // لو الحالة Idle — ابدأ جلسة جديدة بتمارين اليوم
     if (cubit.state is WorkoutLoggerIdle) {
       final planState = context.read<WorkoutPlanCubit>().state;
       WorkoutPlan? plan;
@@ -89,6 +97,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
   }
 }
 
+// ─── Active Session ────────────────────────────────────────────
 class _ActiveView extends StatelessWidget {
   const _ActiveView({required this.session});
   final WorkoutSession session;
@@ -105,12 +114,15 @@ class _ActiveView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // ─── Header ───────────────────────────────────
             ActiveWorkoutHeader(
               session: session,
               onCancel: cubit.cancelSession,
             ),
+            // ─── Progress Bar ──────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(AppConstants.screenPaddingH, 0,
+              padding: const EdgeInsets.fromLTRB(
+                  AppConstants.screenPaddingH, 0,
                   AppConstants.screenPaddingH, AppConstants.spaceM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,6 +151,7 @@ class _ActiveView extends StatelessWidget {
                 ],
               ),
             ),
+            // ─── Exercise List ─────────────────────────────
             Expanded(
               child: session.exercises.isEmpty
                   ? _EmptyExercises(
@@ -203,6 +216,7 @@ class _ActiveView extends StatelessWidget {
   }
 }
 
+// ─── Exercise Tile ────────────────────────────────────────────────
 class _ExerciseTile extends StatelessWidget {
   const _ExerciseTile({
     required this.exercise,
@@ -307,6 +321,7 @@ class _ExerciseTile extends StatelessWidget {
   }
 }
 
+// ─── Exercise Detail Sheet ────────────────────────────────────────
 class _ExerciseDetailSheet extends StatefulWidget {
   const _ExerciseDetailSheet({
     required this.cubit,
@@ -510,6 +525,7 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
   }
 }
 
+// ─── Loading ────────────────────────────────────────────────────
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
 
@@ -522,6 +538,7 @@ class _LoadingView extends StatelessWidget {
   );
 }
 
+// ─── Error ──────────────────────────────────────────────────────
 class _ErrorView extends StatelessWidget {
   const _ErrorView({required this.message});
   final String message;
@@ -535,6 +552,7 @@ class _ErrorView extends StatelessWidget {
   );
 }
 
+// ─── Empty Exercises ────────────────────────────────────────────
 class _EmptyExercises extends StatelessWidget {
   const _EmptyExercises({required this.onAdd});
   final VoidCallback onAdd;
@@ -551,7 +569,7 @@ class _EmptyExercises extends StatelessWidget {
           Text('لا يوجد تمارين بعد',
               style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: AppConstants.spaceS),
-          const Text('اضغط "إضافة تمرين" للبدء',
+          Text('اضغط "إضافة تمرين" للبدء',
               style: AppTextStyles.bodyMedium),
           const SizedBox(height: AppConstants.spaceXXL),
           PPButton(

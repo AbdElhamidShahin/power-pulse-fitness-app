@@ -1,3 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/auth/cloud_sync_service.dart';
 import '../../../../core/domain/api_result.dart';
 import '../../../../core/domain/app_failure.dart';
 import '../../../../core/error/exceptions.dart';
@@ -15,9 +20,15 @@ abstract interface class ProfileRepository {
 final class ProfileRepositoryImpl implements ProfileRepository {
   const ProfileRepositoryImpl({
     required this.localService,
+    required this.prefs,
+    required this.auth,
+    required this.firestore,
   });
 
   final ProfileLocalService localService;
+  final SharedPreferences prefs;
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
 
   @override
   Future<ApiResult<UserProfile>> getProfile() async {
@@ -39,11 +50,12 @@ final class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<ApiResult<void>> saveProfile(
-      UserProfile profile,
-      ) async {
+  Future<ApiResult<void>> saveProfile(UserProfile profile) async {
     try {
       await localService.saveProfile(profile);
+
+      // ─── Cloud sync (fire-and-forget, never blocks local success) ──────
+      CloudSyncService.syncKey(prefs, auth, firestore, 'user_profile');
 
       return const Success(null);
     } on CacheException catch (e) {

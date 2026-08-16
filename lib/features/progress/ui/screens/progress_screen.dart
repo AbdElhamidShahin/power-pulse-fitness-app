@@ -12,6 +12,7 @@ import '../widgets/progress_period_selector.dart';
 import '../widgets/progress_stat_card.dart';
 import '../widgets/progress_weekly_chart_card.dart';
 
+// RouteObserver عالمي — بيُسجَّل في GoRouter
 final RouteObserver<ModalRoute<void>> progressRouteObserver =
 RouteObserver<ModalRoute<void>>();
 
@@ -42,6 +43,7 @@ class _ProgressScreenState extends State<ProgressScreen> with RouteAware {
     super.dispose();
   }
 
+  // بيتنادى لما اليوزر يرجع من WorkoutLogger لـ Progress
   @override
   void didPopNext() {
     context.read<ProgressCubit>().load();

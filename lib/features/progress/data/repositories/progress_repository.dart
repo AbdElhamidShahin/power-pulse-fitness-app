@@ -1,3 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/auth/cloud_sync_service.dart';
 import '../../../../core/domain/api_result.dart';
 import '../../../../core/domain/app_failure.dart';
 import '../../../../core/error/exceptions.dart';
@@ -12,9 +17,17 @@ abstract interface class ProgressRepository {
 }
 
 final class ProgressRepositoryImpl implements ProgressRepository {
-  const ProgressRepositoryImpl({required this.localService});
+  const ProgressRepositoryImpl({
+    required this.localService,
+    required this.prefs,
+    required this.auth,
+    required this.firestore,
+  });
 
   final ProgressLocalService localService;
+  final SharedPreferences prefs;
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
 
   @override
   Future<ApiResult<ProgressSummary>> getSummary(ProgressPeriod period) async {
@@ -23,20 +36,21 @@ final class ProgressRepositoryImpl implements ProgressRepository {
       final weights  = await localService.getWeightEntries(limitDays: days);
       final workouts = await localService.getWorkoutLogs(limitDays: days);
 
+      // نحسب الـ streak من كل السجلات (مش مقيدة بالفترة)
       final allWorkouts = await localService.getWorkoutLogs(limitDays: 3650);
       final streak = _calcStreak(allWorkouts);
 
       final summary = ProgressSummary(
-        totalWorkouts:      workouts.length,
-        totalMinutes:       workouts.fold(0, (s, w) => s + w.durationMinutes),
-        totalCaloriesBurned:workouts.fold(0, (s, w) => s + w.caloriesBurned),
-        currentWeight:      weights.isNotEmpty ? weights.last.weight : null,
-        startWeight:        weights.isNotEmpty ? weights.first.weight : null,
-        weightEntries:      weights,
-        workoutLogs:        workouts,
-        weeklyWorkoutPoints:_buildWeeklyPoints(workouts, days),
-        weightChartPoints:  _buildWeightPoints(weights),
-        currentStreak:      streak,
+        totalWorkouts:       workouts.length,
+        totalMinutes:        workouts.fold(0, (s, w) => s + w.durationMinutes),
+        totalCaloriesBurned: workouts.fold(0, (s, w) => s + w.caloriesBurned),
+        currentWeight:       weights.isNotEmpty ? weights.last.weight : null,
+        startWeight:         weights.isNotEmpty ? weights.first.weight : null,
+        weightEntries:       weights,
+        workoutLogs:         workouts,
+        weeklyWorkoutPoints: _buildWeeklyPoints(workouts, days),
+        weightChartPoints:   _buildWeightPoints(weights),
+        currentStreak:       streak,
       );
 
       return Success(summary);
@@ -51,6 +65,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<void>> addWeightEntry(WeightEntry entry) async {
     try {
       await localService.addWeightEntry(entry);
+
+      // ─── Cloud sync ────────────────────────────────────────────────────────
+      CloudSyncService.syncKey(prefs, auth, firestore, 'weight_entries');
+
       return const Success(null);
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
@@ -61,6 +79,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<void>> deleteWeightEntry(String id) async {
     try {
       await localService.deleteWeightEntry(id);
+
+      // ─── Cloud sync ────────────────────────────────────────────────────────
+      CloudSyncService.syncKey(prefs, auth, firestore, 'weight_entries');
+
       return const Success(null);
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
@@ -71,18 +93,23 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<void>> logWorkout(WorkoutLog log) async {
     try {
       await localService.logWorkout(log);
+
+      // ─── Cloud sync ────────────────────────────────────────────────────────
+      CloudSyncService.syncKey(prefs, auth, firestore, 'workout_logs');
+
       return const Success(null);
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     }
   }
 
+  // ─── Streak Calculator ─────────────────────────────────────
   int _calcStreak(List<WorkoutLog> logs) {
     if (logs.isEmpty) return 0;
     final days = logs.map((l) {
       final d = l.date;
       return DateTime(d.year, d.month, d.day);
-    }).toSet().toList()..sort((a, b) => b.compareTo(a));
+    }).toSet().toList()..sort((a, b) => b.compareTo(a)); // أحدث أول
 
     final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     int streak = 0;
@@ -93,13 +120,13 @@ final class ProgressRepositoryImpl implements ProgressRepository {
         streak++;
         expected = expected.subtract(const Duration(days: 1));
       } else if (day.isBefore(expected)) {
-        break;
+        break; // انقطع الـ streak
       }
     }
     return streak;
   }
 
-
+  // ─── Chart Builders ─────────────────────────────────────────
   List<ChartPoint> _buildWeeklyPoints(List<WorkoutLog> logs, int days) {
     final now = DateTime.now();
     final points = <ChartPoint>[];

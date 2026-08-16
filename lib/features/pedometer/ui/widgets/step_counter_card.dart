@@ -22,6 +22,7 @@ class StepCounterCard extends StatelessWidget {
   }
 }
 
+// ─── Counting Card ────────────────────────────────────────────────────
 class _CountingCard extends StatelessWidget {
   const _CountingCard({required this.state});
   final PedometerCounting state;
@@ -45,6 +46,7 @@ class _CountingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Header ──────────────────────────────────────────
           Row(
             children: [
               Text('👟', style: TextStyle(fontSize: 20.sp)),
@@ -124,6 +126,7 @@ class _CountingCard extends StatelessWidget {
           ),
           SizedBox(height: 6.h),
 
+          // ── كم باقي ─────────────────────────────────────────
           Text(
             reached
                 ? '🎉 تجاوزت هدفك اليومي!'
@@ -147,6 +150,7 @@ class _CountingCard extends StatelessWidget {
   }
 }
 
+// ─── Loading ──────────────────────────────────────────────────────────
 class _LoadingCard extends StatelessWidget {
   const _LoadingCard();
 
@@ -165,6 +169,7 @@ class _LoadingCard extends StatelessWidget {
   }
 }
 
+// ─── Unavailable ──────────────────────────────────────────────────────
 class _UnavailableCard extends StatelessWidget {
   const _UnavailableCard();
 

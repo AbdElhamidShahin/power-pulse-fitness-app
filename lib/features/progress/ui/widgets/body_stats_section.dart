@@ -22,18 +22,23 @@ class BodyStatsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // نجيب بيانات الـ profile الحقيقية
     final profileState = context.watch<ProfileCubit>().state;
     final profile = profileState is ProfileLoaded ? profileState.profile : null;
 
+    // الطول من الـ profile — لو مش موجود نستخدم 175 كافتراضي
     final heightCm  = profile?.heightCm ?? 175.0;
     final heightM   = heightCm / 100;
 
+    // الوزن الحالي: من الـ progress logs أو من الـ profile
     final currentWeight = summary.currentWeight ?? profile?.weightKg;
 
+    // BMI حقيقي
     final bmi = currentWeight != null
         ? currentWeight / (heightM * heightM)
         : null;
 
+    // تصنيف الوزن
     final bmiCategory = bmi == null
         ? '--'
         : bmi < 18.5 ? 'نقص في الوزن'
@@ -79,6 +84,7 @@ class BodyStatsSection extends StatelessWidget {
         ),
         SizedBox(height: 10.h),
 
+        // ── الوزن ──────────────────────────────────────────────
         BodyStatRow(
           emoji: '⚖️',
           label: 'الوزن',
@@ -94,6 +100,7 @@ class BodyStatsSection extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
 
+        // ── الطول — من الـ profile الحقيقي ────────────────────
         BodyStatRow(
           emoji: '📏',
           label: 'الطول',
@@ -103,6 +110,7 @@ class BodyStatsSection extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
 
+        // ── BMI — حقيقي ────────────────────────────────────────
         BodyStatRow(
           emoji: '🧮',
           label: 'مؤشر كتلة الجسم',
@@ -112,6 +120,7 @@ class BodyStatsSection extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
 
+        // ── الهدف ──────────────────────────────────────────────
         if (profile != null)
           BodyStatRow(
             emoji: '🎯',

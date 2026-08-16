@@ -48,12 +48,12 @@ class EntryChoiceScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppConstants.spaceXL),
 
-              const  Text(
+              Text(
                 'مرحباً بك 👋',
                 style: AppTextStyles.displayMedium,
               ),
               const SizedBox(height: AppConstants.spaceS),
-              const Text(
+              Text(
                 'ابدأ رحلتك نحو اللياقة البدنية',
                 style: AppTextStyles.bodyMedium,
               ),

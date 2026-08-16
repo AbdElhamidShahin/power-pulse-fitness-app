@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 abstract class AppColors {
   AppColors._();
 
+  // ─── Backgrounds ───────────────────────────────────────────
   static const Color bgDeep     = Color(0xFFF5F5F0); // خلفية الشاشة الأساسية
   static const Color bgSurface  = Color(0xFFFFFFFF); // خلفية الـ cards
   static const Color bgElevated = Color(0xFFEFEFEF); // inputs - tabs - elevated

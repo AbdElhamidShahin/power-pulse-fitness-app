@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ─── WorkoutRecord ───────────────────────────────────────────
 class WorkoutRecord {
   WorkoutRecord({required this.date});
   final DateTime date;
@@ -11,6 +12,7 @@ class WorkoutRecord {
       WorkoutRecord(date: DateTime.parse(json['date'] as String));
 }
 
+// ─── UserProfile Model ───────────────────────────────────────
 class UserProfile {
   const UserProfile({
     this.name = '',
