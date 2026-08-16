@@ -371,6 +371,9 @@ class _ProfileContentState extends State<_ProfileContent> {
             onPressed: () async {
               Navigator.pop(context);
               await context.read<AppSettingsCubit>().logout();
+              // Clear the router cache so the next redirect re-evaluates auth state
+              // (stale 'home' result would otherwise bypass the entry screen check).
+              AppRouter.clearLocationCache();
               // After logout → switch to guest mode → go to home
               // (user can still use the app as a guest; can sign in again from profile)
               if (context.mounted) context.go(AppRouter.home);

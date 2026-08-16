@@ -89,14 +89,17 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
       age: (json['age'] as num?)?.toInt() ?? 0,
       heightCm: (json['heightCm'] as num?)?.toDouble() ?? 0,
       weightKg: (json['weightKg'] as num?)?.toDouble() ?? 0,
-      gender: Gender.values.byName(
-        json['gender'] as String,
+      gender: Gender.values.firstWhere(
+            (e) => e.name == (json['gender'] as String? ?? ''),
+        orElse: () => Gender.male,
       ),
-      goal: FitnessGoal.values.byName(
-        json['goal'] as String,
+      goal: FitnessGoal.values.firstWhere(
+            (e) => e.name == (json['goal'] as String? ?? ''),
+        orElse: () => FitnessGoal.maintain,
       ),
-      activityLevel: ActivityLevel.values.byName(
-        json['activityLevel'] as String,
+      activityLevel: ActivityLevel.values.firstWhere(
+            (e) => e.name == (json['activityLevel'] as String? ?? ''),
+        orElse: () => ActivityLevel.moderate,
       ),
       avatarPath: json['avatarPath'] as String?,
     );

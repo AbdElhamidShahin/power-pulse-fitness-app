@@ -41,9 +41,55 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
   Future<void> _startWithPlan() async {
     final cubit = context.read<WorkoutLoggerCubit>();
 
-    // أول نشوف لو في جلسة نشطة موجودة أصلاً
+    // Load — may restore an interrupted session saved before the app was killed.
     await cubit.load();
     if (!mounted) return;
+
+    // If an interrupted session was restored, ask the user whether to resume
+    // or discard it and start fresh.
+    if (cubit.state is WorkoutLoggerActive) {
+      final resume = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: const Text(
+            'استئناف التمرين؟',
+            style: TextStyle(fontFamily: 'Cairo', color: Colors.white),
+          ),
+          content: const Text(
+            'لديك تمرين لم تكمله. هل تريد الاستمرار أم البدء من جديد؟',
+            style: TextStyle(fontFamily: 'Cairo', color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                'ابدأ من جديد',
+                style: TextStyle(fontFamily: 'Cairo', color: Colors.redAccent),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'استئناف',
+                style: TextStyle(
+                    fontFamily: 'Cairo', color: Color(0xFFBFFF00)),
+              ),
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      if (resume == false) {
+        // Discard the saved session; then fall through to start a new one.
+        await cubit.cancelSession();
+        if (!mounted) return;
+      } else {
+        // Resume — session is already active, nothing more to do.
+        return;
+      }
+    }
 
     // لو الحالة Idle — ابدأ جلسة جديدة بتمارين اليوم
     if (cubit.state is WorkoutLoggerIdle) {

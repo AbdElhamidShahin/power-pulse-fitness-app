@@ -40,11 +40,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<SignUpCubit>().signUpUser(
-          name: _nameCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          password: _passCtrl.text,
-          confirmPassword: _confirmPassCtrl.text,
-        );
+      name: _nameCtrl.text.trim(),
+      email: _emailCtrl.text.trim(),
+      password: _passCtrl.text,
+      confirmPassword: _confirmPassCtrl.text,
+    );
   }
 
   @override
@@ -53,8 +53,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       listener: (context, state) {
         if (state is SignUpSuccess) {
           _showSnack(context,
-              isError: false, message: '🎉 مرحباً ${state.name}! حسابك جاهز');
-          context.go(AppRouter.home);
+              isError: false, message: '🎉 مرحباً ${state.name}! أكمل إعداد حسابك');
+          // New accounts go to onboarding so the user fills their real profile.
+          // Onboarding navigates to /home on completion.
+          AppRouter.clearLocationCache();
+          context.go(AppRouter.onboarding);
         } else if (state is SignUpError) {
           _showSnack(context, isError: true, message: state.errorMessage);
         }
@@ -171,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         obscureText: _confirmPassHidden,
                         suffix: GestureDetector(
                           onTap: () => setState(
-                              () => _confirmPassHidden = !_confirmPassHidden),
+                                  () => _confirmPassHidden = !_confirmPassHidden),
                           child: Icon(
                             _confirmPassHidden
                                 ? Icons.visibility_off_outlined
@@ -312,11 +315,11 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        text,
-        style: AppTextStyles.titleSmall.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      );
+    text,
+    style: AppTextStyles.titleSmall.copyWith(
+      color: AppColors.textSecondary,
+    ),
+  );
 }
 
 // ─── Auth Text Field ──────────────────────────────────────────────────────────
@@ -357,14 +360,14 @@ class _AuthField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle:
-            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+        AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
         prefixIcon:
-            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
+        Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
-                padding: const EdgeInsets.only(left: AppConstants.spaceM),
-                child: suffix,
-              )
+          padding: const EdgeInsets.only(left: AppConstants.spaceM),
+          child: suffix,
+        )
             : null,
         filled: true,
         fillColor: AppColors.bgSurface,

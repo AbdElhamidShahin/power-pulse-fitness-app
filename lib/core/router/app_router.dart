@@ -63,7 +63,20 @@ abstract class AppRouter {
   //      a. If mode == guest → home (guest mode, local data).
   //      b. If mode == none  → entry choice screen (first launch).
   //
+  // _cachedLocation stores the result after the first evaluation so that
+  // subsequent navigations (tab switches, screen pushes/pops) do NOT re-run
+  // the SharedPreferences read and Firestore restore on every event.
+  // Call clearLocationCache() on any auth state change so the next navigation
+  // re-evaluates correctly.
+  static String? _cachedLocation;
+
+  /// Clears the routing cache. Call after login, signup, or logout so the
+  /// next navigation re-evaluates the auth state instead of returning a stale result.
+  static void clearLocationCache() => _cachedLocation = null;
+
   static Future<String> _initialLocation() async {
+    if (_cachedLocation != null) return _cachedLocation!;
+
     final prefs = await SharedPreferences.getInstance();
 
     // Check Firebase Auth — currentUser is non-null when a session is active.
@@ -81,12 +94,16 @@ abstract class AppRouter {
         // Network failure → continue with local cache
       }
       await UserModeService.setAuthenticated(prefs);
-      return home;
+      _cachedLocation = home;
+      return _cachedLocation!;
     }
 
     // Not authenticated — check saved mode preference.
     final mode = await UserModeService.getMode(prefs);
-    if (mode == UserMode.guest) return home; // Guest → straight to app
+    if (mode == UserMode.guest) {
+      _cachedLocation = home;
+      return _cachedLocation!;
+    }
 
     if (mode == UserMode.authenticated) {
       // Mode was authenticated but Firebase session is gone (e.g. expired).
@@ -94,7 +111,8 @@ abstract class AppRouter {
       await UserModeService.clearMode(prefs);
     }
 
-    return entry; // No mode chosen yet → entry choice screen
+    _cachedLocation = entry;
+    return _cachedLocation!;
   }
 
   static final GoRouter router = GoRouter(
@@ -152,7 +170,8 @@ abstract class AppRouter {
         builder: (context, state, child) => MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => sl<HomeCubit>()),
-            BlocProvider(create: (_) => sl<AppSettingsCubit>()),
+            // .value — owned by PowerPulseApp in main.dart; reuse without disposing
+            BlocProvider.value(value: sl<AppSettingsCubit>()),
             BlocProvider(create: (_) => sl<PedometerCubit>()..start()),
             BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
           ],
@@ -229,8 +248,12 @@ abstract class AppRouter {
       ),
       GoRoute(
         path: workoutLogger,
-        builder: (_, __) => BlocProvider(
-          create: (_) => sl<WorkoutLoggerCubit>(),
+        builder: (_, __) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
+            // .value — does not take ownership; singleton stays alive for ShellRoute
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
+          ],
           child: const WorkoutLoggerScreen(),
         ),
       ),
@@ -240,7 +263,9 @@ abstract class AppRouter {
           providers: [
             BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
             BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
-            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
+            // .value — singleton already loaded by ShellRoute; avoids double-load
+            // and prevents disposal of the shared instance on pop
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
           ],
           child: const WorkoutPlanScreen(),
         ),

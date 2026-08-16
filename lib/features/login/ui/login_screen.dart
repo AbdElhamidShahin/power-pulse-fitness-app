@@ -36,9 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<LoginCubit>().loginUser(
-          email: _emailCtrl.text.trim(),
-          password: _passCtrl.text,
-        );
+      email: _emailCtrl.text.trim(),
+      password: _passCtrl.text,
+    );
   }
 
   @override
@@ -47,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is LoginSuccess) {
           _showSnack(context, isError: false, message: 'مرحباً بعودتك ${state.name} 👋');
+          AppRouter.clearLocationCache();
           context.go(AppRouter.home);
         } else if (state is LoginError) {
           _showSnack(context,  isError: true, message: state.errorMessage);
@@ -244,11 +245,11 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        text,
-        style: AppTextStyles.titleSmall.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      );
+    text,
+    style: AppTextStyles.titleSmall.copyWith(
+      color: AppColors.textSecondary,
+    ),
+  );
 }
 
 // ─── Auth Text Field ──────────────────────────────────────────────────────────
@@ -287,14 +288,14 @@ class _AuthField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle:
-            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+        AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
         prefixIcon:
-            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
+        Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
-                padding: const EdgeInsets.only(left: AppConstants.spaceM),
-                child: suffix,
-              )
+          padding: const EdgeInsets.only(left: AppConstants.spaceM),
+          child: suffix,
+        )
             : null,
         filled: true,
         fillColor: AppColors.bgSurface,
@@ -403,10 +404,10 @@ class _GoogleButton extends StatelessWidget {
 class _GoogleIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const SizedBox(
-        width: 22,
-        height: 22,
-        child: _GoogleLetterG(),
-      );
+    width: 22,
+    height: 22,
+    child: _GoogleLetterG(),
+  );
 }
 
 class _GoogleLetterG extends StatelessWidget {
