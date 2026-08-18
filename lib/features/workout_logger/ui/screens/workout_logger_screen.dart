@@ -70,8 +70,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
               onPressed: () => Navigator.of(context).pop(true),
               child: const Text(
                 'استئناف',
-                style: TextStyle(
-                    fontFamily: 'Cairo', color: Color(0xFFBFFF00)),
+                style: TextStyle(fontFamily: 'Cairo', color: Color(0xFFBFFF00)),
               ),
             ),
           ],
@@ -96,9 +95,10 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       if (planState is WorkoutPlanEditing) plan = planState.draft;
 
       final todayPlan = plan?.dayFor(DateTime.now());
-      final name = (todayPlan != null && !todayPlan.isRest && todayPlan.name.isNotEmpty)
-          ? todayPlan.name
-          : 'تمريني اليوم';
+      final name =
+          (todayPlan != null && !todayPlan.isRest && todayPlan.name.isNotEmpty)
+              ? todayPlan.name
+              : 'تمريني اليوم';
 
       await cubit.startSession(
         name,
@@ -118,7 +118,8 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       builder: (context, state) => switch (state) {
         WorkoutLoggerInitial() ||
         WorkoutLoggerLoading() ||
-        WorkoutLoggerIdle()   => const _LoadingView(),
+        WorkoutLoggerIdle() =>
+          const _LoadingView(),
         WorkoutLoggerActive(session: final s) => _ActiveView(session: s),
         WorkoutLoggerFinished() => const _LoadingView(),
         WorkoutLoggerError(message: final m) => _ErrorView(message: m),
@@ -133,7 +134,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
-        BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => WorkoutSummarySheet(session: session),
     ).then((_) => context.read<WorkoutLoggerCubit>().reset());
@@ -147,9 +148,9 @@ class _ActiveView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit    = context.read<WorkoutLoggerCubit>();
-    final done     = session.exercises.where((e) => e.isFullyDone).length;
-    final total    = session.exercises.length;
+    final cubit = context.read<WorkoutLoggerCubit>();
+    final done = session.exercises.where((e) => e.isFullyDone).length;
+    final total = session.exercises.length;
     final progress = total == 0 ? 0.0 : done / total;
 
     return Scaffold(
@@ -164,8 +165,7 @@ class _ActiveView extends StatelessWidget {
             ),
             // ─── Progress Bar ──────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppConstants.screenPaddingH, 0,
+              padding: const EdgeInsets.fromLTRB(AppConstants.screenPaddingH, 0,
                   AppConstants.screenPaddingH, AppConstants.spaceM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,12 +183,14 @@ class _ActiveView extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.radiusPill),
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
                       backgroundColor: AppColors.bgElevated,
-                      valueColor: const AlwaysStoppedAnimation(AppColors.accent),
+                      valueColor:
+                          const AlwaysStoppedAnimation(AppColors.accent),
                     ),
                   ),
                 ],
@@ -198,21 +200,23 @@ class _ActiveView extends StatelessWidget {
             Expanded(
               child: session.exercises.isEmpty
                   ? _EmptyExercises(
-                  onAdd: () => _showAddExercise(context, cubit))
+                      onAdd: () => _showAddExercise(context, cubit))
                   : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(
-                    AppConstants.screenPaddingH, 0,
-                    AppConstants.screenPaddingH, 100),
-                itemCount: session.exercises.length,
-                itemBuilder: (_, i) {
-                  final ex = session.exercises[i];
-                  return _ExerciseTile(
-                    exercise: ex,
-                    onTap: () => _showExerciseDetail(context, cubit, ex),
-                    onDone: () => cubit.markExerciseDone(ex.exerciseId),
-                  );
-                },
-              ),
+                      padding: const EdgeInsets.fromLTRB(
+                          AppConstants.screenPaddingH,
+                          0,
+                          AppConstants.screenPaddingH,
+                          100),
+                      itemCount: session.exercises.length,
+                      itemBuilder: (_, i) {
+                        final ex = session.exercises[i];
+                        return _ExerciseTile(
+                          exercise: ex,
+                          onTap: () => _showExerciseDetail(context, cubit, ex),
+                          onDone: () => cubit.markExerciseDone(ex.exerciseId),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
@@ -231,8 +235,8 @@ class _ActiveView extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppConstants.radiusXXL)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => AddExerciseSheet(
         cubit: cubit,
@@ -251,8 +255,8 @@ class _ActiveView extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppColors.bgSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppConstants.radiusXXL)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => _ExerciseDetailSheet(cubit: cubit, exercise: ex),
     );
@@ -293,27 +297,28 @@ class _ExerciseTile extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(AppConstants.radiusM),
               child: SizedBox(
-                width: 56, height: 56,
+                width: 56,
+                height: 56,
                 child: exercise.gifPath != null && exercise.gifPath!.isNotEmpty
                     ? CachedNetworkImage(
-                  imageUrl: exercise.gifPath!,
-                  fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(
-                    color: AppColors.bgElevated,
-                    child: const Icon(Icons.fitness_center_rounded,
-                        color: AppColors.textMuted, size: 24),
-                  ),
-                  errorWidget: (_, __, ___) => Container(
-                    color: AppColors.bgElevated,
-                    child: const Icon(Icons.fitness_center_rounded,
-                        color: AppColors.textMuted, size: 24),
-                  ),
-                )
+                        imageUrl: exercise.gifPath!,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(
+                          color: AppColors.bgElevated,
+                          child: const Icon(Icons.fitness_center_rounded,
+                              color: AppColors.textMuted, size: 24),
+                        ),
+                        errorWidget: (_, __, ___) => Container(
+                          color: AppColors.bgElevated,
+                          child: const Icon(Icons.fitness_center_rounded,
+                              color: AppColors.textMuted, size: 24),
+                        ),
+                      )
                     : Container(
-                  color: AppColors.bgElevated,
-                  child: const Icon(Icons.fitness_center_rounded,
-                      color: AppColors.textMuted, size: 24),
-                ),
+                        color: AppColors.bgElevated,
+                        child: const Icon(Icons.fitness_center_rounded,
+                            color: AppColors.textMuted, size: 24),
+                      ),
               ),
             ),
             const SizedBox(width: AppConstants.spaceM),
@@ -346,7 +351,8 @@ class _ExerciseTile extends StatelessWidget {
             // زرار الحالة
             if (done)
               Container(
-                width: 36, height: 36,
+                width: 36,
+                height: 36,
                 decoration: const BoxDecoration(
                   color: AppColors.accent,
                   shape: BoxShape.circle,
@@ -398,7 +404,8 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
           // Handle
           Container(
             margin: const EdgeInsets.only(top: AppConstants.spaceM),
-            width: 40, height: 4,
+            width: 40,
+            height: 4,
             decoration: BoxDecoration(
               color: AppColors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
@@ -449,10 +456,12 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                     )),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                   decoration: BoxDecoration(
                     color: AppColors.accentDim,
-                    borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.radiusPill),
                   ),
                   child: Text(_ex.bodyPart,
                       style: AppTextStyles.labelSmall
@@ -465,14 +474,18 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                         .copyWith(color: AppColors.textMuted)),
                 const SizedBox(height: AppConstants.spaceS),
                 ..._ex.sets.asMap().entries.map((entry) {
-                  final i   = entry.key;
+                  final i = entry.key;
                   final set = entry.value;
                   return SetRowWidget(
                     key: ValueKey('${_ex.exerciseId}_$i'),
                     exerciseSet: set,
                     exerciseId: _ex.exerciseId,
-                    onUpdate: ({required exerciseId, required setIndex,
-                      int? reps, double? weight, bool? isCompleted}) {
+                    onUpdate: (
+                        {required exerciseId,
+                        required setIndex,
+                        int? reps,
+                        double? weight,
+                        bool? isCompleted}) {
                       // نحدّث محلياً في الـ sheet
                       final newSets = List<ExerciseSet>.from(_ex.sets);
                       newSets[setIndex] = ExerciseSet(
@@ -548,11 +561,10 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accent,
-                    minimumSize: const Size(double.infinity,
-                        AppConstants.buttonHeightLarge),
+                    minimumSize: const Size(
+                        double.infinity, AppConstants.buttonHeightLarge),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.circular(AppConstants.radiusL),
+                      borderRadius: BorderRadius.circular(AppConstants.radiusL),
                     ),
                   ),
                   child: Text('✓ خلصت هذا التمرين',
@@ -574,11 +586,11 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Scaffold(
-    backgroundColor: AppColors.bgDeep,
-    body: Center(
-      child: CircularProgressIndicator(color: AppColors.accent),
-    ),
-  );
+        backgroundColor: AppColors.bgDeep,
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.accent),
+        ),
+      );
 }
 
 // ─── Error ──────────────────────────────────────────────────────
@@ -588,11 +600,11 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.bgDeep,
-    body: Center(
-      child: Text(message, style: AppTextStyles.bodyMedium),
-    ),
-  );
+        backgroundColor: AppColors.bgDeep,
+        body: Center(
+          child: Text(message, style: AppTextStyles.bodyMedium),
+        ),
+      );
 }
 
 // ─── Empty Exercises ────────────────────────────────────────────
@@ -612,8 +624,7 @@ class _EmptyExercises extends StatelessWidget {
           Text('لا يوجد تمارين بعد',
               style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: AppConstants.spaceS),
-          Text('اضغط "إضافة تمرين" للبدء',
-              style: AppTextStyles.bodyMedium),
+          Text('اضغط "إضافة تمرين" للبدء', style: AppTextStyles.bodyMedium),
           const SizedBox(height: AppConstants.spaceXXL),
           PPButton(
             label: '+ إضافة أول تمرين',

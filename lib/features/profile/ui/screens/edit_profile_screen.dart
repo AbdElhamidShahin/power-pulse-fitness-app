@@ -7,6 +7,7 @@ import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_button.dart';
+import '../../../home/logic/cubit/home_cubit.dart';
 import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
 import '../../logic/cubit/profile_state.dart';
@@ -67,6 +68,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       listener: (context, state) {
         if (state is ProfileSaveSuccess) {
           context.read<ProfileCubit>().onProfileSaved(_built);
+          // Refresh the home screen so the updated name, calorie goal, and
+          // profile-derived values appear immediately without a manual pull-to-refresh.
+          // HomeCubit is provided by ShellRoute; use try/catch in case this screen
+          // is ever opened outside the shell (e.g. from onboarding tests).
+          try {
+            context.read<HomeCubit>().refresh();
+          } catch (_) {
+            // HomeCubit not in scope — silently skip; home will refresh on next load.
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('✓ تم حفظ البيانات',

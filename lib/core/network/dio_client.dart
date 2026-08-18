@@ -54,11 +54,13 @@ class DioClient {
       );
     }
 
-    // Error handler
+    // Error handler — logs in debug only; never exposes user data
     dio.interceptors.add(
       InterceptorsWrapper(
         onError: (DioException e, ErrorInterceptorHandler handler) {
-          debugPrint('[$name] Error: ${e.type} — ${e.message}');
+          if (kDebugMode) {
+            debugPrint('[$name] Error: ${e.type} — ${e.message}');
+          }
           handler.next(e);
         },
       ),
