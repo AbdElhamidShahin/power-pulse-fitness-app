@@ -58,7 +58,7 @@ final class SignUpCubit extends Cubit<SignUpState> {
       emit(SignUpSuccess(name: result.name, email: result.email));
     } on FirebaseAuthException catch (e) {
       emit(SignUpError(_mapFirebaseError(e.code)));
-    } catch (_) {
+    } catch (e) {
       emit(const SignUpError('حدث خطأ غير متوقع، حاول مرة أخرى 🚧'));
     }
   }

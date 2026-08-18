@@ -24,6 +24,21 @@ final class LoginSuccess extends LoginState {
   final String? avatarUrl;
 }
 
+/// Emitted when a guest with local profile data logs into an existing account
+/// that has data in Firestore. The user must choose whether to keep their
+/// local guest data or replace it with the account's cloud data.
+/// Call LoginCubit.resolveConflict(keepLocal: true/false) to proceed.
+final class LoginGuestDataConflict extends LoginState {
+  const LoginGuestDataConflict({
+    required this.accountName,
+    required this.accountEmail,
+  });
+
+  /// Display name from the Firebase account (shown in the dialog).
+  final String accountName;
+  final String accountEmail;
+}
+
 final class LoginError extends LoginState {
   const LoginError(this.errorMessage);
 

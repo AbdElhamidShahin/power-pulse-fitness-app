@@ -90,7 +90,7 @@ String _extractMessage(Response? response) {
           'Server error';
     }
     return 'Server error ${response?.statusCode}';
-  } catch (_) {
+  } catch (e) {
     return 'Server error';
   }
 }

@@ -69,11 +69,10 @@ final class ProgressSummary {
   final List<ChartPoint> weightChartPoints;
   final int currentStreak; // وزن على مدى الوقت
 
-  double? get bmi {
-    if (currentWeight == null) return null;
-    const heightInMeters = 1.78;
-    return currentWeight! / (heightInMeters * heightInMeters);
-  }
+  // NOTE: BMI is intentionally NOT computed here because ProgressSummary does
+  // not carry the user's height. BMI is calculated correctly in BodyStatsSection
+  // from ProfileCubit state (profile.heightCm / 100). Do not add a bmi getter
+  // here — it would require a hardcoded or passed-in height value.
 
   double? get weightChange => (currentWeight != null && startWeight != null)
       ? currentWeight! - startWeight!

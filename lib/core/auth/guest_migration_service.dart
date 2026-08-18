@@ -50,7 +50,7 @@ abstract class GuestMigrationService {
       if (raw != null && raw.isNotEmpty) {
         try {
           payload[key] = jsonDecode(raw);
-        } catch (_) {
+        } catch (e) {
           payload[key] = raw;
         }
       }
@@ -163,7 +163,7 @@ abstract class GuestMigrationService {
     dynamic value;
     try {
       value = jsonDecode(raw);
-    } catch (_) {
+    } catch (e) {
       value = raw;
     }
 
@@ -198,7 +198,7 @@ abstract class GuestMigrationService {
         if (raw != null && raw.isNotEmpty) {
           try {
             map[key] = jsonDecode(raw);
-          } catch (_) {
+          } catch (e) {
             map[key] = raw;
           }
         }
@@ -229,7 +229,7 @@ abstract class GuestMigrationService {
             if (item is Map<String, dynamic>) localList.add(item);
           }
         }
-      } catch (_) {}
+      } catch (e) {} // ignore: json parse fallback
     }
 
     // Build id-indexed map of local items

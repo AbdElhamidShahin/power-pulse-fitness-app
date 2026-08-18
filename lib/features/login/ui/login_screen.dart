@@ -36,9 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<LoginCubit>().loginUser(
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-    );
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+        );
   }
 
   @override
@@ -49,6 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
           _showSnack(context, isError: false, message: 'مرحباً بعودتك ${state.name} 👋');
           AppRouter.clearLocationCache();
           context.go(AppRouter.home);
+        } else if (state is LoginGuestDataConflict) {
+          _showConflictDialog(context, state);
         } else if (state is LoginError) {
           _showSnack(context,  isError: true, message: state.errorMessage);
         }
@@ -245,11 +247,11 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    text,
-    style: AppTextStyles.titleSmall.copyWith(
-      color: AppColors.textSecondary,
-    ),
-  );
+        text,
+        style: AppTextStyles.titleSmall.copyWith(
+          color: AppColors.textSecondary,
+        ),
+      );
 }
 
 // ─── Auth Text Field ──────────────────────────────────────────────────────────
@@ -288,14 +290,14 @@ class _AuthField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle:
-        AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
         prefixIcon:
-        Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
+            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
-          padding: const EdgeInsets.only(left: AppConstants.spaceM),
-          child: suffix,
-        )
+                padding: const EdgeInsets.only(left: AppConstants.spaceM),
+                child: suffix,
+              )
             : null,
         filled: true,
         fillColor: AppColors.bgSurface,
@@ -404,10 +406,10 @@ class _GoogleButton extends StatelessWidget {
 class _GoogleIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const SizedBox(
-    width: 22,
-    height: 22,
-    child: _GoogleLetterG(),
-  );
+        width: 22,
+        height: 22,
+        child: _GoogleLetterG(),
+      );
 }
 
 class _GoogleLetterG extends StatelessWidget {
@@ -433,6 +435,59 @@ class _GoogleLetterG extends StatelessWidget {
       ],
     );
   }
+}
+
+// ─── Guest conflict dialog ─────────────────────────────────────────────────────
+//
+// Shown when a guest with local profile data logs into an existing account.
+// The user chooses whether to keep their local data or use their account data.
+
+void _showConflictDialog(BuildContext context, LoginGuestDataConflict state) {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogContext) => AlertDialog(
+      backgroundColor: const Color(0xFF1E1E1E),
+      title: const Text(
+        'تعارض في البيانات',
+        style: TextStyle(
+            fontFamily: 'Cairo',
+            color: Colors.white,
+            fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        'لديك بيانات محفوظة محليًا كضيف، وحسابك "${state.accountName}" '
+        'يحتوي على بيانات في السحابة.\n\n'
+        'ماذا تريد أن تفعل؟',
+        style: const TextStyle(
+            fontFamily: 'Cairo', color: Colors.white70, height: 1.5),
+      ),
+      actions: [
+        // Keep local — discard cloud profile/plan; keep what was entered as guest
+        TextButton(
+          onPressed: () {
+            Navigator.of(dialogContext).pop();
+            context.read<LoginCubit>().resolveConflict(keepLocal: true);
+          },
+          child: const Text(
+            'احتفظ ببياناتي المحلية',
+            style: TextStyle(fontFamily: 'Cairo', color: Color(0xFFBFFF00)),
+          ),
+        ),
+        // Use account — restore cloud data (original behavior)
+        TextButton(
+          onPressed: () {
+            Navigator.of(dialogContext).pop();
+            context.read<LoginCubit>().resolveConflict(keepLocal: false);
+          },
+          child: const Text(
+            'استخدم بيانات الحساب',
+            style: TextStyle(fontFamily: 'Cairo', color: Colors.redAccent),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 // ─── Snackbar ─────────────────────────────────────────────────────────────────

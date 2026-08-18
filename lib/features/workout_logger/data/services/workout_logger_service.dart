@@ -34,7 +34,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
       final raw = _prefs.getString(_activeKey);
       if (raw == null) return null;
       return WorkoutSession.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    } catch (_) {
+    } catch (e) { // ignore: returns null/empty on parse failure
       return null;
     }
   }
@@ -88,7 +88,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
           .where((s) => s.startTime.isAfter(cutoff))
           .toList()
         ..sort((a, b) => b.startTime.compareTo(a.startTime));
-    } catch (_) {
+    } catch (e) { // ignore: returns null/empty on parse failure
       return [];
     }
   }

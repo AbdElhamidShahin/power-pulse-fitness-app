@@ -298,11 +298,45 @@ class _SetupFormState extends State<_SetupForm> {
     super.dispose();
   }
 
+  // ─── Validation ────────────────────────────────────────────
+  // Business rules match realistic human ranges used by most fitness apps.
+  // These are intentionally wide to accommodate edge cases (e.g. teenagers,
+  // very tall athletes, extreme weight conditions) while blocking clearly
+  // nonsensical inputs such as age=0, weight=1, height=300.
+  static const _minAge    = 10;  // سنة
+  static const _maxAge    = 100; // سنة
+  static const _minHeight = 100; // سم — roughly 3'3"
+  static const _maxHeight = 250; // سم — roughly 8'2"
+  static const _minWeight = 20;  // كجم
+  static const _maxWeight = 300; // كجم
+
+  /// Returns null if the field is valid, or an Arabic error message if not.
+  String? _ageError() {
+    final v = int.tryParse(_ageCtrl.text.trim());
+    if (v == null) return 'أدخل رقماً صحيحاً';
+    if (v < _minAge || v > _maxAge) return 'العمر يجب أن يكون بين $_minAge و $_maxAge سنة';
+    return null;
+  }
+
+  String? _heightError() {
+    final v = double.tryParse(_heightCtrl.text.trim());
+    if (v == null) return 'أدخل رقماً صحيحاً';
+    if (v < _minHeight || v > _maxHeight) return 'الطول يجب أن يكون بين $_minHeight و $_maxHeight سم';
+    return null;
+  }
+
+  String? _weightError() {
+    final v = double.tryParse(_weightCtrl.text.trim());
+    if (v == null) return 'أدخل رقماً صحيحاً';
+    if (v < _minWeight || v > _maxWeight) return 'الوزن يجب أن يكون بين $_minWeight و $_maxWeight كجم';
+    return null;
+  }
+
   bool get _isValid =>
       _nameCtrl.text.trim().isNotEmpty &&
-      int.tryParse(_ageCtrl.text) != null &&
-      double.tryParse(_heightCtrl.text) != null &&
-      double.tryParse(_weightCtrl.text) != null;
+      _ageError() == null &&
+      _heightError() == null &&
+      _weightError() == null;
 
   UserProfile get _profile => UserProfile(
         name:          _nameCtrl.text.trim(),
@@ -396,6 +430,9 @@ class _SetupFormState extends State<_SetupForm> {
                             suffix:      'سنة',
                             keyboardType: TextInputType.number,
                             onChanged:   (_) => setState(() {}),
+                            errorText: _ageCtrl.text.isEmpty
+                                ? null
+                                : _ageError(),
                           ),
                         ],
                       ),
@@ -413,6 +450,9 @@ class _SetupFormState extends State<_SetupForm> {
                             suffix:      'سم',
                             keyboardType: TextInputType.number,
                             onChanged:   (_) => setState(() {}),
+                            errorText: _heightCtrl.text.isEmpty
+                                ? null
+                                : _heightError(),
                           ),
                         ],
                       ),
@@ -431,6 +471,9 @@ class _SetupFormState extends State<_SetupForm> {
                   keyboardType: const TextInputType.numberWithOptions(
                       decimal: true),
                   onChanged: (_) => setState(() {}),
+                  errorText: _weightCtrl.text.isEmpty
+                      ? null
+                      : _weightError(),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
@@ -547,6 +590,7 @@ class _SetupField extends StatelessWidget {
     this.keyboardType,
     this.textDirection = TextDirection.ltr,
     required this.onChanged,
+    this.errorText,
   });
 
   final TextEditingController controller;
@@ -555,6 +599,8 @@ class _SetupField extends StatelessWidget {
   final TextInputType?        keyboardType;
   final TextDirection         textDirection;
   final ValueChanged<String>  onChanged;
+  /// Arabic error message shown below the field; null means no error.
+  final String?               errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -569,6 +615,11 @@ class _SetupField extends StatelessWidget {
         hintStyle:   AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
         suffixText:  suffix,
         suffixStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+        errorText:   errorText,
+        errorStyle:  AppTextStyles.bodySmall.copyWith(
+          color: AppColors.danger,
+          fontFamily: 'Cairo',
+        ),
         filled:      true,
         fillColor:   AppColors.bgSurface,
         contentPadding: const EdgeInsets.symmetric(
@@ -586,6 +637,14 @@ class _SetupField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
           borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: AppColors.danger),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
         ),
       ),
     );

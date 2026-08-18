@@ -36,9 +36,9 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
       }
 
       return _fromJson(json);
-    } catch (_) {
-      throw const CacheException(
-        message: 'خطأ في قراءة بيانات الملف الشخصي',
+    } catch (e) {
+      throw CacheException(
+        message: 'خطأ في قراءة بيانات الملف الشخصي: ${e.runtimeType}',
       );
     }
   }
@@ -52,9 +52,9 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
         _key,
         jsonEncode(json),
       );
-    } catch (_) {
-      throw const CacheException(
-        message: 'خطأ في حفظ بيانات الملف الشخصي',
+    } catch (e) {
+      throw CacheException(
+        message: 'خطأ في حفظ بيانات الملف الشخصي: ${e.runtimeType}',
       );
     }
   }
@@ -90,15 +90,15 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
       heightCm: (json['heightCm'] as num?)?.toDouble() ?? 0,
       weightKg: (json['weightKg'] as num?)?.toDouble() ?? 0,
       gender: Gender.values.firstWhere(
-            (e) => e.name == (json['gender'] as String? ?? ''),
+        (e) => e.name == (json['gender'] as String? ?? ''),
         orElse: () => Gender.male,
       ),
       goal: FitnessGoal.values.firstWhere(
-            (e) => e.name == (json['goal'] as String? ?? ''),
+        (e) => e.name == (json['goal'] as String? ?? ''),
         orElse: () => FitnessGoal.maintain,
       ),
       activityLevel: ActivityLevel.values.firstWhere(
-            (e) => e.name == (json['activityLevel'] as String? ?? ''),
+        (e) => e.name == (json['activityLevel'] as String? ?? ''),
         orElse: () => ActivityLevel.moderate,
       ),
       avatarPath: json['avatarPath'] as String?,

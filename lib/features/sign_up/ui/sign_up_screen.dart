@@ -40,11 +40,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<SignUpCubit>().signUpUser(
-      name: _nameCtrl.text.trim(),
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-      confirmPassword: _confirmPassCtrl.text,
-    );
+          name: _nameCtrl.text.trim(),
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+          confirmPassword: _confirmPassCtrl.text,
+        );
   }
 
   @override
@@ -174,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         obscureText: _confirmPassHidden,
                         suffix: GestureDetector(
                           onTap: () => setState(
-                                  () => _confirmPassHidden = !_confirmPassHidden),
+                              () => _confirmPassHidden = !_confirmPassHidden),
                           child: Icon(
                             _confirmPassHidden
                                 ? Icons.visibility_off_outlined
@@ -315,11 +315,11 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    text,
-    style: AppTextStyles.titleSmall.copyWith(
-      color: AppColors.textSecondary,
-    ),
-  );
+        text,
+        style: AppTextStyles.titleSmall.copyWith(
+          color: AppColors.textSecondary,
+        ),
+      );
 }
 
 // ─── Auth Text Field ──────────────────────────────────────────────────────────
@@ -360,14 +360,14 @@ class _AuthField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle:
-        AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
         prefixIcon:
-        Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
+            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
-          padding: const EdgeInsets.only(left: AppConstants.spaceM),
-          child: suffix,
-        )
+                padding: const EdgeInsets.only(left: AppConstants.spaceM),
+                child: suffix,
+              )
             : null,
         filled: true,
         fillColor: AppColors.bgSurface,
@@ -493,63 +493,6 @@ void _showSnack(BuildContext context,
       ),
       margin: const EdgeInsets.all(AppConstants.spaceL),
       duration: const Duration(seconds: 3),
-    ),
-  );
-}
-
-void _showVerificationSheet(BuildContext context, {required String email}) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: AppColors.bgSurface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(AppConstants.radiusXL),
-      ),
-    ),
-    builder: (_) => Padding(
-      padding: const EdgeInsets.all(AppConstants.spaceXXL),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle bar
-          Container(
-            width: 48,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.borderMedium,
-              borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-            ),
-          ),
-          const SizedBox(height: AppConstants.spaceXXL),
-          Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(
-              color: AppColors.accentDim,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.mark_email_unread_rounded,
-                color: AppColors.accent, size: AppConstants.iconXL),
-          ),
-          const SizedBox(height: AppConstants.spaceXL),
-          Text('تحقق من بريدك', style: AppTextStyles.headlineMedium),
-          const SizedBox(height: AppConstants.spaceS),
-          Text(
-            'أرسلنا رابط التفعيل إلى\n$email',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.bodyMedium,
-          ),
-          const SizedBox(height: AppConstants.space3XL),
-          PPButton(
-            label: 'تم، يمكنني تسجيل الدخول',
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.go(AppRouter.login);
-            },
-          ),
-          const SizedBox(height: AppConstants.spaceXL),
-        ],
-      ),
     ),
   );
 }

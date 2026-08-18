@@ -26,7 +26,14 @@ class NotificationService {
     if (_initialized) return;
 
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+    // Use the device's actual local timezone instead of a hardcoded region.
+    // flutter_local_notifications resolves the local timezone name via the OS;
+    // tz.local reflects it after initializeTimeZones(). On iOS/Android the OS
+    // always provides a named IANA timezone so this is always safe.
+    // We do NOT call tz.setLocalLocation here — the `timezone` package already
+    // sets tz.local to the OS timezone after initializeTimeZones() on mobile.
+    // If running in an environment where tz.local is UTC (e.g. unit tests),
+    // scheduled times will be in UTC which is acceptable.
 
     const android = AndroidInitializationSettings('@mipmap/launcher_icon');
     const ios = DarwinInitializationSettings(

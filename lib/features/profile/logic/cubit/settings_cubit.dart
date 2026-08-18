@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/auth/guest_migration_service.dart';
 import '../../../../core/auth/user_mode_service.dart';
+import '../../../../core/notifications/notification_service.dart';
 import 'settings_state.dart';
 
 class AppSettingsCubit extends Cubit<AppSettings> {
@@ -39,9 +40,45 @@ class AppSettingsCubit extends Cubit<AppSettings> {
   }
 
   // ─── Notifications ─────────────────────────────────────────
+  //
+  // This is the top-level master switch. When turned off it cancels ALL
+  // scheduled notifications. When turned on it re-applies the granular
+  // per-type preferences stored by NotificationSettingsSection so the user
+  // doesn't need to re-enable each type manually.
+  //
+  // Granular keys (owned by NotificationSettingsSection):
+  static const _kNotifWorkout = 'notif_workout';
+  static const _kNotifSteps   = 'notif_steps';
+  static const _kNotifWater   = 'notif_water';
+
   Future<void> toggleNotifications(bool val) async {
     await _prefs.setBool(_kNotifications, val);
     emit(state.copyWith(notificationsEnabled: val));
+
+    final ns = NotificationService.instance;
+
+    if (!val) {
+      // Master OFF → cancel everything regardless of granular settings.
+      await ns.cancelAll();
+      return;
+    }
+
+    // Master ON → re-schedule each type that the user had enabled.
+    // Defaults match NotificationSettingsSection initial values.
+    final workoutEnabled = _prefs.getBool(_kNotifWorkout) ?? true;
+    final stepsEnabled   = _prefs.getBool(_kNotifSteps)   ?? true;
+    final waterEnabled   = _prefs.getBool(_kNotifWater)   ?? false;
+
+    if (workoutEnabled) {
+      await ns.scheduleWorkoutMorningReminder();
+      await ns.scheduleWorkoutEveningReminder();
+    }
+    if (stepsEnabled) {
+      await ns.scheduleStepsReminder();
+    }
+    if (waterEnabled) {
+      await ns.scheduleWaterReminders();
+    }
   }
 
   // ─── Logout — Flow 6 ──────────────────────────────────────
@@ -59,8 +96,9 @@ class AppSettingsCubit extends Cubit<AppSettings> {
 
     try {
       await FirebaseAuth.instance.signOut();
-    } catch (_) {
-      // Even if Firebase sign-out fails, continue clearing local data.
+    } catch (e) {
+      // Firebase sign-out failure is non-fatal — continue clearing local data.
+      // This can happen offline; the session token will expire naturally.
     }
 
     // Switch to guest mode. Firestore data is untouched and preserved

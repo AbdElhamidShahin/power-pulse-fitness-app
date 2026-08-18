@@ -297,10 +297,12 @@ void _initProfile() {
     ),
   );
 
-  // ProfileRepository now receives auth + firestore for post-save cloud sync.
+  // ProfileRepository receives NutritionLocalService so that saving a profile
+  // also updates the calorie_goal key used by the Nutrition screen (M1 fix).
   sl.registerLazySingleton<ProfileRepository>(
         () => ProfileRepositoryImpl(
       localService: sl(),
+      nutritionService: sl<NutritionLocalService>(),
       prefs: sl<SharedPreferences>(),
       auth: sl<FirebaseAuth>(),
       firestore: sl<FirebaseFirestore>(),

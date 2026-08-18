@@ -51,18 +51,18 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     // لو عندنا خطة — نحوّل تمارين اليوم لـ SessionExercise تلقائياً
     final exercises = planDay != null
         ? planDay.exercises
-        .map((pe) => SessionExercise(
-      exerciseId:
-      '${pe.exerciseId}_${DateTime.now().millisecondsSinceEpoch}',
-      exerciseName: pe.exerciseName,
-      bodyPart: pe.bodyPart,
-      gifPath: pe.gifUrl,
-      sets: List.generate(
-        pe.defaultSets,
-            (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
-      ),
-    ))
-        .toList()
+            .map((pe) => SessionExercise(
+                  exerciseId:
+                      '${pe.exerciseId}_${DateTime.now().millisecondsSinceEpoch}',
+                  exerciseName: pe.exerciseName,
+                  bodyPart: pe.bodyPart,
+                  gifPath: pe.gifUrl,
+                  sets: List.generate(
+                    pe.defaultSets,
+                    (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
+                  ),
+                ))
+            .toList()
         : <SessionExercise>[];
 
     final session = WorkoutSession(
@@ -88,7 +88,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     if (current == null) return;
     _updateActive(current.copyWith(
       exercises:
-      current.exercises.where((e) => e.exerciseId != exerciseId).toList(),
+          current.exercises.where((e) => e.exerciseId != exerciseId).toList(),
     ));
   }
 
@@ -142,10 +142,10 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
           .asMap()
           .entries
           .map((e) => ExerciseSet(
-          setNumber: e.key + 1,
-          reps: e.value.reps,
-          weight: e.value.weight,
-          isCompleted: e.value.isCompleted))
+              setNumber: e.key + 1,
+              reps: e.value.reps,
+              weight: e.value.weight,
+              isCompleted: e.value.isCompleted))
           .toList();
       return ex.copyWith(sets: renumbered);
     }).toList();
@@ -160,11 +160,11 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       if (ex.exerciseId != exerciseId) return ex;
       final doneSets = ex.sets
           .map((s) => ExerciseSet(
-        setNumber: s.setNumber,
-        reps: s.reps,
-        weight: s.weight,
-        isCompleted: true,
-      ))
+                setNumber: s.setNumber,
+                reps: s.reps,
+                weight: s.weight,
+                isCompleted: true,
+              ))
           .toList();
       return ex.copyWith(sets: doneSets, isDone: true);
     }).toList();

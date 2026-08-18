@@ -6,7 +6,6 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
-import '../../../exercises/data/models/exercise_entity.dart';
 import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_state.dart';
@@ -15,9 +14,7 @@ import '../../logic/cubit/workout_logger_cubit.dart';
 import '../../logic/cubit/workout_logger_state.dart';
 import '../widgets/active_workout_header.dart';
 import '../widgets/add_exercise_sheet.dart';
-import '../widgets/exercise_logger_card.dart';
 import '../widgets/set_row_widget.dart';
-import '../widgets/workout_logger_idle_view.dart';
 import '../widgets/workout_summary_sheet.dart';
 
 class WorkoutLoggerScreen extends StatefulWidget {

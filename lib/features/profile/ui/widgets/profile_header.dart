@@ -56,8 +56,8 @@ class ProfileHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const _StatItem(value: '47', label: 'تمرين'),
-              const _StatItem(value: '14', label: 'سلسلة'),
+              _StatItem(value: '47', label: 'تمرين'),
+              _StatItem(value: '14', label: 'سلسلة'),
               _StatItem(
                 value: '${profile.weightKg.toInt()} كجم',
                 label: 'الوزن',
