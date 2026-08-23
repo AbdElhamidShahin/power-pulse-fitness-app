@@ -1,53 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../../core/auth/user_mode_service.dart';
 import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_button.dart';
+import '../../../../../shared/widgets/pp_logo.dart';
 import '../../../profile/data/models/user_profile_entity.dart';
 import '../../../profile/logic/cubit/profile_cubit.dart';
 import '../../../profile/logic/cubit/profile_state.dart';
 
-// ─── Onboarding pages data ────────────────────────────────────────────────────
+// ─── Brand Colors (dark-only screens) ────────────────────────────────────────
+const _kBg         = Color(0xFF0F0F0F);
+const _kSurface    = Color(0xFF1A1A1A);
+const _kSurface2   = Color(0xFF242424);
+const _kBorder     = Color(0xFF2E2E2E);
+const _kAccent     = Color(0xFFA8E063);
+const _kAccentDim  = Color(0x26A8E063);
+const _kTextHigh   = Color(0xFFFFFFFF);
+const _kTextMid    = Color(0xFFAAAAAA);
+const _kTextLow    = Color(0xFF666666);
+const _kDanger     = Color(0xFFFF4C6A);
+const _kGreen2     = Color(0xFF34D399);
+const _kBlue       = Color(0xFF60A5FA);
 
-class _PageData {
-  const _PageData({
-    required this.emoji,
-    required this.title,
-    required this.subtitle,
+// ─── Slide data ───────────────────────────────────────────────────────────────
+class _SlideData {
+  const _SlideData({
+    required this.icon,
     required this.accentColor,
+    required this.tag,
+    required this.title,
+    required this.body,
   });
-  final String emoji;
-  final String title;
-  final String subtitle;
-  final Color  accentColor;
+  final IconData icon;
+  final Color    accentColor;
+  final String   tag;
+  final String   title;
+  final String   body;
 }
 
-const _pages = [
-  _PageData(
-    emoji:       '💪',
-    title:       'مرحباً بك في\nPower Pulse',
-    subtitle:    'تطبيقك المتكامل للياقة البدنية\nتمارين • تغذية • تتبع التقدم',
-    accentColor: AppColors.accent,
+const _slides = [
+  _SlideData(
+    icon:        Icons.bolt_rounded,
+    accentColor: _kAccent,
+    tag:         'اللياقة البدنية',
+    title:       'حوّل جسمك\nبالعلم والالتزام',
+    body:        'برامج تمارين مخصصة، تتبع دقيق للتغذية،\nوتحليل مستمر لتقدمك',
   ),
-  _PageData(
-    emoji:       '🥗',
-    title:       'تتبع تغذيتك\nبدقة',
-    subtitle:    'آلاف الأطعمة متاحة\nتتبع السعرات والماكروز يومياً',
-    accentColor: Color(0xFF34D399),
+  _SlideData(
+    icon:        Icons.restaurant_rounded,
+    accentColor: _kGreen2,
+    tag:         'التغذية الذكية',
+    title:       'اعرف ما تأكل\nوابنِ جسمك',
+    body:        'قاعدة بيانات ضخمة من الأطعمة\nتتبع السعرات والماكروز بدقة عالية',
   ),
-  _PageData(
-    emoji:       '📈',
-    title:       'شاهد تقدمك\nيوماً بيوم',
-    subtitle:    'رسوم بيانية واضحة\nتوضح رحلتك نحو هدفك',
-    accentColor: Color(0xFF60A5FA),
+  _SlideData(
+    icon:        Icons.insights_rounded,
+    accentColor: _kBlue,
+    tag:         'تتبع التقدم',
+    title:       'شاهد نتائجك\nتتحقق يوماً بيوم',
+    body:        'رسوم بيانية واضحة ومقارنات أسبوعية\nتُريك كيف تتحسّن كل يوم',
   ),
 ];
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
-
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -61,13 +81,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _showSetup = false;
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor:            Colors.transparent,
+      statusBarIconBrightness:   Brightness.light,
+      statusBarBrightness:       Brightness.dark,
+    ));
+  }
+
+  @override
   void dispose() {
     _pageCtrl.dispose();
     super.dispose();
   }
 
   void _next() {
-    if (_current < _pages.length - 1) {
+    if (_current < _slides.length - 1) {
       _pageCtrl.nextPage(
         duration: AppConstants.durationPage,
         curve:    Curves.easeInOut,
@@ -80,26 +110,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
-      body: SafeArea(
-        child: _showSetup
-            ? const _SetupForm()
-            : _IntroPages(
-                pageCtrl:      _pageCtrl,
-                current:       _current,
-                onPageChanged: (i) => setState(() => _current = i),
-                onNext:        _next,
-                onSkip:        () => setState(() => _showSetup = true),
-              ),
-      ),
+      backgroundColor: _kBg,
+      body: _showSetup
+          ? const _SetupForm()
+          : _IntroSlides(
+              pageCtrl:      _pageCtrl,
+              current:       _current,
+              onPageChanged: (i) => setState(() => _current = i),
+              onNext:        _next,
+              onSkip:        () => setState(() => _showSetup = true),
+            ),
     );
   }
 }
 
-// ─── Intro Slides ─────────────────────────────────────────────────────────────
 
-class _IntroPages extends StatelessWidget {
-  const _IntroPages({
+// ─── Intro Slides ─────────────────────────────────────────────────────────────
+class _IntroSlides extends StatelessWidget {
+  const _IntroSlides({
     required this.pageCtrl,
     required this.current,
     required this.onPageChanged,
@@ -115,154 +143,185 @@ class _IntroPages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // ── Top bar ──────────────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.screenPaddingH,
-            vertical:   AppConstants.spaceM,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Brand
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.spaceM,
-                  vertical:   AppConstants.spaceXXS + 2,
-                ),
-                decoration: BoxDecoration(
-                  color:        AppColors.accentDim,
-                  borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-                ),
-                child: Text(
-                  'Power Pulse',
-                  style: AppTextStyles.labelSmall.copyWith(
-                    color:         AppColors.accent,
-                    fontWeight:    FontWeight.w700,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ),
-              // Skip
-              TextButton(
-                onPressed: onSkip,
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.textMuted,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.spaceM,
-                    vertical:   AppConstants.spaceXS,
-                  ),
-                ),
-                child: Text('تخطي', style: AppTextStyles.labelMedium),
-              ),
-            ],
-          ),
-        ),
+    final slide = _slides[current];
 
-        // ── Pages ─────────────────────────────────────────────
-        Expanded(
-          child: PageView.builder(
-            controller:    pageCtrl,
-            onPageChanged: onPageChanged,
-            itemCount:     _pages.length,
-            itemBuilder:   (_, i) => _OnboardingPage(page: _pages[i]),
-          ),
-        ),
-
-        // ── Bottom controls ───────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppConstants.screenPaddingH,
-            AppConstants.spaceXL,
-            AppConstants.screenPaddingH,
-            AppConstants.spaceXXL,
-          ),
-          child: Column(
-            children: [
-              // Dot indicators
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _pages.length,
-                  (i) => AnimatedContainer(
-                    duration: AppConstants.durationFast,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width:  current == i ? 24 : 8,
-                    height: 8,
+    return SafeArea(
+      child: Column(
+        children: [
+          // ── Top bar ─────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.screenPaddingH,
+              vertical:   AppConstants.spaceL,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(children: [
+                  PPLogo(size: 32),
+                  const SizedBox(width: AppConstants.spaceS),
+                  Text(
+                    'Power Pulse',
+                    style: AppTextStyles.titleMedium.copyWith(
+                      color:         _kAccent,
+                      fontWeight:    FontWeight.w800,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ]),
+                GestureDetector(
+                  onTap: onSkip,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppConstants.spaceM,
+                      vertical:   6,
+                    ),
                     decoration: BoxDecoration(
-                      color: current == i
-                          ? AppColors.accent
-                          : AppColors.borderMedium,
-                      borderRadius:
-                          BorderRadius.circular(AppConstants.radiusPill),
+                      color:        _kSurface,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                      border:       Border.all(color: _kBorder),
+                    ),
+                    child: Text(
+                      'تخطي',
+                      style: AppTextStyles.labelSmall.copyWith(
+                        color: _kTextMid,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: AppConstants.spaceXXL),
-              PPButton(
-                label: current == _pages.length - 1
-                    ? 'ابدأ الإعداد'
-                    : 'التالي',
-                onPressed: onNext,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+
+          // ── Slide pages ──────────────────────────────────────
+          Expanded(
+            child: PageView.builder(
+              controller:    pageCtrl,
+              onPageChanged: onPageChanged,
+              itemCount:     _slides.length,
+              itemBuilder:   (_, i) => _SlidePage(slide: _slides[i]),
+            ),
+          ),
+
+          // ── Bottom ───────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppConstants.screenPaddingH,
+              AppConstants.spaceXL,
+              AppConstants.screenPaddingH,
+              AppConstants.spaceXXL,
+            ),
+            child: Column(
+              children: [
+                // Dot indicators
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _slides.length,
+                    (i) => AnimatedContainer(
+                      duration: AppConstants.durationFast,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width:  current == i ? 28 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: current == i ? slide.accentColor : _kBorder,
+                        borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppConstants.spaceXXL),
+                _DarkButton(
+                  label:   current == _slides.length - 1 ? 'إعداد ملفي الشخصي' : 'التالي',
+                  onTap:   onNext,
+                  accent:  slide.accentColor,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-// ─── Single Onboarding Page ───────────────────────────────────────────────────
-
-class _OnboardingPage extends StatelessWidget {
-  const _OnboardingPage({required this.page});
-  final _PageData page;
+// ─── Single Slide ─────────────────────────────────────────────────────────────
+class _SlidePage extends StatelessWidget {
+  const _SlidePage({required this.slide});
+  final _SlideData slide;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceXXL),
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.screenPaddingH),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Emoji in styled circle ────────────────────────
+          // Icon in styled hexagonal container
           Container(
-            width:  160,
-            height: 160,
+            width: 80, height: 80,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: page.accentColor.withOpacity(0.10),
-              border: Border.all(
-                color: page.accentColor.withOpacity(0.25),
-                width: 2,
+              color:        slide.accentColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+              border:       Border.all(
+                color: slide.accentColor.withOpacity(0.3),
+                width: 1.5,
               ),
             ),
-            child: Center(
-              child: Text(
-                page.emoji,
-                style: const TextStyle(fontSize: 72),
-              ),
+            child: Icon(
+              slide.icon,
+              color: slide.accentColor,
+              size:  36,
             ),
           ),
 
-          const SizedBox(height: AppConstants.space3XL),
+          const SizedBox(height: AppConstants.spaceXXL),
 
-          Text(
-            page.title,
-            style: AppTextStyles.displayMedium,
-            textAlign: TextAlign.center,
+          // Tag
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.spaceM,
+              vertical:   5,
+            ),
+            decoration: BoxDecoration(
+              color:        slide.accentColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+            ),
+            child: Text(
+              slide.tag,
+              style: AppTextStyles.labelSmall.copyWith(
+                color:         slide.accentColor,
+                letterSpacing: 0.5,
+              ),
+            ),
           ),
 
           const SizedBox(height: AppConstants.spaceL),
 
           Text(
-            page.subtitle,
-            style: AppTextStyles.bodyLarge,
-            textAlign: TextAlign.center,
+            slide.title,
+            style: const TextStyle(
+              fontFamily: 'Cairo',
+              fontSize:   32,
+              fontWeight: FontWeight.w900,
+              color:      _kTextHigh,
+              height:     1.15,
+              letterSpacing: -0.5,
+            ),
+          ),
+
+          const SizedBox(height: AppConstants.spaceL),
+
+          Text(
+            slide.body,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize:   14,
+              fontWeight: FontWeight.w400,
+              color:      _kTextMid,
+              height:     1.7,
+            ),
           ),
         ],
       ),
@@ -271,7 +330,6 @@ class _OnboardingPage extends StatelessWidget {
 }
 
 // ─── Setup Form ───────────────────────────────────────────────────────────────
-
 class _SetupForm extends StatefulWidget {
   const _SetupForm();
 
@@ -291,52 +349,37 @@ class _SetupFormState extends State<_SetupForm> {
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
-    _ageCtrl.dispose();
-    _heightCtrl.dispose();
-    _weightCtrl.dispose();
+    _nameCtrl.dispose(); _ageCtrl.dispose();
+    _heightCtrl.dispose(); _weightCtrl.dispose();
     super.dispose();
   }
 
-  // ─── Validation ────────────────────────────────────────────
-  // Business rules match realistic human ranges used by most fitness apps.
-  // These are intentionally wide to accommodate edge cases (e.g. teenagers,
-  // very tall athletes, extreme weight conditions) while blocking clearly
-  // nonsensical inputs such as age=0, weight=1, height=300.
-  static const _minAge    = 10;  // سنة
-  static const _maxAge    = 100; // سنة
-  static const _minHeight = 100; // سم — roughly 3'3"
-  static const _maxHeight = 250; // سم — roughly 8'2"
-  static const _minWeight = 20;  // كجم
-  static const _maxWeight = 300; // كجم
+  static const _minAge = 10;   static const _maxAge = 100;
+  static const _minH   = 100;  static const _maxH   = 250;
+  static const _minW   = 20;   static const _maxW   = 300;
 
-  /// Returns null if the field is valid, or an Arabic error message if not.
   String? _ageError() {
     final v = int.tryParse(_ageCtrl.text.trim());
     if (v == null) return 'أدخل رقماً صحيحاً';
-    if (v < _minAge || v > _maxAge) return 'العمر يجب أن يكون بين $_minAge و $_maxAge سنة';
+    if (v < _minAge || v > _maxAge) return 'بين $_minAge و$_maxAge سنة';
     return null;
   }
-
   String? _heightError() {
     final v = double.tryParse(_heightCtrl.text.trim());
     if (v == null) return 'أدخل رقماً صحيحاً';
-    if (v < _minHeight || v > _maxHeight) return 'الطول يجب أن يكون بين $_minHeight و $_maxHeight سم';
+    if (v < _minH || v > _maxH) return 'بين $_minH و$_maxH سم';
     return null;
   }
-
   String? _weightError() {
     final v = double.tryParse(_weightCtrl.text.trim());
     if (v == null) return 'أدخل رقماً صحيحاً';
-    if (v < _minWeight || v > _maxWeight) return 'الوزن يجب أن يكون بين $_minWeight و $_maxWeight كجم';
+    if (v < _minW || v > _maxW) return 'بين $_minW و$_maxW كجم';
     return null;
   }
 
   bool get _isValid =>
       _nameCtrl.text.trim().isNotEmpty &&
-      _ageError() == null &&
-      _heightError() == null &&
-      _weightError() == null;
+      _ageError() == null && _heightError() == null && _weightError() == null;
 
   UserProfile get _profile => UserProfile(
         name:          _nameCtrl.text.trim(),
@@ -352,374 +395,301 @@ class _SetupFormState extends State<_SetupForm> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProfileSaveCubit, ProfileSaveState>(
-      listener: (context, state) {
-        if (state is ProfileSaveSuccess) context.go('/home');
+      listener: (context, state) async {
+        if (state is ProfileSaveSuccess) {
+          // Mark onboarding done so the router never shows it again
+          final prefs = await SharedPreferences.getInstance();
+          await UserModeService.setOnboardingDone(prefs);
+          // Clear router cache so next navigation re-evaluates
+          AppRouter.clearLocationCache();
+          if (context.mounted) context.go(AppRouter.entry);
+        }
       },
-      child: CustomScrollView(
-        slivers: [
-          // ── Header ─────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppConstants.screenPaddingH,
-                AppConstants.spaceXXL,
-                AppConstants.screenPaddingH,
-                AppConstants.spaceXXL,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Step indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppConstants.spaceM,
-                      vertical:   AppConstants.spaceXXS + 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color:        AppColors.accentDim,
-                      borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-                    ),
-                    child: Text(
-                      'إعداد الملف الشخصي',
-                      style: AppTextStyles.labelSmall.copyWith(
-                        color:      AppColors.accent,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppConstants.spaceM),
-                  Text('أخبرنا عن\nnفسك 🙋',
-                      style: AppTextStyles.displayMedium.copyWith(height: 1.25)),
-                  const SizedBox(height: AppConstants.spaceS),
-                  Text('لنحسب أهدافك اليومية بدقة',
-                      style: AppTextStyles.bodyMedium),
-                ],
-              ),
-            ),
-          ),
-
-          // ── Fields ─────────────────────────────────────────
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.screenPaddingH),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                // Name
-                _SectionLabel('الاسم'),
-                const SizedBox(height: AppConstants.spaceS),
-                _SetupField(
-                  controller:    _nameCtrl,
-                  hint:          'اسمك',
-                  textDirection: TextDirection.rtl,
-                  onChanged:     (_) => setState(() {}),
+      child: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppConstants.screenPaddingH, AppConstants.spaceXXL,
+                  AppConstants.screenPaddingH, AppConstants.spaceXXL,
                 ),
-                const SizedBox(height: AppConstants.spaceXL),
-
-                // Age + Height row
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionLabel('العمر'),
-                          const SizedBox(height: AppConstants.spaceS),
-                          _SetupField(
-                            controller:  _ageCtrl,
-                            hint:        '25',
-                            suffix:      'سنة',
-                            keyboardType: TextInputType.number,
-                            onChanged:   (_) => setState(() {}),
-                            errorText: _ageCtrl.text.isEmpty
-                                ? null
-                                : _ageError(),
-                          ),
-                        ],
+                    Row(children: [
+                      PPLogo(size: 28),
+                      const SizedBox(width: AppConstants.spaceS),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color:        _kAccentDim,
+                          borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                        ),
+                        child: Text('إعداد الملف الشخصي',
+                          style: AppTextStyles.labelSmall.copyWith(color: _kAccent)),
                       ),
-                    ),
-                    const SizedBox(width: AppConstants.spaceM),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionLabel('الطول'),
-                          const SizedBox(height: AppConstants.spaceS),
-                          _SetupField(
-                            controller:  _heightCtrl,
-                            hint:        '175',
-                            suffix:      'سم',
-                            keyboardType: TextInputType.number,
-                            onChanged:   (_) => setState(() {}),
-                            errorText: _heightCtrl.text.isEmpty
-                                ? null
-                                : _heightError(),
-                          ),
-                        ],
-                      ),
-                    ),
+                    ]),
+                    const SizedBox(height: AppConstants.spaceL),
+                    const Text('أخبرنا\nعن نفسك',
+                      style: TextStyle(
+                        fontFamily: 'Cairo', fontSize: 32, fontWeight: FontWeight.w900,
+                        color: _kTextHigh, height: 1.15, letterSpacing: -0.5,
+                      )),
+                    const SizedBox(height: AppConstants.spaceS),
+                    Text('لنحسب أهدافك اليومية بدقة',
+                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
+                          color: _kTextMid, height: 1.5)),
                   ],
                 ),
-                const SizedBox(height: AppConstants.spaceXL),
+              ),
+            ),
+
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: AppConstants.screenPaddingH),
+              sliver: SliverList(delegate: SliverChildListDelegate([
+
+                // Name
+                _Label('الاسم'),
+                const SizedBox(height: AppConstants.spaceS),
+                _Field(controller: _nameCtrl, hint: 'اسمك الكريم',
+                    textDirection: TextDirection.rtl,
+                    onChanged: (_) => setState(() {})),
+                const SizedBox(height: AppConstants.spaceXXL),
+
+                // Age + Height
+                Row(children: [
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    _Label('العمر'),
+                    const SizedBox(height: AppConstants.spaceS),
+                    _Field(controller: _ageCtrl, hint: '25', suffix: 'سنة',
+                        keyboardType: TextInputType.number,
+                        onChanged: (_) => setState(() {}),
+                        errorText: _ageCtrl.text.isEmpty ? null : _ageError()),
+                  ])),
+                  const SizedBox(width: AppConstants.spaceM),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    _Label('الطول'),
+                    const SizedBox(height: AppConstants.spaceS),
+                    _Field(controller: _heightCtrl, hint: '175', suffix: 'سم',
+                        keyboardType: TextInputType.number,
+                        onChanged: (_) => setState(() {}),
+                        errorText: _heightCtrl.text.isEmpty ? null : _heightError()),
+                  ])),
+                ]),
+                const SizedBox(height: AppConstants.spaceXXL),
 
                 // Weight
-                _SectionLabel('الوزن'),
+                _Label('الوزن'),
                 const SizedBox(height: AppConstants.spaceS),
-                _SetupField(
-                  controller:  _weightCtrl,
-                  hint:        '75.0',
-                  suffix:      'كجم',
-                  keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true),
-                  onChanged: (_) => setState(() {}),
-                  errorText: _weightCtrl.text.isEmpty
-                      ? null
-                      : _weightError(),
-                ),
+                _Field(controller: _weightCtrl, hint: '70.0', suffix: 'كجم',
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (_) => setState(() {}),
+                    errorText: _weightCtrl.text.isEmpty ? null : _weightError()),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Gender
-                _SectionLabel('الجنس'),
+                _Label('الجنس'),
                 const SizedBox(height: AppConstants.spaceM),
-                _SegmentRow<Gender>(
-                  values:   Gender.values,
-                  selected: _gender,
-                  label:    (g) => g.labelAr,
+                _DarkSegment<Gender>(
+                  values: Gender.values, selected: _gender,
+                  label: (g) => g.labelAr,
                   onSelect: (g) => setState(() => _gender = g),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
-                // Divider
-                const Divider(color: AppColors.borderSubtle),
+                _Divider(),
                 const SizedBox(height: AppConstants.spaceXL),
 
                 // Goal
-                _SectionLabel('هدفك'),
+                _Label('هدفك من التمرين'),
                 const SizedBox(height: AppConstants.spaceM),
                 ...FitnessGoal.values.map((g) => Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: AppConstants.spaceS),
-                      child: _OptionTile(
-                        label:    g.labelAr,
-                        icon:     _goalIcon(g),
-                        selected: _goal == g,
-                        onTap:    () => setState(() => _goal = g),
-                      ),
-                    )),
+                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
+                  child: _DarkOptionTile(
+                    label: g.labelAr, icon: _goalIcon(g),
+                    accent: _kAccent,
+                    selected: _goal == g,
+                    onTap: () => setState(() => _goal = g),
+                  ),
+                )),
                 const SizedBox(height: AppConstants.spaceXL),
 
-                // Divider
-                const Divider(color: AppColors.borderSubtle),
+                _Divider(),
                 const SizedBox(height: AppConstants.spaceXL),
 
                 // Activity
-                _SectionLabel('مستوى النشاط'),
+                _Label('مستوى نشاطك'),
                 const SizedBox(height: AppConstants.spaceM),
                 ...ActivityLevel.values.map((a) => Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: AppConstants.spaceS),
-                      child: _OptionTile(
-                        label:    a.labelAr,
-                        icon:     _activityIcon(a),
-                        selected: _activity == a,
-                        onTap:    () => setState(() => _activity = a),
-                      ),
-                    )),
+                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
+                  child: _DarkOptionTile(
+                    label: a.labelAr, icon: _activityIcon(a),
+                    accent: _kGreen2,
+                    selected: _activity == a,
+                    onTap: () => setState(() => _activity = a),
+                  ),
+                )),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Submit
                 BlocBuilder<ProfileSaveCubit, ProfileSaveState>(
-                  builder: (context, state) => PPButton(
-                    label:      'ابدأ رحلتك 🚀',
-                    isLoading:  state is ProfileSaveLoading,
-                    isDisabled: !_isValid,
-                    onPressed: _isValid
-                        ? () => context
-                            .read<ProfileSaveCubit>()
-                            .save(_profile)
-                        : null,
+                  builder: (ctx, st) => _DarkButton(
+                    label:    'ابدأ رحلتك ⚡',
+                    onTap:    _isValid ? () => ctx.read<ProfileSaveCubit>().save(_profile) : null,
+                    accent:   _kAccent,
+                    loading:  st is ProfileSaveLoading,
+                    disabled: !_isValid,
                   ),
                 ),
                 const SizedBox(height: AppConstants.space3XL),
-              ]),
+              ])),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   IconData _goalIcon(FitnessGoal g) => switch (g) {
-        FitnessGoal.lose     => Icons.trending_down_rounded,
-        FitnessGoal.gain     => Icons.trending_up_rounded,
-        FitnessGoal.maintain => Icons.balance_rounded,
-        _                    => Icons.flag_rounded,
-      };
-
+    FitnessGoal.lose     => Icons.trending_down_rounded,
+    FitnessGoal.gain     => Icons.trending_up_rounded,
+    FitnessGoal.maintain => Icons.balance_rounded,
+    _                    => Icons.flag_rounded,
+  };
   IconData _activityIcon(ActivityLevel a) => switch (a) {
-        ActivityLevel.sedentary   => Icons.chair_rounded,
-        ActivityLevel.light       => Icons.directions_walk_rounded,
-        ActivityLevel.moderate    => Icons.directions_bike_rounded,
-        ActivityLevel.active      => Icons.directions_run_rounded,
-        ActivityLevel.veryActive  => Icons.sports_gymnastics_rounded,
-        _                         => Icons.fitness_center_rounded,
-      };
+    ActivityLevel.sedentary  => Icons.chair_rounded,
+    ActivityLevel.light      => Icons.directions_walk_rounded,
+    ActivityLevel.moderate   => Icons.directions_bike_rounded,
+    ActivityLevel.active     => Icons.directions_run_rounded,
+    ActivityLevel.veryActive => Icons.sports_gymnastics_rounded,
+    _                        => Icons.fitness_center_rounded,
+  };
 }
 
-// ─── Section Label ────────────────────────────────────────────────────────────
+// ─── Shared dark-screen widgets ───────────────────────────────────────────────
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text);
+class _Label extends StatelessWidget {
+  const _Label(this.text);
   final String text;
-
   @override
-  Widget build(BuildContext context) => Text(
-        text,
-        style: AppTextStyles.titleSmall.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      );
+  Widget build(BuildContext context) => Text(text,
+    style: const TextStyle(fontFamily: 'Cairo', fontSize: 12,
+        fontWeight: FontWeight.w600, color: _kTextMid, letterSpacing: 0.3));
 }
 
-// ─── Setup Text Field ─────────────────────────────────────────────────────────
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+      const Divider(color: _kBorder, thickness: 1);
+}
 
-class _SetupField extends StatelessWidget {
-  const _SetupField({
-    required this.controller,
-    required this.hint,
-    this.suffix,
-    this.keyboardType,
+class _Field extends StatelessWidget {
+  const _Field({
+    required this.controller, required this.hint,
+    this.suffix, this.keyboardType,
     this.textDirection = TextDirection.ltr,
-    required this.onChanged,
-    this.errorText,
+    required this.onChanged, this.errorText,
   });
-
   final TextEditingController controller;
-  final String                hint;
-  final String?               suffix;
-  final TextInputType?        keyboardType;
-  final TextDirection         textDirection;
-  final ValueChanged<String>  onChanged;
-  /// Arabic error message shown below the field; null means no error.
-  final String?               errorText;
+  final String hint;
+  final String? suffix;
+  final TextInputType? keyboardType;
+  final TextDirection textDirection;
+  final ValueChanged<String> onChanged;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller:    controller,
-      keyboardType:  keyboardType,
-      textDirection: textDirection,
-      onChanged:     onChanged,
-      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+      controller: controller, keyboardType: keyboardType,
+      textDirection: textDirection, onChanged: onChanged,
+      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14,
+          color: _kTextHigh, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
-        hintText:    hint,
-        hintStyle:   AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-        suffixText:  suffix,
-        suffixStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
-        errorText:   errorText,
-        errorStyle:  AppTextStyles.bodySmall.copyWith(
-          color: AppColors.danger,
-          fontFamily: 'Cairo',
-        ),
-        filled:      true,
-        fillColor:   AppColors.bgSurface,
+        hintText: hint,
+        hintStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 14, color: _kTextLow),
+        suffixText: suffix,
+        suffixStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 12, color: _kTextMid),
+        errorText: errorText,
+        errorStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 11, color: _kDanger),
+        filled: true, fillColor: _kSurface,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.spaceL,
-          vertical:   AppConstants.spaceM,
-        ),
+            horizontal: AppConstants.spaceL, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
+          borderSide: const BorderSide(color: _kBorder),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
+          borderSide: const BorderSide(color: _kBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+          borderSide: const BorderSide(color: _kAccent, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger),
+          borderSide: const BorderSide(color: _kDanger),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
+          borderSide: const BorderSide(color: _kDanger, width: 1.5),
         ),
       ),
     );
   }
 }
 
-// ─── Segment Row ─────────────────────────────────────────────────────────────
-
-class _SegmentRow<T> extends StatelessWidget {
-  const _SegmentRow({
-    required this.values,
-    required this.selected,
-    required this.label,
-    required this.onSelect,
+class _DarkSegment<T> extends StatelessWidget {
+  const _DarkSegment({
+    required this.values, required this.selected,
+    required this.label, required this.onSelect,
   });
-
-  final List<T>            values;
-  final T                  selected;
+  final List<T> values;
+  final T selected;
   final String Function(T) label;
-  final ValueChanged<T>    onSelect;
+  final ValueChanged<T> onSelect;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color:        AppColors.bgElevated,
-        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        color: _kSurface, borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        border: Border.all(color: _kBorder),
       ),
-      child: Row(
-        children: values.map((v) {
-          final active = v == selected;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onSelect(v),
-              child: AnimatedContainer(
-                duration: AppConstants.durationFast,
-                padding: const EdgeInsets.symmetric(
-                    vertical: AppConstants.spaceS),
-                decoration: BoxDecoration(
-                  color: active ? AppColors.accent : Colors.transparent,
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.radiusS),
-                ),
-                child: Text(
-                  label(v),
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.labelMedium.copyWith(
-                    color: active
-                        ? AppColors.textOnAccent
-                        : AppColors.textMuted,
-                  ),
-                ),
-              ),
+      child: Row(children: values.map((v) {
+        final active = v == selected;
+        return Expanded(child: GestureDetector(
+          onTap: () => onSelect(v),
+          child: AnimatedContainer(
+            duration: AppConstants.durationFast,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: active ? _kAccent : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppConstants.radiusS),
             ),
-          );
-        }).toList(),
-      ),
+            child: Text(label(v), textAlign: TextAlign.center,
+              style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: active ? const Color(0xFF0F0F0F) : _kTextMid)),
+          ),
+        ));
+      }).toList()),
     );
   }
 }
 
-// ─── Option Tile ─────────────────────────────────────────────────────────────
-
-class _OptionTile extends StatelessWidget {
-  const _OptionTile({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
+class _DarkOptionTile extends StatelessWidget {
+  const _DarkOptionTile({
+    required this.label, required this.icon,
+    required this.accent, required this.selected, required this.onTap,
   });
-
-  final String       label;
-  final IconData     icon;
-  final bool         selected;
+  final String label;
+  final IconData icon;
+  final Color accent;
+  final bool selected;
   final VoidCallback onTap;
 
   @override
@@ -729,51 +699,71 @@ class _OptionTile extends StatelessWidget {
       child: AnimatedContainer(
         duration: AppConstants.durationFast,
         padding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.spaceL,
-          vertical:   AppConstants.spaceM + 2,
-        ),
+            horizontal: AppConstants.spaceL, vertical: AppConstants.spaceM),
         decoration: BoxDecoration(
-          color: selected ? AppColors.accentDim : AppColors.bgSurface,
+          color:        selected ? accent.withOpacity(0.1) : _kSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
           border: Border.all(
-            color: selected ? AppColors.accent : AppColors.borderSubtle,
+            color: selected ? accent : _kBorder,
             width: selected ? 1.5 : 1,
           ),
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: selected
-                    ? AppColors.accent.withOpacity(0.15)
-                    : AppColors.bgElevated,
-                borderRadius: BorderRadius.circular(AppConstants.radiusS),
-              ),
-              child: Icon(
-                icon,
-                size:  AppConstants.iconS,
-                color: selected ? AppColors.accent : AppColors.textMuted,
-              ),
+        child: Row(children: [
+          Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(
+              color: selected ? accent.withOpacity(0.15) : _kSurface2,
+              borderRadius: BorderRadius.circular(AppConstants.radiusS),
             ),
-            const SizedBox(width: AppConstants.spaceM),
-            Expanded(
-              child: Text(
-                label,
-                style: AppTextStyles.titleMedium.copyWith(
-                  color: selected
-                      ? AppColors.accent
-                      : AppColors.textPrimary,
-                ),
-              ),
-            ),
-            if (selected)
-              const Icon(Icons.check_circle_rounded,
-                  color: AppColors.accent,
-                  size:  AppConstants.iconS),
-          ],
+            child: Icon(icon, size: 18, color: selected ? accent : _kTextMid),
+          ),
+          const SizedBox(width: AppConstants.spaceM),
+          Expanded(child: Text(label,
+            style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: selected ? accent : _kTextHigh))),
+          if (selected)
+            Icon(Icons.check_circle_rounded, color: accent, size: 18),
+        ]),
+      ),
+    );
+  }
+}
+
+class _DarkButton extends StatelessWidget {
+  const _DarkButton({
+    required this.label, required this.onTap, required this.accent,
+    this.loading = false, this.disabled = false,
+  });
+  final String label;
+  final VoidCallback? onTap;
+  final Color accent;
+  final bool loading;
+  final bool disabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = !disabled && !loading && onTap != null;
+    return GestureDetector(
+      onTap: active ? onTap : null,
+      child: AnimatedContainer(
+        duration: AppConstants.durationFast,
+        height: AppConstants.buttonHeightLarge,
+        decoration: BoxDecoration(
+          color:        active ? accent : _kSurface,
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          border: Border.all(color: active ? Colors.transparent : _kBorder),
         ),
+        child: Center(child: loading
+            ? SizedBox(
+                width: 20, height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2, color: active ? const Color(0xFF0F0F0F) : _kTextMid),
+              )
+            : Text(label,
+                style: TextStyle(fontFamily: 'Cairo', fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: active ? const Color(0xFF0F0F0F) : _kTextLow))),
       ),
     );
   }

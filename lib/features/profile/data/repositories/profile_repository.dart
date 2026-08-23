@@ -28,10 +28,7 @@ final class ProfileRepositoryImpl implements ProfileRepository {
   });
 
   final ProfileLocalService localService;
-  // Injected so that saving a profile also syncs the derived calorie goal
-  // into the Nutrition feature's SharedPreferences key, keeping both screens
-  // consistent without duplicating BMR/TDEE logic.
-  final NutritionLocalService nutritionService;
+final NutritionLocalService nutritionService;
   final SharedPreferences prefs;
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
@@ -60,15 +57,8 @@ final class ProfileRepositoryImpl implements ProfileRepository {
     try {
       await localService.saveProfile(profile);
 
-      // ─── Sync derived calorie goal to Nutrition feature ─────────────────
-      // profile.dailyCalorieGoal is calculated from BMR/TDEE using the user's
-      // actual weight, height, age, gender, activity level, and fitness goal.
-      // NutritionLocalService stores its own `calorie_goal` key which the
-      // Nutrition screen reads — without this sync the two values diverge.
-      // Fire-and-forget: a failure here must not block the profile save.
-      nutritionService.saveCalorieGoal(profile.dailyCalorieGoal).catchError((_) {});
+   nutritionService.saveCalorieGoal(profile.dailyCalorieGoal).catchError((_) {});
 
-      // ─── Cloud sync (fire-and-forget, never blocks local success) ──────
       CloudSyncService.syncKey(prefs, auth, firestore, 'user_profile');
 
       return const Success(null);

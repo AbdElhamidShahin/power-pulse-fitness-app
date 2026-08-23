@@ -1,5 +1,3 @@
-/// UserProfile Entity — Domain Layer
-/// Pure Dart — Zero Flutter imports
 
 enum FitnessGoal {
   loseFat,
@@ -139,7 +137,6 @@ final class UserProfile {
       );
 }
 
-/// Default profile للمستخدم الجديد
 const kDefaultProfile = UserProfile(
   name: 'المستخدم',
   email: '',

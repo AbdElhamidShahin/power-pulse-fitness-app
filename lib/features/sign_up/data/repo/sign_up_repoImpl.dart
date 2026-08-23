@@ -10,7 +10,6 @@ final class SignUpRepositoryImpl implements SignUpRepository {
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
 
-// ... inside SignUpRepositoryImpl
   @override
   Future<SignUpResult> signUp({
     required String email,
@@ -30,7 +29,6 @@ final class SignUpRepositoryImpl implements SignUpRepository {
       );
     }
 
-    // Update display name
     await user.updateDisplayName(name);
 
     return SignUpResult(
@@ -43,7 +41,6 @@ final class SignUpRepositoryImpl implements SignUpRepository {
   }
   @override
   Future<SignUpResult> signInWithGoogle() async {
-    // Trigger the Google Sign In flow
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
       throw FirebaseAuthException(
@@ -52,16 +49,13 @@ final class SignUpRepositoryImpl implements SignUpRepository {
       );
     }
 
-    // Obtain the auth details
     final googleAuth = await googleUser.authentication;
 
-    // Create a new Firebase credential
     final oauthCredential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    // Sign in to Firebase
     final userCredential = await _auth.signInWithCredential(oauthCredential);
     final user = userCredential.user;
 

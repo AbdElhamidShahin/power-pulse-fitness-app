@@ -15,7 +15,6 @@ import '../../logic/cubit/settings_cubit.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_items.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -33,14 +32,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, // لضمان صحة الاتجاهات عربيًا
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: const Color(0xFFF6F6F4),
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) => switch (state) {
             ProfileInitial() || ProfileLoading() => const Center(
-              child: CircularProgressIndicator(color: Color(0xFFA3E635)),
-            ),
+                child: CircularProgressIndicator(color: Color(0xFFA3E635)),
+              ),
             ProfileError(:final message) => Center(child: Text(message)),
             ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
           },
@@ -66,7 +65,6 @@ class _ProfileContentState extends State<_ProfileContent> {
 
     return CustomScrollView(
       slivers: [
-        // ─── Header ──────────────────────────────────────────
         SliverToBoxAdapter(
           child: ProfileHeader(profile: profile),
         ),
@@ -155,8 +153,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: const Color(0xFFF59E0B),
                         label: 'الإشعارات',
                         value: settings.notificationsEnabled,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleNotifications(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleNotifications(val),
                       ),
                       const ProfileDivider(),
                       ProfileToggleRow(
@@ -164,8 +163,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: const Color(0xFF6366F1),
                         label: 'الوضع الليلي',
                         value: settings.isDarkMode,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleDarkMode(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleDarkMode(val),
                       ),
                       const ProfileDivider(),
                       ProfileToggleRow(
@@ -173,8 +173,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: const Color(0xFF10B981),
                         label: 'الوحدات (كجم/سم)',
                         value: settings.isMetricUnits,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleMetricUnits(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleMetricUnits(val),
                       ),
                       const ProfileDivider(),
                       ProfileInfoRow(
@@ -194,7 +195,6 @@ class _ProfileContentState extends State<_ProfileContent> {
 
         SliverToBoxAdapter(child: SizedBox(height: 20.h)),
 
-        // ─── إعدادات الإشعارات التفصيلية ────────────────────────
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: const SliverToBoxAdapter(
@@ -204,11 +204,11 @@ class _ProfileContentState extends State<_ProfileContent> {
 
         SliverToBoxAdapter(child: SizedBox(height: 20.h)),
 
-        // ─── زر تسجيل الدخول للضيف ──────────────────────────────
         FutureBuilder<bool>(
           future: _isGuest(),
           builder: (context, snap) {
-            if (snap.data != true) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            if (snap.data != true)
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
             return SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               sliver: SliverToBoxAdapter(
@@ -218,7 +218,8 @@ class _ProfileContentState extends State<_ProfileContent> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFECFCCC),
                     borderRadius: BorderRadius.circular(14.r),
-                    border: Border.all(color: const Color(0xFFA3E635).withOpacity(0.4)),
+                    border: Border.all(
+                        color: const Color(0xFFA3E635).withOpacity(0.4)),
                   ),
                   child: Row(
                     children: [
@@ -264,7 +265,6 @@ class _ProfileContentState extends State<_ProfileContent> {
           },
         ),
 
-        // ─── تسجيل الخروج ──────────────────────────────────────
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: SliverToBoxAdapter(
@@ -318,35 +318,37 @@ class _ProfileContentState extends State<_ProfileContent> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.all(24),
+      builder: (_) => const Padding(
+        padding: EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('الخصوصية والبيانات',
+            Text('الخصوصية والبيانات',
                 style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 18,
-                    fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
-            const SizedBox(height: 16),
+                    fontFamily: 'Cairo',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.textPrimary)),
+            SizedBox(height: 16),
             _PrivacyItem(
               icon: Icons.phone_android_rounded,
               title: 'البيانات محفوظة محلياً',
               desc: 'كل بياناتك محفوظة على جهازك فقط ولا تُرسل لأي خادم',
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             _PrivacyItem(
               icon: Icons.block_rounded,
               title: 'لا إعلانات',
               desc: 'التطبيق خالي من الإعلانات وتتبع البيانات',
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             _PrivacyItem(
               icon: Icons.delete_forever_rounded,
               title: 'حذف البيانات',
               desc: 'يمكنك حذف كل بياناتك من خلال تسجيل الخروج',
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
           ],
         ),
       ),
@@ -359,7 +361,8 @@ class _ProfileContentState extends State<_ProfileContent> {
       builder: (_) => AlertDialog(
         title: const Text('تسجيل الخروج',
             style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
-        content: const Text('هل أنت متأكد؟ ستستمر بياناتك محفوظة على السحابة ويمكنك تسجيل الدخول مجددًا لاستعادتها.',
+        content: const Text(
+            'هل أنت متأكد؟ ستستمر بياناتك محفوظة على السحابة ويمكنك تسجيل الدخول مجددًا لاستعادتها.',
             style: TextStyle(fontFamily: 'Cairo')),
         actions: [
           TextButton(
@@ -371,16 +374,13 @@ class _ProfileContentState extends State<_ProfileContent> {
             onPressed: () async {
               Navigator.pop(context);
               await context.read<AppSettingsCubit>().logout();
-              // Clear the router cache so the next redirect re-evaluates auth state
-              // (stale 'home' result would otherwise bypass the entry screen check).
               AppRouter.clearLocationCache();
-              // After logout → switch to guest mode → go to home
-              // (user can still use the app as a guest; can sign in again from profile)
-              if (context.mounted) context.go(AppRouter.home);
+           if (context.mounted) context.go(AppRouter.home);
             },
             child: const Text('تسجيل الخروج',
                 style: TextStyle(
-                    fontFamily: 'Cairo', color: Color(0xFFEF4444),
+                    fontFamily: 'Cairo',
+                    color: Color(0xFFEF4444),
                     fontWeight: FontWeight.bold)),
           ),
         ],
@@ -388,6 +388,7 @@ class _ProfileContentState extends State<_ProfileContent> {
     );
   }
 }
+
 class _PrivacyItem extends StatelessWidget {
   const _PrivacyItem({
     required this.icon,
@@ -404,7 +405,8 @@ class _PrivacyItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 36, height: 36,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             color: AppColors.accentDim,
             borderRadius: BorderRadius.circular(10),
@@ -418,14 +420,16 @@ class _PrivacyItem extends StatelessWidget {
             children: [
               Text(title,
                   style: const TextStyle(
-                    fontFamily: 'Cairo', fontSize: 13,
+                    fontFamily: 'Cairo',
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
                   )),
               const SizedBox(height: 2),
               Text(desc,
                   style: const TextStyle(
-                    fontFamily: 'Cairo', fontSize: 12,
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
                     color: AppColors.textMuted,
                   )),
             ],

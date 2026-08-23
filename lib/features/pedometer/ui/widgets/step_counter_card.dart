@@ -22,7 +22,6 @@ class StepCounterCard extends StatelessWidget {
   }
 }
 
-// ─── Counting Card ────────────────────────────────────────────────────
 class _CountingCard extends StatelessWidget {
   const _CountingCard({required this.state});
   final PedometerCounting state;
@@ -82,7 +81,6 @@ class _CountingCard extends StatelessWidget {
           ),
           SizedBox(height: 10.h),
 
-          // ── Steps + Progress ─────────────────────────────────
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -112,7 +110,6 @@ class _CountingCard extends StatelessWidget {
           ),
           SizedBox(height: 10.h),
 
-          // ── Progress Bar ─────────────────────────────────────
           ClipRRect(
             borderRadius: BorderRadius.circular(6.r),
             child: LinearProgressIndicator(
@@ -126,7 +123,6 @@ class _CountingCard extends StatelessWidget {
           ),
           SizedBox(height: 6.h),
 
-          // ── كم باقي ─────────────────────────────────────────
           Text(
             reached
                 ? '🎉 تجاوزت هدفك اليومي!'
@@ -169,7 +165,6 @@ class _LoadingCard extends StatelessWidget {
   }
 }
 
-// ─── Unavailable ──────────────────────────────────────────────────────
 class _UnavailableCard extends StatelessWidget {
   const _UnavailableCard();
 

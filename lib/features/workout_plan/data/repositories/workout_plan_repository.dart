@@ -43,8 +43,6 @@ final class WorkoutPlanRepositoryImpl implements WorkoutPlanRepository {
   Future<ApiResult<void>> savePlan(WorkoutPlan plan) async {
     try {
       await _service.savePlan(plan);
-
-      // ─── Cloud sync ────────────────────────────────────────────────────────
       CloudSyncService.syncKey(_prefs, _auth, _firestore, 'workout_plan');
 
       return const Success(null);
@@ -60,10 +58,7 @@ final class WorkoutPlanRepositoryImpl implements WorkoutPlanRepository {
     try {
       await _service.deletePlan();
 
-      // After deleting locally, update cloud to reflect the deletion.
-      // syncKey will find the key absent and no-op safely, so we explicitly
-      // remove the field from Firestore by setting it to null via merge.
-      _syncDeletedPlan();
+  _syncDeletedPlan();
 
       return const Success(null);
     } on CacheException catch (e) {

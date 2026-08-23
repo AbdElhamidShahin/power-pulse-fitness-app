@@ -32,11 +32,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   final SearchExercisesUseCase _searchExercises;
   final GetExercisesUseCase _getExercises;
 
-  // ─── Load ──────────────────────────────────────────────────
-  // Checks for an interrupted session saved before the app was killed.
-  // If found, emits WorkoutLoggerActive so the UI can offer resume/discard.
-  // If nothing is found, emits WorkoutLoggerIdle (new session flow).
-  Future<void> load() async {
+ Future<void> load() async {
     emit(const WorkoutLoggerLoading());
     final result = await _getActive();
     if (result.isSuccess && result.dataOrNull != null) {
@@ -46,9 +42,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     }
   }
 
-  // ─── Start ─────────────────────────────────────────────────
   Future<void> startSession(String name, {PlanDay? planDay}) async {
-    // لو عندنا خطة — نحوّل تمارين اليوم لـ SessionExercise تلقائياً
     final exercises = planDay != null
         ? planDay.exercises
             .map((pe) => SessionExercise(
@@ -75,7 +69,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     emit(WorkoutLoggerActive(session));
   }
 
-  // ─── Add / Remove Exercise ─────────────────────────────────
   void addExercise(SessionExercise exercise) {
     final current = _active;
     if (current == null) return;
@@ -92,7 +85,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     ));
   }
 
-  // ─── Update / Add / Remove Set ─────────────────────────────
   void updateSet({
     required String exerciseId,
     required int setIndex,
@@ -152,7 +144,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     _updateActive(current.copyWith(exercises: exercises));
   }
 
-  // ─── Mark Exercise Done ────────────────────────────────────
   Future<void> markExerciseDone(String exerciseId) async {
     final current = _active;
     if (current == null) return;
@@ -171,7 +162,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     await _updateActive(current.copyWith(exercises: exercises));
   }
 
-  // ─── Finish ────────────────────────────────────────────────
   Future<void> finishSession() async {
     final current = _active;
     if (current == null) return;
@@ -183,7 +173,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
 
     await _save(finished);
 
-    // سجّل في Progress feature
     await _logWorkout(WorkoutLog(
       id: finished.id,
       name: finished.name,
@@ -196,7 +185,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     emit(WorkoutLoggerFinished(finished));
   }
 
-  // ─── Cancel / Reset ────────────────────────────────────────
   Future<void> cancelSession() async {
     final current = _active;
     if (current != null) await _delete(current.id);
@@ -205,10 +193,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
 
   void reset() => emit(const WorkoutLoggerIdle());
 
-  // ─── Exercise Library ──────────────────────────────────────
-
-  /// جلب كل التمارين للعرض في الـ sheet
-  Future<List<Exercise>> browseExercises() async {
+Future<List<Exercise>> browseExercises() async {
     final result = await _getExercises(limit: 300, offset: 0);
     return result.fold(
       onFailure: (_) => [],
@@ -216,7 +201,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     );
   }
 
-  /// بحث في مكتبة التمارين
   Future<List<Exercise>> searchLibrary(String query) async {
     if (query.trim().isEmpty) return browseExercises();
     final result = await _searchExercises(query.trim());
@@ -226,7 +210,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     );
   }
 
-  // ─── Helpers ───────────────────────────────────────────────
   WorkoutSession? get _active => state is WorkoutLoggerActive
       ? (state as WorkoutLoggerActive).session
       : null;

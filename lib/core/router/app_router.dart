@@ -54,25 +54,8 @@ abstract class AppRouter {
   static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
   static const String workoutPlan   = '/workout-plan';
+ static String? _cachedLocation;
 
-  // ─── Startup routing logic ───────────────────────────────────────────────
-  //
-  // Flow 5: On every app launch:
-  //   1. Check Firebase Auth state.
-  //   2. If authenticated → restore Firestore data → home (authenticated mode).
-  //   3. If not authenticated:
-  //      a. If mode == guest → home (guest mode, local data).
-  //      b. If mode == none  → entry choice screen (first launch).
-  //
-  // _cachedLocation stores the result after the first evaluation so that
-  // subsequent navigations (tab switches, screen pushes/pops) do NOT re-run
-  // the SharedPreferences read and Firestore restore on every event.
-  // Call clearLocationCache() on any auth state change so the next navigation
-  // re-evaluates correctly.
-  static String? _cachedLocation;
-
-  /// Clears the routing cache. Call after login, signup, or logout so the
-  /// next navigation re-evaluates the auth state instead of returning a stale result.
   static void clearLocationCache() => _cachedLocation = null;
 
   static Future<String> _initialLocation() async {
@@ -80,26 +63,21 @@ abstract class AppRouter {
 
     final prefs = await SharedPreferences.getInstance();
 
-    // Check Firebase Auth — currentUser is non-null when a session is active.
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
-      // Authenticated — refresh local cache from Firestore.
-      // Failure (network offline) is silent; local cache acts as fallback.
-      try {
+    try {
         await GuestMigrationService.restoreCloudDataToLocal(
           prefs: prefs,
           firestore: FirebaseFirestore.instance,
           uid: currentUser.uid,
         );
       } catch (e) {
-        // Network failure → continue with local cache
       }
       await UserModeService.setAuthenticated(prefs);
       _cachedLocation = home;
       return _cachedLocation!;
     }
 
-    // Not authenticated — check saved mode preference.
     final mode = await UserModeService.getMode(prefs);
     if (mode == UserMode.guest) {
       _cachedLocation = home;
@@ -107,12 +85,14 @@ abstract class AppRouter {
     }
 
     if (mode == UserMode.authenticated) {
-      // Mode was authenticated but Firebase session is gone (e.g. expired).
-      // Reset mode so the user sees the entry screen and can sign in again.
-      await UserModeService.clearMode(prefs);
+    await UserModeService.clearMode(prefs);
     }
 
-    _cachedLocation = entry;
+   if (UserModeService.hasCompletedOnboarding(prefs)) {
+      _cachedLocation = entry;
+    } else {
+      _cachedLocation = onboarding;
+    }
     return _cachedLocation!;
   }
 
@@ -124,13 +104,11 @@ abstract class AppRouter {
 
       final authRoutes = {login, signUp, entry};
 
-      // If no mode chosen: force entry screen (except auth routes)
-      if (initial == entry && !authRoutes.contains(path)) {
+    if (initial == entry && !authRoutes.contains(path)) {
         return entry;
       }
 
-      // If authenticated/guest and trying to access auth screens → home
-      if (initial == home && authRoutes.contains(path)) {
+     if (initial == home && authRoutes.contains(path)) {
         return home;
       }
 
@@ -139,8 +117,7 @@ abstract class AppRouter {
     debugLogDiagnostics: kDebugMode,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
-      // ─── Entry choice screen (first launch) ─────────────────
-      GoRoute(
+    GoRoute(
         path: entry,
         builder: (_, __) => const EntryChoiceScreen(),
       ),

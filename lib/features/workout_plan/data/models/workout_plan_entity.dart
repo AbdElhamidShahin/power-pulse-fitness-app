@@ -1,6 +1,3 @@
-/// Workout Plan Entities — Pure Dart, Zero Flutter
-
-// تمرين واحد داخل الخطة (اسم + عدد سيتات + رابس مقترح)
 final class PlanExercise {
   const PlanExercise({
     required this.exerciseId,
@@ -46,10 +43,9 @@ final class PlanExercise {
   );
 }
 
-// يوم واحد في الخطة — إما تمرين أو راحة
 final class PlanDay {
   const PlanDay({
-    required this.weekday, // 1=إثنين .. 7=أحد
+    required this.weekday,
     required this.isRest,
     this.name = '',
     this.exercises = const [],
@@ -57,12 +53,12 @@ final class PlanDay {
 
   final int weekday;
   final bool isRest;
-  final String name;          // مثلاً "تمرين الصدر"
+  final String name;
   final List<PlanExercise> exercises;
 
   bool get hasExercises => !isRest && exercises.isNotEmpty;
 
-  int get estimatedMinutes => exercises.length * 12; // تقدير بسيط
+  int get estimatedMinutes => exercises.length * 12;
 
   PlanDay copyWith({
     bool? isRest,
@@ -93,7 +89,6 @@ final class PlanDay {
   );
 }
 
-// الخطة كاملة — 7 أيام
 final class WorkoutPlan {
   const WorkoutPlan({
     required this.id,
@@ -102,19 +97,17 @@ final class WorkoutPlan {
   });
 
   final String id;
-  final List<PlanDay> days; // دايماً 7 عناصر (إثنين → أحد)
+  final List<PlanDay> days;
   final DateTime createdAt;
 
-  // اليوم المناسب لليوم الحالي (weekday: 1=إثنين)
   PlanDay dayFor(DateTime date) {
-    final wd = date.weekday; // dart: 1=Mon .. 7=Sun
+    final wd = date.weekday;
     return days.firstWhere(
           (d) => d.weekday == wd,
       orElse: () => PlanDay(weekday: wd, isRest: true),
     );
   }
 
-  // عدد أيام التمرين في الأسبوع
   int get activeDaysCount => days.where((d) => d.hasExercises).length;
 
   WorkoutPlan copyWith({List<PlanDay>? days}) => WorkoutPlan(
@@ -137,7 +130,6 @@ final class WorkoutPlan {
         .toList(),
   );
 
-  // خطة فارغة — كل الأيام راحة كنقطة بداية
   static WorkoutPlan empty() => WorkoutPlan(
     id: DateTime.now().millisecondsSinceEpoch.toString(),
     createdAt: DateTime.now(),
@@ -148,5 +140,4 @@ final class WorkoutPlan {
   );
 }
 
-// أسماء الأيام بالعربي
 const weekdayNamesAr = ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'];
