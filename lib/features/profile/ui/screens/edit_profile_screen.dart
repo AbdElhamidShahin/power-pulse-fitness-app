@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_button.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../home/logic/cubit/home_cubit.dart';
 import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
@@ -65,9 +69,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       listener: (context, state) {
         if (state is ProfileSaveSuccess) {
           context.read<ProfileCubit>().onProfileSaved(_built);
-  try {
+          // Refresh the home screen so the updated name, calorie goal, and
+          // profile-derived values appear immediately without a manual pull-to-refresh.
+          // HomeCubit is provided by ShellRoute; use try/catch in case this screen
+          // is ever opened outside the shell (e.g. from onboarding tests).
+          try {
             context.read<HomeCubit>().refresh();
           } catch (_) {
+            // HomeCubit not in scope — silently skip; home will refresh on next load.
           }
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -105,7 +114,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: Container(
                           width: 40, height: 40,
                           decoration: BoxDecoration(
-                            color: AppColors.bgElevated,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(AppConstants.radiusM),
                           ),
                           child: const Icon(Icons.arrow_back_ios_new_rounded,
@@ -129,22 +138,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     // ─── Basic Info ──────────────────────────
                     _SectionTitle('المعلومات الأساسية'),
                     const SizedBox(height: AppConstants.spaceM),
-                    _Field(label: 'الاسم', controller: _nameCtrl,
+                    _ProfileField(label: AppStrings.profileName, controller: _nameCtrl,
                         hint: 'اسمك', type: TextInputType.name),
                     const SizedBox(height: AppConstants.spaceM),
 
                     Row(children: [
-                      Expanded(child: _Field(
-                          label: 'العمر', controller: _ageCtrl,
+                      Expanded(child: _ProfileField(
+                          label: AppStrings.profileAge, controller: _ageCtrl,
                           hint: '25', type: TextInputType.number, suffix: 'سنة')),
                       const SizedBox(width: AppConstants.spaceM),
-                      Expanded(child: _Field(
-                          label: 'الطول', controller: _heightCtrl,
+                      Expanded(child: _ProfileField(
+                          label: AppStrings.profileHeight, controller: _heightCtrl,
                           hint: '175', type: TextInputType.number, suffix: 'سم')),
                     ]),
                     const SizedBox(height: AppConstants.spaceM),
 
-                    _Field(label: 'الوزن', controller: _weightCtrl,
+                    _ProfileField(label: AppStrings.profileWeight, controller: _weightCtrl,
                         hint: '75.0', type: const TextInputType.numberWithOptions(decimal: true),
                         suffix: 'كج'),
                     const SizedBox(height: AppConstants.spaceXXL),
@@ -216,8 +225,8 @@ class _SectionTitle extends StatelessWidget {
       style: Theme.of(context).textTheme.headlineSmall);
 }
 
-class _Field extends StatelessWidget {
-  const _Field({
+class _ProfileField extends StatelessWidget {
+  const _ProfileField({
     required this.label,
     required this.controller,
     required this.hint,
@@ -272,7 +281,7 @@ class _SegmentedPicker<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       child: Row(

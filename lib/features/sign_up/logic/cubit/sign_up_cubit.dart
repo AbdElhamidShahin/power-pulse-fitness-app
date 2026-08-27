@@ -20,7 +20,10 @@ final class SignUpCubit extends Cubit<SignUpState> {
   final SharedPreferences _prefs;
   final FirebaseFirestore _firestore;
 
- Future<void> signUpUser({
+  // ─── Email / Password Sign-Up ─────────────────────────────────────────────
+
+// ... inside SignUpCubit
+  Future<void> signUpUser({
     required String name,
     required String email,
     required String password,
@@ -42,7 +45,10 @@ final class SignUpCubit extends Cubit<SignUpState> {
 
       if (isClosed) return;
 
-    await _postSignUpSync(
+      // ⬇️ تم حذف/تعطيل شرط Verification المباشر
+
+      // Flow 3: new account — migrate guest data & sync profile
+      await _postSignUpSync(
         uid: result.userId,
         name: result.name,
         email: result.email,
@@ -57,6 +63,7 @@ final class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
+  // ─── Google Sign-Up ───────────────────────────────────────────────────────
 
   Future<void> signUpWithGoogle() async {
     emit(const SignUpLoading());
@@ -66,6 +73,7 @@ final class SignUpCubit extends Cubit<SignUpState> {
 
       if (isClosed) return;
 
+      // Flow 3: new account via Google — migrate guest data to Firestore
       await _postSignUpSync(
         uid: result.userId,
         name: result.name,
@@ -88,6 +96,7 @@ final class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
+  // ─── Post sign-up: migrate local guest data → Firestore ──────────────────
 
   Future<void> _postSignUpSync({
     required String uid,
@@ -95,12 +104,16 @@ final class SignUpCubit extends Cubit<SignUpState> {
     required String email,
     String? avatarUrl,
   }) async {
- await GuestMigrationService.migrateGuestDataToCloud(
+    // Flow 3: upload any local guest data to Firestore under the new UID.
+    // merge: true ensures we never accidentally overwrite data that may
+    // already exist from a previous registration on another device.
+    await GuestMigrationService.migrateGuestDataToCloud(
       prefs: _prefs,
       firestore: _firestore,
       uid: uid,
     );
 
+    // Save identity to local SharedPreferences cache
     await AuthProfileSync.saveFromAuth(
       prefs: _prefs,
       name: name,
@@ -108,9 +121,11 @@ final class SignUpCubit extends Cubit<SignUpState> {
       avatarUrl: avatarUrl,
     );
 
+    // Switch from guest mode to authenticated mode
     await UserModeService.setAuthenticated(_prefs);
   }
 
+  // ─── Error mapping ────────────────────────────────────────────────────────
 
   String _mapFirebaseError(String code) {
     switch (code) {

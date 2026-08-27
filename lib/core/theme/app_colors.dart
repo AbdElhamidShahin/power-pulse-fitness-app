@@ -57,3 +57,27 @@ abstract class AppColors {
   // ─── Extra ─────────────────────────────────────────────────
   static const Color bghighest = Color(0xFFE8E8E8);
 }
+
+// Helper extension — reads the correct color set based on current theme brightness.
+// Usage: context.colors.bgSurface
+// This avoids 50+ file changes while still supporting dark mode correctly.
+extension AppColorsContext on BuildContext {
+  _AppColorSet get colors {
+    final isDark = Theme.of(this).brightness == Brightness.dark;
+    return isDark ? const _AppColorSet._dark() : const _AppColorSet._light();
+  }
+}
+
+class _AppColorSet {
+  const _AppColorSet._light() : _dark = false;
+  const _AppColorSet._dark()  : _dark = true;
+  final bool _dark;
+
+  Color get bgDeep      => _dark ? const Color(0xFF0D0D0D) : AppColors.bgDeep;
+  Color get bgSurface   => _dark ? const Color(0xFF1A1A1A) : AppColors.bgSurface;
+  Color get bgElevated  => _dark ? const Color(0xFF242424) : AppColors.bgElevated;
+  Color get textPrimary => _dark ? const Color(0xFFF5F5F0) : AppColors.textPrimary;
+  Color get textSecondary => _dark ? const Color(0xFFB0B0B0) : AppColors.textSecondary;
+  Color get textMuted   => _dark ? const Color(0xFF6B6B6B) : AppColors.textMuted;
+  Color get borderSubtle=> _dark ? const Color(0xFF2A2A2A) : AppColors.borderSubtle;
+}

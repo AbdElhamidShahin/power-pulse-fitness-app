@@ -64,6 +64,10 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
     return _prefs.containsKey(_key);
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // JSON
+  // ─────────────────────────────────────────────────────────────
+
   Map<String, dynamic> _toJson(UserProfile profile) {
     return {
       'name': profile.name,

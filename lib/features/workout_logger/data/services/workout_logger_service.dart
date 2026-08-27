@@ -34,7 +34,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
       final raw = _prefs.getString(_activeKey);
       if (raw == null) return null;
       return WorkoutSession.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    } catch (e) {
+    } catch (e) { // ignore: returns null/empty on parse failure
       return null;
     }
   }
@@ -43,8 +43,10 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
   Future<void> saveSession(WorkoutSession session) async {
     try {
       if (session.isActive) {
+        // احفظ كـ active — لا نحتاج cloud sync للجلسات النشطة
         await _prefs.setString(_activeKey, jsonEncode(session.toJson()));
       } else {
+        // انتهت — احذف الـ active وأضفها للـ history
         await _prefs.remove(_activeKey);
         final all = await _allSessions();
         all.removeWhere((s) => s.id == session.id);
@@ -52,6 +54,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
         await _prefs.setString(
             _historyKey, jsonEncode(all.map((s) => s.toJson()).toList()));
 
+        // ─── Cloud sync for completed sessions only ──────────────────────────
         CloudSyncService.syncKey(_prefs, _auth, _firestore, _historyKey);
       }
     } catch (e) {
@@ -69,6 +72,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
       await _prefs.setString(
           _historyKey, jsonEncode(all.map((s) => s.toJson()).toList()));
 
+      // ─── Cloud sync ────────────────────────────────────────────────────────
       CloudSyncService.syncKey(_prefs, _auth, _firestore, _historyKey);
     } catch (e) {
       throw CacheException(message: 'فشل حذف الجلسة: $e');

@@ -12,16 +12,19 @@ final class WorkoutPlanLoading extends WorkoutPlanState {
   const WorkoutPlanLoading();
 }
 
+// عنده خطة محفوظة
 final class WorkoutPlanLoaded extends WorkoutPlanState {
   const WorkoutPlanLoaded(this.plan);
   final WorkoutPlan plan;
 }
 
+// بيعدّل الخطة (في شاشة الإنشاء/التعديل)
 final class WorkoutPlanEditing extends WorkoutPlanState {
   const WorkoutPlanEditing(this.draft);
   final WorkoutPlan draft;
 }
 
+// مفيش خطة بعد
 final class WorkoutPlanEmpty extends WorkoutPlanState {
   const WorkoutPlanEmpty();
 }

@@ -54,24 +54,31 @@ abstract class AppRouter {
   static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
   static const String workoutPlan   = '/workout-plan';
- static String? _cachedLocation;
+
+  // Cached after the first evaluation — avoids re-running async work on every navigation.
+  // Clear this whenever auth state changes (login, logout, signup).
+  static String? _cachedLocation;
 
   static void clearLocationCache() => _cachedLocation = null;
 
+  // Decides where to send the user on app start.
+  // Result is cached so this runs only once per session.
   static Future<String> _initialLocation() async {
     if (_cachedLocation != null) return _cachedLocation!;
 
     final prefs = await SharedPreferences.getInstance();
-
     final currentUser = FirebaseAuth.instance.currentUser;
+
     if (currentUser != null) {
-    try {
+      // Signed-in user — restore Firestore data (offline failure is silent).
+      try {
         await GuestMigrationService.restoreCloudDataToLocal(
           prefs: prefs,
           firestore: FirebaseFirestore.instance,
           uid: currentUser.uid,
         );
       } catch (e) {
+        // Continue with local cache when offline
       }
       await UserModeService.setAuthenticated(prefs);
       _cachedLocation = home;
@@ -85,14 +92,15 @@ abstract class AppRouter {
     }
 
     if (mode == UserMode.authenticated) {
-    await UserModeService.clearMode(prefs);
+      // Session expired — reset so the user can sign in again.
+      await UserModeService.clearMode(prefs);
     }
 
-   if (UserModeService.hasCompletedOnboarding(prefs)) {
-      _cachedLocation = entry;
-    } else {
-      _cachedLocation = onboarding;
-    }
+    // New install — show onboarding first, then entry (auth choice).
+    // Skip onboarding if already done (e.g. closed app at entry screen).
+    _cachedLocation = UserModeService.hasCompletedOnboarding(prefs)
+        ? entry
+        : onboarding;
     return _cachedLocation!;
   }
 
@@ -104,11 +112,13 @@ abstract class AppRouter {
 
       final authRoutes = {login, signUp, entry};
 
-    if (initial == entry && !authRoutes.contains(path)) {
+      // If no mode chosen: force entry screen (except auth routes)
+      if (initial == entry && !authRoutes.contains(path)) {
         return entry;
       }
 
-     if (initial == home && authRoutes.contains(path)) {
+      // If authenticated/guest and trying to access auth screens → home
+      if (initial == home && authRoutes.contains(path)) {
         return home;
       }
 
@@ -117,7 +127,8 @@ abstract class AppRouter {
     debugLogDiagnostics: kDebugMode,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
-    GoRoute(
+      // ─── Entry choice screen (first launch) ─────────────────
+      GoRoute(
         path: entry,
         builder: (_, __) => const EntryChoiceScreen(),
       ),

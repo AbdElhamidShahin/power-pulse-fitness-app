@@ -12,7 +12,7 @@ class CaloriesCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(16.w, 14.h, 24.w, 14.h),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(

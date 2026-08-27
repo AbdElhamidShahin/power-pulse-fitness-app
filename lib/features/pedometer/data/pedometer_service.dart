@@ -1,6 +1,8 @@
 import 'package:pedometer/pedometer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// PedometerService — يتعامل مع عداد الخطوات الـ native
+/// يحفظ نقطة البداية كل يوم عشان يحسب خطوات النهارده بس
 class PedometerService {
   PedometerService(this._prefs);
   final SharedPreferences _prefs;
@@ -9,11 +11,13 @@ class PedometerService {
   static const _keyBaseDate    = 'pedometer_base_date';
   static const _keyDailySteps  = 'pedometer_daily_steps';
 
+  /// stream خطوات اليوم فقط (بعد طرح الـ base)
   Stream<int> get dailyStepsStream async* {
     await for (final event in Pedometer.stepCountStream) {
       final today = _todayKey();
       final savedDate = _prefs.getString(_keyBaseDate);
 
+      // يوم جديد — نعيد ضبط الـ base
       if (savedDate != today) {
         await _prefs.setInt(_keyBaseSteps, event.steps);
         await _prefs.setString(_keyBaseDate, today);
@@ -28,6 +32,7 @@ class PedometerService {
     }
   }
 
+  /// الخطوات المحفوظة (للعرض بدون stream)
   int get savedDailySteps => _prefs.getInt(_keyDailySteps) ?? 0;
 
   String _todayKey() {

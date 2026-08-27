@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/auth/user_mode_service.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../core/router/app_router.dart';
 import '../../../shared/widgets/pp_logo.dart';
 
@@ -77,11 +78,11 @@ class _EntryChoiceScreenState extends State<EntryChoiceScreen>
                     const PPLogo(size: 40),
                     const SizedBox(width: AppConstants.spaceS),
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('Power Pulse',
+                      const Text(AppStrings.appName,
                         style: TextStyle(fontFamily: 'Cairo', fontSize: 17,
                           fontWeight: FontWeight.w900, color: _kTextHigh,
                           letterSpacing: 0.2)),
-                      const Text('ابدأ رحلتك الآن',
+                      const Text(AppStrings.appTagline,
                         style: TextStyle(fontFamily: 'Cairo', fontSize: 11,
                           color: _kAccent, fontWeight: FontWeight.w600)),
                     ]),
@@ -91,14 +92,14 @@ class _EntryChoiceScreenState extends State<EntryChoiceScreen>
 
                   // Headline
                   const Text(
-                    'اختر\nطريقة المتابعة',
+                    AppStrings.entryTitle,
                     style: TextStyle(fontFamily: 'Cairo', fontSize: 34,
                       fontWeight: FontWeight.w900, color: _kTextHigh,
                       height: 1.1, letterSpacing: -0.5),
                   ),
                   const SizedBox(height: AppConstants.spaceS),
                   const Text(
-                    'بياناتك اتحفظت ✓  اختر كيف تكمل',
+                    AppStrings.entryDataSaved,
                     style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
                       color: _kAccent, fontWeight: FontWeight.w600),
                   ),
@@ -109,15 +110,15 @@ class _EntryChoiceScreenState extends State<EntryChoiceScreen>
                   _EntryCard(
                     icon: Icons.cloud_done_rounded,
                     iconColor: _kAccent, iconBg: _kAccentDim,
-                    title: 'إنشاء حساب أو تسجيل الدخول',
-                    subtitle: 'احفظ بياناتك على السحابة واستعدها\nفي أي جهاز وأي وقت',
-                    buttonLabel: 'تسجيل الدخول / إنشاء حساب',
+                    title: AppStrings.entryAccountTitle,
+                    subtitle: AppStrings.entryAccountSub,
+                    buttonLabel: AppStrings.entryAccountBtn,
                     isPrimary: true,
                     onTap: () => context.go(AppRouter.login),
                     perks: const [
-                      'مزامنة تلقائية عبر الأجهزة',
-                      'نسخ احتياطي دائم للبيانات',
-                      'استعادة البيانات عند تغيير الهاتف',
+                      AppStrings.entryPerk1,
+                      AppStrings.entryPerk2,
+                      AppStrings.entryPerk3,
                     ],
                   ),
 
@@ -127,9 +128,9 @@ class _EntryChoiceScreenState extends State<EntryChoiceScreen>
                   _EntryCard(
                     icon: Icons.person_outline_rounded,
                     iconColor: _kTextMid, iconBg: _kSurface2,
-                    title: 'متابعة كضيف',
-                    subtitle: 'البيانات محفوظة على الجهاز فقط\nيمكنك إنشاء حساب لاحقاً',
-                    buttonLabel: 'متابعة بدون حساب',
+                    title: AppStrings.entryGuestTitle,
+                    subtitle: AppStrings.entryGuestSub,
+                    buttonLabel: AppStrings.entryGuestBtn,
                     isPrimary: false,
                     onTap: () => _continueAsGuest(context),
                     perks: null,
@@ -139,7 +140,7 @@ class _EntryChoiceScreenState extends State<EntryChoiceScreen>
 
                   Center(
                     child: const Text(
-                      'بالمتابعة فأنت توافق على شروط الاستخدام',
+                      AppStrings.entryTerms,
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: _kTextLow),
                     ),
                   ),
@@ -199,7 +200,7 @@ class _EntryCard extends StatelessWidget {
                 color: _kAccentDim,
                 borderRadius: BorderRadius.circular(AppConstants.radiusPill),
               ),
-              child: const Text('موصى به',
+              child: const Text(AppStrings.entryAccountBadge,
                 style: TextStyle(fontFamily: 'Cairo', fontSize: 10,
                     color: _kAccent, fontWeight: FontWeight.w700)),
             ),

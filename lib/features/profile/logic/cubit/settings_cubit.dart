@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../core/auth/guest_migration_service.dart';
 import '../../../../core/auth/user_mode_service.dart';
 import '../../../../core/notifications/notification_service.dart';
@@ -26,16 +27,20 @@ class AppSettingsCubit extends Cubit<AppSettings> {
     ));
   }
 
+  // ─── Dark Mode ────────────────────────────────────────────
   Future<void> toggleDarkMode(bool val) async {
     await _prefs.setBool(_kDark, val);
     emit(state.copyWith(isDarkMode: val));
   }
 
+  // ─── Metric Units ──────────────────────────────────────────
   Future<void> toggleMetricUnits(bool val) async {
     await _prefs.setBool(_kMetric, val);
     emit(state.copyWith(isMetricUnits: val));
   }
- static const _kNotifWorkout = 'notif_workout';
+
+  // Master notification toggle — OFF cancels everything, ON restores each enabled type.
+  static const _kNotifWorkout = 'notif_workout';
   static const _kNotifSteps   = 'notif_steps';
   static const _kNotifWater   = 'notif_water';
 
@@ -45,11 +50,15 @@ class AppSettingsCubit extends Cubit<AppSettings> {
 
     final ns = NotificationService.instance;
 
-    if (!val) {await ns.cancelAll();
+    if (!val) {
+      // Master OFF → cancel everything regardless of granular settings.
+      await ns.cancelAll();
       return;
     }
 
- final workoutEnabled = _prefs.getBool(_kNotifWorkout) ?? true;
+    // Master ON → re-schedule each type that the user had enabled.
+    // Defaults match NotificationSettingsSection initial values.
+    final workoutEnabled = _prefs.getBool(_kNotifWorkout) ?? true;
     final stepsEnabled   = _prefs.getBool(_kNotifSteps)   ?? true;
     final waterEnabled   = _prefs.getBool(_kNotifWater)   ?? false;
 
@@ -65,7 +74,15 @@ class AppSettingsCubit extends Cubit<AppSettings> {
     }
   }
 
- Future<void> logout() async {
+  // ─── Logout — Flow 6 ──────────────────────────────────────
+  //
+  // 1. Signs out from Firebase Auth.
+  // 2. Clears ALL local user-specific data so the next guest or
+  //    authenticated user cannot see the previous user's data.
+  // 3. Device-specific settings (dark mode, units, notifications) are kept.
+  // 4. Cloud (Firestore) data is NOT touched — it remains for future restores.
+  Future<void> logout() async {
+    // Snapshot device settings before clearing so we can restore them.
     final dark          = state.isDarkMode;
     final metric        = state.isMetricUnits;
     final notifications = state.notificationsEnabled;
@@ -73,11 +90,19 @@ class AppSettingsCubit extends Cubit<AppSettings> {
     try {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
+      // Firebase sign-out failure is non-fatal — continue clearing local data.
+      // This can happen offline; the session token will expire naturally.
     }
-   await UserModeService.setGuestAfterLogout(_prefs);
 
-   await GuestMigrationService.clearLocalUserData(_prefs);
+    // Switch to guest mode. Firestore data is untouched and preserved
+    // for the next login from this or another device.
+    await UserModeService.setGuestAfterLogout(_prefs);
 
+    // Clear ALL local user data (profile, workouts, progress, nutrition, etc.)
+    // Device settings are excluded inside clearLocalUserData.
+    await GuestMigrationService.clearLocalUserData(_prefs);
+
+    // Restore device-specific settings (not user data).
     await _prefs.setBool(_kDark, dark);
     await _prefs.setBool(_kMetric, metric);
     await _prefs.setBool(_kNotifications, notifications);
@@ -89,6 +114,7 @@ class AppSettingsCubit extends Cubit<AppSettings> {
     ));
   }
 
+  // ─── Helpers for UI ───────────────────────────────────────
   ThemeMode get themeMode =>
       state.isDarkMode ? ThemeMode.dark : ThemeMode.light;
 

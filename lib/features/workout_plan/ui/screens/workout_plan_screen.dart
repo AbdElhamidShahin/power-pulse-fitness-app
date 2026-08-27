@@ -20,7 +20,7 @@ class WorkoutPlanScreen extends StatefulWidget {
 }
 
 class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
-  int _selectedWeekday = DateTime.now().weekday;
+  int _selectedWeekday = DateTime.now().weekday; // اليوم الحالي مختار افتراضياً
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           appBar: AppBar(
             backgroundColor: AppColors.bgDeep,
             elevation: 0,
-            title: const Text('خطة الأسبوع', style: AppTextStyles.headlineMedium),
+            title: Text('خطة الأسبوع', style: AppTextStyles.headlineMedium),
             centerTitle: true,
             actions: [
               TextButton(
@@ -117,8 +117,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // ─── زرار ابدأ التمرين ────────────────────────
                   _StartTodayWorkoutButton(draft: draft),
                   const SizedBox(height: AppConstants.spaceS),
+                  // ─── زرار حفظ الخطة ──────────────────────────
                   PPButton(
                     label: 'حفظ الخطة',
                     width: double.infinity,
@@ -148,6 +150,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       builder: (_) => _ExercisePickerSheet(
         exercisesCubit: exCubit,
         onPick: (ex) {
+          // ─── بسيط: ٣×١٠ تلقائي، بدون أي picker معقد ───
           cubit.addExerciseToDay(
             weekday,
             PlanExercise(
@@ -166,6 +169,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   }
 }
 
+// ─── Week Strip ─────────────────────────────────────────────────────
 class _WeekStrip extends StatelessWidget {
   const _WeekStrip({
     required this.days,
@@ -264,6 +268,7 @@ class _WeekStrip extends StatelessWidget {
   }
 }
 
+// ─── Day Detail ─────────────────────────────────────────────────────
 class _DayDetail extends StatefulWidget {
   const _DayDetail({
     required this.day,
@@ -295,6 +300,7 @@ class _DayDetailState extends State<_DayDetail> {
   @override
   void didUpdateWidget(_DayDetail old) {
     super.didUpdateWidget(old);
+    // لما اليوزر يبدل اليوم نحدّث الـ controller
     if (old.day.weekday != widget.day.weekday) {
       _nameCtrl.text = widget.day.name;
     }

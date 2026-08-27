@@ -6,7 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/auth/user_mode_service.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/dark_field_label.dart';
+import '../../../../shared/widgets/dark_primary_button.dart';
+import '../../../../shared/widgets/dark_form_field.dart';
 import '../../../../shared/widgets/pp_logo.dart';
 import '../app_regex.dart';
 import '../logic/cubit/login_cubit.dart';
@@ -108,18 +113,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: _kAccentDim,
                       borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                     ),
-                    child: const Text('تسجيل الدخول',
+                    child: const Text(AppStrings.loginTag,
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 11,
                         color: _kAccent, fontWeight: FontWeight.w700)),
                   ),
                 ]),
                 const SizedBox(height: AppConstants.spaceXL),
-                const Text('أهلاً بعودتك\nمجدداً 💪',
+                Text(AppStrings.loginTitle,
                   style: TextStyle(fontFamily: 'Cairo', fontSize: 32,
                     fontWeight: FontWeight.w900, color: _kTextHigh,
                     height: 1.15, letterSpacing: -0.5)),
                 const SizedBox(height: AppConstants.spaceS),
-                const Text('سجّل دخولك وواصل رحلتك نحو اللياقة',
+                const Text(AppStrings.loginSubtitle,
                   style: TextStyle(fontFamily: 'Cairo', fontSize: 13, color: _kTextMid)),
 
                 const SizedBox(height: AppConstants.space3XL),
@@ -130,11 +135,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('البريد الإلكتروني'),
+                      DarkFieldLabel(AppStrings.fieldEmail),
                       const SizedBox(height: AppConstants.spaceS),
-                      _DarkFormField(
+                      DarkFormField(
                         controller: _emailCtrl,
-                        hint: 'example@gmail.com',
+                        hint: AppStrings.loginEmailHint,
                         keyboardType: TextInputType.emailAddress,
                         icon: Icons.alternate_email_rounded,
                         validator: (v) {
@@ -144,11 +149,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('كلمة المرور'),
+                      DarkFieldLabel(AppStrings.fieldPass),
                       const SizedBox(height: AppConstants.spaceS),
-                      _DarkFormField(
+                      DarkFormField(
                         controller: _passCtrl,
-                        hint: '••••••••',
+                        hint: AppStrings.loginPassHint,
                         obscureText: _passHidden,
                         icon: Icons.lock_outline_rounded,
                         suffix: GestureDetector(
@@ -171,8 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Login button
                 BlocBuilder<LoginCubit, LoginState>(
-                  builder: (ctx, st) => _PrimaryButton(
-                    label: 'تسجيل الدخول',
+                  builder: (ctx, st) => DarkPrimaryButton(
+                    label: AppStrings.loginTag,
                     loading: st is LoginLoading,
                     onTap: _submit,
                   ),
@@ -185,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Expanded(child: Divider(color: _kBorder, thickness: 1)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
-                    child: const Text('أو', style: TextStyle(fontFamily: 'Cairo',
+                    child: const Text(AppStrings.loginOr, style: TextStyle(fontFamily: 'Cairo',
                         fontSize: 12, color: _kTextLow)),
                   ),
                   const Expanded(child: Divider(color: _kBorder, thickness: 1)),
@@ -205,12 +210,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Sign up link
                 Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  const Text('ليس لديك حساب؟',
+                  const Text(AppStrings.loginNoAccount,
                     style: TextStyle(fontFamily: 'Cairo', fontSize: 13, color: _kTextMid)),
                   const SizedBox(width: AppConstants.spaceXS),
                   GestureDetector(
                     onTap: () => context.push(AppRouter.signUp),
-                    child: const Text('إنشاء حساب',
+                    child: const Text(AppStrings.loginCreateAccount,
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
                         color: _kAccent, fontWeight: FontWeight.w700,
                         decoration: TextDecoration.underline,
@@ -228,137 +233,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// ─── Shared dark form widgets ─────────────────────────────────────────────────
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-  final String text;
-  @override
-  Widget build(BuildContext context) => Text(text,
-    style: const TextStyle(fontFamily: 'Cairo', fontSize: 12,
-        fontWeight: FontWeight.w600, color: _kTextMid, letterSpacing: 0.3));
-}
-
-class _DarkFormField extends StatelessWidget {
-  const _DarkFormField({
-    required this.controller, required this.hint, required this.icon,
-    this.obscureText = false, this.keyboardType, this.suffix, this.validator,
-  });
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final Widget? suffix;
-  final FormFieldValidator<String>? validator;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
-      textDirection: TextDirection.ltr,
-      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14,
-          color: _kTextHigh, fontWeight: FontWeight.w500),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 14, color: _kTextLow),
-        prefixIcon: Icon(icon, color: _kTextLow, size: AppConstants.iconM),
-        suffixIcon: suffix != null
-            ? Padding(padding: const EdgeInsets.only(left: 8), child: suffix)
-            : null,
-        errorStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 11, color: _kDanger),
-        filled: true, fillColor: _kSurface,
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spaceL, vertical: 15),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kBorder),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kAccent, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kDanger),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kDanger, width: 1.5),
-        ),
-      ),
-    );
-  }
-}
-
-class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton({required this.label, required this.onTap, this.loading = false});
-  final String label;
-  final VoidCallback onTap;
-  final bool loading;
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: loading ? null : onTap,
-      child: Container(
-        width: double.infinity,
-        height: AppConstants.buttonHeightLarge,
-        decoration: BoxDecoration(
-          color: loading ? _kAccent.withOpacity(0.5) : _kAccent,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-        ),
-        child: Center(child: loading
-            ? const SizedBox(width: 20, height: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Color(0xFF0F0F0F)))
-            : Text(label, style: const TextStyle(fontFamily: 'Cairo',
-                fontSize: 15, fontWeight: FontWeight.w800,
-                color: Color(0xFF0F0F0F)))),
-      ),
-    );
-  }
-}
-
-class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({required this.loading, required this.onTap});
-  final bool loading;
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: loading ? null : onTap,
-      child: Container(
-        width: double.infinity,
-        height: AppConstants.buttonHeightLarge,
-        decoration: BoxDecoration(
-          color: _kSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: _kBorder),
-        ),
-        child: Center(child: loading
-            ? const SizedBox(width: 20, height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: _kAccent))
-            : Row(mainAxisSize: MainAxisSize.min, children: [
-                const Text('G', style: TextStyle(fontSize: 18,
-                    fontWeight: FontWeight.w700, color: Color(0xFF4285F4),
-                    fontFamily: 'sans-serif')),
-                const SizedBox(width: AppConstants.spaceM),
-                const Text('الدخول بحساب جوجل',
-                  style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
-                      fontWeight: FontWeight.w600, color: _kTextMid)),
-              ])),
-      ),
-    );
-  }
-}
-
 // ─── Conflict dialog ──────────────────────────────────────────────────────────
 
 void _showConflictDialog(BuildContext context, LoginGuestDataConflict state) {
@@ -369,7 +243,7 @@ void _showConflictDialog(BuildContext context, LoginGuestDataConflict state) {
       backgroundColor: const Color(0xFF1E1E1E),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusXL)),
-      title: const Text('تعارض في البيانات',
+      title: const Text(AppStrings.conflictTitle,
         style: TextStyle(fontFamily: 'Cairo', color: _kTextHigh,
             fontWeight: FontWeight.w800)),
       content: Text(
@@ -383,7 +257,7 @@ void _showConflictDialog(BuildContext context, LoginGuestDataConflict state) {
             Navigator.of(dCtx).pop();
             context.read<LoginCubit>().resolveConflict(keepLocal: true);
           },
-          child: const Text('بياناتي المحلية',
+          child: const Text(AppStrings.conflictLocal,
             style: TextStyle(fontFamily: 'Cairo', color: _kAccent,
                 fontWeight: FontWeight.w700)),
         ),
@@ -392,7 +266,7 @@ void _showConflictDialog(BuildContext context, LoginGuestDataConflict state) {
             Navigator.of(dCtx).pop();
             context.read<LoginCubit>().resolveConflict(keepLocal: false);
           },
-          child: const Text('بيانات الحساب',
+          child: const Text(AppStrings.conflictCloud,
             style: TextStyle(fontFamily: 'Cairo', color: _kDanger,
                 fontWeight: FontWeight.w700)),
         ),

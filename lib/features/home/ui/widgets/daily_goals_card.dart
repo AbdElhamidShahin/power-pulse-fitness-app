@@ -36,7 +36,7 @@ class DailyGoalsCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(

@@ -6,8 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/auth/user_mode_service.dart';
 import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../shared/widgets/dark_field_label.dart';
+import '../../../../../shared/widgets/dark_primary_button.dart';
+import '../../../../../shared/widgets/dark_form_field.dart';
 import '../../../../../shared/widgets/pp_logo.dart';
 import '../../../profile/data/models/user_profile_entity.dart';
 import '../../../profile/logic/cubit/profile_cubit.dart';
@@ -47,23 +51,23 @@ const _slides = [
   _SlideData(
     icon:        Icons.bolt_rounded,
     accentColor: _kAccent,
-    tag:         'اللياقة البدنية',
-    title:       'حوّل جسمك\nبالعلم والالتزام',
-    body:        'برامج تمارين مخصصة، تتبع دقيق للتغذية،\nوتحليل مستمر لتقدمك',
+    tag:         AppStrings.slide1Tag,
+    title:       AppStrings.slide1Title,
+    body:        AppStrings.slide1Body,
   ),
   _SlideData(
     icon:        Icons.restaurant_rounded,
     accentColor: _kGreen2,
-    tag:         'التغذية الذكية',
-    title:       'اعرف ما تأكل\nوابنِ جسمك',
-    body:        'قاعدة بيانات ضخمة من الأطعمة\nتتبع السعرات والماكروز بدقة عالية',
+    tag:         AppStrings.slide2Tag,
+    title:       AppStrings.slide2Title,
+    body:        AppStrings.slide2Body,
   ),
   _SlideData(
     icon:        Icons.insights_rounded,
     accentColor: _kBlue,
-    tag:         'تتبع التقدم',
-    title:       'شاهد نتائجك\nتتحقق يوماً بيوم',
-    body:        'رسوم بيانية واضحة ومقارنات أسبوعية\nتُريك كيف تتحسّن كل يوم',
+    tag:         AppStrings.slide3Tag,
+    title:       AppStrings.slide3Title,
+    body:        AppStrings.slide3Body,
   ),
 ];
 
@@ -182,7 +186,7 @@ class _IntroSlides extends StatelessWidget {
                       border:       Border.all(color: _kBorder),
                     ),
                     child: Text(
-                      'تخطي',
+                      AppStrings.onboardingSkip,
                       style: AppTextStyles.labelSmall.copyWith(
                         color: _kTextMid,
                       ),
@@ -231,8 +235,8 @@ class _IntroSlides extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
-                _DarkButton(
-                  label:   current == _slides.length - 1 ? 'إعداد ملفي الشخصي' : 'التالي',
+                DarkPrimaryButton(
+                  label:   current == _slides.length - 1 ? AppStrings.onboardingSetupProfile : AppStrings.onboardingNext,
                   onTap:   onNext,
                   accent:  slide.accentColor,
                 ),
@@ -360,19 +364,19 @@ class _SetupFormState extends State<_SetupForm> {
 
   String? _ageError() {
     final v = int.tryParse(_ageCtrl.text.trim());
-    if (v == null) return 'أدخل رقماً صحيحاً';
+    if (v == null) return AppStrings.errEnterNumber;
     if (v < _minAge || v > _maxAge) return 'بين $_minAge و$_maxAge سنة';
     return null;
   }
   String? _heightError() {
     final v = double.tryParse(_heightCtrl.text.trim());
-    if (v == null) return 'أدخل رقماً صحيحاً';
+    if (v == null) return AppStrings.errEnterNumber;
     if (v < _minH || v > _maxH) return 'بين $_minH و$_maxH سم';
     return null;
   }
   String? _weightError() {
     final v = double.tryParse(_weightCtrl.text.trim());
-    if (v == null) return 'أدخل رقماً صحيحاً';
+    if (v == null) return AppStrings.errEnterNumber;
     if (v < _minW || v > _maxW) return 'بين $_minW و$_maxW كجم';
     return null;
   }
@@ -426,18 +430,18 @@ class _SetupFormState extends State<_SetupForm> {
                           color:        _kAccentDim,
                           borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                         ),
-                        child: Text('إعداد الملف الشخصي',
+                        child: Text(AppStrings.onboardingSetupTag,
                           style: AppTextStyles.labelSmall.copyWith(color: _kAccent)),
                       ),
                     ]),
                     const SizedBox(height: AppConstants.spaceL),
-                    const Text('أخبرنا\nعن نفسك',
+                    const Text(AppStrings.onboardingSetupTitle,
                       style: TextStyle(
                         fontFamily: 'Cairo', fontSize: 32, fontWeight: FontWeight.w900,
                         color: _kTextHigh, height: 1.15, letterSpacing: -0.5,
                       )),
                     const SizedBox(height: AppConstants.spaceS),
-                    Text('لنحسب أهدافك اليومية بدقة',
+                    Text(AppStrings.onboardingSetupBody,
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
                           color: _kTextMid, height: 1.5)),
                   ],
@@ -450,9 +454,9 @@ class _SetupFormState extends State<_SetupForm> {
               sliver: SliverList(delegate: SliverChildListDelegate([
 
                 // Name
-                _Label('الاسم'),
+                DarkFieldLabel(AppStrings.fieldName),
                 const SizedBox(height: AppConstants.spaceS),
-                _Field(controller: _nameCtrl, hint: 'اسمك الكريم',
+                DarkFormField(controller: _nameCtrl, hint: AppStrings.fieldNameHint,
                     textDirection: TextDirection.rtl,
                     onChanged: (_) => setState(() {})),
                 const SizedBox(height: AppConstants.spaceXXL),
@@ -460,18 +464,18 @@ class _SetupFormState extends State<_SetupForm> {
                 // Age + Height
                 Row(children: [
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _Label('العمر'),
+                    DarkFieldLabel(AppStrings.fieldAge),
                     const SizedBox(height: AppConstants.spaceS),
-                    _Field(controller: _ageCtrl, hint: '25', suffix: 'سنة',
+                    DarkFormField(controller: _ageCtrl, hint: AppStrings.fieldAgeHint, suffix: AppStrings.fieldAgeSuffix,
                         keyboardType: TextInputType.number,
                         onChanged: (_) => setState(() {}),
                         errorText: _ageCtrl.text.isEmpty ? null : _ageError()),
                   ])),
                   const SizedBox(width: AppConstants.spaceM),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _Label('الطول'),
+                    DarkFieldLabel(AppStrings.fieldHeight),
                     const SizedBox(height: AppConstants.spaceS),
-                    _Field(controller: _heightCtrl, hint: '175', suffix: 'سم',
+                    DarkFormField(controller: _heightCtrl, hint: AppStrings.fieldHeightHint, suffix: AppStrings.fieldHeightSuffix,
                         keyboardType: TextInputType.number,
                         onChanged: (_) => setState(() {}),
                         errorText: _heightCtrl.text.isEmpty ? null : _heightError()),
@@ -480,16 +484,16 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Weight
-                _Label('الوزن'),
+                DarkFieldLabel(AppStrings.fieldWeight),
                 const SizedBox(height: AppConstants.spaceS),
-                _Field(controller: _weightCtrl, hint: '70.0', suffix: 'كجم',
+                DarkFormField(controller: _weightCtrl, hint: AppStrings.fieldWeightHint, suffix: AppStrings.fieldWeightSuffix,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     onChanged: (_) => setState(() {}),
                     errorText: _weightCtrl.text.isEmpty ? null : _weightError()),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Gender
-                _Label('الجنس'),
+                DarkFieldLabel(AppStrings.fieldGender),
                 const SizedBox(height: AppConstants.spaceM),
                 _DarkSegment<Gender>(
                   values: Gender.values, selected: _gender,
@@ -502,7 +506,7 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceXL),
 
                 // Goal
-                _Label('هدفك من التمرين'),
+                DarkFieldLabel(AppStrings.fieldGoal),
                 const SizedBox(height: AppConstants.spaceM),
                 ...FitnessGoal.values.map((g) => Padding(
                   padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
@@ -519,7 +523,7 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceXL),
 
                 // Activity
-                _Label('مستوى نشاطك'),
+                DarkFieldLabel(AppStrings.fieldActivity),
                 const SizedBox(height: AppConstants.spaceM),
                 ...ActivityLevel.values.map((a) => Padding(
                   padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
@@ -534,8 +538,8 @@ class _SetupFormState extends State<_SetupForm> {
 
                 // Submit
                 BlocBuilder<ProfileSaveCubit, ProfileSaveState>(
-                  builder: (ctx, st) => _DarkButton(
-                    label:    'ابدأ رحلتك ⚡',
+                  builder: (ctx, st) => DarkPrimaryButton(
+                    label:    AppStrings.onboardingStart,
                     onTap:    _isValid ? () => ctx.read<ProfileSaveCubit>().save(_profile) : null,
                     accent:   _kAccent,
                     loading:  st is ProfileSaveLoading,
@@ -568,203 +572,3 @@ class _SetupFormState extends State<_SetupForm> {
 }
 
 // ─── Shared dark-screen widgets ───────────────────────────────────────────────
-
-class _Label extends StatelessWidget {
-  const _Label(this.text);
-  final String text;
-  @override
-  Widget build(BuildContext context) => Text(text,
-    style: const TextStyle(fontFamily: 'Cairo', fontSize: 12,
-        fontWeight: FontWeight.w600, color: _kTextMid, letterSpacing: 0.3));
-}
-
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) =>
-      const Divider(color: _kBorder, thickness: 1);
-}
-
-class _Field extends StatelessWidget {
-  const _Field({
-    required this.controller, required this.hint,
-    this.suffix, this.keyboardType,
-    this.textDirection = TextDirection.ltr,
-    required this.onChanged, this.errorText,
-  });
-  final TextEditingController controller;
-  final String hint;
-  final String? suffix;
-  final TextInputType? keyboardType;
-  final TextDirection textDirection;
-  final ValueChanged<String> onChanged;
-  final String? errorText;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller, keyboardType: keyboardType,
-      textDirection: textDirection, onChanged: onChanged,
-      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14,
-          color: _kTextHigh, fontWeight: FontWeight.w500),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 14, color: _kTextLow),
-        suffixText: suffix,
-        suffixStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 12, color: _kTextMid),
-        errorText: errorText,
-        errorStyle: const TextStyle(fontFamily: 'Cairo', fontSize: 11, color: _kDanger),
-        filled: true, fillColor: _kSurface,
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spaceL, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kBorder),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kAccent, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kDanger),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: _kDanger, width: 1.5),
-        ),
-      ),
-    );
-  }
-}
-
-class _DarkSegment<T> extends StatelessWidget {
-  const _DarkSegment({
-    required this.values, required this.selected,
-    required this.label, required this.onSelect,
-  });
-  final List<T> values;
-  final T selected;
-  final String Function(T) label;
-  final ValueChanged<T> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: _kSurface, borderRadius: BorderRadius.circular(AppConstants.radiusM),
-        border: Border.all(color: _kBorder),
-      ),
-      child: Row(children: values.map((v) {
-        final active = v == selected;
-        return Expanded(child: GestureDetector(
-          onTap: () => onSelect(v),
-          child: AnimatedContainer(
-            duration: AppConstants.durationFast,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: active ? _kAccent : Colors.transparent,
-              borderRadius: BorderRadius.circular(AppConstants.radiusS),
-            ),
-            child: Text(label(v), textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: active ? const Color(0xFF0F0F0F) : _kTextMid)),
-          ),
-        ));
-      }).toList()),
-    );
-  }
-}
-
-class _DarkOptionTile extends StatelessWidget {
-  const _DarkOptionTile({
-    required this.label, required this.icon,
-    required this.accent, required this.selected, required this.onTap,
-  });
-  final String label;
-  final IconData icon;
-  final Color accent;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: AppConstants.durationFast,
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spaceL, vertical: AppConstants.spaceM),
-        decoration: BoxDecoration(
-          color:        selected ? accent.withOpacity(0.1) : _kSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(
-            color: selected ? accent : _kBorder,
-            width: selected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(children: [
-          Container(
-            width: 36, height: 36,
-            decoration: BoxDecoration(
-              color: selected ? accent.withOpacity(0.15) : _kSurface2,
-              borderRadius: BorderRadius.circular(AppConstants.radiusS),
-            ),
-            child: Icon(icon, size: 18, color: selected ? accent : _kTextMid),
-          ),
-          const SizedBox(width: AppConstants.spaceM),
-          Expanded(child: Text(label,
-            style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: selected ? accent : _kTextHigh))),
-          if (selected)
-            Icon(Icons.check_circle_rounded, color: accent, size: 18),
-        ]),
-      ),
-    );
-  }
-}
-
-class _DarkButton extends StatelessWidget {
-  const _DarkButton({
-    required this.label, required this.onTap, required this.accent,
-    this.loading = false, this.disabled = false,
-  });
-  final String label;
-  final VoidCallback? onTap;
-  final Color accent;
-  final bool loading;
-  final bool disabled;
-
-  @override
-  Widget build(BuildContext context) {
-    final active = !disabled && !loading && onTap != null;
-    return GestureDetector(
-      onTap: active ? onTap : null,
-      child: AnimatedContainer(
-        duration: AppConstants.durationFast,
-        height: AppConstants.buttonHeightLarge,
-        decoration: BoxDecoration(
-          color:        active ? accent : _kSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: active ? Colors.transparent : _kBorder),
-        ),
-        child: Center(child: loading
-            ? SizedBox(
-                width: 20, height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2, color: active ? const Color(0xFF0F0F0F) : _kTextMid),
-              )
-            : Text(label,
-                style: TextStyle(fontFamily: 'Cairo', fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: active ? const Color(0xFF0F0F0F) : _kTextLow))),
-      ),
-    );
-  }
-}

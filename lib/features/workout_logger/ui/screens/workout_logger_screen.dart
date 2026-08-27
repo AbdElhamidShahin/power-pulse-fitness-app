@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -28,6 +27,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
   @override
   void initState() {
     super.initState();
+    // نبدأ الجلسة مباشرة مع تمارين اليوم من الخطة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _startWithPlan();
@@ -37,10 +37,13 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
   Future<void> _startWithPlan() async {
     final cubit = context.read<WorkoutLoggerCubit>();
 
+    // Load — may restore an interrupted session saved before the app was killed.
     await cubit.load();
     if (!mounted) return;
 
- if (cubit.state is WorkoutLoggerActive) {
+    // If an interrupted session was restored, ask the user whether to resume
+    // or discard it and start fresh.
+    if (cubit.state is WorkoutLoggerActive) {
       final resume = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
@@ -75,13 +78,16 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
       );
       if (!mounted) return;
       if (resume == false) {
+        // Discard the saved session; then fall through to start a new one.
         await cubit.cancelSession();
         if (!mounted) return;
       } else {
+        // Resume — session is already active, nothing more to do.
         return;
       }
     }
 
+    // لو الحالة Idle — ابدأ جلسة جديدة بتمارين اليوم
     if (cubit.state is WorkoutLoggerIdle) {
       final planState = context.read<WorkoutPlanCubit>().state;
       WorkoutPlan? plan;
