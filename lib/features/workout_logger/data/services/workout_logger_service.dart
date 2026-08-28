@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/auth/cloud_sync_service.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/workout_session_entity.dart';
 
@@ -11,8 +15,15 @@ abstract interface class WorkoutLoggerService {
 }
 
 final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
-  WorkoutLoggerServiceImpl(this._prefs);
+  WorkoutLoggerServiceImpl(
+    this._prefs,
+    this._auth,
+    this._firestore,
+  );
+
   final SharedPreferences _prefs;
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _firestore;
 
   static const _activeKey   = 'active_workout_session';
   static const _historyKey  = 'workout_sessions_history';
@@ -23,7 +34,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
       final raw = _prefs.getString(_activeKey);
       if (raw == null) return null;
       return WorkoutSession.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    } catch (_) {
+    } catch (e) { // ignore: returns null/empty on parse failure
       return null;
     }
   }
@@ -32,7 +43,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
   Future<void> saveSession(WorkoutSession session) async {
     try {
       if (session.isActive) {
-        // احفظ كـ active
+        // احفظ كـ active — لا نحتاج cloud sync للجلسات النشطة
         await _prefs.setString(_activeKey, jsonEncode(session.toJson()));
       } else {
         // انتهت — احذف الـ active وأضفها للـ history
@@ -42,6 +53,9 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
         all.add(session);
         await _prefs.setString(
             _historyKey, jsonEncode(all.map((s) => s.toJson()).toList()));
+
+        // ─── Cloud sync for completed sessions only ──────────────────────────
+        CloudSyncService.syncKey(_prefs, _auth, _firestore, _historyKey);
       }
     } catch (e) {
       throw CacheException(message: 'فشل حفظ الجلسة: $e');
@@ -57,6 +71,9 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
       all.removeWhere((s) => s.id == id);
       await _prefs.setString(
           _historyKey, jsonEncode(all.map((s) => s.toJson()).toList()));
+
+      // ─── Cloud sync ────────────────────────────────────────────────────────
+      CloudSyncService.syncKey(_prefs, _auth, _firestore, _historyKey);
     } catch (e) {
       throw CacheException(message: 'فشل حذف الجلسة: $e');
     }
@@ -71,7 +88,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
           .where((s) => s.startTime.isAfter(cutoff))
           .toList()
         ..sort((a, b) => b.startTime.compareTo(a.startTime));
-    } catch (_) {
+    } catch (e) { // ignore: returns null/empty on parse failure
       return [];
     }
   }

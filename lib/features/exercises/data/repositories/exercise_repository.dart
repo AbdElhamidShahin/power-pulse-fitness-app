@@ -81,7 +81,7 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
         try {
           final exercise = all.firstWhere((e) => e.id == id);
           return Success(exercise);
-        } catch (_) {
+        } catch (e) {
           return const Failure(NotFoundFailure(message: 'Exercise not found'));
         }
       },

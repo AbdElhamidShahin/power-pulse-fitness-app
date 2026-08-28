@@ -33,8 +33,8 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
           .where((e) => e.date.isAfter(cutoff))
           .toList()
         ..sort((a, b) => a.date.compareTo(b.date));
-    } catch (_) {
-      throw const CacheException(message: 'خطأ في قراءة بيانات الوزن');
+    } catch (e) {
+      throw CacheException(message: 'خطأ في قراءة بيانات الوزن: ${e.runtimeType}');
     }
   }
 
@@ -45,8 +45,8 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.add(entry);
       await _prefs.setString(
           _weightKey, jsonEncode(all.map(_weightToJson).toList()));
-    } catch (_) {
-      throw const CacheException(message: 'خطأ في حفظ الوزن');
+    } catch (e) {
+      throw CacheException(message: 'خطأ في حفظ الوزن: ${e.runtimeType}');
     }
   }
 
@@ -57,8 +57,8 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.removeWhere((e) => e.id == id);
       await _prefs.setString(
           _weightKey, jsonEncode(all.map(_weightToJson).toList()));
-    } catch (_) {
-      throw const CacheException(message: 'خطأ في حذف الوزن');
+    } catch (e) {
+      throw CacheException(message: 'خطأ في حذف الوزن: ${e.runtimeType}');
     }
   }
 
@@ -82,8 +82,8 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
           .where((e) => e.date.isAfter(cutoff))
           .toList()
         ..sort((a, b) => b.date.compareTo(a.date));
-    } catch (_) {
-      throw const CacheException(message: 'خطأ في قراءة سجل التمارين');
+    } catch (e) {
+      throw CacheException(message: 'خطأ في قراءة سجل التمارين: ${e.runtimeType}');
     }
   }
 
@@ -98,8 +98,8 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.add(log);
       await _prefs.setString(
           _workoutKey, jsonEncode(all.map(_workoutToJson).toList()));
-    } catch (_) {
-      throw const CacheException(message: 'خطأ في حفظ التمرين');
+    } catch (e) {
+      throw CacheException(message: 'خطأ في حفظ التمرين: ${e.runtimeType}');
     }
   }
 

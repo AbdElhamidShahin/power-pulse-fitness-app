@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
+
     sdk: flutter
 
   flutter_bloc: ^8.1.6

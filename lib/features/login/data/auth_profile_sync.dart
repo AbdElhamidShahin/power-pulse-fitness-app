@@ -23,7 +23,7 @@ abstract class AuthProfileSync {
         json['email'] = email;
         if (avatarUrl != null) json['avatarPath'] = avatarUrl;
         await prefs.setString(_key, jsonEncode(json));
-      } catch (_) {
+      } catch (e) {
         // لو فشل التحديث، نكتب profile جديد
         await _writeDefault(prefs, name: name, email: email, avatarUrl: avatarUrl);
       }

@@ -1,3 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/auth/cloud_sync_service.dart';
 import '../../../../core/domain/api_result.dart';
 import '../../../../core/domain/app_failure.dart';
 import '../../../../core/error/exceptions.dart';
@@ -12,9 +17,17 @@ abstract interface class ProgressRepository {
 }
 
 final class ProgressRepositoryImpl implements ProgressRepository {
-  const ProgressRepositoryImpl({required this.localService});
+  const ProgressRepositoryImpl({
+    required this.localService,
+    required this.prefs,
+    required this.auth,
+    required this.firestore,
+  });
 
   final ProgressLocalService localService;
+  final SharedPreferences prefs;
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
 
   @override
   Future<ApiResult<ProgressSummary>> getSummary(ProgressPeriod period) async {
@@ -28,16 +41,16 @@ final class ProgressRepositoryImpl implements ProgressRepository {
       final streak = _calcStreak(allWorkouts);
 
       final summary = ProgressSummary(
-        totalWorkouts:      workouts.length,
-        totalMinutes:       workouts.fold(0, (s, w) => s + w.durationMinutes),
-        totalCaloriesBurned:workouts.fold(0, (s, w) => s + w.caloriesBurned),
-        currentWeight:      weights.isNotEmpty ? weights.last.weight : null,
-        startWeight:        weights.isNotEmpty ? weights.first.weight : null,
-        weightEntries:      weights,
-        workoutLogs:        workouts,
-        weeklyWorkoutPoints:_buildWeeklyPoints(workouts, days),
-        weightChartPoints:  _buildWeightPoints(weights),
-        currentStreak:      streak,
+        totalWorkouts:       workouts.length,
+        totalMinutes:        workouts.fold(0, (s, w) => s + w.durationMinutes),
+        totalCaloriesBurned: workouts.fold(0, (s, w) => s + w.caloriesBurned),
+        currentWeight:       weights.isNotEmpty ? weights.last.weight : null,
+        startWeight:         weights.isNotEmpty ? weights.first.weight : null,
+        weightEntries:       weights,
+        workoutLogs:         workouts,
+        weeklyWorkoutPoints: _buildWeeklyPoints(workouts, days),
+        weightChartPoints:   _buildWeightPoints(weights),
+        currentStreak:       streak,
       );
 
       return Success(summary);
@@ -52,6 +65,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<void>> addWeightEntry(WeightEntry entry) async {
     try {
       await localService.addWeightEntry(entry);
+
+      // ─── Cloud sync ────────────────────────────────────────────────────────
+      CloudSyncService.syncKey(prefs, auth, firestore, 'weight_entries');
+
       return const Success(null);
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
@@ -62,6 +79,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<void>> deleteWeightEntry(String id) async {
     try {
       await localService.deleteWeightEntry(id);
+
+      // ─── Cloud sync ────────────────────────────────────────────────────────
+      CloudSyncService.syncKey(prefs, auth, firestore, 'weight_entries');
+
       return const Success(null);
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
@@ -72,6 +93,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<void>> logWorkout(WorkoutLog log) async {
     try {
       await localService.logWorkout(log);
+
+      // ─── Cloud sync ────────────────────────────────────────────────────────
+      CloudSyncService.syncKey(prefs, auth, firestore, 'workout_logs');
+
       return const Success(null);
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
@@ -102,12 +127,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   }
 
   // ─── Chart Builders ─────────────────────────────────────────
-  /// تمارين لكل يوم خلال الفترة
   List<ChartPoint> _buildWeeklyPoints(List<WorkoutLog> logs, int days) {
     final now = DateTime.now();
     final points = <ChartPoint>[];
 
-    // آخر 7 أيام أو كل أسبوع حسب الفترة
     final buckets = days <= 7 ? days : (days / 7).ceil();
     final bucketDays = days <= 7 ? 1 : 7;
 
@@ -122,7 +145,6 @@ final class ProgressRepositoryImpl implements ProgressRepository {
     return points;
   }
 
-  /// وزن على مدار الوقت
   List<ChartPoint> _buildWeightPoints(List<WeightEntry> entries) {
     return entries
         .asMap()

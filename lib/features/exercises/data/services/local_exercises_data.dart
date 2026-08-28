@@ -33,7 +33,7 @@ final class ExerciseLocalServiceImpl implements ExerciseLocalService {
     try {
       final list = jsonDecode(raw) as List<dynamic>;
       return ExerciseModel.toEntityList(list);
-    } catch (_) {
+    } catch (e) { // ignore: corrupted cache returns empty list
       return [];
     }
   }

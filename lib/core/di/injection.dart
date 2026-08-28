@@ -205,9 +205,13 @@ void _initNutrition() {
     ),
   );
 
+  // NutritionLocalService now receives FirebaseAuth and FirebaseFirestore
+  // for cloud sync after successful local writes.
   sl.registerLazySingleton<NutritionLocalService>(
         () => NutritionLocalServiceImpl(
       sl<SharedPreferences>(),
+      sl<FirebaseAuth>(),
+      sl<FirebaseFirestore>(),
     ),
   );
 
@@ -245,9 +249,14 @@ void _initProgress() {
     ),
   );
 
+  // ProgressRepository now receives FirebaseAuth and FirebaseFirestore
+  // for cloud sync after weight/workout writes.
   sl.registerLazySingleton<ProgressRepository>(
         () => ProgressRepositoryImpl(
       localService: sl(),
+      prefs: sl<SharedPreferences>(),
+      auth: sl<FirebaseAuth>(),
+      firestore: sl<FirebaseFirestore>(),
     ),
   );
 
@@ -288,9 +297,15 @@ void _initProfile() {
     ),
   );
 
+  // ProfileRepository receives NutritionLocalService so that saving a profile
+  // also updates the calorie_goal key used by the Nutrition screen (M1 fix).
   sl.registerLazySingleton<ProfileRepository>(
         () => ProfileRepositoryImpl(
       localService: sl(),
+      nutritionService: sl<NutritionLocalService>(),
+      prefs: sl<SharedPreferences>(),
+      auth: sl<FirebaseAuth>(),
+      firestore: sl<FirebaseFirestore>(),
     ),
   );
 
@@ -344,9 +359,13 @@ void _initWorkoutPlan() {
     ),
   );
 
+  // WorkoutPlanRepository now receives auth + firestore for post-save cloud sync.
   sl.registerLazySingleton<WorkoutPlanRepository>(
         () => WorkoutPlanRepositoryImpl(
       sl<WorkoutPlanService>(),
+      sl<SharedPreferences>(),
+      sl<FirebaseAuth>(),
+      sl<FirebaseFirestore>(),
     ),
   );
 
@@ -372,9 +391,12 @@ void _initWorkoutPlan() {
 }
 
 void _initWorkoutLogger() {
+  // WorkoutLoggerService now receives auth + firestore for post-complete cloud sync.
   sl.registerLazySingleton<WorkoutLoggerService>(
         () => WorkoutLoggerServiceImpl(
       sl<SharedPreferences>(),
+      sl<FirebaseAuth>(),
+      sl<FirebaseFirestore>(),
     ),
   );
 

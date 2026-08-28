@@ -193,7 +193,7 @@ class _NoPlantCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: AppColors.borderSubtle),
       ),
@@ -258,7 +258,7 @@ class _RestDayCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: AppColors.borderSubtle),
       ),
@@ -298,7 +298,7 @@ class _RestDayCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: AppColors.bgElevated,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(color: AppColors.borderMedium),
               ),
@@ -343,7 +343,7 @@ class _WorkoutDayCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isToday
@@ -466,7 +466,7 @@ class _CompletedTodayCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.r),
         border:
             Border.all(color: AppColors.success.withOpacity(0.4), width: 1.5),
@@ -532,7 +532,7 @@ class _CompletedTodayCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
-                    color: AppColors.bgElevated,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(color: AppColors.borderMedium),
                   ),
@@ -610,7 +610,7 @@ class _Chip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(

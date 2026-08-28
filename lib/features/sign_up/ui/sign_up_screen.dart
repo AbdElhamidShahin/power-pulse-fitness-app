@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/pp_button.dart';
+import '../../../../shared/widgets/dark_field_label.dart';
+import '../../../../shared/widgets/dark_primary_button.dart';
+import '../../../../shared/widgets/dark_form_field.dart';
+import '../../../../shared/widgets/pp_logo.dart';
 import '../../login/app_regex.dart';
 import '../logic/cubit/sign_up_cubit.dart';
 import '../logic/cubit/sign_up_state.dart';
 
+const _kBg = Color(0xFF0F0F0F);
+const _kSurface = Color(0xFF1A1A1A);
+const _kBorder = Color(0xFF2A2A2A);
+const _kAccent = Color(0xFFA8E063);
+const _kAccentDim = Color(0x1AA8E063);
+const _kDanger = Color(0xFFFF4C6A);
+const _kSuccess = Color(0xFF34D399);
+const _kTextHigh = Color(0xFFFFFFFF);
+const _kTextMid = Color(0xFF888888);
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
-
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
@@ -24,9 +37,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   final _confirmPassCtrl = TextEditingController();
-
   bool _passHidden = true;
-  bool _confirmPassHidden = true;
+  bool _confirmHidden = true;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+    ));
+  }
 
   @override
   void dispose() {
@@ -53,137 +75,175 @@ class _SignUpScreenState extends State<SignUpScreen> {
       listener: (context, state) {
         if (state is SignUpSuccess) {
           _showSnack(context,
-              isError: false, message: '🎉 مرحباً ${state.name}! حسابك جاهز');
+              message: '🎉 مرحباً ${state.name}! حسابك جاهز', isError: false);
+          AppRouter.clearLocationCache();
           context.go(AppRouter.home);
         } else if (state is SignUpError) {
-          _showSnack(context, isError: true, message: state.errorMessage);
+          _showSnack(context, message: state.errorMessage, isError: true);
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: _kBg,
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.screenPaddingH + 4,
-              vertical: AppConstants.screenPaddingV,
-            ),
+            padding: EdgeInsets.symmetric(
+                horizontal: (AppConstants.screenPaddingH + 2).w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: AppConstants.spaceXXL),
+                SizedBox(height: 16.h),
 
-                // ── Back button ────────────────────────────────────
+                // Back
                 GestureDetector(
                   onTap: () => context.canPop()
                       ? context.pop()
                       : context.go(AppRouter.login),
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: 40.r,
+                    height: 40.r,
                     decoration: BoxDecoration(
-                      color: AppColors.bgSurface,
-                      borderRadius: BorderRadius.circular(AppConstants.radiusS),
-                      border: Border.all(color: AppColors.borderSubtle),
+                      color: _kSurface,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                      border: Border.all(color: _kBorder),
                     ),
-                    child: const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: AppColors.textSecondary,
-                      size: 16,
-                    ),
+                    child: Icon(Icons.arrow_forward_ios_rounded,
+                        color: _kTextMid, size: 16.sp),
                   ),
                 ),
 
-                const SizedBox(height: AppConstants.spaceXXL),
+                SizedBox(height: 28.h),
 
-                // ── Header ─────────────────────────────────────────
-                _buildHeader(),
+                // Logo + badge
+                Row(children: [
+                  const PPLogo(size: 30),
+                  SizedBox(width: 8.w),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: _kAccentDim,
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.radiusPill),
+                      border: Border.all(color: _kAccent.withOpacity(0.3)),
+                    ),
+                    child: Text(AppStrings.signUpTag,
+                        style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10.sp,
+                            color: _kAccent,
+                            fontWeight: FontWeight.w700)),
+                  ),
+                ]),
 
-                const SizedBox(height: AppConstants.space3XL),
+                SizedBox(height: 18.h),
 
-                // ── Form ───────────────────────────────────────────
+                Text(AppStrings.signUpTitle,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.w900,
+                      color: _kTextHigh,
+                      height: 1.15,
+                      letterSpacing: -0.5,
+                    )),
+                SizedBox(height: 6.h),
+                Text(AppStrings.signUpSubtitle,
+                    style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 13.sp,
+                        color: _kTextMid,
+                        height: 1.5)),
+
+                SizedBox(height: 28.h),
+
                 Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('الاسم الكامل'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      _AuthField(
+                      // Name
+                      DarkFieldLabel(AppStrings.fieldName),
+                      SizedBox(height: 8.h),
+                      DarkFormField(
                         controller: _nameCtrl,
-                        hint: 'Ahmed Mohamed',
+                        hint: AppStrings.fieldNameHint,
                         icon: Icons.person_outline_rounded,
                         textDirection: TextDirection.rtl,
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'أدخل اسمك';
-                          if (v.trim().length < 2) return 'الاسم قصير جداً';
-                          return null;
-                        },
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'أدخل اسمك'
+                            : null,
                       ),
-                      const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('البريد الإلكتروني'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      _AuthField(
+                      SizedBox(height: 16.h),
+
+                      // Email
+                      DarkFieldLabel(AppStrings.fieldEmail),
+                      SizedBox(height: 8.h),
+                      DarkFormField(
                         controller: _emailCtrl,
-                        hint: 'example@gmail.com',
+                        hint: AppStrings.loginEmailHint,
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) {
                           if (v == null || v.isEmpty)
-                            return 'أدخل بريدك الإلكتروني';
+                            return AppStrings.errEnterEmail;
                           if (!AppRegex.isEmailValid(v))
-                            return 'بريد إلكتروني غير صحيح';
+                            return AppStrings.errInvalidEmail;
                           return null;
                         },
                       ),
-                      const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('كلمة المرور'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      _AuthField(
+                      SizedBox(height: 16.h),
+
+                      // Password
+                      DarkFieldLabel(AppStrings.fieldPass),
+                      SizedBox(height: 8.h),
+                      DarkFormField(
                         controller: _passCtrl,
-                        hint: '••••••••',
+                        hint: AppStrings.fieldPassHint,
                         icon: Icons.lock_outline_rounded,
                         obscureText: _passHidden,
                         suffix: GestureDetector(
                           onTap: () =>
                               setState(() => _passHidden = !_passHidden),
                           child: Icon(
-                            _passHidden
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: AppColors.textMuted,
-                            size: AppConstants.iconM,
-                          ),
+                              _passHidden
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: _kTextMid,
+                              size: AppConstants.iconM),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أدخل كلمة المرور';
+                          if (v == null || v.isEmpty)
+                            return AppStrings.errEnterPass;
                           if (!AppRegex.hasMinLength(v))
-                            return '8 أحرف على الأقل';
+                            return AppStrings.errPassShort;
                           return null;
                         },
                       ),
-                      const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('تأكيد كلمة المرور'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      _AuthField(
+                      SizedBox(height: 16.h),
+
+                      // Confirm password
+                      DarkFieldLabel(AppStrings.fieldPassConfirm),
+                      SizedBox(height: 8.h),
+                      DarkFormField(
                         controller: _confirmPassCtrl,
-                        hint: '••••••••',
+                        hint: AppStrings.fieldPassConfirmH,
                         icon: Icons.lock_outline_rounded,
-                        obscureText: _confirmPassHidden,
+                        obscureText: _confirmHidden,
                         suffix: GestureDetector(
-                          onTap: () => setState(
-                              () => _confirmPassHidden = !_confirmPassHidden),
+                          onTap: () =>
+                              setState(() => _confirmHidden = !_confirmHidden),
                           child: Icon(
-                            _confirmPassHidden
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: AppColors.textMuted,
-                            size: AppConstants.iconM,
-                          ),
+                              _confirmHidden
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: _kTextMid,
+                              size: AppConstants.iconM),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أكّد كلمة المرور';
+                          if (v == null || v.isEmpty)
+                            return AppStrings.errEnterPassConf;
                           if (v != _passCtrl.text)
-                            return 'كلمتا المرور غير متطابقتين';
+                            return AppStrings.errPassMismatch;
                           return null;
                         },
                       ),
@@ -191,74 +251,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
 
-                const SizedBox(height: AppConstants.space3XL),
+                SizedBox(height: 28.h),
 
-                // ── Create account button ──────────────────────────
+                // Submit
                 BlocBuilder<SignUpCubit, SignUpState>(
-                  builder: (context, state) => PPButton(
-                    label: 'إنشاء الحساب',
-                    onPressed: _submit,
-                    isLoading: state is SignUpLoading,
+                  builder: (ctx, st) => DarkPrimaryButton(
+                    label: AppStrings.signUpBtn,
+                    loading: st is SignUpLoading,
+                    onTap: _submit,
                   ),
                 ),
 
-                const SizedBox(height: AppConstants.spaceXL),
+                SizedBox(height: 24.h),
 
-                // ── Divider ────────────────────────────────────────
-                Row(
-                  children: [
-                    const Expanded(
-                        child: Divider(
-                            color: AppColors.borderSubtle, thickness: 1)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.spaceM),
-                      child: Text('أو', style: AppTextStyles.bodySmall),
-                    ),
-                    const Expanded(
-                        child: Divider(
-                            color: AppColors.borderSubtle, thickness: 1)),
-                  ],
-                ),
-
-                const SizedBox(height: AppConstants.spaceXL),
-
-                // ── Google ─────────────────────────────────────────
-                BlocBuilder<SignUpCubit, SignUpState>(
-                  builder: (context, state) => _GoogleButton(
-                    isLoading: state is SignUpLoading,
-                    label: 'التسجيل بحساب جوجل',
-                    onTap: () => context.read<SignUpCubit>().signUpWithGoogle(),
-                  ),
-                ),
-
-                const SizedBox(height: AppConstants.space3XL),
-
-                // ── Login link ─────────────────────────────────────
+                // Login link
                 Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('لديك حساب بالفعل؟',
-                          style: AppTextStyles.bodyMedium),
-                      const SizedBox(width: AppConstants.spaceXS),
-                      GestureDetector(
-                        onTap: () => context.canPop()
-                            ? context.pop()
-                            : context.go(AppRouter.login),
-                        child: Text(
-                          'تسجيل الدخول',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Text(AppStrings.signUpHasAccount,
+                      style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 13.sp,
+                          color: _kTextMid)),
+                  SizedBox(width: 4.w),
+                  GestureDetector(
+                    onTap: () => context.canPop()
+                        ? context.pop()
+                        : context.go(AppRouter.login),
+                    child: Text(AppStrings.signUpLogin,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 13.sp,
+                          color: _kAccent,
+                          fontWeight: FontWeight.w700,
+                          decoration: TextDecoration.underline,
+                          decorationColor: _kAccent,
+                        )),
                   ),
-                ),
+                ])),
 
-                const SizedBox(height: AppConstants.spaceXXL),
+                SizedBox(height: 24.h),
               ],
             ),
           ),
@@ -266,287 +297,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spaceM,
-            vertical: AppConstants.spaceXXS + 2,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.accentDim,
-            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-          ),
-          child: Text(
-            'حساب جديد',
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.accent,
-              letterSpacing: 1.0,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppConstants.spaceM),
-        Text(
-          'ابدأ رحلتك\nالآن 🔥',
-          style: AppTextStyles.displayMedium.copyWith(height: 1.25),
-        ),
-        const SizedBox(height: AppConstants.spaceS),
-        Text(
-          'أنشئ حسابك وانضم لآلاف الرياضيين',
-          style: AppTextStyles.bodyMedium,
-        ),
-      ],
-    );
-  }
 }
-
-// ─── Field Label ──────────────────────────────────────────────────────────────
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Text(
-        text,
-        style: AppTextStyles.titleSmall.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      );
-}
-
-// ─── Auth Text Field ──────────────────────────────────────────────────────────
-
-class _AuthField extends StatelessWidget {
-  const _AuthField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    this.obscureText = false,
-    this.keyboardType,
-    this.textDirection = TextDirection.ltr,
-    this.suffix,
-    this.validator,
-  });
-
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final TextDirection textDirection;
-  final Widget? suffix;
-  final FormFieldValidator<String>? validator;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
-      textDirection: textDirection,
-      style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textPrimary,
-        letterSpacing: obscureText ? 2.0 : 0,
-      ),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle:
-            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-        prefixIcon:
-            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
-        suffixIcon: suffix != null
-            ? Padding(
-                padding: const EdgeInsets.only(left: AppConstants.spaceM),
-                child: suffix,
-              )
-            : null,
-        filled: true,
-        fillColor: AppColors.bgSurface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
-        ),
-        errorStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.danger),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.spaceL,
-          vertical: AppConstants.spaceL,
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Google Button ────────────────────────────────────────────────────────────
-
-class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({
-    required this.isLoading,
-    required this.label,
-    required this.onTap,
-  });
-  final bool isLoading;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isLoading ? null : onTap,
-      child: Container(
-        height: AppConstants.buttonHeightLarge,
-        decoration: BoxDecoration(
-          color: AppColors.bgSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: AppColors.borderMedium),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isLoading)
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.accent),
-              )
-            else ...[
-              const SizedBox(
-                width: 22,
-                height: 22,
-                child: _GoogleLetterG(),
-              ),
-              const SizedBox(width: AppConstants.spaceM),
-              Text(label,
-                  style: AppTextStyles.labelLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  )),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _GoogleLetterG extends StatelessWidget {
-  const _GoogleLetterG();
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'G',
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF4285F4),
-          fontFamily: 'sans-serif',
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 void _showSnack(BuildContext context,
     {required String message, required bool isError}) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message,
-          style: AppTextStyles.bodyMedium.copyWith(color: Colors.white)),
-      backgroundColor: isError ? AppColors.danger : AppColors.success,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppConstants.radiusM),
-      ),
-      margin: const EdgeInsets.all(AppConstants.spaceL),
-      duration: const Duration(seconds: 3),
-    ),
-  );
-}
-
-void _showVerificationSheet(BuildContext context, {required String email}) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: AppColors.bgSurface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(AppConstants.radiusXL),
-      ),
-    ),
-    builder: (_) => Padding(
-      padding: const EdgeInsets.all(AppConstants.spaceXXL),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle bar
-          Container(
-            width: 48,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.borderMedium,
-              borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-            ),
-          ),
-          const SizedBox(height: AppConstants.spaceXXL),
-          Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(
-              color: AppColors.accentDim,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.mark_email_unread_rounded,
-                color: AppColors.accent, size: AppConstants.iconXL),
-          ),
-          const SizedBox(height: AppConstants.spaceXL),
-          Text('تحقق من بريدك', style: AppTextStyles.headlineMedium),
-          const SizedBox(height: AppConstants.spaceS),
-          Text(
-            'أرسلنا رابط التفعيل إلى\n$email',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.bodyMedium,
-          ),
-          const SizedBox(height: AppConstants.space3XL),
-          PPButton(
-            label: 'تم، يمكنني تسجيل الدخول',
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.go(AppRouter.login);
-            },
-          ),
-          const SizedBox(height: AppConstants.spaceXL),
-        ],
-      ),
-    ),
-  );
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message,
+        style: const TextStyle(fontFamily: 'Cairo', color: _kTextHigh)),
+    backgroundColor: isError ? _kDanger : _kSuccess,
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM)),
+    margin: const EdgeInsets.all(AppConstants.spaceL),
+    duration: const Duration(seconds: 3),
+  ));
 }

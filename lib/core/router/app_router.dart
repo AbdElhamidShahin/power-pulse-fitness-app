@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/entry/ui/entry_choice_screen.dart';
 import '../../features/exercises/logic/cubit/exercises_cubit.dart';
@@ -53,90 +54,64 @@ abstract class AppRouter {
   static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
   static const String workoutPlan = '/workout-plan';
+  static String? _cachedLocation;
 
-  static bool _cloudDataRestored = false;
+  static void clearLocationCache() => _cachedLocation = null;
 
-  static Future<void> _ensureAuthenticatedState(
-      SharedPreferences prefs,
-      User user,
-      ) async {
-    if (!_cloudDataRestored) {
+  static Future<String> _initialLocation() async {
+    if (_cachedLocation != null) return _cachedLocation!;
+
+    final prefs = await SharedPreferences.getInstance();
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
       try {
         await GuestMigrationService.restoreCloudDataToLocal(
           prefs: prefs,
           firestore: FirebaseFirestore.instance,
-          uid: user.uid,
+          uid: currentUser.uid,
         );
-      } catch (_) {}
-
-      _cloudDataRestored = true;
+      } catch (e) {}
+      await UserModeService.setAuthenticated(prefs);
+      _cachedLocation = home;
+      return _cachedLocation!;
     }
 
-    await UserModeService.setAuthenticated(prefs);
+    final mode = await UserModeService.getMode(prefs);
+    if (mode == UserMode.guest) {
+      _cachedLocation = home;
+      return _cachedLocation!;
+    }
+
+    if (mode == UserMode.authenticated) {
+      await UserModeService.clearMode(prefs);
+    }
+
+    _cachedLocation =
+        UserModeService.hasCompletedOnboarding(prefs) ? entry : onboarding;
+    return _cachedLocation!;
   }
 
   static final GoRouter router = GoRouter(
-    initialLocation: entry,
+    initialLocation: onboarding,  ///home
     redirect: (context, state) async {
-      final prefs = await SharedPreferences.getInstance();
-
-      final currentUser = FirebaseAuth.instance.currentUser;
+      final initial = await _initialLocation();
       final path = state.uri.path;
 
-      final isEntryRoute = path == entry;
-      final isLoginRoute = path == login;
-      final isSignUpRoute = path == signUp;
-      final isOnboardingRoute = path == onboarding;
+      final authRoutes = {login, signUp, entry};
 
-      final isAuthRoute =
-          isEntryRoute ||
-              isLoginRoute ||
-              isSignUpRoute ||
-              isOnboardingRoute;
-
-      if (currentUser != null) {
-        await _ensureAuthenticatedState(
-          prefs,
-          currentUser,
-        );
-
-        if (isOnboardingRoute) {
-          return null;
-        }
-
-        if (isEntryRoute || isLoginRoute || isSignUpRoute) {
-          return home;
-        }
-
-        return null;
-      }
-
-      final mode = await UserModeService.getMode(prefs);
-
-      if (mode == UserMode.guest) {
-        return null;
-      }
-
-      if (mode == UserMode.authenticated) {
-        await UserModeService.clearMode(prefs);
-      }
-
-      if (mode == UserMode.none ||
-          mode == UserMode.authenticated) {
-        if (isAuthRoute) {
-          return null;
-        }
-
+      if (initial == entry && !authRoutes.contains(path)) {
         return entry;
+      }
+
+      if (initial == home && authRoutes.contains(path)) {
+        return home;
       }
 
       return null;
     },
-    debugLogDiagnostics: true,
-    observers: [
-      nutritionRouteObserver,
-      progressRouteObserver,
-    ],
+    debugLogDiagnostics: kDebugMode,
+    observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
       GoRoute(
         path: entry,
@@ -166,18 +141,10 @@ abstract class AppRouter {
       ShellRoute(
         builder: (context, state, child) => MultiBlocProvider(
           providers: [
-            BlocProvider(
-              create: (_) => sl<HomeCubit>(),
-            ),
-            BlocProvider(
-              create: (_) => sl<AppSettingsCubit>(),
-            ),
-            BlocProvider(
-              create: (_) => sl<PedometerCubit>()..start(),
-            ),
-            BlocProvider(
-              create: (_) => sl<WorkoutPlanCubit>()..load(),
-            ),
+            BlocProvider(create: (_) => sl<HomeCubit>()),
+            BlocProvider.value(value: sl<AppSettingsCubit>()),
+            BlocProvider(create: (_) => sl<PedometerCubit>()..start()),
+            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
           ],
           child: MainShell(child: child),
         ),
@@ -197,12 +164,8 @@ abstract class AppRouter {
                 path: ':id',
                 builder: (_, state) => MultiBlocProvider(
                   providers: [
-                    BlocProvider(
-                      create: (_) => sl<ExerciseDetailCubit>(),
-                    ),
-                    BlocProvider(
-                      create: (_) => sl<WorkoutLoggerCubit>(),
-                    ),
+                    BlocProvider(create: (_) => sl<ExerciseDetailCubit>()),
+                    BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
                   ],
                   child: ExerciseDetailScreen(
                     exerciseId: state.pathParameters['id']!,
@@ -222,15 +185,9 @@ abstract class AppRouter {
             path: progress,
             builder: (_, __) => MultiBlocProvider(
               providers: [
-                BlocProvider(
-                  create: (_) => sl<ProgressCubit>(),
-                ),
-                BlocProvider(
-                  create: (_) => sl<WeightLogCubit>(),
-                ),
-                BlocProvider(
-                  create: (_) => sl<ProfileCubit>()..load(),
-                ),
+                BlocProvider(create: (_) => sl<ProgressCubit>()),
+                BlocProvider(create: (_) => sl<WeightLogCubit>()),
+                BlocProvider(create: (_) => sl<ProfileCubit>()..load()),
               ],
               child: const ProgressScreen(),
             ),
@@ -247,31 +204,24 @@ abstract class AppRouter {
       GoRoute(
         path: nutritionSearch,
         builder: (context, state) {
-          final mealType =
-              state.extra as MealType? ?? MealType.lunch;
-
+          final mealType = state.extra as MealType? ?? MealType.lunch;
           return MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: (_) => sl<FoodSearchCubit>(),
-              ),
-              BlocProvider(
-                create: (_) => sl<AddMealCubit>(),
-              ),
-              BlocProvider(
-                create: (_) => sl<NutritionCubit>(),
-              ),
+              BlocProvider(create: (_) => sl<FoodSearchCubit>()),
+              BlocProvider(create: (_) => sl<AddMealCubit>()),
+              BlocProvider(create: (_) => sl<NutritionCubit>()),
             ],
-            child: FoodSearchScreen(
-              mealType: mealType,
-            ),
+            child: FoodSearchScreen(mealType: mealType),
           );
         },
       ),
       GoRoute(
         path: workoutLogger,
-        builder: (_, __) => BlocProvider(
-          create: (_) => sl<WorkoutLoggerCubit>(),
+        builder: (_, __) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
+          ],
           child: const WorkoutLoggerScreen(),
         ),
       ),
@@ -279,15 +229,9 @@ abstract class AppRouter {
         path: workoutPlan,
         builder: (_, __) => MultiBlocProvider(
           providers: [
-            BlocProvider(
-              create: (_) => sl<ExercisesCubit>()..loadInitial(),
-            ),
-            BlocProvider(
-              create: (_) => sl<ExerciseSearchCubit>(),
-            ),
-            BlocProvider(
-              create: (_) => sl<WorkoutPlanCubit>()..load(),
-            ),
+            BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
+            BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
           ],
           child: const WorkoutPlanScreen(),
         ),
@@ -296,12 +240,8 @@ abstract class AppRouter {
         path: profileEdit,
         builder: (context, state) => MultiBlocProvider(
           providers: [
-            BlocProvider(
-              create: (_) => sl<ProfileSaveCubit>(),
-            ),
-            BlocProvider(
-              create: (_) => sl<ProfileCubit>(),
-            ),
+            BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
+            BlocProvider(create: (_) => sl<ProfileCubit>()),
           ],
           child: const _ProfileEditGate(),
         ),
@@ -311,10 +251,7 @@ abstract class AppRouter {
       body: Center(
         child: Text(
           'الصفحة غير موجودة',
-          style: TextStyle(
-            fontFamily: 'Cairo',
-            color: Colors.white,
-          ),
+          style: TextStyle(fontFamily: 'Cairo', color: Colors.white),
         ),
       ),
     ),
@@ -332,9 +269,7 @@ class _ProfileEditGateState extends State<_ProfileEditGate> {
   @override
   void initState() {
     super.initState();
-
     final cubit = context.read<ProfileCubit>();
-
     if (cubit.state is! ProfileLoaded) {
       cubit.load();
     }
@@ -347,12 +282,9 @@ class _ProfileEditGateState extends State<_ProfileEditGate> {
         if (state is ProfileLoaded) {
           return BlocProvider(
             create: (_) => sl<ProfileSaveCubit>(),
-            child: EditProfileScreen(
-              profile: state.profile,
-            ),
+            child: EditProfileScreen(profile: state.profile),
           );
         }
-
         if (state is ProfileError) {
           return Scaffold(
             backgroundColor: const Color(0xFF0D0D0D),
@@ -360,46 +292,33 @@ class _ProfileEditGateState extends State<_ProfileEditGate> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.error_outline_rounded,
-                    color: Color(0xFFBFFF00),
-                    size: 48,
-                  ),
+                  const Icon(Icons.error_outline_rounded,
+                      color: Color(0xFFBFFF00), size: 48),
                   const SizedBox(height: 16),
                   const Text(
                     'تعذّر تحميل البيانات',
                     style: TextStyle(
-                      fontFamily: 'Cairo',
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                        fontFamily: 'Cairo',
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 8),
                   TextButton(
-                    onPressed: () {
-                      context.read<ProfileCubit>().load();
-                    },
-                    child: const Text(
-                      'إعادة المحاولة',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        color: Color(0xFFBFFF00),
-                      ),
-                    ),
+                    onPressed: () => context.read<ProfileCubit>().load(),
+                    child: const Text('إعادة المحاولة',
+                        style: TextStyle(
+                            fontFamily: 'Cairo', color: Color(0xFFBFFF00))),
                   ),
                 ],
               ),
             ),
           );
         }
-
         return const Scaffold(
           backgroundColor: Color(0xFF0D0D0D),
           body: Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFFBFFF00),
-            ),
+            child: CircularProgressIndicator(color: Color(0xFFBFFF00)),
           ),
         );
       },

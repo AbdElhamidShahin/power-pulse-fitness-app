@@ -20,6 +20,13 @@ final class LoginCubit extends Cubit<LoginState> {
   final SharedPreferences _prefs;
   final FirebaseFirestore _firestore;
 
+  // ─── Pending conflict resolution data ────────────────────────────────────
+  // Set when a LoginGuestDataConflict is emitted; cleared after resolution.
+  String? _pendingUid;
+  String? _pendingName;
+  String? _pendingEmail;
+  String? _pendingAvatarUrl;
+
   // ─── Email / Password ────────────────────────────────────────────────────
 
   Future<void> loginUser({
@@ -41,18 +48,11 @@ final class LoginCubit extends Cubit<LoginState> {
         avatarUrl: result.avatarUrl,
         isNewAccount: false, // Existing account → Firestore wins
       );
-
-      if (isClosed) return;
-
-      emit(LoginSuccess(
-        userId: result.userId,
-        name: result.name,
-        email: result.email,
-        avatarUrl: result.avatarUrl,
-      ));
+      // LoginSuccess (or LoginGuestDataConflict) is emitted by _postLoginSync
+      // via _finaliseLogin. Do not emit again here.
     } on FirebaseAuthException catch (e) {
       emit(LoginError(_mapFirebaseError(e.code)));
-    } catch (_) {
+    } catch (e) {
       emit(const LoginError('حدث خطأ غير متوقع، يرجى المحاولة لاحقاً 🚧'));
     }
   }
@@ -72,15 +72,8 @@ final class LoginCubit extends Cubit<LoginState> {
         avatarUrl: result.avatarUrl,
         isNewAccount: false, // Treat as existing account — Firestore wins
       );
-
-      if (isClosed) return;
-
-      emit(LoginSuccess(
-        userId: result.userId,
-        name: result.name,
-        email: result.email,
-        avatarUrl: result.avatarUrl,
-      ));
+      // LoginSuccess (or LoginGuestDataConflict) is emitted by _postLoginSync
+      // via _finaliseLogin. Do not emit again here.
     } on FirebaseAuthException catch (e) {
       emit(LoginError(_mapFirebaseError(e.code)));
     } catch (e) {
@@ -116,10 +109,22 @@ final class LoginCubit extends Cubit<LoginState> {
         firestore: _firestore,
         uid: uid,
       );
+    } else if (currentMode == UserMode.guest &&
+        _prefs.containsKey('user_profile')) {
+      // Flow 4 — CONFLICT: guest has local profile data AND is logging into
+      // an existing account. Restoring cloud data would silently overwrite
+      // the guest's locally-entered profile. Pause and ask the user to choose.
+      _pendingUid       = uid;
+      _pendingName      = name;
+      _pendingEmail     = email;
+      _pendingAvatarUrl = avatarUrl;
+      emit(LoginGuestDataConflict(
+        accountName:  name,
+        accountEmail: email,
+      ));
+      return; // Do NOT proceed — wait for resolveConflict() to be called.
     } else {
-      // Flow 4: Existing account sign-in — Firestore is the source of truth.
-      // Restore cloud data into local SharedPreferences cache.
-      // Do NOT upload local guest data.
+      // Flow 4 (no local guest data): safe to restore cloud data directly.
       await GuestMigrationService.restoreCloudDataToLocal(
         prefs: _prefs,
         firestore: _firestore,
@@ -127,16 +132,80 @@ final class LoginCubit extends Cubit<LoginState> {
       );
     }
 
-    // Update local profile cache with auth identity data
+    await _finaliseLogin(
+      uid: uid,
+      name: name,
+      email: email,
+      avatarUrl: avatarUrl,
+    );
+  }
+
+  /// Called by the UI after the user resolves the guest-data conflict dialog.
+  ///
+  /// [keepLocal] = true  → discard cloud profile/plan; keep local guest data.
+  /// [keepLocal] = false → overwrite local data with cloud data (original behavior).
+  Future<void> resolveConflict({required bool keepLocal}) async {
+    final uid       = _pendingUid;
+    final name      = _pendingName;
+    final email     = _pendingEmail;
+    final avatarUrl = _pendingAvatarUrl;
+
+    // Clear pending data regardless of outcome.
+    _pendingUid = _pendingName = _pendingEmail = _pendingAvatarUrl = null;
+
+    if (uid == null || name == null || email == null) {
+      emit(const LoginError('حدث خطأ غير متوقع، يرجى المحاولة لاحقاً 🚧'));
+      return;
+    }
+
+    emit(const LoginLoading());
+
+    try {
+      if (!keepLocal) {
+        // User chose to use their account data — restore from Firestore.
+        await GuestMigrationService.restoreCloudDataToLocal(
+          prefs: _prefs,
+          firestore: _firestore,
+          uid: uid,
+        );
+      }
+      // keepLocal = true → skip restore; local data is already in place.
+      // Either way, finalise the login (write auth identity + set mode).
+
+      await _finaliseLogin(
+        uid: uid,
+        name: name,
+        email: email,
+        avatarUrl: avatarUrl,
+      );
+    } catch (e) {
+      emit(const LoginError('حدث خطأ غير متوقع، يرجى المحاولة لاحقاً 🚧'));
+    }
+  }
+
+  /// Shared final step: write auth identity into the local profile cache and
+  /// mark the user as authenticated. Emits LoginSuccess.
+  Future<void> _finaliseLogin({
+    required String uid,
+    required String name,
+    required String email,
+    String? avatarUrl,
+  }) async {
     await AuthProfileSync.saveFromAuth(
       prefs: _prefs,
       name: name,
       email: email,
       avatarUrl: avatarUrl,
     );
-
-    // Mark authenticated mode
     await UserModeService.setAuthenticated(_prefs);
+
+    if (isClosed) return;
+    emit(LoginSuccess(
+      userId: uid,
+      name: name,
+      email: email,
+      avatarUrl: avatarUrl,
+    ));
   }
 
   // ─── Error mapping ────────────────────────────────────────────────────────

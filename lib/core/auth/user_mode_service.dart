@@ -8,12 +8,24 @@ abstract class UserModeService {
   static const _kModeGuest = 'guest';
   static const _kModeAuth = 'authenticated';
 
+  /// Set when the user completes the initial onboarding setup form.
+  /// Once set, the onboarding screen is never shown again.
+  static const _kOnboardingDone = 'onboarding_done';
+
   static Future<UserMode> getMode(SharedPreferences prefs) async {
     final raw = prefs.getString(_kMode);
     if (raw == _kModeGuest) return UserMode.guest;
     if (raw == _kModeAuth) return UserMode.authenticated;
     return UserMode.none;
   }
+
+  /// Returns true if the user has already completed the onboarding setup form.
+  static bool hasCompletedOnboarding(SharedPreferences prefs) =>
+      prefs.getBool(_kOnboardingDone) ?? false;
+
+  /// Marks onboarding as complete. Call after the setup form is saved.
+  static Future<void> setOnboardingDone(SharedPreferences prefs) =>
+      prefs.setBool(_kOnboardingDone, true);
 
   static Future<void> setGuest(SharedPreferences prefs) =>
       prefs.setString(_kMode, _kModeGuest);

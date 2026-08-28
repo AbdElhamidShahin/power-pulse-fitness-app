@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
-import '../../../exercises/data/models/exercise_entity.dart';
 import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_state.dart';
@@ -15,9 +13,7 @@ import '../../logic/cubit/workout_logger_cubit.dart';
 import '../../logic/cubit/workout_logger_state.dart';
 import '../widgets/active_workout_header.dart';
 import '../widgets/add_exercise_sheet.dart';
-import '../widgets/exercise_logger_card.dart';
 import '../widgets/set_row_widget.dart';
-import '../widgets/workout_logger_idle_view.dart';
 import '../widgets/workout_summary_sheet.dart';
 
 class WorkoutLoggerScreen extends StatefulWidget {
@@ -41,9 +37,55 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
   Future<void> _startWithPlan() async {
     final cubit = context.read<WorkoutLoggerCubit>();
 
-    // أول نشوف لو في جلسة نشطة موجودة أصلاً
+    // Load — may restore an interrupted session saved before the app was killed.
     await cubit.load();
     if (!mounted) return;
+
+    // If an interrupted session was restored, ask the user whether to resume
+    // or discard it and start fresh.
+    if (cubit.state is WorkoutLoggerActive) {
+      final resume = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: const Text(
+            'استئناف التمرين؟',
+            style: TextStyle(fontFamily: 'Cairo', color: Colors.white),
+          ),
+          content: const Text(
+            'لديك تمرين لم تكمله. هل تريد الاستمرار أم البدء من جديد؟',
+            style: TextStyle(fontFamily: 'Cairo', color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                'ابدأ من جديد',
+                style: TextStyle(fontFamily: 'Cairo', color: Colors.redAccent),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'استئناف',
+                style: TextStyle(
+                    fontFamily: 'Cairo', color: Color(0xFFBFFF00)),
+              ),
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      if (resume == false) {
+        // Discard the saved session; then fall through to start a new one.
+        await cubit.cancelSession();
+        if (!mounted) return;
+      } else {
+        // Resume — session is already active, nothing more to do.
+        return;
+      }
+    }
 
     // لو الحالة Idle — ابدأ جلسة جديدة بتمارين اليوم
     if (cubit.state is WorkoutLoggerIdle) {

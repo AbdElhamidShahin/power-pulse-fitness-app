@@ -33,10 +33,17 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   final GetExercisesUseCase _getExercises;
 
   // ─── Load ──────────────────────────────────────────────────
+  // Checks for an interrupted session saved before the app was killed.
+  // If found, emits WorkoutLoggerActive so the UI can offer resume/discard.
+  // If nothing is found, emits WorkoutLoggerIdle (new session flow).
   Future<void> load() async {
     emit(const WorkoutLoggerLoading());
-    // دايماً جلسة نظيفة — مش بنرجع جلسة قديمة محفوظة
-    emit(const WorkoutLoggerIdle());
+    final result = await _getActive();
+    if (result.isSuccess && result.dataOrNull != null) {
+      emit(WorkoutLoggerActive(result.dataOrNull!));
+    } else {
+      emit(const WorkoutLoggerIdle());
+    }
   }
 
   // ─── Start ─────────────────────────────────────────────────

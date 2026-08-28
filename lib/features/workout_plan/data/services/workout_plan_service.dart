@@ -21,8 +21,8 @@ final class WorkoutPlanServiceImpl implements WorkoutPlanService {
       final raw = _prefs.getString(_key);
       if (raw == null) return null;
       return WorkoutPlan.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    } catch (_) {
-      throw const CacheException(message: 'خطأ في قراءة خطة التمرين');
+    } catch (e) {
+      throw CacheException(message: 'خطأ في قراءة خطة التمرين: ${e.runtimeType}');
     }
   }
 
@@ -30,8 +30,8 @@ final class WorkoutPlanServiceImpl implements WorkoutPlanService {
   Future<void> savePlan(WorkoutPlan plan) async {
     try {
       await _prefs.setString(_key, jsonEncode(plan.toJson()));
-    } catch (_) {
-      throw const CacheException(message: 'خطأ في حفظ خطة التمرين');
+    } catch (e) {
+      throw CacheException(message: 'خطأ في حفظ خطة التمرين: ${e.runtimeType}');
     }
   }
 

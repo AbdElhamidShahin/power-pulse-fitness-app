@@ -4,34 +4,53 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'guest_migration_service.dart';
 
+/// A lightweight, fire-and-forget helper that syncs a local SharedPreferences
+/// key (or the nutrition aggregate) to Firestore when the user is authenticated.
+///
+/// ALL failures are silently swallowed — the local operation always takes
+/// priority and must never fail because of a cloud sync issue.
+///
+/// Usage (inside a repository or service after a successful local write):
+///
+///   CloudSyncService.syncKey(_prefs, _auth, _firestore, 'weight_entries');
+///   CloudSyncService.syncNutrition(_prefs, _auth, _firestore);
 abstract class CloudSyncService {
-  static Future<void> syncKeys(List<String> keys) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+  // ─── Sync a single fixed key ──────────────────────────────────────────────
+  static void syncKey(
+    SharedPreferences prefs,
+    FirebaseAuth auth,
+    FirebaseFirestore firestore,
+    String key,
+  ) {
+    final uid = auth.currentUser?.uid;
+    if (uid == null) return; // guest — nothing to sync
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      for (final key in keys) {
-        await GuestMigrationService.syncLocalKeyToCloud(
-          prefs: prefs,
-          firestore: FirebaseFirestore.instance,
-          uid: user.uid,
-          key: key,
-        );
-      }
-    } catch (_) {
+    // Fire and forget — never await in the calling layer.
+    GuestMigrationService.syncLocalKeyToCloud(
+      prefs: prefs,
+      firestore: firestore,
+      uid: uid,
+      key: key,
+    ).catchError((_) {
+      // Network unavailable or Firestore error — local data is safe.
+    });
   }
+
+  // ─── Sync all nutrition keys (meals_* and water_*) ────────────────────────
+  static void syncNutrition(
+    SharedPreferences prefs,
+    FirebaseAuth auth,
+    FirebaseFirestore firestore,
+  ) {
+    final uid = auth.currentUser?.uid;
+    if (uid == null) return;
+
+    GuestMigrationService.syncNutritionToCloud(
+      prefs: prefs,
+      firestore: firestore,
+      uid: uid,
+    ).catchError((_) {
+      // Network unavailable or Firestore error — local data is safe.
+    });
   }
-
-  static Future<void> syncWorkouts() =>
-      syncKeys(['workout_sessions', 'active_workout_session']);
-
-  static Future<void> syncProgress() =>
-      syncKeys(['progress_entries', 'weight_entries']);
-
-  static Future<void> syncNutrition() =>
-      syncKeys(['nutrition_logs']);
-
-  static Future<void> syncProfile() =>
-      syncKeys(['user_profile']);
 }

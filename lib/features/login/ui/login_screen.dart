@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../core/auth/user_mode_service.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/pp_button.dart';
+import '../../../../shared/widgets/dark_field_label.dart';
+import '../../../../shared/widgets/dark_primary_button.dart';
+import '../../../../shared/widgets/dark_form_field.dart';
+import '../../../../shared/widgets/pp_logo.dart';
 import '../app_regex.dart';
 import '../logic/cubit/login_cubit.dart';
 import '../logic/cubit/login_state.dart';
 
+const _kBg = Color(0xFF0F0F0F);
+const _kSurface = Color(0xFF1A1A1A);
+const _kBorder = Color(0xFF2A2A2A);
+const _kAccent = Color(0xFFA8E063);
+const _kAccentDim = Color(0x1AA8E063);
+const _kDanger = Color(0xFFFF4C6A);
+const _kSuccess = Color(0xFF34D399);
+const _kTextHigh = Color(0xFFFFFFFF);
+const _kTextMid = Color(0xFF888888);
+const _kTextLow = Color(0xFF444444);
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -27,6 +39,16 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _passHidden = true;
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+    ));
+  }
+
+  @override
   void dispose() {
     _emailCtrl.dispose();
     _passCtrl.dispose();
@@ -35,10 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    context.read<LoginCubit>().loginUser(
-          email: _emailCtrl.text.trim(),
-          password: _passCtrl.text,
-        );
+    context
+        .read<LoginCubit>()
+        .loginUser(email: _emailCtrl.text.trim(), password: _passCtrl.text);
   }
 
   @override
@@ -46,41 +67,102 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
-          _showSnack(context, isError: false, message: 'مرحباً بعودتك ${state.name} 👋');
+          _showSnack(context,
+              message: 'مرحباً بعودتك ${state.name} 👋', isError: false);
+          AppRouter.clearLocationCache();
           context.go(AppRouter.home);
+        } else if (state is LoginGuestDataConflict) {
+          _showConflictDialog(context, state);
         } else if (state is LoginError) {
-          _showSnack(context,  isError: true, message: state.errorMessage);
+          _showSnack(context, message: state.errorMessage, isError: true);
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: _kBg,
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.screenPaddingH + 4,
-              vertical: AppConstants.screenPaddingV,
-            ),
+            padding: EdgeInsets.symmetric(
+                horizontal: (AppConstants.screenPaddingH + 2).w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: AppConstants.space3XL),
+                SizedBox(height: 16.h),
 
-                // ── Header ──────────────────────────────────────
-                _buildHeader(),
+                // Back button
+                GestureDetector(
+                  onTap: () => context.canPop()
+                      ? context.pop()
+                      : context.go(AppRouter.entry),
+                  child: Container(
+                    width: 40.r,
+                    height: 40.r,
+                    decoration: BoxDecoration(
+                      color: _kSurface,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                      border: Border.all(color: _kBorder),
+                    ),
+                    child: Icon(Icons.arrow_forward_ios_rounded,
+                        color: _kTextMid, size: 16.sp),
+                  ),
+                ),
 
-                const SizedBox(height: AppConstants.space4XL),
+                SizedBox(height: 28.h),
 
-                // ── Form ────────────────────────────────────────
+                // Logo + badge
+                Row(children: [
+                  const PPLogo(size: 30),
+                  SizedBox(width: 8.w),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: _kAccentDim,
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.radiusPill),
+                      border: Border.all(color: _kAccent.withOpacity(0.3)),
+                    ),
+                    child: Text(AppStrings.loginTag,
+                        style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10.sp,
+                            color: _kAccent,
+                            fontWeight: FontWeight.w700)),
+                  ),
+                ]),
+
+                SizedBox(height: 18.h),
+
+                // Title
+                Text(AppStrings.loginTitle,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.w900,
+                      color: _kTextHigh,
+                      height: 1.15,
+                      letterSpacing: -0.5,
+                    )),
+                SizedBox(height: 6.h),
+                Text(AppStrings.loginSubtitle,
+                    style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 13.sp,
+                        color: _kTextMid,
+                        height: 1.5)),
+
+                SizedBox(height: 32.h),
+
+                // Form
                 Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('البريد الإلكتروني'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      _AuthField(
+                      DarkFieldLabel(AppStrings.fieldEmail),
+                      SizedBox(height: 8.h),
+                      DarkFormField(
                         controller: _emailCtrl,
-                        hint: 'example@gmail.com',
+                        hint: AppStrings.loginEmailHint,
                         keyboardType: TextInputType.emailAddress,
                         icon: Icons.alternate_email_rounded,
                         validator: (v) {
@@ -91,29 +173,28 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('كلمة المرور'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      _AuthField(
+                      SizedBox(height: 16.h),
+                      DarkFieldLabel(AppStrings.fieldPass),
+                      SizedBox(height: 8.h),
+                      DarkFormField(
                         controller: _passCtrl,
-                        hint: '••••••••',
+                        hint: AppStrings.loginPassHint,
                         obscureText: _passHidden,
                         icon: Icons.lock_outline_rounded,
                         suffix: GestureDetector(
                           onTap: () =>
                               setState(() => _passHidden = !_passHidden),
                           child: Icon(
-                            _passHidden
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: AppColors.textMuted,
-                            size: AppConstants.iconM,
-                          ),
+                              _passHidden
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: _kTextMid,
+                              size: AppConstants.iconM),
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) return 'أدخل كلمة المرور';
                           if (!AppRegex.hasMinLength(v))
-                            return 'كلمة المرور قصيرة جداً (8 أحرف على الأقل)';
+                            return 'كلمة المرور قصيرة (8 أحرف على الأقل)';
                           return null;
                         },
                       ),
@@ -121,75 +202,70 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: AppConstants.space3XL),
+                SizedBox(height: 28.h),
 
-                // ── Login button ─────────────────────────────────
+                // Login button
                 BlocBuilder<LoginCubit, LoginState>(
-                  builder: (context, state) => PPButton(
-                    label: 'تسجيل الدخول',
-                    onPressed: _submit,
-                    isLoading: state is LoginLoading,
+                  builder: (ctx, st) => DarkPrimaryButton(
+                    label: AppStrings.loginTag,
+                    loading: st is LoginLoading,
+                    onTap: _submit,
                   ),
                 ),
 
-                const SizedBox(height: AppConstants.spaceXL),
+                SizedBox(height: 20.h),
 
-                // ── Divider ──────────────────────────────────────
-                _OrDivider(),
+                // Divider
+                Row(children: [
+                  Expanded(child: Divider(color: _kBorder, thickness: 1)),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: AppConstants.spaceM.w),
+                    child: Text(AppStrings.loginOr,
+                        style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 11.sp,
+                            color: _kTextLow)),
+                  ),
+                  Expanded(child: Divider(color: _kBorder, thickness: 1)),
+                ]),
 
-                const SizedBox(height: AppConstants.spaceXL),
+                SizedBox(height: 16.h),
 
-                // ── Google ───────────────────────────────────────
+                // Google button
                 BlocBuilder<LoginCubit, LoginState>(
-                  builder: (context, state) => _GoogleButton(
-                    isLoading: state is LoginLoading,
-                    onTap: () => context.read<LoginCubit>().loginWithGoogle(),
+                  builder: (ctx, st) => _GoogleButton(
+                    loading: st is LoginLoading,
+                    onTap: () => ctx.read<LoginCubit>().loginWithGoogle(),
                   ),
                 ),
 
-                const SizedBox(height: AppConstants.space4XL),
+                SizedBox(height: 28.h),
 
-                // ── Sign up link ─────────────────────────────────
+                // Sign up link
                 Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('ليس لديك حساب؟', style: AppTextStyles.bodyMedium),
-                      const SizedBox(width: AppConstants.spaceXS),
-                      GestureDetector(
-                        onTap: () => context.push(AppRouter.signUp),
-                        child: Text('إنشاء حساب',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w700,
-                            )),
-                      ),
-                    ],
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Text(AppStrings.loginNoAccount,
+                      style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 13.sp,
+                          color: _kTextMid)),
+                  SizedBox(width: 4.w),
+                  GestureDetector(
+                    onTap: () => context.push(AppRouter.signUp),
+                    child: Text(AppStrings.loginCreateAccount,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 13.sp,
+                          color: _kAccent,
+                          fontWeight: FontWeight.w700,
+                          decoration: TextDecoration.underline,
+                          decorationColor: _kAccent,
+                        )),
                   ),
-                ),
+                ])),
 
-                const SizedBox(height: AppConstants.spaceL),
-
-                // ── Guest link ───────────────────────────────────
-                Center(
-                  child: GestureDetector(
-                    onTap: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      await UserModeService.setGuest(prefs);
-                      if (context.mounted) context.go(AppRouter.home);
-                    },
-                    child: Text(
-                      'متابعة كضيف بدون حساب',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textMuted,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppColors.textMuted,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: AppConstants.spaceXXL),
+                SizedBox(height: 24.h),
               ],
             ),
           ),
@@ -197,258 +273,128 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Brand pill
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spaceM,
-            vertical: AppConstants.spaceXXS + 2,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.accentDim,
-            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
-          ),
-          child: Text(
-            'Power Pulse',
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.accent,
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppConstants.spaceM),
-        Text(
-          'أهلاً بعودتك\nمجدداً 💪',
-          style: AppTextStyles.displayMedium.copyWith(height: 1.25),
-        ),
-        const SizedBox(height: AppConstants.spaceS),
-        Text(
-          'سجّل دخولك وواصل رحلتك نحو اللياقة',
-          style: AppTextStyles.bodyMedium,
-        ),
-      ],
-    );
-  }
 }
 
-// ─── Field Label ──────────────────────────────────────────────────────────────
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Text(
-        text,
-        style: AppTextStyles.titleSmall.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      );
-}
-
-// ─── Auth Text Field ──────────────────────────────────────────────────────────
-
-class _AuthField extends StatelessWidget {
-  const _AuthField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    this.obscureText = false,
-    this.keyboardType,
-    this.suffix,
-    this.validator,
-  });
-
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final Widget? suffix;
-  final FormFieldValidator<String>? validator;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
-      textDirection: TextDirection.ltr,
-      style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textPrimary,
-        letterSpacing: obscureText ? 2.0 : 0,
-      ),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle:
-            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-        prefixIcon:
-            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
-        suffixIcon: suffix != null
-            ? Padding(
-                padding: const EdgeInsets.only(left: AppConstants.spaceM),
-                child: suffix,
-              )
-            : null,
-        filled: true,
-        fillColor: AppColors.bgSurface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
-        ),
-        errorStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.danger),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.spaceL,
-          vertical: AppConstants.spaceL,
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Or Divider ───────────────────────────────────────────────────────────────
-
-class _OrDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(
-            child: Divider(color: AppColors.borderSubtle, thickness: 1)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
-          child: Text('أو', style: AppTextStyles.bodySmall),
-        ),
-        const Expanded(
-            child: Divider(color: AppColors.borderSubtle, thickness: 1)),
-      ],
-    );
-  }
-}
-
-// ─── Google Button ────────────────────────────────────────────────────────────
-
+// ─── Google button ────────────────────────────────────────────────────────────
 class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({required this.isLoading, required this.onTap});
-  final bool isLoading;
+  const _GoogleButton({required this.onTap, this.loading = false});
   final VoidCallback onTap;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isLoading ? null : onTap,
+      onTap: loading ? null : onTap,
       child: Container(
+        width: double.infinity,
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
-          color: AppColors.bgSurface,
+          color: const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: AppColors.borderMedium),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: const Color(0xFF2A2A2A)),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isLoading)
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.accent,
+        child: loading
+            ? const Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: _kAccent),
                 ),
               )
-            else ...[
-              _GoogleIcon(),
-              const SizedBox(width: AppConstants.spaceM),
-              Text('الدخول بحساب جوجل',
-                  style: AppTextStyles.labelLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  )),
-            ],
-          ],
-        ),
+            : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                // Google G letter as icon (no asset needed)
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Center(
+                    child: Text('G',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF4285F4),
+                          height: 1,
+                        )),
+                  ),
+                ),
+                SizedBox(width: AppConstants.spaceM.w),
+                Text(AppStrings.loginGoogle,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 14.sp,
+                      color: _kTextHigh,
+                      fontWeight: FontWeight.w600,
+                    )),
+              ]),
       ),
     );
   }
 }
 
-class _GoogleIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const SizedBox(
-        width: 22,
-        height: 22,
-        child: _GoogleLetterG(),
-      );
-}
-
-class _GoogleLetterG extends StatelessWidget {
-  const _GoogleLetterG();
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Colored G using text (simple & crisp)
-        RichText(
-          text: const TextSpan(
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'sans-serif',
-            ),
-            children: [
-              TextSpan(text: 'G', style: TextStyle(color: Color(0xFF4285F4))),
-            ],
-          ),
+// ─── Conflict dialog ──────────────────────────────────────────────────────────
+void _showConflictDialog(BuildContext context, LoginGuestDataConflict state) {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (dCtx) => AlertDialog(
+      backgroundColor: const Color(0xFF1E1E1E),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusXL)),
+      title: const Text(AppStrings.conflictTitle,
+          style: TextStyle(
+              fontFamily: 'Cairo',
+              color: _kTextHigh,
+              fontWeight: FontWeight.w800)),
+      content: Text(
+        'لديك بيانات محفوظة محليًا كضيف، وحسابك "${state.accountName}" '
+        'يحتوي على بيانات في السحابة.\n\nاختر أيهما تريد الاحتفاظ به:',
+        style:
+            const TextStyle(fontFamily: 'Cairo', color: _kTextMid, height: 1.6),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(dCtx).pop();
+            context.read<LoginCubit>().resolveConflict(keepLocal: true);
+          },
+          child: const Text(AppStrings.conflictLocal,
+              style: TextStyle(
+                  fontFamily: 'Cairo',
+                  color: _kAccent,
+                  fontWeight: FontWeight.w700)),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(dCtx).pop();
+            context.read<LoginCubit>().resolveConflict(keepLocal: false);
+          },
+          child: const Text(AppStrings.conflictCloud,
+              style: TextStyle(
+                  fontFamily: 'Cairo',
+                  color: _kDanger,
+                  fontWeight: FontWeight.w700)),
         ),
       ],
-    );
-  }
+    ),
+  );
 }
 
 // ─── Snackbar ─────────────────────────────────────────────────────────────────
-
 void _showSnack(BuildContext context,
     {required String message, required bool isError}) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message,
-          style: AppTextStyles.bodyMedium.copyWith(color: Colors.white)),
-      backgroundColor: isError ? AppColors.danger : AppColors.success,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppConstants.radiusM),
-      ),
-      margin: const EdgeInsets.all(AppConstants.spaceL),
-      duration: const Duration(seconds: 3),
-    ),
-  );
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message,
+        style: const TextStyle(fontFamily: 'Cairo', color: _kTextHigh)),
+    backgroundColor: isError ? _kDanger : _kSuccess,
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM)),
+    margin: const EdgeInsets.all(AppConstants.spaceL),
+    duration: const Duration(seconds: 3),
+  ));
 }
