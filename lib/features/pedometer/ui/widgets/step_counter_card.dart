@@ -70,8 +70,8 @@ class _CountingCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text('هدف ✓',
-                  style: AppTextStyles.labelSmall.copyWith(
-                      color: AppColors.success, fontSize: 10.sp)),
+                    style: AppTextStyles.labelSmall.copyWith(
+                        color: AppColors.success, fontSize: 10.sp)),
               ),
           ]),
 
@@ -81,7 +81,7 @@ class _CountingCard extends StatelessWidget {
           Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Text(
               _fmt(state.steps),
-              style: AppTextStyles.displaySmall.copyWith(
+              style: AppTextStyles.statNumber.copyWith(
                   color: color, fontSize: 32.sp, height: 1.0),
             ),
             SizedBox(width: 6.w),

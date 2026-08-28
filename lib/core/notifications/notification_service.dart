@@ -28,15 +28,14 @@ class NotificationService {
     tz.initializeTimeZones();
 
     const android = AndroidInitializationSettings('@mipmap/launcher_icon');
-    const ios     = DarwinInitializationSettings(
+    const ios = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
-    // v20: initialize() takes named parameters only
     await _plugin.initialize(
-      const InitializationSettings(android: android, iOS: ios),
+      settings: const InitializationSettings(android: android, iOS: ios),
       onDidReceiveNotificationResponse: _onNotificationResponse,
       onDidReceiveBackgroundNotificationResponse:
       _onBackgroundNotificationResponse,
@@ -52,8 +51,9 @@ class NotificationService {
   void _onNotificationResponse(NotificationResponse r) {}
 
   Future<void> _createChannels() async {
-    final androidPlugin = _plugin.resolvePlatformSpecificImplementation
-    AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
 
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
@@ -89,8 +89,9 @@ class NotificationService {
 
   // ─── Request Permission ───────────────────────────────────
   Future<bool> requestPermission() async {
-    final android = _plugin.resolvePlatformSpecificImplementation
-    AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     final granted = await android?.requestNotificationsPermission();
     return granted ?? false;
   }
@@ -100,7 +101,8 @@ class NotificationService {
     id: idWorkoutMorning,
     title: '💪 وقت التمرين!',
     body: 'ابدأ يومك بتمرين قوي — جسمك يشكرك لاحقاً',
-    hour: 8, minute: 0,
+    hour: 8,
+    minute: 0,
     channel: _chWorkout,
   );
 
@@ -108,7 +110,8 @@ class NotificationService {
     id: idWorkoutEvening,
     title: '🔥 لسه فيه وقت!',
     body: 'اليوم راح من غير تمرين؟ 15 دقيقة كفاية تبدأ بيها',
-    hour: 18, minute: 0,
+    hour: 18,
+    minute: 0,
     channel: _chWorkout,
   );
 
@@ -116,7 +119,8 @@ class NotificationService {
     id: idStepsReminder,
     title: '👟 تحرك شوية!',
     body: 'نص اليوم عدى — قوم اتمشى لو الخطوات أقل من هدفك',
-    hour: 12, minute: 0,
+    hour: 12,
+    minute: 0,
     channel: _chSteps,
   );
 
@@ -126,7 +130,8 @@ class NotificationService {
         id: idWaterReminder + h,
         title: '💧 اشرب ماء!',
         body: 'جسمك محتاج ماء — كوباية صغيرة كل شوية',
-        hour: h, minute: 0,
+        hour: h,
+        minute: 0,
         channel: _chWater,
       );
     }
@@ -136,81 +141,93 @@ class NotificationService {
   Future<void> showWorkoutCompleted({
     required String workoutName,
     required int durationMinutes,
-  }) =>
-      _plugin.show(
-        idAchievement,
-        '🎉 أنهيت تمرينك!',
-        '$workoutName — $durationMinutes دقيقة. عمل رائع!',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            _chAchievement, 'الإنجازات',
-            importance: Importance.high,
-            priority: Priority.high,
-            icon: '@mipmap/launcher_icon',
-          ),
-          iOS: DarwinNotificationDetails(),
+  }) async {
+    await _plugin.show(
+      id: idAchievement,
+      title: '🎉 أنهيت تمرينك!',
+      body: '$workoutName — $durationMinutes دقيقة. عمل رائع!',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _chAchievement,
+          'الإنجازات',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/launcher_icon',
         ),
-      );
+        iOS: DarwinNotificationDetails(),
+      ),
+    );
+  }
 
-  Future<void> showStepsGoalReached(int steps) =>
-      _plugin.show(
-        idAchievement + 1,
-        '🏆 وصلت لهدف الخطوات!',
-        '$steps خطوة اليوم — متميز!',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            _chAchievement, 'الإنجازات',
-            importance: Importance.high,
-            priority: Priority.high,
-            icon: '@mipmap/launcher_icon',
-          ),
-          iOS: DarwinNotificationDetails(),
+  Future<void> showStepsGoalReached(int steps) async {
+    await _plugin.show(
+      id: idAchievement + 1,
+      title: '🏆 وصلت لهدف الخطوات!',
+      body: '$steps خطوة اليوم — متميز!',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _chAchievement,
+          'الإنجازات',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/launcher_icon',
         ),
-      );
+        iOS: DarwinNotificationDetails(),
+      ),
+    );
+  }
 
   // ─── Cancel ───────────────────────────────────────────────
   Future<void> cancelWorkoutReminders() async {
-    // v20: cancel() takes a named `id` parameter
-    await _plugin.cancel(idWorkoutMorning);
-    await _plugin.cancel(idWorkoutEvening);
+    await _plugin.cancel(id: idWorkoutMorning);
+    await _plugin.cancel(id: idWorkoutEvening);
   }
 
-  Future<void> cancelStepsReminder() => _plugin.cancel(idStepsReminder);
+  Future<void> cancelStepsReminder() async {
+    await _plugin.cancel(id: idStepsReminder);
+  }
 
   Future<void> cancelWaterReminders() async {
     for (final h in [8, 10, 12, 14, 16, 18, 20]) {
-      await _plugin.cancel(idWaterReminder + h);
+      await _plugin.cancel(id: idWaterReminder + h);
     }
   }
 
   Future<void> cancelAll() => _plugin.cancelAll();
 
   // ─── Internal helper ──────────────────────────────────────
+// ─── Internal helper ──────────────────────────────────────
   Future<void> _scheduleDailyAt({
-    required int    id,
+    required int id,
     required String title,
     required String body,
-    required int    hour,
-    required int    minute,
+    required int hour,
+    required int minute,
     required String channel,
   }) async {
     final now = tz.TZDateTime.now(tz.local);
     var scheduled = tz.TZDateTime(
-      tz.local, now.year, now.month, now.day, hour, minute,
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
     );
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
 
-    // v20: zonedSchedule() — uiLocalNotificationDateInterpretation is now required
     await _plugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduled,
-      NotificationDetails(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: scheduled,
+      notificationDetails: NotificationDetails(
+
         android: AndroidNotificationDetails(
-          channel, channel,
+          channel,
+          channel,
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/launcher_icon',
@@ -219,9 +236,6 @@ class NotificationService {
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
-      // ← Required in v20; was optional/missing in older versions
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 }

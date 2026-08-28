@@ -41,28 +41,23 @@ import '../di/injection.dart';
 abstract class AppRouter {
   AppRouter._();
 
-  static const String entry      = '/entry';
-  static const String login      = '/login';
-  static const String signUp     = '/sign-up';
+  static const String entry = '/entry';
+  static const String login = '/login';
+  static const String signUp = '/sign-up';
   static const String onboarding = '/onboarding';
-  static const String home       = '/home';
-  static const String exercises  = '/exercises';
-  static const String nutrition  = '/nutrition';
+  static const String home = '/home';
+  static const String exercises = '/exercises';
+  static const String nutrition = '/nutrition';
   static const String nutritionSearch = '/nutrition/search';
-  static const String progress   = '/progress';
-  static const String profile    = '/profile';
+  static const String progress = '/progress';
+  static const String profile = '/profile';
   static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
-  static const String workoutPlan   = '/workout-plan';
-
-  // Cached after the first evaluation — avoids re-running async work on every navigation.
-  // Clear this whenever auth state changes (login, logout, signup).
+  static const String workoutPlan = '/workout-plan';
   static String? _cachedLocation;
 
   static void clearLocationCache() => _cachedLocation = null;
 
-  // Decides where to send the user on app start.
-  // Result is cached so this runs only once per session.
   static Future<String> _initialLocation() async {
     if (_cachedLocation != null) return _cachedLocation!;
 
@@ -70,16 +65,13 @@ abstract class AppRouter {
     final currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
-      // Signed-in user — restore Firestore data (offline failure is silent).
       try {
         await GuestMigrationService.restoreCloudDataToLocal(
           prefs: prefs,
           firestore: FirebaseFirestore.instance,
           uid: currentUser.uid,
         );
-      } catch (e) {
-        // Continue with local cache when offline
-      }
+      } catch (e) {}
       await UserModeService.setAuthenticated(prefs);
       _cachedLocation = home;
       return _cachedLocation!;
@@ -92,32 +84,26 @@ abstract class AppRouter {
     }
 
     if (mode == UserMode.authenticated) {
-      // Session expired — reset so the user can sign in again.
       await UserModeService.clearMode(prefs);
     }
 
-    // New install — show onboarding first, then entry (auth choice).
-    // Skip onboarding if already done (e.g. closed app at entry screen).
-    _cachedLocation = UserModeService.hasCompletedOnboarding(prefs)
-        ? entry
-        : onboarding;
+    _cachedLocation =
+        UserModeService.hasCompletedOnboarding(prefs) ? entry : onboarding;
     return _cachedLocation!;
   }
 
   static final GoRouter router = GoRouter(
-    initialLocation: home,
+    initialLocation: onboarding,  ///home
     redirect: (context, state) async {
       final initial = await _initialLocation();
       final path = state.uri.path;
 
       final authRoutes = {login, signUp, entry};
 
-      // If no mode chosen: force entry screen (except auth routes)
       if (initial == entry && !authRoutes.contains(path)) {
         return entry;
       }
 
-      // If authenticated/guest and trying to access auth screens → home
       if (initial == home && authRoutes.contains(path)) {
         return home;
       }
@@ -127,12 +113,10 @@ abstract class AppRouter {
     debugLogDiagnostics: kDebugMode,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
-      // ─── Entry choice screen (first launch) ─────────────────
       GoRoute(
         path: entry,
         builder: (_, __) => const EntryChoiceScreen(),
       ),
-
       GoRoute(
         path: login,
         builder: (_, __) => BlocProvider(
@@ -154,12 +138,10 @@ abstract class AppRouter {
           child: const OnboardingScreen(),
         ),
       ),
-
       ShellRoute(
         builder: (context, state, child) => MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => sl<HomeCubit>()),
-            // .value — owned by PowerPulseApp in main.dart; reuse without disposing
             BlocProvider.value(value: sl<AppSettingsCubit>()),
             BlocProvider(create: (_) => sl<PedometerCubit>()..start()),
             BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
@@ -219,8 +201,6 @@ abstract class AppRouter {
           ),
         ],
       ),
-
-      // ─── Independent Routes ──────────────────────────────────────────────
       GoRoute(
         path: nutritionSearch,
         builder: (context, state) {
@@ -240,7 +220,6 @@ abstract class AppRouter {
         builder: (_, __) => MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
-            // .value — does not take ownership; singleton stays alive for ShellRoute
             BlocProvider.value(value: sl<WorkoutPlanCubit>()),
           ],
           child: const WorkoutLoggerScreen(),
@@ -252,8 +231,6 @@ abstract class AppRouter {
           providers: [
             BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
             BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
-            // .value — singleton already loaded by ShellRoute; avoids double-load
-            // and prevents disposal of the shared instance on pop
             BlocProvider.value(value: sl<WorkoutPlanCubit>()),
           ],
           child: const WorkoutPlanScreen(),
@@ -281,7 +258,6 @@ abstract class AppRouter {
   );
 }
 
-// ─── Profile Edit Gate ────────────────────────────────────────────
 class _ProfileEditGate extends StatefulWidget {
   const _ProfileEditGate();
 

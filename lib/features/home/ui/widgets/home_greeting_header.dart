@@ -18,6 +18,30 @@ class GreetingHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              greeting,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 11.sp,
+                color: AppColors.textMuted,
+                letterSpacing: 0.3,
+              ),
+            ),
+            Text(
+              '$name 💪',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 26.sp,
+                fontWeight: FontWeight.w900,
+                color: AppColors.textPrimary,
+                height: 1.1,
+              ),
+            ),
+          ],
+        ),
         GestureDetector(
           onTap: () => context.go('/profile'),
           child: Container(
@@ -38,30 +62,6 @@ class GreetingHeader extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              greeting,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 11.sp,
-                color: AppColors.textMuted,
-                letterSpacing: 0.3,
-              ),
-            ),
-            Text(
-              '💪 $name',
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 26.sp,
-                fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
-                height: 1.1,
-              ),
-            ),
-          ],
         ),
       ],
     );
