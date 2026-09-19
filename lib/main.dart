@@ -54,6 +54,7 @@ class PowerPulseApp extends StatelessWidget {
           routerConfig: AppRouter.router,
           locale: const Locale('ar', 'EG'),
           localizationsDelegates:  const [
+
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
