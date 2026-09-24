@@ -161,7 +161,7 @@ class NotificationService {
   }) async {
     // v20.1.0: show() — ALL named parameters.
     // Signature: show({required int id, String? title, String? body,
-    //                  NotificationDetails? notificationDetails, String? payload})
+    //   BN               NotificationDetails? notificationDetails, String? payload})
     await _plugin.show(
       id: idAchievement,
       title: '🎉 أنهيت تمرينك!',

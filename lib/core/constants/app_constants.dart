@@ -1,6 +1,9 @@
-
 abstract class AppConstants {
   AppConstants._();
+
+  // ─── Supabase ───────────────────────────────────────────────
+  static const String supabaseUrl     = 'https://YOUR_PROJECT_ID.supabase.co';
+  static const String supabaseAnonKey = 'YOUR_ANON_KEY_HERE';
 
   // ─── Spacing ───────────────────────────────────────────────
   static const double spaceXXS =  2.0;
@@ -24,34 +27,29 @@ abstract class AppConstants {
   static const double radiusPill = 100.0;
 
   // ─── Screen Padding ────────────────────────────────────────
-  static const double screenPaddingH = 18.0; // horizontal
-  static const double screenPaddingV = 16.0; // vertical
+  static const double screenPaddingH = 18.0;
+  static const double screenPaddingV = 16.0;
 
   // ─── Component Sizes ───────────────────────────────────────
-  // Buttons
   static const double buttonHeightLarge  = 52.0;
   static const double buttonHeightMedium = 44.0;
   static const double buttonHeightSmall  = 36.0;
 
-  // Icons
   static const double iconXS = 14.0;
   static const double iconS  = 18.0;
   static const double iconM  = 22.0;
   static const double iconL  = 28.0;
   static const double iconXL = 36.0;
 
-  // Avatars
   static const double avatarS  = 32.0;
   static const double avatarM  = 42.0;
   static const double avatarL  = 56.0;
   static const double avatarXL = 80.0;
 
-  // Cards
   static const double cardHeightHero  = 180.0;
   static const double cardHeightSmall = 100.0;
   static const double exerciseThumb   =  56.0;
 
-  // Bottom Nav
   static const double bottomNavHeight = 64.0;
 
   // ─── Elevation / Blur ──────────────────────────────────────

@@ -14,7 +14,7 @@ android {
     namespace "com.powerteam.powerpulse"
     compileSdk = 35   // لازم 35
 
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.powerteam.powerpulse"
