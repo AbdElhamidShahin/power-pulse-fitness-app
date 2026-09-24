@@ -59,14 +59,15 @@ dependencies:
 
   # Launcher Icons
   flutter_launcher_icons: ^0.14.1
+  awesome_snackbar_content: ^0.1.7
 
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-
 flutter:
   uses-material-design: true
+
   assets:
     - assets/langs/en.json
     - assets/langs/ar.json

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:task/core/domain/api_result.dart';
+import 'package:power_pulse/core/domain/api_result.dart';
 import '../../data/models/workout_plan_entity.dart';
 import '../usecases/workout_plan_usecases.dart';
 import 'workout_plan_state.dart';

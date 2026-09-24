@@ -1,66 +1,97 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   NotificationService._();
+
   static final NotificationService instance = NotificationService._();
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
+
   bool _initialized = false;
 
-  static const _chWorkout = 'workout_reminder';
-  static const _chSteps = 'steps_reminder';
-  static const _chWater = 'water_reminder';
-  static const _chAchievement = 'achievement';
+  // ─── Notification Channels ───────────────────────────────
 
-  static const idWorkoutMorning = 1;
-  static const idWorkoutEvening = 2;
-  static const idStepsReminder = 3;
-  static const idWaterReminder = 4;
-  static const idAchievement = 5;
+  static const String _chWorkout = 'workout_reminder';
+  static const String _chSteps = 'steps_reminder';
+  static const String _chWater = 'water_reminder';
+  static const String _chAchievement = 'achievement';
+
+  // ─── Notification IDs ────────────────────────────────────
+
+  static const int idWorkoutMorning = 1;
+  static const int idWorkoutEvening = 2;
+  static const int idStepsReminder = 3;
+  static const int idWaterReminder = 4;
+  static const int idAchievement = 5;
 
   // ─── Init ─────────────────────────────────────────────────
+
   Future<void> init() async {
     if (_initialized) return;
 
+    // Initialize timezone database.
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
 
-    const android = AndroidInitializationSettings('@mipmap/launcher_icon');
-    const ios = DarwinInitializationSettings(
+    // Egypt timezone.
+    tz.setLocalLocation(
+      tz.getLocation('Africa/Cairo'),
+    );
+
+    // Android initialization.
+    const AndroidInitializationSettings android = AndroidInitializationSettings(
+      '@mipmap/launcher_icon',
+    );
+
+    // iOS initialization.
+    const DarwinInitializationSettings ios = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
-    // v20.1.0: initialize() — ALL named parameters.
-    // Signature: initialize({required InitializationSettings settings, ...})
+    const InitializationSettings settings = InitializationSettings(
+      android: android,
+      iOS: ios,
+    );
+
     await _plugin.initialize(
-      settings: const InitializationSettings(android: android, iOS: ios),
+      settings,
       onDidReceiveNotificationResponse: _onNotificationResponse,
       onDidReceiveBackgroundNotificationResponse:
           _onBackgroundNotificationResponse,
     );
 
     await _createChannels();
+
     _initialized = true;
   }
 
-  // Must be static (top-level equivalent) for background isolate use.
+  // ─── Background Notification Callback ────────────────────
+
   @pragma('vm:entry-point')
-  static void _onBackgroundNotificationResponse(NotificationResponse response) {
-    // Background tap — add navigation logic here if needed.
+  static void _onBackgroundNotificationResponse(
+    NotificationResponse response,
+  ) {
+    // Add navigation/background logic here if needed.
   }
 
-  void _onNotificationResponse(NotificationResponse response) {
-    // Foreground tap — add navigation logic here if needed.
+  // ─── Foreground Notification Callback ────────────────────
+
+  void _onNotificationResponse(
+    NotificationResponse response,
+  ) {
+    // Add navigation logic here if needed.
   }
+
+  // ─── Notification Channels ───────────────────────────────
 
   Future<void> _createChannels() async {
-    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+        _plugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
 
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
@@ -71,6 +102,7 @@ class NotificationService {
         playSound: true,
       ),
     );
+
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
         _chSteps,
@@ -79,6 +111,7 @@ class NotificationService {
         importance: Importance.defaultImportance,
       ),
     );
+
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
         _chWater,
@@ -87,6 +120,7 @@ class NotificationService {
         importance: Importance.low,
       ),
     );
+
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
         _chAchievement,
@@ -99,14 +133,19 @@ class NotificationService {
   }
 
   // ─── Request Permission ───────────────────────────────────
+
   Future<bool> requestPermission() async {
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-    final granted = await android?.requestNotificationsPermission();
+    final AndroidFlutterLocalNotificationsPlugin? android =
+        _plugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    final bool? granted = await android?.requestNotificationsPermission();
+
     return granted ?? false;
   }
 
-  // ─── Workout Reminders ────────────────────────────────────
+  // ─── Workout Reminders ───────────────────────────────────
+
   Future<void> scheduleWorkoutMorningReminder() async {
     await _scheduleDailyAt(
       id: idWorkoutMorning,
@@ -129,6 +168,8 @@ class NotificationService {
     );
   }
 
+  // ─── Steps Reminder ───────────────────────────────────────
+
   Future<void> scheduleStepsReminder() async {
     await _scheduleDailyAt(
       id: idStepsReminder,
@@ -140,14 +181,25 @@ class NotificationService {
     );
   }
 
+  // ─── Water Reminders ─────────────────────────────────────
+
   Future<void> scheduleWaterReminders() async {
-    final hours = [8, 10, 12, 14, 16, 18, 20];
-    for (final h in hours) {
+    const List<int> hours = [
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+    ];
+
+    for (final int hour in hours) {
       await _scheduleDailyAt(
-        id: idWaterReminder + h,
+        id: idWaterReminder + hour,
         title: '💧 اشرب ماء!',
         body: 'جسمك محتاج ماء — كوباية صغيرة كل شوية',
-        hour: h,
+        hour: hour,
         minute: 0,
         channel: _chWater,
       );
@@ -155,18 +207,16 @@ class NotificationService {
   }
 
   // ─── Achievement Notifications ────────────────────────────
+
   Future<void> showWorkoutCompleted({
     required String workoutName,
     required int durationMinutes,
   }) async {
-    // v20.1.0: show() — ALL named parameters.
-    // Signature: show({required int id, String? title, String? body,
-    //   BN               NotificationDetails? notificationDetails, String? payload})
     await _plugin.show(
-      id: idAchievement,
-      title: '🎉 أنهيت تمرينك!',
-      body: '$workoutName — $durationMinutes دقيقة. عمل رائع!',
-      notificationDetails: const NotificationDetails(
+      idAchievement,
+      '🎉 أنهيت تمرينك!',
+      '$workoutName — $durationMinutes دقيقة. عمل رائع!',
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           _chAchievement,
           'الإنجازات',
@@ -181,10 +231,10 @@ class NotificationService {
 
   Future<void> showStepsGoalReached(int steps) async {
     await _plugin.show(
-      id: idAchievement + 1,
-      title: '🏆 وصلت لهدف الخطوات!',
-      body: '$steps خطوة اليوم — متميز!',
-      notificationDetails: const NotificationDetails(
+      idAchievement + 1,
+      '🏆 وصلت لهدف الخطوات!',
+      '$steps خطوة اليوم — متميز!',
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           _chAchievement,
           'الإنجازات',
@@ -198,26 +248,38 @@ class NotificationService {
   }
 
   // ─── Cancel ───────────────────────────────────────────────
-  // v20.1.0: cancel() — named parameter.
-  // Signature: cancel({required int id, String? tag})
+
   Future<void> cancelWorkoutReminders() async {
-    await _plugin.cancel(id: idWorkoutMorning);
-    await _plugin.cancel(id: idWorkoutEvening);
+    await _plugin.cancel(idWorkoutMorning);
+    await _plugin.cancel(idWorkoutEvening);
   }
 
   Future<void> cancelStepsReminder() async {
-    await _plugin.cancel(id: idStepsReminder);
+    await _plugin.cancel(idStepsReminder);
   }
 
   Future<void> cancelWaterReminders() async {
-    for (final h in [8, 10, 12, 14, 16, 18, 20]) {
-      await _plugin.cancel(id: idWaterReminder + h);
+    const List<int> hours = [
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+    ];
+
+    for (final int hour in hours) {
+      await _plugin.cancel(idWaterReminder + hour);
     }
   }
 
-  Future<void> cancelAll() => _plugin.cancelAll();
+  Future<void> cancelAll() async {
+    await _plugin.cancelAll();
+  }
 
-  // ─── Internal helper ──────────────────────────────────────
+  // ─── Internal Schedule Helper ─────────────────────────────
+
   Future<void> _scheduleDailyAt({
     required int id,
     required String title,
@@ -226,8 +288,9 @@ class NotificationService {
     required int minute,
     required String channel,
   }) async {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+
+    tz.TZDateTime scheduled = tz.TZDateTime(
       tz.local,
       now.year,
       now.month,
@@ -235,25 +298,20 @@ class NotificationService {
       hour,
       minute,
     );
-    if (scheduled.isBefore(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
-    }
 
-    // v20.1.0: zonedSchedule() — ALL named parameters.
-    // Signature: zonedSchedule({required int id,
-    //                           required TZDateTime scheduledDate,
-    //                           required NotificationDetails notificationDetails,
-    //                           required AndroidScheduleMode androidScheduleMode,
-    //                           String? title, String? body, String? payload,
-    //                           DateTimeComponents? matchDateTimeComponents})
-    // NOTE: `title` and `body` come AFTER the three required params.
-    // NOTE: `uiLocalNotificationDateInterpretation` is REMOVED in v20.
+    // If today's time already passed,
+    // schedule it for tomorrow.
+    if (scheduled.isBefore(now)) {
+      scheduled = scheduled.add(
+        const Duration(days: 1),
+      );
+    }
     await _plugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: scheduled,
-      notificationDetails: NotificationDetails(
+      id,
+      title,
+      body,
+      scheduled,
+      NotificationDetails(
         android: AndroidNotificationDetails(
           channel,
           channel,
@@ -263,8 +321,12 @@ class NotificationService {
         ),
         iOS: const DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
+      androidScheduleMode:
+      AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+      UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents:
+      DateTimeComponents.time,
     );
   }
 }

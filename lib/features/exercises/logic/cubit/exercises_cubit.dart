@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
-import 'package:task/core/domain/api_result.dart';
 
 import '../../../../core/domain/app_failure.dart';
 import '../../data/models/exercise_entity.dart';
