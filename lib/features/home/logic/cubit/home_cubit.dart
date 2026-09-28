@@ -29,14 +29,17 @@ final class HomeCubit extends Cubit<HomeState> {
     emit(const HomeLoading());
 
     final profileResult = await _getProfile();
+
     if (profileResult.isFailure) {
-      emit(HomeError(_map(profileResult.failureOrNull!)));
+      emit(HomeError(profileResult.failureOrNull!.userMessage));
       return;
     }
+
     final UserProfile profile = profileResult.dataOrNull!;
 
     final nutritionResult =
         await _nutritionRepo.getDailyNutrition(DateTime.now());
+
     final progressResult = await _getProgressSummary(ProgressPeriod.week);
 
     final nutrition = nutritionResult.dataOrNull;
@@ -46,10 +49,12 @@ final class HomeCubit extends Cubit<HomeState> {
 
     // ─── Today's workouts ──────────────────────────────────────
     final todayLogs = progress?.workoutLogs
-            .where((l) =>
-                l.date.year == today.year &&
-                l.date.month == today.month &&
-                l.date.day == today.day)
+            .where(
+              (l) =>
+                  l.date.year == today.year &&
+                  l.date.month == today.month &&
+                  l.date.day == today.day,
+            )
             .toList() ??
         [];
 
@@ -62,13 +67,17 @@ final class HomeCubit extends Cubit<HomeState> {
           calorieGoal: profile.dailyCalorieGoal,
         );
 
-    emit(HomeLoaded(HomeSummary(
-      profile: profile,
-      dailyNutrition: dailyNutrition,
-      todayWorkouts: todayLogs,
-      weeklyWorkouts: progress?.totalWorkouts ?? 0,
-      currentStreak: streak,
-    )));
+    emit(
+      HomeLoaded(
+        HomeSummary(
+          profile: profile,
+          dailyNutrition: dailyNutrition,
+          todayWorkouts: todayLogs,
+          weeklyWorkouts: progress?.totalWorkouts ?? 0,
+          currentStreak: streak,
+        ),
+      ),
+    );
   }
 
   Future<void> refresh() => load();
@@ -77,7 +86,13 @@ final class HomeCubit extends Cubit<HomeState> {
     if (logs.isEmpty) return 0;
 
     final workedDays = logs
-        .map((l) => DateTime(l.date.year, l.date.month, l.date.day))
+        .map(
+          (l) => DateTime(
+            l.date.year,
+            l.date.month,
+            l.date.day,
+          ),
+        )
         .toSet()
         .toList()
       ..sort((a, b) => b.compareTo(a));
@@ -85,24 +100,32 @@ final class HomeCubit extends Cubit<HomeState> {
     if (workedDays.isEmpty) return 0;
 
     final today = DateTime.now();
-    final todayDate = DateTime(today.year, today.month, today.day);
-    final yesterday = todayDate.subtract(const Duration(days: 1));
+    final todayDate = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    );
+
+    final yesterday = todayDate.subtract(
+      const Duration(days: 1),
+    );
 
     if (workedDays.first != todayDate && workedDays.first != yesterday) {
       return 0;
     }
 
     int streak = 1;
+
     for (int i = 1; i < workedDays.length; i++) {
       final diff = workedDays[i - 1].difference(workedDays[i]).inDays;
+
       if (diff == 1) {
         streak++;
       } else {
         break;
       }
     }
+
     return streak;
   }
-
-  // _map أُزيلت — استخدم AppFailureX.userMessage
 }
