@@ -40,11 +40,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<SignUpCubit>().signUpUser(
-          name: _nameCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          password: _passCtrl.text,
-          confirmPassword: _confirmPassCtrl.text,
-        );
+      name: _nameCtrl.text.trim(),
+      email: _emailCtrl.text.trim(),
+      password: _passCtrl.text,
+      confirmPassword: _confirmPassCtrl.text,
+    );
   }
 
   @override
@@ -52,15 +52,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state is SignUpSuccess) {
-          _showSnack(context,
-              isError: false, message: '🎉 مرحباً ${state.name}! حسابك جاهز');
+          _showBanner(
+            context,
+            message: 'مرحباً بك، ${state.name}! حسابك جاهز 🎉',
+            isError: false,
+          );
           context.go(AppRouter.home);
+        } else if (state is SignUpVerificationRequired) {
+          _showVerificationSheet(context, email: state.email);
         } else if (state is SignUpError) {
-          _showSnack(context, isError: true, message: state.errorMessage);
+          _showBanner(context, message: state.errorMessage, isError: true);
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: const Color(0xFF0D0D0D),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -72,22 +77,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 const SizedBox(height: AppConstants.spaceXXL),
 
-                // ── Back button ────────────────────────────────────
+                // ── Back button ───────────────────────────────────
                 GestureDetector(
-                  onTap: () => context.canPop()
-                      ? context.pop()
-                      : context.go(AppRouter.login),
+                  onTap: () => context.canPop() ? context.pop() : context.go(AppRouter.login),
                   child: Container(
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.bgSurface,
+                      color: const Color(0xFF1A1A1A),
                       borderRadius: BorderRadius.circular(AppConstants.radiusS),
-                      border: Border.all(color: AppColors.borderSubtle),
+                      border: Border.all(color: const Color(0xFF2A2A2A)),
                     ),
                     child: const Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: AppColors.textSecondary,
+                      color: Color(0xFFB0B0B0),
                       size: 16,
                     ),
                   ),
@@ -95,12 +98,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 const SizedBox(height: AppConstants.spaceXXL),
 
-                // ── Header ─────────────────────────────────────────
-                _buildHeader(),
+                // ── Header ────────────────────────────────────────
+                _SignUpHeader(),
 
                 const SizedBox(height: AppConstants.space3XL),
 
-                // ── Form ───────────────────────────────────────────
+                // ── Form ──────────────────────────────────────────
                 Form(
                   key: _formKey,
                   child: Column(
@@ -128,10 +131,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) {
-                          if (v == null || v.isEmpty)
-                            return 'أدخل بريدك الإلكتروني';
-                          if (!AppRegex.isEmailValid(v))
-                            return 'بريد إلكتروني غير صحيح';
+                          if (v == null || v.isEmpty) return 'أدخل بريدك الإلكتروني';
+                          if (!AppRegex.isEmailValid(v)) return 'بريد إلكتروني غير صحيح';
                           return null;
                         },
                       ),
@@ -144,8 +145,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.lock_outline_rounded,
                         obscureText: _passHidden,
                         suffix: GestureDetector(
-                          onTap: () =>
-                              setState(() => _passHidden = !_passHidden),
+                          onTap: () => setState(() => _passHidden = !_passHidden),
                           child: Icon(
                             _passHidden
                                 ? Icons.visibility_off_outlined
@@ -156,8 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) return 'أدخل كلمة المرور';
-                          if (!AppRegex.hasMinLength(v))
-                            return '8 أحرف على الأقل';
+                          if (!AppRegex.hasMinLength(v)) return '8 أحرف على الأقل';
                           return null;
                         },
                       ),
@@ -170,8 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.lock_outline_rounded,
                         obscureText: _confirmPassHidden,
                         suffix: GestureDetector(
-                          onTap: () => setState(
-                              () => _confirmPassHidden = !_confirmPassHidden),
+                          onTap: () => setState(() => _confirmPassHidden = !_confirmPassHidden),
                           child: Icon(
                             _confirmPassHidden
                                 ? Icons.visibility_off_outlined
@@ -182,8 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) return 'أكّد كلمة المرور';
-                          if (v != _passCtrl.text)
-                            return 'كلمتا المرور غير متطابقتين';
+                          if (v != _passCtrl.text) return 'كلمتا المرور غير متطابقتين';
                           return null;
                         },
                       ),
@@ -205,21 +202,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: AppConstants.spaceXL),
 
                 // ── Divider ────────────────────────────────────────
-                Row(
-                  children: [
-                    const Expanded(
-                        child: Divider(
-                            color: AppColors.borderSubtle, thickness: 1)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.spaceM),
-                      child: Text('أو', style: AppTextStyles.bodySmall),
-                    ),
-                    const Expanded(
-                        child: Divider(
-                            color: AppColors.borderSubtle, thickness: 1)),
-                  ],
-                ),
+                _OrDivider(),
 
                 const SizedBox(height: AppConstants.spaceXL),
 
@@ -239,8 +222,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('لديك حساب بالفعل؟',
-                          style: AppTextStyles.bodyMedium),
+                      Text(
+                        'لديك حساب بالفعل؟',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: const Color(0xFF6B6B6B),
+                        ),
+                      ),
                       const SizedBox(width: AppConstants.spaceXS),
                       GestureDetector(
                         onTap: () => context.canPop()
@@ -266,8 +253,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+}
 
-  Widget _buildHeader() {
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+class _SignUpHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -285,41 +277,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
             style: AppTextStyles.labelSmall.copyWith(
               color: AppColors.accent,
               letterSpacing: 1.0,
-              fontWeight: FontWeight.w700,
             ),
           ),
         ),
         const SizedBox(height: AppConstants.spaceM),
         Text(
           'ابدأ رحلتك\nالآن 🔥',
-          style: AppTextStyles.displayMedium.copyWith(height: 1.25),
+          style: AppTextStyles.displayMedium.copyWith(
+            color: const Color(0xFFF5F5F0),
+            height: 1.2,
+          ),
         ),
         const SizedBox(height: AppConstants.spaceS),
         Text(
           'أنشئ حسابك وانضم لآلاف الرياضيين',
-          style: AppTextStyles.bodyMedium,
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: const Color(0xFF6B6B6B),
+          ),
         ),
       ],
     );
   }
 }
 
-// ─── Field Label ──────────────────────────────────────────────────────────────
+// ─── Shared widgets (same style as login) ────────────────────────────────────
 
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel(this.text);
   final String text;
 
   @override
-  Widget build(BuildContext context) => Text(
-        text,
-        style: AppTextStyles.titleSmall.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      );
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: AppTextStyles.titleSmall.copyWith(color: const Color(0xFFB0B0B0)),
+    );
+  }
 }
-
-// ─── Auth Text Field ──────────────────────────────────────────────────────────
 
 class _AuthField extends StatelessWidget {
   const _AuthField({
@@ -351,42 +345,40 @@ class _AuthField extends StatelessWidget {
       validator: validator,
       textDirection: textDirection,
       style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textPrimary,
+        color: const Color(0xFFF5F5F0),
         letterSpacing: obscureText ? 2.0 : 0,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle:
-            AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-        prefixIcon:
-            Icon(icon, color: AppColors.textMuted, size: AppConstants.iconM),
+        hintStyle: AppTextStyles.bodyMedium.copyWith(color: const Color(0xFF3A3A3A)),
+        prefixIcon: Icon(icon, color: const Color(0xFF4B4B4B), size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
-                padding: const EdgeInsets.only(left: AppConstants.spaceM),
-                child: suffix,
-              )
+          padding: const EdgeInsets.only(left: AppConstants.spaceM),
+          child: suffix,
+        )
             : null,
         filled: true,
-        fillColor: AppColors.bgSurface,
+        fillColor: const Color(0xFF1A1A1A),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
+          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
+          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+          borderSide: BorderSide(color: AppColors.accent, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger),
+          borderSide: BorderSide(color: AppColors.danger),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
+          borderSide: BorderSide(color: AppColors.danger, width: 1.5),
         ),
         errorStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.danger),
         contentPadding: const EdgeInsets.symmetric(
@@ -398,7 +390,22 @@ class _AuthField extends StatelessWidget {
   }
 }
 
-// ─── Google Button ────────────────────────────────────────────────────────────
+class _OrDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
+          child: Text('أو',
+              style: AppTextStyles.bodySmall.copyWith(color: const Color(0xFF4B4B4B))),
+        ),
+        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+      ],
+    );
+  }
+}
 
 class _GoogleButton extends StatelessWidget {
   const _GoogleButton({
@@ -417,16 +424,9 @@ class _GoogleButton extends StatelessWidget {
       child: Container(
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
-          color: AppColors.bgSurface,
+          color: const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: AppColors.borderMedium),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: const Color(0xFF2A2A2A)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -435,20 +435,19 @@ class _GoogleButton extends StatelessWidget {
               const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.accent),
+                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
               )
             else ...[
-              const SizedBox(
-                width: 22,
-                height: 22,
-                child: _GoogleLetterG(),
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CustomPaint(painter: _GooglePainter()),
               ),
               const SizedBox(width: AppConstants.spaceM),
-              Text(label,
-                  style: AppTextStyles.labelLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  )),
+              Text(
+                label,
+                style: AppTextStyles.labelLarge.copyWith(color: const Color(0xFFB0B0B0)),
+              ),
             ],
           ],
         ),
@@ -457,47 +456,87 @@ class _GoogleButton extends StatelessWidget {
   }
 }
 
-class _GoogleLetterG extends StatelessWidget {
-  const _GoogleLetterG();
+class _GooglePainter extends CustomPainter {
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'G',
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF4285F4),
-          fontFamily: 'sans-serif',
-        ),
-      ),
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final r = size.width / 2;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(cx, cy), radius: r),
+      -0.5, 3.8, false,
+      Paint()
+        ..color = const Color(0xFF4285F4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.8,
+    );
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(cx, cy), radius: r),
+      3.3, 1.0, false,
+      Paint()
+        ..color = const Color(0xFFEA4335)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.8,
+    );
+    canvas.drawLine(
+      Offset(cx, cy),
+      Offset(cx + r, cy),
+      Paint()
+        ..color = const Color(0xFF4285F4)
+        ..strokeWidth = 2.8,
     );
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
-void _showSnack(BuildContext context,
-    {required String message, required bool isError}) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message,
-          style: AppTextStyles.bodyMedium.copyWith(color: Colors.white)),
-      backgroundColor: isError ? AppColors.danger : AppColors.success,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+void _showBanner(
+    BuildContext context, {
+      required String message,
+      required bool isError,
+    }) {
+  ScaffoldMessenger.of(context).showMaterialBanner(
+    MaterialBanner(
+      backgroundColor: isError ? AppColors.dangerDim : AppColors.accentDim,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spaceXXL,
+        vertical: AppConstants.spaceM,
       ),
-      margin: const EdgeInsets.all(AppConstants.spaceL),
-      duration: const Duration(seconds: 3),
+      content: Text(
+        message,
+        style: AppTextStyles.bodyMedium.copyWith(
+          color: isError ? AppColors.danger : AppColors.accent,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () =>
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+          child: Text(
+            'حسناً',
+            style: AppTextStyles.labelMedium.copyWith(
+              color: isError ? AppColors.danger : AppColors.accent,
+            ),
+          ),
+        ),
+      ],
     ),
   );
+  Future.delayed(const Duration(seconds: 3), () {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    }
+  });
 }
 
 void _showVerificationSheet(BuildContext context, {required String email}) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: AppColors.bgSurface,
+    backgroundColor: const Color(0xFF1A1A1A),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(AppConstants.radiusXL),
@@ -508,12 +547,11 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle bar
           Container(
             width: 48,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.borderMedium,
+              color: const Color(0xFF3A3A3A),
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
@@ -521,20 +559,27 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
           Container(
             width: 64,
             height: 64,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.accentDim,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.mark_email_unread_rounded,
+            child: Icon(Icons.mark_email_unread_rounded,
                 color: AppColors.accent, size: AppConstants.iconXL),
           ),
           const SizedBox(height: AppConstants.spaceXL),
-          Text('تحقق من بريدك', style: AppTextStyles.headlineMedium),
+          Text(
+            'تحقق من بريدك',
+            style: AppTextStyles.headlineMedium.copyWith(
+              color: const Color(0xFFF5F5F0),
+            ),
+          ),
           const SizedBox(height: AppConstants.spaceS),
           Text(
             'أرسلنا رابط التفعيل إلى\n$email',
             textAlign: TextAlign.center,
-            style: AppTextStyles.bodyMedium,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: const Color(0xFF6B6B6B),
+            ),
           ),
           const SizedBox(height: AppConstants.space3XL),
           PPButton(

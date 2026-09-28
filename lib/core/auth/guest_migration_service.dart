@@ -1,8 +1,11 @@
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// Keys that hold local user data we want to migrate to the cloud.
+/// Each key maps to a Supabase table column / document path.
 abstract class GuestMigrationService {
+  // SharedPreferences keys that hold user-owned data
   static const _migrateKeys = [
     'user_profile',
     'nutrition_logs',
@@ -13,17 +16,16 @@ abstract class GuestMigrationService {
     'active_workout_session',
   ];
 
-  static DocumentReference<Map<String, dynamic>> _docRef(
-    FirebaseFirestore firestore,
-    String uid,
-  ) =>
-      firestore.collection('users').doc(uid).collection('data').doc('local_cache');
-static Future<void> migrateGuestDataToCloud({
+  /// Call this once after a guest successfully authenticates.
+  /// Uploads every non-empty local key to `user_data` table in Supabase
+  /// under the authenticated UID. Does NOT wipe local data afterward —
+  /// the caller should switch to authenticated mode.
+  static Future<void> migrateGuestDataToCloud({
     required SharedPreferences prefs,
-    required FirebaseFirestore firestore,
+    required SupabaseClient supabase,
     required String uid,
   }) async {
-    final payload = <String, dynamic>{};
+    final payload = <String, dynamic>{'uid': uid};
 
     for (final key in _migrateKeys) {
       final raw = prefs.getString(key);
@@ -31,55 +33,42 @@ static Future<void> migrateGuestDataToCloud({
         try {
           payload[key] = jsonDecode(raw);
         } catch (_) {
-          payload[key] = raw;
+          payload[key] = raw; // store as-is if not JSON
         }
       }
     }
 
-    if (payload.isEmpty) return;
+    if (payload.length <= 1) return; // only uid, nothing to migrate
 
-   await _docRef(firestore, uid).set(payload, SetOptions(merge: true));
+    // Upsert into `user_data` table.  Row = one document per user.
+    await supabase.from('user_data').upsert(payload);
   }
 
- static Future<void> restoreCloudDataToLocal({
+  /// Restore cloud data into local SharedPreferences cache.
+  /// Call this when an existing authenticated user signs in.
+  static Future<void> restoreCloudDataToLocal({
     required SharedPreferences prefs,
-    required FirebaseFirestore firestore,
+    required SupabaseClient supabase,
     required String uid,
   }) async {
-    final snapshot = await _docRef(firestore, uid).get();
+    final rows = await supabase
+        .from('user_data')
+        .select()
+        .eq('uid', uid)
+        .limit(1);
 
-    if (!snapshot.exists) return;
+    if (rows.isEmpty) return;
 
-    final data = snapshot.data();
-    if (data == null || data.isEmpty) return;
+    final row = rows.first as Map<String, dynamic>;
 
     for (final key in _migrateKeys) {
-      if (data.containsKey(key) && data[key] != null) {
-        final value = data[key];
+      if (row.containsKey(key) && row[key] != null) {
+        final value = row[key];
         await prefs.setString(
           key,
           value is String ? value : jsonEncode(value),
         );
       }
     }
-  }
-
-static Future<void> syncLocalKeyToCloud({
-    required SharedPreferences prefs,
-    required FirebaseFirestore firestore,
-    required String uid,
-    required String key,
-  }) async {
-    final raw = prefs.getString(key);
-    if (raw == null) return;
-
-    dynamic value;
-    try {
-      value = jsonDecode(raw);
-    } catch (_) {
-      value = raw;
-    }
-
-    await _docRef(firestore, uid).set({key: value}, SetOptions(merge: true));
   }
 }

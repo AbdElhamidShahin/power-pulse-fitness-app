@@ -1,77 +1,52 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../repo/login_result.dart';
 import 'login_repostry.dart';
 
 final class LoginRepositoryImpl implements LoginRepository {
-  LoginRepositoryImpl(this._auth, this._googleSignIn);
+  const LoginRepositoryImpl(this._supabase);
 
-  final FirebaseAuth _auth;
-  final GoogleSignIn _googleSignIn;
+  final SupabaseClient _supabase;
 
   @override
   Future<LoginResult> login({
     required String email,
     required String password,
   }) async {
-    final credential = await _auth.signInWithEmailAndPassword(
+    final response = await _supabase.auth.signInWithPassword(
       email: email,
       password: password,
     );
 
-    final user = credential.user;
+    final user = response.user;
+
     if (user == null) {
-      throw FirebaseAuthException(
-        code: 'null-user',
-        message: 'فشل تسجيل الدخول، يرجى المحاولة مرة أخرى',
-      );
+      throw Exception('فشل تسجيل الدخول، يرجى المحاولة مرة أخرى');
     }
 
+    final metadata = user.userMetadata ?? const <String, dynamic>{};
+
+    final name =
+        metadata['full_name'] as String? ??
+            metadata['name'] as String? ??
+            'مستخدم';
+
+    final avatarUrl =
+        metadata['avatar_url'] as String? ?? metadata['picture'] as String?;
+
     return LoginResult(
-      userId: user.uid,
+      userId: user.id,
       email: user.email ?? email,
-      name: user.displayName ?? 'مستخدم',
-      avatarUrl: user.photoURL,
+      name: name,
+      avatarUrl: avatarUrl,
     );
   }
 
   @override
-  Future<LoginResult> signInWithGoogle() async {
-    // Trigger the Google Sign In flow
-    final googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) {
-      throw FirebaseAuthException(
-        code: 'google-sign-in-cancelled',
-        message: 'تم إلغاء تسجيل الدخول بجوجل',
-      );
-    }
-
-    // Obtain the auth details
-    final googleAuth = await googleUser.authentication;
-
-    // Create a new credential
-    final oauthCredential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with the Google credential
-    final userCredential = await _auth.signInWithCredential(oauthCredential);
-    final user = userCredential.user;
-
-    if (user == null) {
-      throw FirebaseAuthException(
-        code: 'null-user',
-        message: 'فشل تسجيل الدخول بجوجل',
-      );
-    }
-
-    return LoginResult(
-      userId: user.uid,
-      email: user.email ?? googleUser.email,
-      name: user.displayName ?? googleUser.displayName ?? 'مستخدم',
-      avatarUrl: user.photoURL ?? googleUser.photoUrl,
+  Future<void> signInWithGoogle() async {
+    await _supabase.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: 'io.supabase.hotelguide://login-callback',
     );
   }
 }

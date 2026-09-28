@@ -1,5 +1,5 @@
 /// Result of a sign-up/authentication operation.
-/// Pure Dart — no external SDK imports.
+/// Pure Dart — no Flutter/Supabase imports.
 final class SignUpResult {
   const SignUpResult({
     required this.userId,

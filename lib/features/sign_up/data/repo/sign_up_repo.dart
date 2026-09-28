@@ -7,6 +7,6 @@ abstract interface class SignUpRepository {
     required String name,
   });
 
-  /// Sign in/up with Google — returns the result directly (no OAuth redirect needed on mobile).
+  /// يبدأ OAuth flow لـ Google ثم ينتظر Auth event ويرجع النتيجة
   Future<SignUpResult> signInWithGoogle();
 }

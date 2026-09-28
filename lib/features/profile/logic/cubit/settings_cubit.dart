@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,51 +12,59 @@ class AppSettingsCubit extends Cubit<AppSettings> {
 
   final SharedPreferences _prefs;
 
-  static const _kDark = 'settings_dark_mode';
-  static const _kMetric = 'settings_metric_units';
+  static const _kDark          = 'settings_dark_mode';
+  static const _kMetric        = 'settings_metric_units';
   static const _kNotifications = 'settings_notifications';
 
   void _load() {
     emit(AppSettings(
-      isDarkMode: _prefs.getBool(_kDark) ?? false,
-      isMetricUnits: _prefs.getBool(_kMetric) ?? true,
+      isDarkMode:           _prefs.getBool(_kDark)          ?? false,
+      isMetricUnits:        _prefs.getBool(_kMetric)        ?? true,
       notificationsEnabled: _prefs.getBool(_kNotifications) ?? true,
     ));
   }
 
+  // ─── Dark Mode ────────────────────────────────────────────
   Future<void> toggleDarkMode(bool val) async {
     await _prefs.setBool(_kDark, val);
     emit(state.copyWith(isDarkMode: val));
   }
 
+  // ─── Metric Units ──────────────────────────────────────────
   Future<void> toggleMetricUnits(bool val) async {
     await _prefs.setBool(_kMetric, val);
     emit(state.copyWith(isMetricUnits: val));
   }
 
+  // ─── Notifications ─────────────────────────────────────────
   Future<void> toggleNotifications(bool val) async {
     await _prefs.setBool(_kNotifications, val);
     emit(state.copyWith(notificationsEnabled: val));
   }
 
+  // ─── Logout — يخرج من الحساب ويحول لوضع الضيف ────────────
   Future<void> logout() async {
     try {
-      await FirebaseAuth.instance.signOut();
-    } catch (_) {}
-
-    await UserModeService.clearMode(_prefs);
+      // سجّل الخروج من Supabase أولاً
+      await Supabase.instance.client.auth.signOut();
+    } catch (_) {
+      // حتى لو فشل الـ signOut، نكمل
+    }
+    // حوّل لوضع الضيف — لا تحذف بيانات Supabase ولا الملف الشخصي
+    // (البيانات المحلية تبقى كـ cache عشان لو رجع يسجل الدخول)
+    await UserModeService.setGuestAfterLogout(_prefs);
+    // امسح فقط الـ token المحلي لا كل الـ prefs
     await _prefs.remove('user_profile');
-
     emit(const AppSettings());
   }
 
+  // Helper للشاشات الأخرى
   ThemeMode get themeMode =>
       state.isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
   String weightUnit(double kg) =>
       state.isMetricUnits ? '${kg.toInt()} كجم' : '${(kg * 2.205).toInt()} رطل';
 
-  String heightUnit(double cm) => state.isMetricUnits
-      ? '${cm.toInt()} سم'
-      : '${(cm / 2.54).toStringAsFixed(1)} بوصة';
+  String heightUnit(double cm) =>
+      state.isMetricUnits ? '${cm.toInt()} سم' : '${(cm / 2.54).toStringAsFixed(1)} بوصة';
 }

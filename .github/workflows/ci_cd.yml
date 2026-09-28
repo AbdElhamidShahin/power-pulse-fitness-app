@@ -3,7 +3,8 @@ name: Power Pulse CI/CD
 on:
   push:
     branches: [ main ]
-
+  pull_request:
+    branches: [ main ]
 
 env:
   FLUTTER_VERSION: '3.32.5'
@@ -49,9 +50,7 @@ jobs:
       # Step 5: فحص الكود
       # ─────────────────────────────────────────
       - name: 🔍 Flutter Analyze
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
-
-
+        run: flutter analyze --no-fatal-infos
 
       # ─────────────────────────────────────────
       # Step 6: تشغيل الـ Tests
