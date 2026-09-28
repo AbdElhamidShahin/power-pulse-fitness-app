@@ -45,5 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Supabase OAuth callback: لازم يتطابق مع AppConstants.oauthScheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.powerteam.powerpulse.oauth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.powerteam.powerpulse</string>
+			</array>
+		</dict>
+	</array>
+	<!-- supabase_flutter بيتعامل مع الـ deep link بنفسه، مش go_router -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 </dict>
 </plist>

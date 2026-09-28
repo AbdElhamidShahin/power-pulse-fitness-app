@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yourcompanyname.yourappname">
+    package="com.powerteam.powerpulse">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -28,6 +28,20 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Supabase OAuth callback (Google Sign-In).
+                 لازم يتطابق مع AppConstants.oauthRedirectUrl و Supabase Redirect URLs -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.powerteam.powerpulse"
+                      android:host="login-callback"/>
+            </intent-filter>
+            <!-- supabase_flutter بيلتقط الـ deep link بنفسه؛ منع Flutter من تمريره
+                 لـ go_router عشان مايظهرش "الصفحة غير موجودة" -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false" />
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

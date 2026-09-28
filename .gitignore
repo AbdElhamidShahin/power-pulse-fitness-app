@@ -21,6 +21,12 @@ migrate_working_dir/
 # is commented out by default.
 #.vscode/
 
+# Local secrets (Supabase) — مايتعملهاش commit أبداً
+# انسخ dart_defines.example.json إلى dart_defines.json واملاه بالقيم الحقيقية
+dart_defines.json
+dart_defines.*.json
+!dart_defines.example.json
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
