@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/router/route_observers.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -12,9 +13,6 @@ import '../widgets/progress_period_selector.dart';
 import '../widgets/progress_stat_card.dart';
 import '../widgets/progress_weekly_chart_card.dart';
 
-// RouteObserver عالمي — بيُسجَّل في GoRouter
-final RouteObserver<ModalRoute<void>> progressRouteObserver =
-RouteObserver<ModalRoute<void>>();
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});

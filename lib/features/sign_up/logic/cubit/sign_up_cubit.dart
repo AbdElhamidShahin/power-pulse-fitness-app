@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/auth/guest_migration_service.dart';
 import '../../../../core/auth/user_mode_service.dart';
-import '../../../login/data/auth_profile_sync.dart';
+import '../../../../core/auth/auth_profile_sync.dart';
 import '../../data/repo/sign_up_repo.dart';
 import 'sign_up_state.dart';
 

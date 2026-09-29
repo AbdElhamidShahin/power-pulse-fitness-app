@@ -12,19 +12,19 @@ import '../../features/exercises/ui/screens/exercise_detail_screen.dart';
 import '../../features/exercises/ui/screens/exercises_screen.dart';
 import '../../features/home/logic/cubit/home_cubit.dart';
 import '../../features/home/ui/screens/home_screen.dart';
+import '../../features/nutrition/ui/screens/nutrition_screen.dart';
+import '../../features/progress/ui/screens/progress_screen.dart';
 import '../../features/nutrition/data/models/food_entity.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
 import '../../features/nutrition/ui/screens/food_search_screen.dart';
-import '../../features/nutrition/ui/screens/nutrition_screen.dart';
 import '../../features/onboarding/ui/screens/onboarding_screen.dart';
 import '../../features/pedometer/logic/cubit/pedometer_cubit.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
-import '../../features/profile/logic/cubit/profile_state.dart';
 import '../../features/profile/logic/cubit/settings_cubit.dart';
 import '../../features/profile/ui/screens/edit_profile_screen.dart';
+import '../../features/profile/ui/widgets/profile_edit_gate.dart';
 import '../../features/profile/ui/screens/profile_screen.dart';
 import '../../features/progress/logic/cubit/progress_cubit.dart';
-import '../../features/progress/ui/screens/progress_screen.dart';
 import '../../features/workout_logger/logic/cubit/workout_logger_cubit.dart';
 import '../../features/workout_logger/ui/screens/workout_logger_screen.dart';
 import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart';
@@ -32,6 +32,7 @@ import '../../features/workout_plan/ui/screens/workout_plan_screen.dart';
 import '../../shared/shell/main_shell.dart';
 import '../di/injection.dart';
 import '../startup.dart';
+import 'route_observers.dart';
 
 abstract class AppRouter {
   AppRouter._();
@@ -199,7 +200,7 @@ abstract class AppRouter {
         path: workoutPlan,
         builder: (_, __) => MultiBlocProvider(
           providers: [
-            BlocProvider(create: (_) => sl<ExercisesCubit>()..loadInitial()),
+            BlocProvider(create: (_) => sl<ExercisesCubit>()),
             BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
             BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
           ],
@@ -213,7 +214,7 @@ abstract class AppRouter {
             BlocProvider(create: (_) => sl<ProfileSaveCubit>()),
             BlocProvider(create: (_) => sl<ProfileCubit>()),
           ],
-          child: const _ProfileEditGate(),
+          child: const ProfileEditGate(),
         ),
       ),
     ],
@@ -228,71 +229,3 @@ abstract class AppRouter {
   );
 }
 
-// ─── Profile Edit Gate ────────────────────────────────────────────
-class _ProfileEditGate extends StatefulWidget {
-  const _ProfileEditGate();
-
-  @override
-  State<_ProfileEditGate> createState() => _ProfileEditGateState();
-}
-
-class _ProfileEditGateState extends State<_ProfileEditGate> {
-  @override
-  void initState() {
-    super.initState();
-    final cubit = context.read<ProfileCubit>();
-    if (cubit.state is! ProfileLoaded) {
-      cubit.load();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ProfileCubit, ProfileState>(
-      builder: (context, state) {
-        if (state is ProfileLoaded) {
-          return BlocProvider(
-            create: (_) => sl<ProfileSaveCubit>(),
-            child: EditProfileScreen(profile: state.profile),
-          );
-        }
-        if (state is ProfileError) {
-          return Scaffold(
-            backgroundColor: const Color(0xFF0D0D0D),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline_rounded,
-                      color: Color(0xFFBFFF00), size: 48),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'تعذّر تحميل البيانات',
-                    style: TextStyle(
-                        fontFamily: 'Cairo',
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: () => context.read<ProfileCubit>().load(),
-                    child: const Text('إعادة المحاولة',
-                        style: TextStyle(
-                            fontFamily: 'Cairo', color: Color(0xFFBFFF00))),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-        return const Scaffold(
-          backgroundColor: Color(0xFF0D0D0D),
-          body: Center(
-            child: CircularProgressIndicator(color: Color(0xFFBFFF00)),
-          ),
-        );
-      },
-    );
-  }
-}

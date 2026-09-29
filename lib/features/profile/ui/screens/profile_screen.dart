@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/auth/user_mode_service.dart';
-import '../../../../core/notifications/notification_settings_section.dart';
+import '../widgets/notification_settings_section.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/models/user_profile_entity.dart';
