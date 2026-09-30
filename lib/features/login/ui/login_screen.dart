@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _emailCtrl,
-                        hint: 'powerteam@gmail.com',
+                        hint: 'example@gmail.com',
                         keyboardType: TextInputType.emailAddress,
                         icon: Icons.alternate_email_rounded,
                         validator: (v) {

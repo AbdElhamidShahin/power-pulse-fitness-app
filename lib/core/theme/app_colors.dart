@@ -56,4 +56,16 @@ abstract class AppColors {
 
   // ─── Extra ─────────────────────────────────────────────────
   static const Color bghighest = Color(0xFFE8E8E8);
+
+  // ─── Profile Menu Icon Colors ──────────────────────────────
+  // ألوان أيقونات الـ profile menu — semantic فقط
+  static const Color profileIconPurple  = Color(0xFF6B21A8);
+  static const Color profileIconOrange  = Color(0xFFF97316);
+  static const Color profileIconPink    = Color(0xFFEC4899);
+  static const Color profileIconIndigo  = Color(0xFF6366F1);
+  static const Color profileIconTeal    = Color(0xFF10B981);
+  static const Color profileIconGreen   = Color(0xFF65A30D);
+  static const Color profileIconDark    = Color(0xFF3F6212);
+  static const Color profileIconDeep    = Color(0xFF1A2E05);
+  static const Color dangerSurface      = Color(0xFFFEE2E2);
 }

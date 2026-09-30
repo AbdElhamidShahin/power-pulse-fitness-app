@@ -1,52 +1,46 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
 import '../../../exercises/data/models/exercise_entity.dart';
-import '../../../exercises/logic/usecases/exercise_usecases.dart';
-import '../../../progress/data/models/progress_entity.dart';
-import '../../../progress/logic/usecases/progress_usecases.dart';
 import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../data/models/workout_session_entity.dart';
 import '../usecases/workout_logger_usecases.dart';
 import 'workout_logger_state.dart';
 
+/// WorkoutLoggerCubit — مسؤول عن إدارة الجلسة النشطة فقط.
+///
+/// Step 5 (P1 fix): أُزيلت الـ cross-feature dependencies:
+///   - SearchExercisesUseCase  → انتقلت لـ AddExerciseSheet
+///   - GetExercisesUseCase     → انتقلت لـ AddExerciseSheet
+///   - LogWorkoutUseCase       → انتقل لـ workout_logger_screen (UI listener)
+///
+/// الـ Cubit دلوقتي بيعرف بس عن workout_logger feature.
 final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   WorkoutLoggerCubit({
     required GetActiveSessionUseCase getActiveSession,
     required SaveSessionUseCase saveSession,
     required DeleteSessionUseCase deleteSession,
-    required LogWorkoutUseCase logWorkout,
-    required SearchExercisesUseCase searchExercises,
-    required GetExercisesUseCase getExercises,
   })  : _getActive = getActiveSession,
         _save = saveSession,
         _delete = deleteSession,
-        _logWorkout = logWorkout,
-        _searchExercises = searchExercises,
-        _getExercises = getExercises,
         super(const WorkoutLoggerInitial());
 
   final GetActiveSessionUseCase _getActive;
   final SaveSessionUseCase _save;
   final DeleteSessionUseCase _delete;
-  final LogWorkoutUseCase _logWorkout;
-  final SearchExercisesUseCase _searchExercises;
-  final GetExercisesUseCase _getExercises;
 
   // ─── Load ──────────────────────────────────────────────────
   Future<void> load() async {
     emit(const WorkoutLoggerLoading());
-    // دايماً جلسة نظيفة — مش بنرجع جلسة قديمة محفوظة
     emit(const WorkoutLoggerIdle());
   }
 
   // ─── Start ─────────────────────────────────────────────────
   Future<void> startSession(String name, {PlanDay? planDay}) async {
-    // لو عندنا خطة — نحوّل تمارين اليوم لـ SessionExercise تلقائياً
     final exercises = planDay != null
         ? planDay.exercises
             .map((pe) => SessionExercise(
                   exerciseId:
-                      '${pe.exerciseId}_${DateTime.now().millisecondsSinceEpoch}',
+                      '\${pe.exerciseId}_\${DateTime.now().millisecondsSinceEpoch}',
                   exerciseName: pe.exerciseName,
                   bodyPart: pe.bodyPart,
                   gifPath: pe.gifUrl,
@@ -165,6 +159,9 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   }
 
   // ─── Finish ────────────────────────────────────────────────
+  /// ينهي الجلسة ويُصدر [WorkoutLoggerFinished].
+  /// الـ UI (workout_logger_screen) مسؤول عن استدعاء LogWorkoutUseCase
+  /// بعد ما يستقبل هذه الحالة — عشان نتجنب الـ cross-feature coupling.
   Future<void> finishSession() async {
     final current = _active;
     if (current == null) return;
@@ -175,17 +172,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     );
 
     await _save(finished);
-
-    // سجّل في Progress feature
-    await _logWorkout(WorkoutLog(
-      id: finished.id,
-      name: finished.name,
-      date: finished.startTime,
-      durationMinutes: finished.durationMinutes,
-      caloriesBurned: finished.caloriesBurned,
-      exerciseCount: finished.exercises.length,
-    ));
-
     emit(WorkoutLoggerFinished(finished));
   }
 
@@ -197,27 +183,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   }
 
   void reset() => emit(const WorkoutLoggerIdle());
-
-  // ─── Exercise Library ──────────────────────────────────────
-
-  /// جلب كل التمارين للعرض في الـ sheet
-  Future<List<Exercise>> browseExercises() async {
-    final result = await _getExercises(limit: 300, offset: 0);
-    return result.fold(
-      onFailure: (_) => [],
-      onSuccess: (list) => list,
-    );
-  }
-
-  /// بحث في مكتبة التمارين
-  Future<List<Exercise>> searchLibrary(String query) async {
-    if (query.trim().isEmpty) return browseExercises();
-    final result = await _searchExercises(query.trim());
-    return result.fold(
-      onFailure: (_) => [],
-      onSuccess: (list) => list,
-    );
-  }
 
   // ─── Helpers ───────────────────────────────────────────────
   WorkoutSession? get _active => state is WorkoutLoggerActive

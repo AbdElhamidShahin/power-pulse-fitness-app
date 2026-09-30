@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/di/injection.dart';
+import '../../../exercises/logic/usecases/exercise_usecases.dart';
+import '../../../progress/data/models/progress_entity.dart';
+import '../../../progress/logic/usecases/progress_usecases.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
@@ -69,6 +73,16 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
     return BlocConsumer<WorkoutLoggerCubit, WorkoutLoggerState>(
       listener: (context, state) {
         if (state is WorkoutLoggerFinished) {
+          // (P1 fix) LogWorkoutUseCase انتقل هنا من WorkoutLoggerCubit
+          // عشان الـ Cubit ميعرفش عن progress feature
+          sl<LogWorkoutUseCase>()(WorkoutLog(
+            id: state.session.id,
+            name: state.session.name,
+            date: state.session.startTime,
+            durationMinutes: state.session.durationMinutes,
+            caloriesBurned: state.session.caloriesBurned,
+            exerciseCount: state.session.exercises.length,
+          ));
           _showSummarySheet(context, state.session);
         }
       },
@@ -191,8 +205,10 @@ class _ActiveView extends StatelessWidget {
         borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppConstants.radiusXXL)),
       ),
+      // (P1 fix) UseCases بتيجي من DI مباشرة — الـ Cubit مش عارفهم
       builder: (_) => AddExerciseSheet(
-        cubit: cubit,
+        getExercises: sl<GetExercisesUseCase>(),
+        searchExercises: sl<SearchExercisesUseCase>(),
         onAdd: (exercise) {
           cubit.addExercise(exercise);
           Navigator.pop(context);

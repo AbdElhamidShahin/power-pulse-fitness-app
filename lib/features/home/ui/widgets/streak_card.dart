@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
-import 'RingPainter.dart';
+import 'ring_painter.dart';
 
 class StreakCard extends StatelessWidget {
   const StreakCard({super.key, required this.streak});

@@ -5,11 +5,11 @@ abstract class AppConstants {
   // القيم بتتحقن وقت الـ build ومش موجودة في الـ source:
   //   flutter run --dart-define-from-file=dart_defines.json
   //   flutter build apk --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
-  // شوف dart_defines.powerteam.json
+  // شوف dart_defines.example.json
   static const String supabaseUrl =
-      String.fromEnvironment('https://vzxqyiddmtdfertbtmil.supabase.co/rest/v1/');
+      String.fromEnvironment('SUPABASE_URL');
   static const String supabaseAnonKey =
-      String.fromEnvironment('sb_publishable_NMFyzGbAFH0J39U888BdsQ_sMGZcuXj');
+      String.fromEnvironment('SUPABASE_ANON_KEY');
 
   /// لو أي قيمة ناقصة، التطبيق مينفعش يتصل بـ Supabase.
   static bool get isSupabaseConfigured =>

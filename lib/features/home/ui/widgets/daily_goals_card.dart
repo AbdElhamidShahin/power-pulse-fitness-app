@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
 import '../../logic/cubit/home_cubit.dart';
 import '../../logic/cubit/home_state.dart';
-import 'RingPainter.dart';
+import 'ring_painter.dart';
 
 class DailyGoalsCard extends StatelessWidget {
   const DailyGoalsCard({

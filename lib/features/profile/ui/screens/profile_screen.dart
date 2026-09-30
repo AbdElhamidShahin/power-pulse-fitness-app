@@ -35,11 +35,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Directionality(
       textDirection: TextDirection.rtl, // لضمان صحة الاتجاهات عربيًا
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F6F4),
+        backgroundColor: AppColors.bgDeep,
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) => switch (state) {
             ProfileInitial() || ProfileLoading() => const Center(
-              child: CircularProgressIndicator(color: Color(0xFFA3E635)),
+              child: CircularProgressIndicator(color: AppColors.accent),
             ),
             ProfileError(:final message) => Center(child: Text(message)),
             ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
@@ -89,7 +89,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                     children: [
                       ProfileInfoRow(
                         icon: Icons.person_rounded,
-                        iconColor: const Color(0xFF6B21A8),
+                        iconColor: AppColors.profileIconPurple,
                         label: 'الاسم',
                         value: profile.name,
                         onTap: () => context.push('/profile/edit'),
@@ -97,7 +97,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileInfoRow(
                         icon: Icons.cake_rounded,
-                        iconColor: const Color(0xFFF97316),
+                        iconColor: AppColors.profileIconOrange,
                         label: 'العمر',
                         value: '${profile.age} سنة',
                         onTap: () => context.push('/profile/edit'),
@@ -105,7 +105,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileInfoRow(
                         icon: Icons.edit_rounded,
-                        iconColor: const Color(0xFF9CA3AF),
+                        iconColor: AppColors.textMuted,
                         label: 'الطول',
                         value: '${profile.heightCm.toInt()} سم',
                         onTap: () => context.push('/profile/edit'),
@@ -113,7 +113,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileInfoRow(
                         icon: Icons.balance_rounded,
-                        iconColor: const Color(0xFFEAB308),
+                        iconColor: AppColors.warning,
                         label: 'الوزن',
                         value: '${profile.weightKg.toInt()} كجم',
                         onTap: () => context.push('/profile/edit'),
@@ -121,7 +121,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileInfoRow(
                         icon: Icons.track_changes_rounded,
-                        iconColor: const Color(0xFFEC4899),
+                        iconColor: AppColors.profileIconPink,
                         label: 'الهدف',
                         value: profile.goal.labelAr,
                         onTap: () => context.push('/profile/edit'),
@@ -152,7 +152,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                     children: [
                       ProfileToggleRow(
                         icon: Icons.notifications_rounded,
-                        iconColor: const Color(0xFFF59E0B),
+                        iconColor: AppColors.warning,
                         label: 'الإشعارات',
                         value: settings.notificationsEnabled,
                         onChanged: (val) =>
@@ -161,7 +161,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileToggleRow(
                         icon: Icons.nightlight_round,
-                        iconColor: const Color(0xFF6366F1),
+                        iconColor: AppColors.profileIconIndigo,
                         label: 'الوضع الليلي',
                         value: settings.isDarkMode,
                         onChanged: (val) =>
@@ -170,7 +170,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileToggleRow(
                         icon: Icons.square_foot_rounded,
-                        iconColor: const Color(0xFF10B981),
+                        iconColor: AppColors.profileIconTeal,
                         label: 'الوحدات (كجم/سم)',
                         value: settings.isMetricUnits,
                         onChanged: (val) =>
@@ -179,7 +179,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileInfoRow(
                         icon: Icons.lock_rounded,
-                        iconColor: const Color(0xFFF59E0B),
+                        iconColor: AppColors.warning,
                         label: 'الخصوصية',
                         value: '',
                         onTap: () => _showPrivacySheet(context),
@@ -216,14 +216,14 @@ class _ProfileContentState extends State<_ProfileContent> {
                   margin: EdgeInsets.only(bottom: 16.h),
                   padding: EdgeInsets.all(16.r),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFECFCCC),
+                    color: AppColors.accentDim,
                     borderRadius: BorderRadius.circular(14.r),
-                    border: Border.all(color: const Color(0xFFA3E635).withOpacity(0.4)),
+                    border: Border.all(color: AppColors.accent.withOpacity(0.4)),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.cloud_upload_outlined,
-                          color: Color(0xFF65A30D), size: 22),
+                          color: AppColors.profileIconGreen, size: 22),
                       SizedBox(width: 10.w),
                       Expanded(
                         child: Text(
@@ -231,7 +231,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 12.sp,
-                            color: const Color(0xFF3F6212),
+                            color: AppColors.profileIconDark,
                           ),
                         ),
                       ),
@@ -241,7 +241,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.symmetric(
                               horizontal: 10.w, vertical: 6.h),
-                          backgroundColor: const Color(0xFFA3E635),
+                          backgroundColor: AppColors.accent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),
                           ),
@@ -252,7 +252,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                             fontFamily: 'Cairo',
                             fontSize: 11.sp,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1A2E05),
+                            color: AppColors.profileIconDeep,
                           ),
                         ),
                       ),
@@ -274,14 +274,14 @@ class _ProfileContentState extends State<_ProfileContent> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEE2E2),
+                  color: AppColors.dangerSurface,
                   borderRadius: BorderRadius.circular(14.r),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.style_rounded,
-                        color: const Color(0xFFEF4444), size: 18.r),
+                        color: AppColors.danger, size: 18.r),
                     SizedBox(width: 6.w),
                     Text(
                       'تسجيل الخروج',
@@ -289,7 +289,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         fontFamily: 'Cairo',
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFFEF4444),
+                        color: AppColors.danger,
                       ),
                     ),
                   ],
@@ -378,7 +378,7 @@ class _ProfileContentState extends State<_ProfileContent> {
             },
             child: const Text('تسجيل الخروج',
                 style: TextStyle(
-                    fontFamily: 'Cairo', color: Color(0xFFEF4444),
+                    fontFamily: 'Cairo', color: AppColors.danger,
                     fontWeight: FontWeight.bold)),
           ),
         ],

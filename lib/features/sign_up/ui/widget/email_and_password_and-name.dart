@@ -69,7 +69,7 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
           SizedBox(height: 16.h),
           _buildLabel(context, 'البريد الإلكتروني'),
           AppTextFormFeild(
-            hintText: 'powerteam@gmail.com',
+            hintText: 'example@gmail.com',
             controller: _emailController,
             validator: (value) {
               if (value == null || value.isEmpty) {

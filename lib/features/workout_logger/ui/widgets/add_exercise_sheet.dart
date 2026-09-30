@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/domain/api_result.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../exercises/data/models/exercise_entity.dart';
+import '../../../exercises/logic/usecases/exercise_usecases.dart';
 import '../../data/models/workout_session_entity.dart';
-import '../../logic/cubit/workout_logger_cubit.dart';
 
+/// Sheet لاختيار تمرين من المكتبة وإضافته للجلسة.
+///
+/// Step 5 (P1 fix): browseExercises / searchLibrary انتقلوا من
+/// WorkoutLoggerCubit لهنا — الـ Cubit مبقاش يعرف عن exercises feature.
 class AddExerciseSheet extends StatefulWidget {
   const AddExerciseSheet({
     super.key,
     required this.onAdd,
-    required this.cubit,
+    required this.getExercises,
+    required this.searchExercises,
   });
+
   final void Function(SessionExercise) onAdd;
-  final WorkoutLoggerCubit cubit;
+  final GetExercisesUseCase getExercises;
+  final SearchExercisesUseCase searchExercises;
 
   @override
   State<AddExerciseSheet> createState() => _AddExerciseSheetState();
@@ -38,10 +46,22 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
 
   Future<void> _load(String query) async {
     setState(() => _loading = true);
-    final list = query.isEmpty
-        ? await widget.cubit.browseExercises()
-        : await widget.cubit.searchLibrary(query);
+
+    final list = await (query.isEmpty
+        ? _browseExercises()
+        : _searchLibrary(query));
+
     if (mounted) setState(() { _results = list; _loading = false; });
+  }
+
+  Future<List<Exercise>> _browseExercises() async {
+    final result = await widget.getExercises(limit: 300, offset: 0);
+    return result.fold(onFailure: (_) => [], onSuccess: (l) => l);
+  }
+
+  Future<List<Exercise>> _searchLibrary(String query) async {
+    final result = await widget.searchExercises(query.trim());
+    return result.fold(onFailure: (_) => [], onSuccess: (l) => l);
   }
 
   void _pick(Exercise ex) {
@@ -58,11 +78,12 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
-      minChildSize: 0.5,
       maxChildSize: 0.95,
+      minChildSize: 0.5,
       expand: false,
-      builder: (_, scrollCtrl) => Column(
+      builder: (_, scroll) => Column(
         children: [
+          // Handle
           Container(
             margin: const EdgeInsets.only(top: AppConstants.spaceM),
             width: 40, height: 4,
@@ -71,37 +92,21 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
+          // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppConstants.screenPaddingH, AppConstants.spaceL,
-              AppConstants.screenPaddingH, AppConstants.spaceM,
+              AppConstants.screenPaddingH,
+              AppConstants.spaceM,
+              AppConstants.screenPaddingH,
+              AppConstants.spaceS,
             ),
-            child: Row(
-              children: [
-                Text('اختر تمريناً',
-                    style: Theme.of(context).textTheme.headlineMedium),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.close_rounded,
-                      color: AppColors.textMuted),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.screenPaddingH),
             child: TextField(
               controller: _searchCtrl,
-              autofocus: false,
-              onChanged: _load,
-              style: AppTextStyles.bodyMedium,
+              style: const TextStyle(fontFamily: 'Cairo', color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'ابحث عن تمرين...',
-                hintStyle: AppTextStyles.bodyMedium,
-                prefixIcon: const Icon(Icons.search_rounded,
-                    color: AppColors.textMuted, size: 20),
+                hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+                prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
                 filled: true,
                 fillColor: AppColors.bgElevated,
                 border: OutlineInputBorder(
@@ -109,82 +114,48 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
                   borderSide: BorderSide.none,
                 ),
               ),
+              onChanged: (q) => _load(q),
             ),
           ),
-          const SizedBox(height: AppConstants.spaceM),
+          // Results
           Expanded(
             child: _loading
-                ? const Center(
-                child: CircularProgressIndicator(color: AppColors.accent))
+                ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
                 : _results.isEmpty
-                ? Center(
-                child: Text('لا توجد نتائج',
-                    style: AppTextStyles.bodyMedium))
-                : ListView.builder(
-              controller: scrollCtrl,
-              padding: const EdgeInsets.fromLTRB(
-                AppConstants.screenPaddingH, 0,
-                AppConstants.screenPaddingH, AppConstants.spaceXXL,
-              ),
-              itemCount: _results.length,
-              itemBuilder: (_, i) {
-                final Exercise ex = _results[i];
-                final name = ex.nameAr.isNotEmpty ? ex.nameAr : ex.name;
-                final part = ex.bodyPartAr.isNotEmpty
-                    ? ex.bodyPartAr
-                    : ex.bodyPart;
-                return GestureDetector(
-                  onTap: () => _pick(ex),
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                        bottom: AppConstants.spaceS),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppConstants.spaceL,
-                      vertical: AppConstants.spaceM,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.bgElevated,
-                      borderRadius:
-                      BorderRadius.circular(AppConstants.radiusL),
-                      border: Border.all(color: AppColors.borderSubtle),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              Text(name,
-                                  style: AppTextStyles.labelMedium,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis),
-                              const SizedBox(height: AppConstants.spaceXS),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: AppConstants.spaceS,
-                                    vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: AppColors.accentDim,
-                                  borderRadius: BorderRadius.circular(
-                                      AppConstants.radiusPill),
-                                ),
-                                child: Text(part,
-                                    style: AppTextStyles.labelSmall
-                                        .copyWith(
-                                        color: AppColors.accent)),
-                              ),
-                            ],
-                          ),
+                    ? Center(
+                        child: Text('لا يوجد نتائج',
+                            style: AppTextStyles.bodyMedium
+                                .copyWith(color: AppColors.textMuted)),
+                      )
+                    : ListView.builder(
+                        controller: scroll,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppConstants.screenPaddingH,
+                          vertical: AppConstants.spaceS,
                         ),
-                        const Icon(Icons.add_circle_outline_rounded,
-                            color: AppColors.accent, size: 22),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                        itemCount: _results.length,
+                        itemBuilder: (_, i) {
+                          final ex = _results[i];
+                          return ListTile(
+                            title: Text(
+                              ex.nameAr.isNotEmpty ? ex.nameAr : ex.name,
+                              style: const TextStyle(
+                                fontFamily: 'Cairo',
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: Text(
+                              ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
+                              style: AppTextStyles.bodySmall
+                                  .copyWith(color: AppColors.textMuted),
+                            ),
+                            trailing: const Icon(Icons.add_circle_outline_rounded,
+                                color: AppColors.accent),
+                            onTap: () => _pick(ex),
+                          );
+                        },
+                      ),
           ),
         ],
       ),

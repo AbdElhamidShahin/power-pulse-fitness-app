@@ -4,12 +4,12 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../features/login/data/repo/login_repoImpl.dart';
+import '../../features/login/data/repo/login_repo_impl.dart';
 import '../../features/login/data/repo/login_repostry.dart';
 import '../../features/login/logic/cubit/login_cubit.dart';
 
 import '../../features/sign_up/data/repo/sign_up_repo.dart';
-import '../../features/sign_up/data/repo/sign_up_repoImpl.dart';
+import '../../features/sign_up/data/repo/sign_up_repo_impl.dart';
 import '../../features/sign_up/logic/cubit/sign_up_cubit.dart';
 
 import '../../features/exercises/data/services/exercise_service.dart';
@@ -391,9 +391,8 @@ void _initWorkoutLogger() {
       getActiveSession: sl(),
       saveSession: sl(),
       deleteSession: sl(),
-      logWorkout: sl(),
-      searchExercises: sl(),
-      getExercises: sl(),
+      // logWorkout / searchExercises / getExercises أُزيلوا (P1 fix Step 5)
+      // الـ UI بياخذهم من sl مباشرة بدون وساطة الـ Cubit
     ),
   );
 }
