@@ -54,7 +54,7 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
             ),
           ),
           AppTextFormFeild(
-            hintText: 'example@gmail.com',
+            hintText: 'powerteam@gmail.com',
             controller: _emailController,
             validator: (value) {
               if (value == null || value.isEmpty) {

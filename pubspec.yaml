@@ -56,15 +56,14 @@ dependencies:
   # Misc
   url_launcher: ^6.3.0
   provider: ^6.1.2
-
-  # Launcher Icons
-  flutter_launcher_icons: ^0.14.1
   awesome_snackbar_content: ^0.1.7
 
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.1
+
 flutter:
   uses-material-design: true
 
@@ -81,4 +80,3 @@ flutter:
     - assets/GIF/hands/
     - assets/GIF/legs/
     - assets/GIF/beily/
-    - assets/images/123456.jpg

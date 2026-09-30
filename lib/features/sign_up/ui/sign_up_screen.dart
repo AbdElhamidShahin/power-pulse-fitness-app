@@ -127,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _emailCtrl,
-                        hint: 'example@gmail.com',
+                        hint: 'powerteam@gmail.com',
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) {
