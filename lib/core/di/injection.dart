@@ -23,6 +23,7 @@ import '../../features/nutrition/data/services/nutrition_service.dart';
 import '../../features/nutrition/data/services/nutrition_local_service.dart';
 import '../../features/nutrition/data/repositories/nutrition_repository.dart';
 import '../../features/nutrition/logic/cubit/nutrition_cubit.dart';
+import '../../features/nutrition/logic/usecases/nutrition_usecases.dart';
 
 import '../../features/profile/logic/cubit/settings_cubit.dart';
 import '../../features/profile/data/services/profile_local_service.dart';
@@ -204,6 +205,10 @@ void _initNutrition() {
     ),
   );
 
+  sl.registerLazySingleton(
+        () => GetDailyNutritionUseCase(sl<NutritionRepository>()),
+  );
+
   sl.registerFactory(
         () => NutritionCubit(
       sl<NutritionRepository>(),
@@ -306,7 +311,7 @@ void _initHome() {
   sl.registerFactory(
         () => HomeCubit(
       getProfile: sl(),
-      nutritionRepo: sl(),
+      getDailyNutrition: sl(),      // GetDailyNutritionUseCase (P1 fix)
       getProgressSummary: sl(),
     ),
   );
