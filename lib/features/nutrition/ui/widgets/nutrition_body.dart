@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -21,7 +22,7 @@ class NutritionBody extends StatelessWidget {
   void _showPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -47,7 +48,7 @@ class NutritionBody extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -60,7 +61,7 @@ class NutritionBody extends StatelessWidget {
                         fontFamily: 'Cairo',
                         fontSize: 24.sp,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     SizedBox(width: 8.w),
@@ -127,7 +128,7 @@ class NutritionBody extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
                 GestureDetector(

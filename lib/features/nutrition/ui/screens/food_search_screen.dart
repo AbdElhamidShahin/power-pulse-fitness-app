@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_input.dart';
 import '../../data/models/food_entity.dart';
@@ -44,7 +46,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: Column(
           children: [
@@ -73,13 +75,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     child: Container(
                       width: 40, height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.bgElevated,
+                        color: context.colors.bgElevated,
                         borderRadius:
                         BorderRadius.circular(AppConstants.radiusM),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_forward_ios_rounded,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                         size: AppConstants.iconS,
                       ),
                     ),
@@ -169,7 +171,7 @@ class _ResultsList extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppConstants.radiusXL)),
@@ -239,7 +241,7 @@ class _AddMealSheetState extends State<_AddMealSheet> {
             ..showSnackBar(SnackBar(
               content: Text(
                 'تمت إضافة ${widget.food.displayName} للـ${widget.mealType.labelAr}',
-                style: const TextStyle(fontFamily: 'Cairo'),
+                style: TextStyle(fontFamily: 'Cairo'),
               ),
               backgroundColor: AppColors.accent,
               behavior: SnackBarBehavior.floating,
@@ -258,7 +260,7 @@ class _AddMealSheetState extends State<_AddMealSheet> {
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
               content: Text(state.message,
-                  style: const TextStyle(fontFamily: 'Cairo')),
+                  style: TextStyle(fontFamily: 'Cairo')),
               backgroundColor: AppColors.danger,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -283,7 +285,7 @@ class _AddMealSheetState extends State<_AddMealSheet> {
               child: Container(
                 width: 40, height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.bgElevated,
+                  color: context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -330,7 +332,7 @@ class _AddMealSheetState extends State<_AddMealSheet> {
                     decoration: InputDecoration(
                       labelText: 'الكمية',
                       labelStyle:
-                      const TextStyle(fontFamily: 'Cairo'),
+                      TextStyle(fontFamily: 'Cairo'),
                       suffixText: widget.food.servingUnit,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
@@ -338,7 +340,7 @@ class _AddMealSheetState extends State<_AddMealSheet> {
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor: AppColors.bgElevated,
+                      fillColor: context.colors.bgElevated,
                     ),
                   ),
                 ),
@@ -411,7 +413,7 @@ class _MacroPreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: context.colors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       child: Row(
@@ -447,9 +449,9 @@ class _MItem extends StatelessWidget {
               fontWeight: FontWeight.w800, color: color,
             )),
         Text(label,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Cairo', fontSize: 10,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
             )),
       ],
     );
@@ -469,10 +471,10 @@ class _QtyBtn extends StatelessWidget {
       child: Container(
         width: 36, height: 36,
         decoration: BoxDecoration(
-          color: AppColors.bgElevated,
+          color: context.colors.bgElevated,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, size: 18, color: AppColors.textPrimary),
+        child: Icon(icon, size: 18, color: context.colors.textPrimary),
       ),
     );
   }
@@ -484,12 +486,12 @@ class _IdleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(Icons.search_rounded,
-          color: AppColors.textMuted, size: 48),
+      Icon(Icons.search_rounded,
+          color: context.colors.textMuted, size: 48),
       const SizedBox(height: AppConstants.spaceM),
       Text('ابحث عن طعام لإضافته',
           style: AppTextStyles.bodyMedium
-              .copyWith(color: AppColors.textMuted)),
+              .copyWith(color: context.colors.textMuted)),
     ]),
   );
 }
@@ -506,12 +508,12 @@ class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(Icons.no_food_rounded,
-          color: AppColors.textMuted, size: 48),
+      Icon(Icons.no_food_rounded,
+          color: context.colors.textMuted, size: 48),
       const SizedBox(height: AppConstants.spaceM),
       Text('لا توجد نتائج',
           style: AppTextStyles.bodyMedium
-              .copyWith(color: AppColors.textMuted)),
+              .copyWith(color: context.colors.textMuted)),
     ]),
   );
 }
@@ -529,12 +531,12 @@ class _SearchErrorView extends StatelessWidget {
     child: Padding(
       padding: const EdgeInsets.all(AppConstants.spaceXL),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded,
-            color: AppColors.textMuted, size: 48),
+        Icon(Icons.wifi_off_rounded,
+            color: context.colors.textMuted, size: 48),
         const SizedBox(height: AppConstants.spaceM),
         Text(message,
             style: AppTextStyles.bodyMedium
-                .copyWith(color: AppColors.textMuted),
+                .copyWith(color: context.colors.textMuted),
             textAlign: TextAlign.center),
         const SizedBox(height: AppConstants.spaceL),
         GestureDetector(

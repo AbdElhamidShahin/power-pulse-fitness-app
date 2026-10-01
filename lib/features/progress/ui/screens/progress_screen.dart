@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import '../../../../../core/router/route_observers.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../data/models/progress_entity.dart';
 import '../../logic/cubit/progress_cubit.dart';
@@ -50,7 +52,7 @@ class _ProgressScreenState extends State<ProgressScreen> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: BlocBuilder<ProgressCubit, ProgressState>(
           builder: (context, state) => switch (state) {
@@ -160,7 +162,7 @@ class _HeaderSection extends StatelessWidget {
             fontFamily: 'Cairo',
             fontSize: 11.sp,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF8A8A8A),
+            color: Color(0xFF8A8A8A),
             letterSpacing: 0.8,
           ),
         ),
@@ -171,7 +173,7 @@ class _HeaderSection extends StatelessWidget {
             fontFamily: 'Cairo',
             fontSize: 28.sp,
             fontWeight: FontWeight.w900,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
           ),
         ),
       ],

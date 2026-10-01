@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/notifications/notification_service.dart';
@@ -19,7 +20,7 @@ class WorkoutSummarySheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.emoji_events_rounded,
+          Icon(Icons.emoji_events_rounded,
               color: AppColors.accent, size: 56),
           const SizedBox(height: AppConstants.spaceL),
           Text('أحسنت! 💪',
@@ -67,13 +68,13 @@ class WorkoutSummarySheet extends StatelessWidget {
                   Container(
                     width: 28, height: 28,
                     decoration: BoxDecoration(
-                      color: done ? AppColors.successDim : AppColors.bgElevated,
+                      color: done ? AppColors.successDim : context.colors.bgElevated,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       done ? Icons.check_rounded : Icons.remove_rounded,
                       size: 16,
-                      color: done ? AppColors.success : AppColors.textMuted,
+                      color: done ? AppColors.success : context.colors.textMuted,
                     ),
                   ),
                   const SizedBox(width: AppConstants.spaceM),
@@ -81,14 +82,14 @@ class WorkoutSummarySheet extends StatelessWidget {
                     child: Text(ex.exerciseName,
                         style: AppTextStyles.labelMedium.copyWith(
                           color: done
-                              ? AppColors.textPrimary
-                              : AppColors.textMuted,
+                              ? context.colors.textPrimary
+                              : context.colors.textMuted,
                         )),
                   ),
                   Text(
                     '${ex.completedSets}/${ex.sets.length} سيت',
                     style: AppTextStyles.bodySmall
-                        .copyWith(color: AppColors.textMuted),
+                        .copyWith(color: context.colors.textMuted),
                   ),
                 ],
               ),
@@ -135,11 +136,11 @@ class _SummaryItem extends StatelessWidget {
         Icon(icon, color: color, size: 24),
         const SizedBox(height: AppConstants.spaceXS),
         Text(value,
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary)),
+                color: context.colors.textPrimary)),
         Text(unit, style: AppTextStyles.bodySmall),
       ],
     );

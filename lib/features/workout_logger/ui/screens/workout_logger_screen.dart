@@ -8,6 +8,7 @@ import '../../../exercises/logic/usecases/exercise_usecases.dart';
 import '../../../progress/data/models/progress_entity.dart';
 import '../../../progress/logic/usecases/progress_usecases.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
 import '../../../exercises/data/models/exercise_entity.dart';
@@ -101,7 +102,7 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
         BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
@@ -124,7 +125,7 @@ class _ActiveView extends StatelessWidget {
     final progress = total == 0 ? 0.0 : done / total;
 
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: Column(
           children: [
@@ -146,7 +147,7 @@ class _ActiveView extends StatelessWidget {
                     children: [
                       Text('التمارين',
                           style: AppTextStyles.labelSmall
-                              .copyWith(color: AppColors.textMuted)),
+                              .copyWith(color: context.colors.textMuted)),
                       Text('$done / $total',
                           style: AppTextStyles.labelSmall
                               .copyWith(color: AppColors.accent)),
@@ -158,7 +159,7 @@ class _ActiveView extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: AppColors.bgElevated,
+                      backgroundColor: context.colors.bgElevated,
                       valueColor: const AlwaysStoppedAnimation(AppColors.accent),
                     ),
                   ),
@@ -200,7 +201,7 @@ class _ActiveView extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppConstants.radiusXXL)),
@@ -222,7 +223,7 @@ class _ActiveView extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppConstants.radiusXXL)),
@@ -253,10 +254,10 @@ class _ExerciseTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AppConstants.spaceM),
         padding: const EdgeInsets.all(AppConstants.spaceM),
         decoration: BoxDecoration(
-          color: done ? AppColors.accentDim : AppColors.bgSurface,
+          color: done ? AppColors.accentDim : context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusXL),
           border: Border.all(
-            color: done ? AppColors.accent : AppColors.borderSubtle,
+            color: done ? AppColors.accent : context.colors.borderSubtle,
             width: done ? 1.5 : 0.5,
           ),
         ),
@@ -272,20 +273,20 @@ class _ExerciseTile extends StatelessWidget {
                   imageUrl: exercise.gifPath!,
                   fit: BoxFit.cover,
                   placeholder: (_, __) => Container(
-                    color: AppColors.bgElevated,
-                    child: const Icon(Icons.fitness_center_rounded,
-                        color: AppColors.textMuted, size: 24),
+                    color: context.colors.bgElevated,
+                    child: Icon(Icons.fitness_center_rounded,
+                        color: context.colors.textMuted, size: 24),
                   ),
                   errorWidget: (_, __, ___) => Container(
-                    color: AppColors.bgElevated,
-                    child: const Icon(Icons.fitness_center_rounded,
-                        color: AppColors.textMuted, size: 24),
+                    color: context.colors.bgElevated,
+                    child: Icon(Icons.fitness_center_rounded,
+                        color: context.colors.textMuted, size: 24),
                   ),
                 )
                     : Container(
-                  color: AppColors.bgElevated,
-                  child: const Icon(Icons.fitness_center_rounded,
-                      color: AppColors.textMuted, size: 24),
+                  color: context.colors.bgElevated,
+                  child: Icon(Icons.fitness_center_rounded,
+                      color: context.colors.textMuted, size: 24),
                 ),
               ),
             ),
@@ -296,11 +297,11 @@ class _ExerciseTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(exercise.exerciseName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
@@ -310,7 +311,7 @@ class _ExerciseTile extends StatelessWidget {
                         ? '✓ مكتمل'
                         : '${exercise.sets.length} سيتات · اضغط للتفاصيل',
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: done ? AppColors.accent : AppColors.textMuted,
+                      color: done ? AppColors.accent : context.colors.textMuted,
                     ),
                   ),
                 ],
@@ -320,16 +321,16 @@ class _ExerciseTile extends StatelessWidget {
             if (done)
               Container(
                 width: 36, height: 36,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.accent,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_rounded,
+                child: Icon(Icons.check_rounded,
                     color: AppColors.textOnAccent, size: 20),
               )
             else
-              const Icon(Icons.chevron_left_rounded,
-                  color: AppColors.textMuted, size: 24),
+              Icon(Icons.chevron_left_rounded,
+                  color: context.colors.textMuted, size: 24),
           ],
         ),
       ),
@@ -373,7 +374,7 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
             margin: const EdgeInsets.only(top: AppConstants.spaceM),
             width: 40, height: 4,
             decoration: BoxDecoration(
-              color: AppColors.borderMedium,
+              color: context.colors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
@@ -397,7 +398,7 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                       fit: BoxFit.contain,
                       placeholder: (_, __) => Container(
                         height: 200,
-                        color: AppColors.bgElevated,
+                        color: context.colors.bgElevated,
                         child: const Center(
                           child: CircularProgressIndicator(
                               color: AppColors.accent),
@@ -405,20 +406,20 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                       ),
                       errorWidget: (_, __, ___) => Container(
                         height: 120,
-                        color: AppColors.bgElevated,
-                        child: const Icon(Icons.fitness_center_rounded,
-                            color: AppColors.textMuted, size: 48),
+                        color: context.colors.bgElevated,
+                        child: Icon(Icons.fitness_center_rounded,
+                            color: context.colors.textMuted, size: 48),
                       ),
                     ),
                   ),
                 const SizedBox(height: AppConstants.spaceL),
                 // اسم + bodyPart
                 Text(_ex.exerciseName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.textPrimary,
+                      color: context.colors.textPrimary,
                     )),
                 const SizedBox(height: 4),
                 Container(
@@ -435,7 +436,7 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                 // Sets
                 Text('المجموعات',
                     style: AppTextStyles.labelMedium
-                        .copyWith(color: AppColors.textMuted)),
+                        .copyWith(color: context.colors.textMuted)),
                 const SizedBox(height: AppConstants.spaceS),
                 ..._ex.sets.asMap().entries.map((entry) {
                   final i   = entry.key;
@@ -496,18 +497,18 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                     margin: const EdgeInsets.only(top: AppConstants.spaceS),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: AppColors.bgElevated,
+                      color: context.colors.bgElevated,
                       borderRadius: BorderRadius.circular(AppConstants.radiusM),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.add_rounded,
-                            color: AppColors.textMuted, size: 16),
+                        Icon(Icons.add_rounded,
+                            color: context.colors.textMuted, size: 16),
                         const SizedBox(width: 4),
                         Text('+ مجموعة',
                             style: AppTextStyles.labelSmall
-                                .copyWith(color: AppColors.textMuted)),
+                                .copyWith(color: context.colors.textMuted)),
                       ],
                     ),
                   ),
@@ -546,8 +547,8 @@ class _LoadingView extends StatelessWidget {
   const _LoadingView();
 
   @override
-  Widget build(BuildContext context) => const Scaffold(
-    backgroundColor: AppColors.bgDeep,
+  Widget build(BuildContext context) =>   Scaffold(
+    backgroundColor: context.colors.bgDeep,
     body: Center(
       child: CircularProgressIndicator(color: AppColors.accent),
     ),
@@ -561,7 +562,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.bgDeep,
+    backgroundColor: context.colors.bgDeep,
     body: Center(
       child: Text(message, style: AppTextStyles.bodyMedium),
     ),
@@ -579,8 +580,8 @@ class _EmptyExercises extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.add_circle_outline_rounded,
-              color: AppColors.textMuted, size: 56),
+          Icon(Icons.add_circle_outline_rounded,
+              color: context.colors.textMuted, size: 56),
           const SizedBox(height: AppConstants.spaceL),
           Text('لا يوجد تمارين بعد',
               style: Theme.of(context).textTheme.headlineSmall),

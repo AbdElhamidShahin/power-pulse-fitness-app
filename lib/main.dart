@@ -24,14 +24,14 @@ Future<void> main() async {
       statusBarColor: Colors.transparent,
     ),
   );
-  if (!AppConstants.isSupabaseConfigured) {
-    throw StateError(
-      'Supabase غير مُهيّأ. شغّل التطبيق بـ:\n'
-      '  flutter run --dart-define-from-file=dart_defines.json\n'
-      'أو مرّر --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...\n'
-      '(شوف dart_defines.example.json)',
-    );
-  }
+  // if (!AppConstants.isSupabaseConfigured) {
+  //   throw StateError(
+  //     'Supabase غير مُهيّأ. شغّل التطبيق بـ:\n'
+  //     '  flutter run --dart-define-from-file=dart_defines.json\n'
+  //     'أو مرّر --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...\n'
+  //     '(شوف dart_defines.example.json)',
+  //   );
+  // }
   await Supabase.initialize(
     url: AppConstants.supabaseUrl,
     anonKey: AppConstants.supabaseAnonKey,

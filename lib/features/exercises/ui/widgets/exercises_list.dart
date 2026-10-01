@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -88,7 +89,7 @@ class _LoadedList extends StatelessWidget {
                       vertical: 7.h,
                     ),
                     decoration: BoxDecoration(
-                      color: active ? AppColors.bgDark : AppColors.bgElevated,
+                      color: active ? context.colors.bgDark : context.colors.bgElevated,
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
@@ -98,7 +99,7 @@ class _LoadedList extends StatelessWidget {
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                         color:
-                        active ? AppColors.textOnDark : AppColors.textMuted,
+                        active ? AppColors.textOnDark : context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -114,7 +115,7 @@ class _LoadedList extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.sp,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF8A8A8A),
+              color: Color(0xFF8A8A8A),
               fontFamily: 'Cairo',
             ),
           ),

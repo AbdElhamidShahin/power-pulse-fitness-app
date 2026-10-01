@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:power_pulse/features/profile/data/models/user_profile_entity.dart';
@@ -47,7 +48,7 @@ class BodyStatsSection extends StatelessWidget {
         : 'سمنة';
 
     final bmiColor = bmi == null
-        ? AppColors.textMuted
+        ? context.colors.textMuted
         : bmi < 18.5 ? AppColors.info
         : bmi < 25.0 ? AppColors.success
         : bmi < 30.0 ? AppColors.warning
@@ -64,7 +65,7 @@ class BodyStatsSection extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF8A8A8A),
+                color: Color(0xFF8A8A8A),
                 letterSpacing: 0.8,
               ),
             ),
@@ -134,7 +135,7 @@ class BodyStatsSection extends StatelessWidget {
   void _showWeightSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),

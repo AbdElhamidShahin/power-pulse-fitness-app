@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -32,7 +33,7 @@ class NutritionCalorieRing extends StatelessWidget {
             size: Size(size, size),
             painter: _RingPainter(
               progress: _pct,
-              trackColor: AppColors.bgElevated,
+              trackColor: context.colors.bgElevated,
               progressColor: _isOver ? AppColors.danger : AppColors.accent,
               strokeWidth: 9.r,
             ),
@@ -46,7 +47,7 @@ class NutritionCalorieRing extends StatelessWidget {
                   fontFamily: 'Cairo',
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                   height: 1.0,
                 ),
               ),
@@ -56,7 +57,7 @@ class NutritionCalorieRing extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 9.sp,
-                  color: AppColors.textMuted,
+                  color: context.colors.textMuted,
                 ),
               ),
             ],
@@ -156,7 +157,7 @@ class MacroBar extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 10.sp,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
               ),
             ),
             Text(
@@ -177,7 +178,7 @@ class MacroBar extends StatelessWidget {
             value: progress.clamp(0.0, 1.0),
             minHeight: 4.h,
             color: color,
-            backgroundColor: AppColors.bgElevated,
+            backgroundColor: context.colors.bgElevated,
           ),
         ),
       ],

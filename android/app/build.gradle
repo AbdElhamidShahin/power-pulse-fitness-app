@@ -1,68 +1,59 @@
-import java.util.Properties
-
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // لازم يجي بعد Android و Kotlin plugins
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-// ---- قراءة بيانات التوقيع من android/key.properties ----
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
-    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 android {
     namespace "com.powerteam.powerpulse"
-    compileSdk flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    compileSdk = 35   // لازم 35
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-        // مطلوب لـ flutter_local_notifications
-        coreLibraryDesugaringEnabled true
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
-        applicationId "com.powerteam.powerpulse"
-        minSdk flutter.minSdkVersion
-        targetSdk flutter.targetSdkVersion
-        versionCode flutter.versionCode
-        versionName flutter.versionName
-        multiDexEnabled true
+        applicationId = "com.powerteam.powerpulse"
+        minSdk = 21 // أو flutter.minSdkVersion لو معرفه
+        targetSdk = 35
+        versionCode = 22
+        versionName = flutter.versionName
     }
 
     signingConfigs {
         release {
-            if (keystorePropertiesFile.exists()) {
-                // كل القيم نصوص من الملف، فمفيش مشكلة مع الشرطة في upload-key
-                keyAlias keystoreProperties["keyAlias"]
-                keyPassword keystoreProperties["keyPassword"]
-                storePassword keystoreProperties["storePassword"]
-                // مسار نسبي لفولدر android/app
-                storeFile file(keystoreProperties["storeFile"])
-            }
+            keyAlias = keystoreProperties["keyAlias"]
+            keyPassword = keystoreProperties["keyPassword"]
+            storeFile = keystoreProperties["storeFile"] ? file(keystoreProperties["storeFile"]) : null
+            storePassword = keystoreProperties["storePassword"]
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
             minifyEnabled false
             shrinkResources false
         }
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }
 
 flutter {
-    source "../.."
+    source = "../.."
 }
 
 dependencies {

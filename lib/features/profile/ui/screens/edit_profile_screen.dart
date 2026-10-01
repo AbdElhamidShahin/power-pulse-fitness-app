@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -103,11 +104,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: Container(
                           width: 40, height: 40,
                           decoration: BoxDecoration(
-                            color: AppColors.bgElevated,
+                            color: context.colors.bgElevated,
                             borderRadius: BorderRadius.circular(AppConstants.radiusM),
                           ),
-                          child: const Icon(Icons.arrow_back_ios_new_rounded,
-                              color: AppColors.textPrimary, size: AppConstants.iconS),
+                          child: Icon(Icons.arrow_back_ios_new_rounded,
+                              color: context.colors.textPrimary, size: AppConstants.iconS),
                         ),
                       ),
                       const SizedBox(width: AppConstants.spaceM),
@@ -241,7 +242,7 @@ class _Field extends StatelessWidget {
           keyboardType: type,
           textDirection: TextDirection.rtl,
           style: AppTextStyles.bodyMedium
-              .copyWith(color: AppColors.textPrimary),
+              .copyWith(color: context.colors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             suffixText: suffix,
@@ -270,7 +271,7 @@ class _SegmentedPicker<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: context.colors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       child: Row(
@@ -293,7 +294,7 @@ class _SegmentedPicker<T> extends StatelessWidget {
                   style: AppTextStyles.labelMedium.copyWith(
                     color: isSelected
                         ? AppColors.textOnAccent
-                        : AppColors.textMuted,
+                        : context.colors.textMuted,
                   ),
                 ),
               ),
@@ -327,10 +328,10 @@ class _OptionTile extends StatelessWidget {
           vertical: AppConstants.spaceM,
         ),
         decoration: BoxDecoration(
-          color: selected ? AppColors.accentDim : AppColors.bgSurface,
+          color: selected ? AppColors.accentDim : context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
           border: Border.all(
-            color: selected ? AppColors.accent : AppColors.borderSubtle,
+            color: selected ? AppColors.accent : context.colors.borderSubtle,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -341,11 +342,11 @@ class _OptionTile extends StatelessWidget {
                   style: AppTextStyles.titleMedium.copyWith(
                     color: selected
                         ? AppColors.accent
-                        : AppColors.textPrimary,
+                        : context.colors.textPrimary,
                   )),
             ),
             if (selected)
-              const Icon(Icons.check_circle_rounded,
+              Icon(Icons.check_circle_rounded,
                   color: AppColors.accent, size: AppConstants.iconS),
           ],
         ),

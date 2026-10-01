@@ -7,9 +7,9 @@ abstract class AppConstants {
   //   flutter build apk --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
   // شوف dart_defines.example.json
   static const String supabaseUrl =
-      String.fromEnvironment('SUPABASE_URL');
+      String.fromEnvironment('https://vzxqyiddmtdfertbtmil.supabase.co/rest/v1/');
   static const String supabaseAnonKey =
-      String.fromEnvironment('SUPABASE_ANON_KEY');
+      String.fromEnvironment('sb_publishable_NMFyzGbAFH0J39U888BdsQ_sMGZcuXj');
 
   /// لو أي قيمة ناقصة، التطبيق مينفعش يتصل بـ Supabase.
   static bool get isSupabaseConfigured =>

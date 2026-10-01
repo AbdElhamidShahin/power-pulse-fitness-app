@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
 
@@ -17,7 +18,7 @@ class SectionLabel extends StatelessWidget {
           fontFamily: 'Cairo',
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,
-          color: AppColors.textMuted,
+          color: context.colors.textMuted,
           letterSpacing: 0.5,
         ),
       ),

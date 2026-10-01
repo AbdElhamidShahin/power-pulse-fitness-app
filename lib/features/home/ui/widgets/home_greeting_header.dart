@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../../core/theme/app_colors.dart';
@@ -23,8 +24,8 @@ class GreetingHeader extends StatelessWidget {
           child: Container(
             width: 44.r,
             height: 44.r,
-            decoration: const BoxDecoration(
-              color: AppColors.bgDark,
+            decoration: BoxDecoration(
+              color: context.colors.bgDark,
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
@@ -47,7 +48,7 @@ class GreetingHeader extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 11.sp,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
                 letterSpacing: 0.3,
               ),
             ),
@@ -57,7 +58,7 @@ class GreetingHeader extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 26.sp,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
                 height: 1.1,
               ),
             ),

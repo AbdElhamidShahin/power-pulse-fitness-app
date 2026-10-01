@@ -8,6 +8,7 @@ import '../../../../core/auth/user_mode_service.dart';
 import '../widgets/notification_settings_section.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
 import '../../logic/cubit/profile_state.dart';
@@ -35,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Directionality(
       textDirection: TextDirection.rtl, // لضمان صحة الاتجاهات عربيًا
       child: Scaffold(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: context.colors.bgDeep,
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) => switch (state) {
             ProfileInitial() || ProfileLoading() => const Center(
@@ -105,7 +106,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       const ProfileDivider(),
                       ProfileInfoRow(
                         icon: Icons.edit_rounded,
-                        iconColor: AppColors.textMuted,
+                        iconColor: context.colors.textMuted,
                         label: 'الطول',
                         value: '${profile.heightCm.toInt()} سم',
                         onTap: () => context.push('/profile/edit'),
@@ -222,7 +223,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.cloud_upload_outlined,
+                      Icon(Icons.cloud_upload_outlined,
                           color: AppColors.profileIconGreen, size: 22),
                       SizedBox(width: 10.w),
                       Expanded(
@@ -315,7 +316,7 @@ class _ProfileContentState extends State<_ProfileContent> {
   void _showPrivacySheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -325,10 +326,10 @@ class _ProfileContentState extends State<_ProfileContent> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('الخصوصية والبيانات',
+              Text('الخصوصية والبيانات',
                 style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 18,
-                    fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+                    fontWeight: FontWeight.w900, color: context.colors.textPrimary)),
             const SizedBox(height: 16),
             _PrivacyItem(
               icon: Icons.phone_android_rounded,
@@ -415,16 +416,16 @@ class _PrivacyItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   )),
               const SizedBox(height: 2),
               Text(desc,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 12,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   )),
             ],
           ),

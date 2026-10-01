@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
 import '../../../exercises/data/models/exercise_entity.dart';
@@ -50,8 +51,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       },
       builder: (context, state) {
         if (state is! WorkoutPlanEditing) {
-          return const Scaffold(
-            backgroundColor: AppColors.bgDeep,
+          return   Scaffold(
+            backgroundColor: context.colors.bgDeep,
             body: Center(
                 child: CircularProgressIndicator(color: AppColors.accent)),
           );
@@ -63,9 +64,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         );
 
         return Scaffold(
-          backgroundColor: AppColors.bgDeep,
+          backgroundColor: context.colors.bgDeep,
           appBar: AppBar(
-            backgroundColor: AppColors.bgDeep,
+            backgroundColor: context.colors.bgDeep,
             elevation: 0,
             title: Text('خطة الأسبوع', style: AppTextStyles.headlineMedium),
             centerTitle: true,
@@ -142,7 +143,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
@@ -195,7 +196,7 @@ class _WeekStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.bgDeep,
+      color: context.colors.bgDeep,
       padding: const EdgeInsets.fromLTRB(
         AppConstants.screenPaddingH,
         0,
@@ -220,7 +221,7 @@ class _WeekStrip extends StatelessWidget {
                   color: isSelected
                       ? AppColors.accent
                       : day.isRest
-                          ? AppColors.bgElevated
+                          ? context.colors.bgElevated
                           : AppColors.accentDim,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: isToday && !isSelected
@@ -235,7 +236,7 @@ class _WeekStrip extends StatelessWidget {
                       style: AppTextStyles.labelSmall.copyWith(
                         color: isSelected
                             ? AppColors.textOnAccent
-                            : AppColors.textMuted,
+                            : context.colors.textMuted,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w400,
                       ),
@@ -243,7 +244,7 @@ class _WeekStrip extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       day.isRest ? '😴' : '💪',
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 12),
                     ),
                     if (!day.isRest && day.exercises.isNotEmpty)
                       Container(
@@ -355,7 +356,7 @@ class _DayDetailState extends State<_DayDetail> {
                 Text(
                   day.isRest ? 'يوم راحة' : '${day.exercises.length} تمارين',
                   style: AppTextStyles.bodySmall
-                      .copyWith(color: AppColors.textMuted),
+                      .copyWith(color: context.colors.textMuted),
                 ),
               ],
             ),
@@ -368,11 +369,11 @@ class _DayDetailState extends State<_DayDetail> {
                     horizontal: AppConstants.spaceL,
                     vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
-                  color: day.isRest ? AppColors.accent : AppColors.bgElevated,
+                  color: day.isRest ? AppColors.accent : context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                   border: Border.all(
                     color:
-                        day.isRest ? AppColors.accent : AppColors.borderMedium,
+                        day.isRest ? AppColors.accent : context.colors.borderMedium,
                   ),
                 ),
                 child: Row(
@@ -380,7 +381,7 @@ class _DayDetailState extends State<_DayDetail> {
                   children: [
                     Text(
                       day.isRest ? '😴' : '💪',
-                      style: const TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14),
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -388,7 +389,7 @@ class _DayDetailState extends State<_DayDetail> {
                       style: AppTextStyles.labelSmall.copyWith(
                         color: day.isRest
                             ? AppColors.textOnAccent
-                            : AppColors.textSecondary,
+                            : context.colors.textSecondary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -405,9 +406,9 @@ class _DayDetailState extends State<_DayDetail> {
           Container(
             padding: const EdgeInsets.all(AppConstants.spaceXXL),
             decoration: BoxDecoration(
-              color: AppColors.bgSurface,
+              color: context.colors.bgSurface,
               borderRadius: BorderRadius.circular(AppConstants.radiusL),
-              border: Border.all(color: AppColors.borderSubtle),
+              border: Border.all(color: context.colors.borderSubtle),
             ),
             child: Column(
               children: [
@@ -417,7 +418,7 @@ class _DayDetailState extends State<_DayDetail> {
                 const SizedBox(height: AppConstants.spaceS),
                 Text('اضغط على "راحة" أعلاه لتحويله ليوم تمرين',
                     style: AppTextStyles.bodySmall
-                        .copyWith(color: AppColors.textMuted),
+                        .copyWith(color: context.colors.textMuted),
                     textAlign: TextAlign.center),
               ],
             ),
@@ -431,9 +432,9 @@ class _DayDetailState extends State<_DayDetail> {
             decoration: InputDecoration(
               hintText: 'اسم اليوم — مثلاً: تمرين الصدر',
               hintStyle:
-                  AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+                  AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
               filled: true,
-              fillColor: AppColors.bgSurface,
+              fillColor: context.colors.bgSurface,
               contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppConstants.spaceL,
                   vertical: AppConstants.spaceM),
@@ -450,22 +451,22 @@ class _DayDetailState extends State<_DayDetail> {
             Container(
               padding: const EdgeInsets.all(AppConstants.spaceXXL),
               decoration: BoxDecoration(
-                color: AppColors.bgSurface,
+                color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
-                border: Border.all(color: AppColors.borderSubtle, width: 0.5),
+                border: Border.all(color: context.colors.borderSubtle, width: 0.5),
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.fitness_center_rounded,
-                      color: AppColors.textMuted, size: 32),
+                  Icon(Icons.fitness_center_rounded,
+                      color: context.colors.textMuted, size: 32),
                   const SizedBox(height: AppConstants.spaceM),
                   Text('لا توجد تمارين بعد',
                       style: AppTextStyles.labelMedium
-                          .copyWith(color: AppColors.textMuted)),
+                          .copyWith(color: context.colors.textMuted)),
                   const SizedBox(height: AppConstants.spaceS),
                   Text('اضغط + لإضافة تمارين ليوم $dayName',
                       style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.textMuted),
+                          .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ],
               ),
@@ -480,9 +481,9 @@ class _DayDetailState extends State<_DayDetail> {
                     horizontal: AppConstants.spaceL,
                     vertical: AppConstants.spaceM),
                 decoration: BoxDecoration(
-                  color: AppColors.bgSurface,
+                  color: context.colors.bgSurface,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                  border: Border.all(color: AppColors.borderSubtle, width: 0.5),
+                  border: Border.all(color: context.colors.borderSubtle, width: 0.5),
                 ),
                 child: Row(
                   children: [
@@ -511,7 +512,7 @@ class _DayDetailState extends State<_DayDetail> {
                           Text(
                             '${ex.defaultSets} سيتات × ${ex.defaultReps} رابس  •  ${ex.bodyPart}',
                             style: AppTextStyles.bodySmall
-                                .copyWith(color: AppColors.textMuted),
+                                .copyWith(color: context.colors.textMuted),
                           ),
                         ],
                       ),
@@ -519,10 +520,10 @@ class _DayDetailState extends State<_DayDetail> {
                     // حذف
                     GestureDetector(
                       onTap: () => widget.onRemoveExercise(ex.exerciseId),
-                      child: const Padding(
+                      child:   Padding(
                         padding: EdgeInsets.all(4),
                         child: Icon(Icons.close_rounded,
-                            size: 18, color: AppColors.textMuted),
+                            size: 18, color: context.colors.textMuted),
                       ),
                     ),
                   ],
@@ -539,7 +540,7 @@ class _DayDetailState extends State<_DayDetail> {
               padding:
                   const EdgeInsets.symmetric(vertical: AppConstants.spaceL),
               decoration: BoxDecoration(
-                color: AppColors.bgSurface,
+                color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
                 border: Border.all(
                     color: AppColors.accent.withOpacity(0.4), width: 1),
@@ -547,7 +548,7 @@ class _DayDetailState extends State<_DayDetail> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.add_rounded,
+                  Icon(Icons.add_rounded,
                       color: AppColors.accent, size: 20),
                   const SizedBox(width: AppConstants.spaceS),
                   Text('إضافة تمرين',
@@ -619,7 +620,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.borderMedium,
+              color: context.colors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
@@ -635,8 +636,8 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                 const Spacer(),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.close_rounded,
-                      color: AppColors.textMuted),
+                  child: Icon(Icons.close_rounded,
+                      color: context.colors.textMuted),
                 ),
               ],
             ),
@@ -650,10 +651,10 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
               style: AppTextStyles.bodyMedium,
               decoration: InputDecoration(
                 hintText: 'ابحث...',
-                prefixIcon: const Icon(Icons.search_rounded,
-                    color: AppColors.textMuted, size: 20),
+                prefixIcon: Icon(Icons.search_rounded,
+                    color: context.colors.textMuted, size: 20),
                 filled: true,
-                fillColor: AppColors.bgElevated,
+                fillColor: context.colors.bgElevated,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   borderSide: BorderSide.none,
@@ -696,7 +697,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                                 vertical: AppConstants.spaceM,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.bgElevated,
+                                color: context.colors.bgElevated,
                                 borderRadius:
                                     BorderRadius.circular(AppConstants.radiusL),
                               ),
@@ -747,7 +748,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                                       ],
                                     ),
                                   ),
-                                  const Icon(Icons.add_circle_outline_rounded,
+                                  Icon(Icons.add_circle_outline_rounded,
                                       color: AppColors.accent, size: 22),
                                 ],
                               ),
@@ -789,7 +790,7 @@ class _StartTodayWorkoutButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.play_arrow_rounded,
+            Icon(Icons.play_arrow_rounded,
                 color: AppColors.accent, size: 22),
             const SizedBox(width: 8),
             Text(
@@ -855,7 +856,7 @@ class _ExercisePlaceholder extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       alignment: Alignment.center,
-      child: Text(_emojiFor(bodyPart), style: const TextStyle(fontSize: 26)),
+      child: Text(_emojiFor(bodyPart), style: TextStyle(fontSize: 26)),
     );
   }
 }

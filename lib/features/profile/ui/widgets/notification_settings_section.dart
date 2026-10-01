@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -85,16 +86,16 @@ class _NotificationSettingsSectionState
             fontFamily: 'Cairo',
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
-            color: AppColors.textMuted,
+            color: context.colors.textMuted,
             letterSpacing: 0.5,
           ),
         ),
         SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.bgSurface,
+            color: context.colors.bgSurface,
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: AppColors.borderSubtle),
+            border: Border.all(color: context.colors.borderSubtle),
           ),
           child: Column(
             children: [
@@ -105,7 +106,7 @@ class _NotificationSettingsSectionState
                 value:    _workout,
                 onChanged: (v) => _toggle(_keyWorkout, v),
               ),
-              Divider(height: 1, color: AppColors.borderSubtle),
+              Divider(height: 1, color: context.colors.borderSubtle),
               _NotifTile(
                 emoji:    '👟',
                 title:    'تذكير الخطوات',
@@ -113,7 +114,7 @@ class _NotificationSettingsSectionState
                 value:    _steps,
                 onChanged: (v) => _toggle(_keySteps, v),
               ),
-              Divider(height: 1, color: AppColors.borderSubtle),
+              Divider(height: 1, color: context.colors.borderSubtle),
               _NotifTile(
                 emoji:    '💧',
                 title:    'تذكير الماء',
@@ -162,7 +163,7 @@ class _NotifTile extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -170,7 +171,7 @@ class _NotifTile extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ],

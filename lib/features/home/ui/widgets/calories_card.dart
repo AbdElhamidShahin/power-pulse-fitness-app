@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
 
@@ -12,7 +13,7 @@ class CaloriesCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(16.w, 14.h, 24.w, 14.h),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(
@@ -23,7 +24,7 @@ class CaloriesCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 14.sp,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
             ),
           ),
           SizedBox(height: 8.h),
@@ -33,7 +34,7 @@ class CaloriesCard extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 30.sp,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
               height: 1.0,
             ),
           ),
@@ -43,7 +44,7 @@ class CaloriesCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 14.sp,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
             ),
           ),
         ],

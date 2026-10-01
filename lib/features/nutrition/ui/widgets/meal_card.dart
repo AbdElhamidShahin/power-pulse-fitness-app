@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -71,7 +72,7 @@ class _MealCardState extends State<MealCard>
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: AppColors.bgSurface,
+              color: context.colors.bgSurface,
               borderRadius: BorderRadius.circular(18.r),
             ),
             child: Row(
@@ -101,7 +102,7 @@ class _MealCardState extends State<MealCard>
                               fontFamily: 'Cairo',
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
+                              color: context.colors.textPrimary,
                             ),
                           ),
                           Text(
@@ -112,7 +113,7 @@ class _MealCardState extends State<MealCard>
                               fontWeight: FontWeight.w700,
                               color: isDone
                                   ? AppColors.accent
-                                  : AppColors.textMuted,
+                                  : context.colors.textMuted,
                             ),
                           ),
                         ],
@@ -123,7 +124,7 @@ class _MealCardState extends State<MealCard>
                         style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 11.sp,
-                          color: AppColors.textMuted,
+                          color: context.colors.textMuted,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -136,7 +137,7 @@ class _MealCardState extends State<MealCard>
                     ? RotationTransition(
                         turns: _rotate,
                         child: Icon(Icons.keyboard_arrow_down_rounded,
-                            color: AppColors.textMuted, size: 20.r),
+                            color: context.colors.textMuted, size: 20.r),
                       )
                     : GestureDetector(
                         onTap: widget.onAddTap,
@@ -156,7 +157,7 @@ class _MealCardState extends State<MealCard>
           secondChild: Container(
             margin: EdgeInsets.only(top: 4.h),
             decoration: BoxDecoration(
-              color: AppColors.bgSurface,
+              color: context.colors.bgSurface,
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Column(
@@ -239,7 +240,7 @@ class _EntryRow extends StatelessWidget {
         return await showDialog<bool>(
               context: context,
               builder: (ctx) => AlertDialog(
-                backgroundColor: AppColors.bgSurface,
+                backgroundColor: context.colors.bgSurface,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.r)),
                 title: Text('حذف العنصر؟',
@@ -258,7 +259,7 @@ class _EntryRow extends StatelessWidget {
                     child: Text('إلغاء',
                         style: TextStyle(
                             fontFamily: 'Cairo',
-                            color: AppColors.textMuted,
+                            color: context.colors.textMuted,
                             fontSize: 12.sp)),
                   ),
                   TextButton(
@@ -290,7 +291,7 @@ class _EntryRow extends StatelessWidget {
                       fontFamily: 'Cairo',
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: context.colors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -301,7 +302,7 @@ class _EntryRow extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 11.sp,
-                      color: AppColors.textMuted,
+                      color: context.colors.textMuted,
                     ),
                   ),
                 ],
@@ -325,7 +326,7 @@ class _EntryRow extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 10.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ],

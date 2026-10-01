@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -102,7 +104,7 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
             },
             suffixIcon: _buildPasswordIcon(
               _isPasswordHidden,
-              () => setState(() => _isPasswordHidden = !_isPasswordHidden),
+              () => setState(() => _isPasswordHidden = !_isPasswordHidden),context
             ),
           ),
           SizedBox(height: 16.h),
@@ -124,7 +126,7 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
               _isConfirmPasswordHidden,
               () => setState(
                 () => _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
-              ),
+              ),context
             ),
           ),
           SizedBox(height: 20.h),
@@ -134,9 +136,9 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
             child: BlocBuilder<SignUpCubit, SignUpState>(
               builder: (context, state) {
                 if (state is SignUpLoading) {
-                  return const Center(
+                  return   Center(
                     child:
-                        CircularProgressIndicator(color: AppColors.textPrimary),
+                        CircularProgressIndicator(color: context.colors.textPrimary),
                   );
                 }
                 return ElevatedButton(
@@ -173,7 +175,7 @@ Widget _buildLabel(BuildContext context, String text) {
       text,
       style: AppTextStyles.bodySmall.copyWith(
         fontSize: 14.sp,
-        color: isDark ? Colors.white : AppColors.textPrimary,
+        color: isDark ? Colors.white : context.colors.textPrimary,
       ),
     ),
   );
@@ -186,12 +188,12 @@ Widget _buildSuffixIcon(IconData icon, context) {
     child: Icon(
       icon,
       size: 22.r,
-      color: isDark ? Colors.white70 : AppColors.textPrimary,
+      color: isDark ? Colors.white70 : context.colors.textPrimary,
     ),
   );
 }
 
-Widget _buildPasswordIcon(bool obscure, VoidCallback onTap) {
+Widget _buildPasswordIcon(bool obscure, VoidCallback onTap,context) {
   return GestureDetector(
     onTap: onTap,
     child: Padding(
@@ -199,7 +201,7 @@ Widget _buildPasswordIcon(bool obscure, VoidCallback onTap) {
       child: Icon(
         obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
         size: 22.r,
-        color: AppColors.textPrimary,
+        color: context.colors.textPrimary,
       ),
     ),
   );

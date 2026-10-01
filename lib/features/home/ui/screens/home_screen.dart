@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../pedometer/ui/widgets/step_counter_card.dart';
 import '../../logic/cubit/home_cubit.dart';
 import '../../logic/cubit/home_state.dart';
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) => switch (state) {

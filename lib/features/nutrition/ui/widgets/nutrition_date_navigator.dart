@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -30,12 +31,12 @@ class NutritionDateNavigator extends StatelessWidget {
             width: 32.r,
             height: 32.r,
             decoration: BoxDecoration(
-              color: AppColors.bgElevated,
+              color: context.colors.bgElevated,
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.chevron_right_rounded,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
               size: 20,
             ),
           ),
@@ -47,7 +48,7 @@ class NutritionDateNavigator extends StatelessWidget {
             fontFamily: 'Cairo',
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
           ),
         ),
         SizedBox(width: 12.w),
@@ -57,12 +58,12 @@ class NutritionDateNavigator extends StatelessWidget {
             width: 32.r,
             height: 32.r,
             decoration: BoxDecoration(
-              color: isToday ? AppColors.bgDeep : AppColors.bgElevated,
+              color: isToday ? context.colors.bgDeep : context.colors.bgElevated,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
               Icons.chevron_left_rounded,
-              color: isToday ? AppColors.borderMedium : AppColors.textMuted,
+              color: isToday ? context.colors.borderMedium : context.colors.textMuted,
               size: 20,
             ),
           ),

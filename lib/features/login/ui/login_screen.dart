@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -57,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF0D0D0D),
+        backgroundColor: AppColorsDark.bgDeep,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -110,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             _passHidden
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: AppColors.textMuted,
+                            color: context.colors.textMuted,
                             size: AppConstants.iconM,
                           ),
                         ),
@@ -161,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'ليس لديك حساب؟',
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF6B6B6B),
+                          color: AppColorsDark.textMuted,
                         ),
                       ),
                       const SizedBox(width: AppConstants.spaceXS),
@@ -192,9 +194,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'متابعة كضيف بدون حساب',
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: const Color(0xFF4B4B4B),
+                        color: AppColorsDark.textMuted,
                         decoration: TextDecoration.underline,
-                        decorationColor: const Color(0xFF4B4B4B),
+                        decorationColor: AppColorsDark.textMuted,
                       ),
                     ),
                   ),
@@ -240,7 +242,7 @@ class _Header extends StatelessWidget {
         Text(
           'أهلاً بعودتك\nمجدداً 💪',
           style: AppTextStyles.displayMedium.copyWith(
-            color: const Color(0xFFF5F5F0),
+            color: AppColorsDark.textPrimary,
             height: 1.2,
           ),
         ),
@@ -248,7 +250,7 @@ class _Header extends StatelessWidget {
         Text(
           'سجّل دخولك وواصل رحلتك نحو اللياقة',
           style: AppTextStyles.bodyMedium.copyWith(
-            color: const Color(0xFF6B6B6B),
+            color: AppColorsDark.textMuted,
           ),
         ),
       ],
@@ -267,7 +269,7 @@ class _FieldLabel extends StatelessWidget {
     return Text(
       text,
       style: AppTextStyles.titleSmall.copyWith(
-        color: const Color(0xFFB0B0B0),
+        color: AppColorsDark.textSecondary,
       ),
     );
   }
@@ -303,16 +305,16 @@ class _AuthField extends StatelessWidget {
       validator: validator,
       textDirection: TextDirection.ltr,
       style: AppTextStyles.bodyMedium.copyWith(
-        color: const Color(0xFFF5F5F0),
+        color: AppColorsDark.textPrimary,
         letterSpacing: obscureText ? 2.0 : 0,
       ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: const Color(0xFF3A3A3A),
+          color: AppColorsDark.borderMedium,
         ),
         prefixIcon: Icon(icon,
-            color: const Color(0xFF4B4B4B), size: AppConstants.iconM),
+            color: AppColorsDark.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
                 padding: const EdgeInsets.only(left: AppConstants.spaceM),
@@ -320,14 +322,14 @@ class _AuthField extends StatelessWidget {
               )
             : null,
         filled: true,
-        fillColor: const Color(0xFF1A1A1A),
+        fillColor: AppColorsDark.bgSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          borderSide: BorderSide(color: AppColorsDark.borderSubtle),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          borderSide: BorderSide(color: AppColorsDark.borderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -358,16 +360,16 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+        Expanded(child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text(
             'أو',
             style: AppTextStyles.bodySmall
-                .copyWith(color: const Color(0xFF4B4B4B)),
+                .copyWith(color: AppColorsDark.textMuted),
           ),
         ),
-        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+        Expanded(child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
       ],
     );
   }
@@ -387,9 +389,9 @@ class _GoogleButton extends StatelessWidget {
       child: Container(
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: AppColorsDark.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: const Color(0xFF2A2A2A)),
+          border: Border.all(color: AppColorsDark.borderSubtle),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -409,7 +411,7 @@ class _GoogleButton extends StatelessWidget {
               Text(
                 'الدخول بحساب جوجل',
                 style: AppTextStyles.labelLarge.copyWith(
-                  color: const Color(0xFFB0B0B0),
+                  color: AppColorsDark.textSecondary,
                 ),
               ),
             ],
@@ -445,7 +447,7 @@ class _GooglePainter extends CustomPainter {
       3.8,
       false,
       Paint()
-        ..color = const Color(0xFF4285F4)
+        ..color = Color(0xFF4285F4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8,
     );
@@ -456,7 +458,7 @@ class _GooglePainter extends CustomPainter {
       1.0,
       false,
       Paint()
-        ..color = const Color(0xFFEA4335)
+        ..color = Color(0xFFEA4335)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8,
     );
@@ -465,7 +467,7 @@ class _GooglePainter extends CustomPainter {
       Offset(cx, cy),
       Offset(cx + r, cy),
       Paint()
-        ..color = const Color(0xFF4285F4)
+        ..color = Color(0xFF4285F4)
         ..strokeWidth = 2.8,
     );
   }

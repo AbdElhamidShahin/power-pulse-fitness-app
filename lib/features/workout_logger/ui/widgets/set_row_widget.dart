@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -70,11 +71,11 @@ class _SetRowWidgetState extends State<SetRowWidget> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: done ? AppColors.accentDim : AppColors.bgElevated,
+        color: done ? AppColors.accentDim : context.colors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         border: Border.all(
           color:
-              done ? AppColors.accent.withOpacity(0.4) : AppColors.borderSubtle,
+              done ? AppColors.accent.withOpacity(0.4) : context.colors.borderSubtle,
           width: 0.5,
         ),
       ),
@@ -89,7 +90,7 @@ class _SetRowWidgetState extends State<SetRowWidget> {
                 fontFamily: 'Cairo',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: done ? AppColors.accent : AppColors.textMuted,
+                color: done ? AppColors.accent : context.colors.textMuted,
               ),
               textAlign: TextAlign.center,
             ),
@@ -132,7 +133,7 @@ class _SetRowWidgetState extends State<SetRowWidget> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: done ? AppColors.accent : AppColors.bgHighest,
+                color: done ? AppColors.accent : context.colors.bgHighest,
                 shape: BoxShape.circle,
                 boxShadow: done
                     ? [
@@ -146,7 +147,7 @@ class _SetRowWidgetState extends State<SetRowWidget> {
               ),
               child: Icon(
                 Icons.check_rounded,
-                color: done ? AppColors.textOnAccent : AppColors.textMuted,
+                color: done ? AppColors.textOnAccent : context.colors.textMuted,
                 size: 20,
               ),
             ),
@@ -157,8 +158,8 @@ class _SetRowWidgetState extends State<SetRowWidget> {
             const SizedBox(width: 4),
             GestureDetector(
               onTap: widget.onRemove,
-              child: const Icon(Icons.close_rounded,
-                  color: AppColors.textMuted, size: 16),
+              child: Icon(Icons.close_rounded,
+                  color: context.colors.textMuted, size: 16),
             ),
           ] else
             const SizedBox(width: 20),
@@ -190,21 +191,21 @@ class _NumField extends StatelessWidget {
       enabled: enabled,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       textAlign: TextAlign.center,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: 'Cairo',
         fontSize: 15,
         fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
+        color: context.colors.textPrimary,
       ),
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+        hintStyle: AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
         suffixText: label,
         suffixStyle:
-            AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+            AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
         filled: true,
-        fillColor: AppColors.bgDeep,
+        fillColor: context.colors.bgDeep,
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusS),

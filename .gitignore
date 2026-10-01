@@ -22,7 +22,7 @@ migrate_working_dir/
 #.vscode/
 
 # Local secrets (Supabase) — مايتعملهاش commit أبداً
-# انسخ dart_defines.powerteam.json إلى dart_defines.json واملاه بالقيم الحقيقية
+# انسخ dart_defines.example.json إلى dart_defines.json واملاه بالقيم الحقيقية
 dart_defines.json
 dart_defines.*.json
 !dart_defines.example.json

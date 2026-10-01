@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/di/injection.dart';
@@ -40,12 +41,12 @@ class _ProfileEditGateState extends State<ProfileEditGate> {
 
         if (state is ProfileError) {
           return Scaffold(
-            backgroundColor: AppColors.bgDark,
+            backgroundColor: context.colors.bgDark,
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.error_outline_rounded,
                     color: AppColors.accent,
                     size: 48,
@@ -78,8 +79,8 @@ class _ProfileEditGateState extends State<ProfileEditGate> {
         }
 
         // ProfileLoading أو ProfileInitial
-        return const Scaffold(
-          backgroundColor: AppColors.bgDark,
+        return   Scaffold(
+          backgroundColor: context.colors.bgDark,
           body: Center(
             child: CircularProgressIndicator(color: AppColors.accent),
           ),

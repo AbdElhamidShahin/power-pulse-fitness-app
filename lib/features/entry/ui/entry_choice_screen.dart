@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +22,7 @@ class EntryChoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
+      backgroundColor: AppColorsDark.bgDeep,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -58,7 +59,7 @@ class EntryChoiceScreen extends StatelessWidget {
               Text(
                 'مرحباً بك 👋',
                 style: AppTextStyles.displayMedium.copyWith(
-                  color: const Color(0xFFF5F5F0),
+                  color: AppColorsDark.textPrimary,
                   height: 1.2,
                 ),
               ),
@@ -68,7 +69,7 @@ class EntryChoiceScreen extends StatelessWidget {
               Text(
                 'ابدأ رحلتك نحو اللياقة البدنية',
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFF6B6B6B),
+                  color: AppColorsDark.textMuted,
                 ),
               ),
 
@@ -92,8 +93,8 @@ class EntryChoiceScreen extends StatelessWidget {
               // ── Guest Card ──────────────────────────────────────────
               _OptionCard(
                 icon: Icons.person_outline_rounded,
-                iconColor: const Color(0xFF9CA3AF),
-                iconBg: const Color(0xFF1F2937),
+                iconColor: AppColorsDark.textMuted,
+                iconBg: AppColorsDark.bgSurface,
                 title: 'متابعة كضيف',
                 description:
                     'ستُحفظ بياناتك على هذا الجهاز فقط. يمكنك إنشاء حساب لاحقًا لحفظها على السحابة واستعادتها.',
@@ -137,10 +138,10 @@ class _OptionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppConstants.spaceXL),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: AppColorsDark.bgSurface,
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
         border: Border.all(
-          color: isPrimary ? AppColors.accent.withOpacity(0.4) : const Color(0xFF2A2A2A),
+          color: isPrimary ? AppColors.accent.withOpacity(0.4) : AppColorsDark.borderSubtle,
           width: isPrimary ? 1.5 : 1,
         ),
       ),
@@ -163,7 +164,7 @@ class _OptionCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: AppTextStyles.titleMedium.copyWith(
-                    color: const Color(0xFFF5F5F0),
+                    color: AppColorsDark.textPrimary,
                   ),
                 ),
               ),
@@ -173,7 +174,7 @@ class _OptionCard extends StatelessWidget {
           Text(
             description,
             style: AppTextStyles.bodySmall.copyWith(
-              color: const Color(0xFF6B6B6B),
+              color: AppColorsDark.textMuted,
               height: 1.6,
             ),
           ),
@@ -185,8 +186,8 @@ class _OptionCard extends StatelessWidget {
                 : OutlinedButton(
                     onPressed: onTap,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF3A3A3A)),
-                      foregroundColor: const Color(0xFF9CA3AF),
+                      side: const BorderSide(color: AppColorsDark.borderMedium),
+                      foregroundColor: AppColorsDark.textMuted,
                       padding: const EdgeInsets.symmetric(
                           vertical: AppConstants.spaceM),
                       shape: RoundedRectangleBorder(
@@ -196,7 +197,7 @@ class _OptionCard extends StatelessWidget {
                     ),
                     child: Text(actionLabel,
                         style: AppTextStyles.labelLarge
-                            .copyWith(color: const Color(0xFF9CA3AF))),
+                            .copyWith(color: AppColorsDark.textMuted)),
                   ),
           ),
         ],

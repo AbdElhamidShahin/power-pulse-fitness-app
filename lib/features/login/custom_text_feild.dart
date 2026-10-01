@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -46,14 +47,14 @@ class AppTextFormFeild extends StatelessWidget {
           enabledBorder: enabledBorder ??
               OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: AppColors.textPrimary.withOpacity(0.9),
+                  color: context.colors.textPrimary.withOpacity(0.9),
                   width: 1.3,
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
           focusedBorder: focusedBorder ??
               OutlineInputBorder(
-                borderSide: const BorderSide(
+                borderSide: BorderSide(
                   color: AppColors.accent,
                   width: 1.3,
                 ),
@@ -61,12 +62,12 @@ class AppTextFormFeild extends StatelessWidget {
               ),
           errorBorder: OutlineInputBorder(
             borderSide:
-                const BorderSide(color: AppColors.textPrimary, width: 1.3),
+                BorderSide(color: context.colors.textPrimary, width: 1.3),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderSide:
-                const BorderSide(color: AppColors.textPrimary, width: 1.3),
+                BorderSide(color: context.colors.textPrimary, width: 1.3),
             borderRadius: BorderRadius.circular(10),
           ),
           // Callers can still override hintStyle; fall back to the themed version.

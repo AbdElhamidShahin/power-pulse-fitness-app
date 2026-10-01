@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -36,10 +37,10 @@ class ExerciseLoggerCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppConstants.spaceL),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
         border: Border.all(
-          color: done ? AppColors.accent : AppColors.borderSubtle,
+          color: done ? AppColors.accent : context.colors.borderSubtle,
           width: done ? 1.5 : 0.5,
         ),
       ),
@@ -58,11 +59,11 @@ class ExerciseLoggerCard extends StatelessWidget {
                     children: [
                       Text(
                         exercise.exerciseName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+                          color: context.colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -91,7 +92,7 @@ class ExerciseLoggerCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: done ? AppColors.accent : AppColors.bgElevated,
+                    color: done ? AppColors.accent : context.colors.bgElevated,
                     borderRadius:
                     BorderRadius.circular(AppConstants.radiusPill),
                   ),
@@ -103,7 +104,7 @@ class ExerciseLoggerCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: done
                           ? AppColors.textOnAccent
-                          : AppColors.textMuted,
+                          : context.colors.textMuted,
                     ),
                   ),
                 ),
@@ -111,8 +112,8 @@ class ExerciseLoggerCard extends StatelessWidget {
                 // حذف
                 GestureDetector(
                   onTap: onRemoveExercise,
-                  child: const Icon(Icons.delete_outline_rounded,
-                      color: AppColors.textMuted, size: 20),
+                  child: Icon(Icons.delete_outline_rounded,
+                      color: context.colors.textMuted, size: 20),
                 ),
               ],
             ),
@@ -127,14 +128,14 @@ class ExerciseLoggerCard extends StatelessWidget {
                 Expanded(
                   child: Text('وزن (كجم)',
                       style: AppTextStyles.labelSmall
-                          .copyWith(color: AppColors.textMuted),
+                          .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text('رابس',
                       style: AppTextStyles.labelSmall
-                          .copyWith(color: AppColors.textMuted),
+                          .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ),
                 const SizedBox(width: 52),
@@ -169,21 +170,21 @@ class ExerciseLoggerCard extends StatelessWidget {
                 padding:
                 const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppColors.bgElevated,
+                  color: context.colors.bgElevated,
                   borderRadius:
                   BorderRadius.circular(AppConstants.radiusM),
                   border: Border.all(
-                      color: AppColors.borderMedium, width: 0.5),
+                      color: context.colors.borderMedium, width: 0.5),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add_rounded,
-                        color: AppColors.textMuted, size: 16),
+                    Icon(Icons.add_rounded,
+                        color: context.colors.textMuted, size: 16),
                     const SizedBox(width: 4),
                     Text('إضافة مجموعة',
                         style: AppTextStyles.labelSmall
-                            .copyWith(color: AppColors.textMuted)),
+                            .copyWith(color: context.colors.textMuted)),
                   ],
                 ),
               ),

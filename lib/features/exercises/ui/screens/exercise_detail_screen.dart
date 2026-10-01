@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_badge.dart';
 import '../../../../../shared/widgets/pp_button.dart';
@@ -56,7 +58,7 @@ class _DetailContent extends StatelessWidget {
   void _showAddToPlanSheet(BuildContext context, Exercise ex) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -89,18 +91,18 @@ class _DetailContent extends StatelessWidget {
         SliverAppBar(
           expandedHeight: 280,
           pinned: true,
-          backgroundColor: AppColors.bgDeep,
+          backgroundColor: context.colors.bgDeep,
           leading: GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Container(
               margin: const EdgeInsets.all(AppConstants.spaceS),
               decoration: BoxDecoration(
-                color: AppColors.bgSurface.withValues(alpha: 0.9),
+                color: context.colors.bgSurface.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_ios,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
                 size: AppConstants.iconL,
               ),
             ),
@@ -110,15 +112,15 @@ class _DetailContent extends StatelessWidget {
               imageUrl: exercise.gifUrl,
               fit: BoxFit.cover,
               placeholder: (_, __) => Container(
-                color: AppColors.bgElevated,
+                color: context.colors.bgElevated,
                 child: const Center(
                   child: CircularProgressIndicator(color: AppColors.accent),
                 ),
               ),
               errorWidget: (_, __, ___) => Container(
-                color: AppColors.bgElevated,
-                child: const Icon(Icons.fitness_center,
-                    color: AppColors.textMuted, size: 64),
+                color: context.colors.bgElevated,
+                child: Icon(Icons.fitness_center,
+                    color: context.colors.textMuted, size: 64),
               ),
             ),
           ),
@@ -143,7 +145,7 @@ class _DetailContent extends StatelessWidget {
                 children: [
                   MuscleGroupBadge(muscle: displayBodyPart),
                   PPBadge(label: displayTarget, color: AppColors.info),
-                  PPBadge(label: displayEquipment, color: AppColors.textMuted),
+                  PPBadge(label: displayEquipment, color: context.colors.textMuted),
                 ],
               ),
               const SizedBox(height: AppConstants.spaceXXL),
@@ -158,7 +160,7 @@ class _DetailContent extends StatelessWidget {
                   children: muscles
                       .map((m) => PPBadge(
                     label: m,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                     size: PPBadgeSize.small,
                   ))
                       .toList(),
@@ -251,7 +253,7 @@ class _DetailError extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline_rounded,
+          Icon(Icons.error_outline_rounded,
               color: AppColors.danger, size: 48),
           const SizedBox(height: AppConstants.spaceM),
           Text(message, style: AppTextStyles.bodyMedium),
@@ -316,7 +318,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                   child: Container(
                     width: 40, height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.borderMedium,
+                      color: context.colors.borderMedium,
                       borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                     ),
                   ),
@@ -324,9 +326,9 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 const SizedBox(height: 16),
                 Text(
                   'أضف لأي يوم؟',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 18,
-                    fontWeight: FontWeight.w900, color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w900, color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -334,7 +336,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                   widget.exercise.nameAr.isNotEmpty
                       ? widget.exercise.nameAr
                       : widget.exercise.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 14,
                     color: AppColors.accent, fontWeight: FontWeight.w600,
                   ),
@@ -364,7 +366,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.accentDim
-                            : AppColors.bgElevated,
+                            : context.colors.bgElevated,
                         borderRadius: BorderRadius.circular(AppConstants.radiusM),
                         border: Border.all(
                           color: isSelected ? AppColors.accent : Colors.transparent,
@@ -375,7 +377,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                         children: [
                           Text(
                             day.isRest ? '😴' : '💪',
-                            style: const TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 18),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -389,8 +391,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                       fontFamily: 'Cairo', fontSize: 14,
                                       fontWeight: FontWeight.w700,
                                       color: day.isRest
-                                          ? AppColors.textMuted
-                                          : AppColors.textPrimary,
+                                          ? context.colors.textMuted
+                                          : context.colors.textPrimary,
                                     ),
                                   ),
                                   if (isToday) ...[
@@ -420,20 +422,20 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                       fontFamily: 'Cairo', fontSize: 11,
                                       color: alreadyHas
                                           ? AppColors.success
-                                          : AppColors.textMuted,
+                                          : context.colors.textMuted,
                                     ),
                                   ),
                               ],
                             ),
                           ),
                           if (isSelected)
-                            const Icon(Icons.check_circle_rounded,
+                            Icon(Icons.check_circle_rounded,
                                 color: AppColors.accent, size: 20),
                           if (day.isRest)
-                            const Text('راحة',
+                              Text('راحة',
                                 style: TextStyle(
                                   fontFamily: 'Cairo', fontSize: 11,
-                                  color: AppColors.textMuted,
+                                  color: context.colors.textMuted,
                                 )),
                         ],
                       ),
@@ -475,7 +477,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                     decoration: BoxDecoration(
                       color: _selectedWeekday != null
                           ? AppColors.accent
-                          : AppColors.bgElevated,
+                          : context.colors.bgElevated,
                       borderRadius: BorderRadius.circular(AppConstants.radiusL),
                     ),
                     alignment: Alignment.center,
@@ -489,7 +491,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                         fontWeight: FontWeight.w700,
                         color: _selectedWeekday != null
                             ? AppColors.textOnAccent
-                            : AppColors.textMuted,
+                            : context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -510,18 +512,18 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
         children: [
           const Text('💪', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
-          const Text(
+            Text(
             'مفيش خطة تمرين بعد',
             style: TextStyle(
               fontFamily: 'Cairo', fontSize: 16,
-              fontWeight: FontWeight.w900, color: AppColors.textPrimary,
+              fontWeight: FontWeight.w900, color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+            Text(
             'اعمل خطة الأسبوع الأول وبعدين ضيف التمارين',
             style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
-                color: AppColors.textMuted),
+                color: context.colors.textMuted),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -560,25 +562,25 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
         children: [
           Container(
             width: 72, height: 72,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.successDim, shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_rounded,
+            child: Icon(Icons.check_rounded,
                 color: AppColors.success, size: 40),
           ),
           const SizedBox(height: 16),
-          const Text(
+            Text(
             'تمت الإضافة! 🎉',
             style: TextStyle(
               fontFamily: 'Cairo', fontSize: 18,
-              fontWeight: FontWeight.w900, color: AppColors.textPrimary,
+              fontWeight: FontWeight.w900, color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'اتضاف لـ ${_dayNames[(_selectedWeekday ?? 1) - 1]}',
-            style: const TextStyle(fontFamily: 'Cairo', fontSize: 14,
-                color: AppColors.textMuted),
+            style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
+                color: context.colors.textMuted),
           ),
           const SizedBox(height: 24),
           Row(children: [
@@ -588,14 +590,14 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: AppColors.bgElevated,
+                    color: context.colors.bgElevated,
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   ),
                   alignment: Alignment.center,
-                  child: const Text('تمام',
+                  child:   Text('تمام',
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary)),
+                          color: context.colors.textPrimary)),
                 ),
               ),
             ),

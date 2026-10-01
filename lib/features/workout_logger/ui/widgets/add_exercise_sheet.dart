@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -88,7 +89,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
             margin: const EdgeInsets.only(top: AppConstants.spaceM),
             width: 40, height: 4,
             decoration: BoxDecoration(
-              color: AppColors.borderMedium,
+              color: context.colors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
@@ -102,13 +103,13 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
             ),
             child: TextField(
               controller: _searchCtrl,
-              style: const TextStyle(fontFamily: 'Cairo', color: AppColors.textPrimary),
+              style: TextStyle(fontFamily: 'Cairo', color: context.colors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'ابحث عن تمرين...',
-                hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
-                prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
+                hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted),
+                prefixIcon: Icon(Icons.search_rounded, color: context.colors.textMuted),
                 filled: true,
-                fillColor: AppColors.bgElevated,
+                fillColor: context.colors.bgElevated,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   borderSide: BorderSide.none,
@@ -125,7 +126,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
                     ? Center(
                         child: Text('لا يوجد نتائج',
                             style: AppTextStyles.bodyMedium
-                                .copyWith(color: AppColors.textMuted)),
+                                .copyWith(color: context.colors.textMuted)),
                       )
                     : ListView.builder(
                         controller: scroll,
@@ -139,18 +140,18 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
                           return ListTile(
                             title: Text(
                               ex.nameAr.isNotEmpty ? ex.nameAr : ex.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: 'Cairo',
-                                color: AppColors.textPrimary,
+                                color: context.colors.textPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             subtitle: Text(
                               ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
                               style: AppTextStyles.bodySmall
-                                  .copyWith(color: AppColors.textMuted),
+                                  .copyWith(color: context.colors.textMuted),
                             ),
-                            trailing: const Icon(Icons.add_circle_outline_rounded,
+                            trailing: Icon(Icons.add_circle_outline_rounded,
                                 color: AppColors.accent),
                             onTap: () => _pick(ex),
                           );

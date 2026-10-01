@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../shared/widgets/pp_input.dart';
 import '../../../home/logic/cubit/home_cubit.dart';
@@ -47,7 +49,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: Column(
           children: [
@@ -59,7 +61,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Column(
+                        Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('مكتبة التمارين  ',
@@ -71,7 +73,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                               style: TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary,
+                                  color: context.colors.textPrimary,
                                   fontFamily: 'Cairo')),
                         ],
                       ),
@@ -89,8 +91,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           height: 42,
                           decoration: BoxDecoration(
                             color: _isSearching
-                                ? AppColors.bgDark
-                                : AppColors.bgElevated,
+                                ? context.colors.bgDark
+                                : context.colors.bgElevated,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -99,7 +101,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                 : Icons.search_rounded,
                             color: _isSearching
                                 ? AppColors.textOnDark
-                                : AppColors.textMuted,
+                                : context.colors.textMuted,
                             size: 20,
                           ),
                         ),
@@ -145,7 +147,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         return Container(
                           padding: const EdgeInsets.all(18),
                           decoration: BoxDecoration(
-                            color: AppColors.bgDark,
+                            color: context.colors.bgDark,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -186,13 +188,13 @@ class _StatItem extends StatelessWidget {
     return Column(
       children: [
         Text(value,
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
                 color: AppColors.accent)),
         Text(label,
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'Cairo', fontSize: 10, color: Color(0xFF888888))),
       ],
     );
@@ -304,7 +306,7 @@ class _Shimmer extends StatelessWidget {
       itemBuilder: (_, __) => Container(
         height: 80,
         decoration: BoxDecoration(
-          color: AppColors.bgSurface,
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(20),
         ),
       ),
@@ -318,7 +320,7 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(Icons.error_outline_rounded,
+      Icon(Icons.error_outline_rounded,
           color: AppColors.danger, size: 48),
       const SizedBox(height: 16),
       Text(message, style: AppTextStyles.bodyMedium),

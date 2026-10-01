@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -37,7 +38,7 @@ class WeekStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.bgDeep,
+      color: context.colors.bgDeep,
       padding: const EdgeInsets.fromLTRB(
         AppConstants.screenPaddingH,
         0,
@@ -62,7 +63,7 @@ class WeekStrip extends StatelessWidget {
                   color: isSelected
                       ? AppColors.accent
                       : day.isRest
-                      ? AppColors.bgElevated
+                      ? context.colors.bgElevated
                       : AppColors.accentDim,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: isToday && !isSelected
@@ -77,7 +78,7 @@ class WeekStrip extends StatelessWidget {
                       style: AppTextStyles.labelSmall.copyWith(
                         color: isSelected
                             ? AppColors.textOnAccent
-                            : AppColors.textMuted,
+                            : context.colors.textMuted,
                         fontWeight:
                         isSelected ? FontWeight.w700 : FontWeight.w400,
                       ),
@@ -85,7 +86,7 @@ class WeekStrip extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       day.isRest ? '😴' : '💪',
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 12),
                     ),
                     if (!day.isRest && day.exercises.isNotEmpty)
                       Container(

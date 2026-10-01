@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
 import 'ring_painter.dart';
@@ -16,7 +17,7 @@ class StreakCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
       decoration: BoxDecoration(
-        color: AppColors.bgDark,
+        color: context.colors.bgDark,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Row(
@@ -33,7 +34,7 @@ class StreakCard extends StatelessWidget {
                   painter: RingPainter(
                     progress: pct,
                     color: AppColors.accent,
-                    trackColor: const Color(0xFF333333),
+                    trackColor: Color(0xFF333333),
                     strokeWidth: 5.w,
                   ),
                 ),
@@ -59,7 +60,7 @@ class StreakCard extends StatelessWidget {
                   fontFamily: 'Cairo',
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF888888),
+                  color: Color(0xFF888888),
                   letterSpacing: 0.5,
                 ),
               ),

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.powerteam" "\0"
-            VALUE "FileDescription", "powerpulse" "\0"
+            VALUE "CompanyName", "com.example" "\0"
+            VALUE "FileDescription", "task" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "powerpulse" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.powerteam. All rights reserved." "\0"
-            VALUE "OriginalFilename", "powerpulse.exe" "\0"
-            VALUE "ProductName", "powerpulse" "\0"
+            VALUE "InternalName", "task" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "task.exe" "\0"
+            VALUE "ProductName", "task" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

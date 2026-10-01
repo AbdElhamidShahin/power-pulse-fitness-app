@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -133,7 +134,7 @@ class _WeekStrip extends StatelessWidget {
                 color: isSelected
                     ? AppColors.accent
                     : day.isRest
-                        ? AppColors.bgElevated
+                        ? context.colors.bgElevated
                         : AppColors.accentDim,
                 borderRadius: BorderRadius.circular(10.r),
                 border: isToday && !isSelected
@@ -152,7 +153,7 @@ class _WeekStrip extends StatelessWidget {
                           isSelected ? FontWeight.w700 : FontWeight.w400,
                       color: isSelected
                           ? AppColors.textOnAccent
-                          : AppColors.textMuted,
+                          : context.colors.textMuted,
                     ),
                   ),
                   SizedBox(height: 3.h),
@@ -193,9 +194,9 @@ class _NoPlantCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.colors.borderSubtle),
       ),
       child: Column(
         children: [
@@ -206,14 +207,14 @@ class _NoPlantCard extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
               )),
           SizedBox(height: 4.h),
           Text('حدد تمارينك لكل يوم ويوم الراحة مرة واحدة',
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 12.sp,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
               ),
               textAlign: TextAlign.center),
           SizedBox(height: 16.h),
@@ -258,9 +259,9 @@ class _RestDayCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.colors.borderSubtle),
       ),
       child: Row(
         children: [
@@ -276,7 +277,7 @@ class _RestDayCard extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -286,7 +287,7 @@ class _RestDayCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 12.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ],
@@ -298,15 +299,15 @@ class _RestDayCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: AppColors.bgElevated,
+                color: context.colors.bgElevated,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: AppColors.borderMedium),
+                border: Border.all(color: context.colors.borderMedium),
               ),
               child: Text('تعديل',
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
-                    color: AppColors.textSecondary,
+                    color: context.colors.textSecondary,
                   )),
             ),
           ),
@@ -343,12 +344,12 @@ class _WorkoutDayCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isToday
               ? AppColors.accent.withOpacity(0.4)
-              : AppColors.borderSubtle,
+              : context.colors.borderSubtle,
         ),
       ),
       child: Column(
@@ -364,14 +365,14 @@ class _WorkoutDayCard extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 17.sp,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: isToday ? AppColors.accentDim : AppColors.bgElevated,
+                  color: isToday ? AppColors.accentDim : context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
@@ -380,7 +381,7 @@ class _WorkoutDayCard extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
-                    color: isToday ? AppColors.accent : AppColors.textMuted,
+                    color: isToday ? AppColors.accent : context.colors.textMuted,
                   ),
                 ),
               ),
@@ -417,10 +418,10 @@ class _WorkoutDayCard extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 15.h),
               decoration: BoxDecoration(
-                color: isToday ? AppColors.accent : AppColors.bgElevated,
+                color: isToday ? AppColors.accent : context.colors.bgElevated,
                 borderRadius: BorderRadius.circular(14.r),
                 border:
-                    isToday ? null : Border.all(color: AppColors.borderMedium),
+                    isToday ? null : Border.all(color: context.colors.borderMedium),
               ),
               alignment: Alignment.center,
               child: Text(
@@ -431,7 +432,7 @@ class _WorkoutDayCard extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   color: isToday
                       ? AppColors.textOnAccent
-                      : AppColors.textSecondary,
+                      : context.colors.textSecondary,
                 ),
               ),
             ),
@@ -466,7 +467,7 @@ class _CompletedTodayCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
         border:
             Border.all(color: AppColors.success.withOpacity(0.4), width: 1.5),
@@ -480,11 +481,11 @@ class _CompletedTodayCard extends StatelessWidget {
               Container(
                 width: 40.r,
                 height: 40.r,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.successDim,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_rounded,
+                child: Icon(Icons.check_rounded,
                     color: AppColors.success, size: 24),
               ),
               SizedBox(width: 12.w),
@@ -498,7 +499,7 @@ class _CompletedTodayCard extends StatelessWidget {
                         fontFamily: 'Cairo',
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     Text(
@@ -532,9 +533,9 @@ class _CompletedTodayCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
-                    color: AppColors.bgElevated,
+                    color: context.colors.bgElevated,
                     borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: AppColors.borderMedium),
+                    border: Border.all(color: context.colors.borderMedium),
                   ),
                   alignment: Alignment.center,
                   child: Text('تعديل الخطة',
@@ -542,7 +543,7 @@ class _CompletedTodayCard extends StatelessWidget {
                         fontFamily: 'Cairo',
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textSecondary,
+                        color: context.colors.textSecondary,
                       )),
                 ),
               ),
@@ -593,7 +594,7 @@ class _Stat extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 12.sp,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
             )),
       ],
     );
@@ -610,7 +611,7 @@ class _Chip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: context.colors.bgElevated,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
@@ -619,7 +620,7 @@ class _Chip extends StatelessWidget {
           fontFamily: 'Cairo',
           fontSize: 11.sp,
           fontWeight: FontWeight.w600,
-          color: muted ? AppColors.textMuted : AppColors.textPrimary,
+          color: muted ? context.colors.textMuted : context.colors.textPrimary,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -15,7 +16,7 @@ class ExercisesShimmer extends StatelessWidget {
       itemBuilder: (_, __) => Container(
         height: 80.h,
         decoration: BoxDecoration(
-          color: AppColors.bgSurface,
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(20.r),
         ),
       ),

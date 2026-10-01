@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../../core/router/app_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_colors.dart';
 
 class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.child});
@@ -33,7 +34,7 @@ class MainShell extends StatelessWidget {
     final int currentIndex = _calculateSelectedIndex(location);
 
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: child,
       bottomNavigationBar: AppBottomNav(
         currentIndex: currentIndex,

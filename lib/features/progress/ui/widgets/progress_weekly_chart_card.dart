@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -14,7 +15,7 @@ class ProgressWeeklyChartCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(
@@ -26,7 +27,7 @@ class ProgressWeeklyChartCard extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF8A8A8A),
+              color: Color(0xFF8A8A8A),
               letterSpacing: 0.8,
             ),
           ),
@@ -79,7 +80,7 @@ class _WeeklyBarChart extends StatelessWidget {
               height:
               hasWorkout ? (60.h * heightFraction).clamp(20.h, 60.h) : 4.h,
               decoration: BoxDecoration(
-                color: hasWorkout ? AppColors.accent : const Color(0xFFE0E0E0),
+                color: hasWorkout ? AppColors.accent : Color(0xFFE0E0E0),
                 borderRadius: BorderRadius.circular(8.r),
               ),
             ),
@@ -90,7 +91,7 @@ class _WeeklyBarChart extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF8A8A8A),
+                color: Color(0xFF8A8A8A),
               ),
             ),
           ],

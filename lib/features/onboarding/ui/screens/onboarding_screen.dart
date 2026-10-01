@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -116,7 +117,7 @@ class _IntroPages extends StatelessWidget {
             onPressed: onSkip,
             child: Text('تخطي',
                 style: AppTextStyles.labelMedium
-                    .copyWith(color: AppColors.textMuted)),
+                    .copyWith(color: context.colors.textMuted)),
           ),
         ),
 
@@ -148,7 +149,7 @@ class _IntroPages extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: current == i
                           ? AppColors.accent
-                          : AppColors.bgElevated,
+                          : context.colors.bgElevated,
                       borderRadius:
                           BorderRadius.circular(AppConstants.radiusPill),
                     ),
@@ -199,14 +200,14 @@ class _OnboardingPage extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .displayMedium!
-                .copyWith(color: AppColors.textPrimary),
+                .copyWith(color: context.colors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppConstants.spaceL),
           Text(
             page.subtitle,
             style: AppTextStyles.bodyLarge
-                .copyWith(color: AppColors.textSecondary),
+                .copyWith(color: context.colors.textSecondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -284,7 +285,7 @@ class _SetupFormState extends State<_SetupForm> {
                   const SizedBox(height: AppConstants.spaceS),
                   Text('لنحسب أهدافك اليومية بدقة',
                       style: AppTextStyles.bodyMedium
-                          .copyWith(color: AppColors.textMuted)),
+                          .copyWith(color: context.colors.textMuted)),
                 ],
               ),
             ),
@@ -438,7 +439,7 @@ class _SegmentRow<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: context.colors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       child: Row(
@@ -461,7 +462,7 @@ class _SegmentRow<T> extends StatelessWidget {
                   style: AppTextStyles.labelMedium.copyWith(
                     color: active
                         ? AppColors.textOnAccent
-                        : AppColors.textMuted,
+                        : context.colors.textMuted,
                   ),
                 ),
               ),
@@ -494,10 +495,10 @@ class _OptionTile extends StatelessWidget {
           vertical: AppConstants.spaceM,
         ),
         decoration: BoxDecoration(
-          color: selected ? AppColors.accentDim : AppColors.bgSurface,
+          color: selected ? AppColors.accentDim : context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
           border: Border.all(
-            color: selected ? AppColors.accent : AppColors.borderSubtle,
+            color: selected ? AppColors.accent : context.colors.borderSubtle,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -508,11 +509,11 @@ class _OptionTile extends StatelessWidget {
                   style: AppTextStyles.titleMedium.copyWith(
                     color: selected
                         ? AppColors.accent
-                        : AppColors.textPrimary,
+                        : context.colors.textPrimary,
                   )),
             ),
             if (selected)
-              const Icon(Icons.check_circle_rounded,
+              Icon(Icons.check_circle_rounded,
                   color: AppColors.accent, size: AppConstants.iconS),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -24,7 +25,7 @@ class ProgressStatCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(
@@ -51,7 +52,7 @@ class ProgressStatCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11.sp,
-              color: const Color(0xFF8A8A8A),
+              color: Color(0xFF8A8A8A),
             ),
           ),
         ],

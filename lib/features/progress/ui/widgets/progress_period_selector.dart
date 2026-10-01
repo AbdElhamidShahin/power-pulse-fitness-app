@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -23,7 +24,7 @@ class ProgressPeriodSelector extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: active ? AppColors.bgDark : AppColors.bgSurface,
+                color: active ? context.colors.bgDark : context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Text(
@@ -32,7 +33,7 @@ class ProgressPeriodSelector extends StatelessWidget {
                   fontFamily: 'Cairo',
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
-                  color: active ? AppColors.textOnDark : AppColors.textMuted,
+                  color: active ? AppColors.textOnDark : context.colors.textMuted,
                 ),
               ),
             ),

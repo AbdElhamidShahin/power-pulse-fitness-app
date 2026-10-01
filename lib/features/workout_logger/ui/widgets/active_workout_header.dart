@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -67,7 +68,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
             onTap: () => showDialog(
               context: context,
               builder: (_) => AlertDialog(
-                backgroundColor: AppColors.bgSurface,
+                backgroundColor: context.colors.bgSurface,
                 title: Text('إلغاء التمرين؟',
                     style: Theme.of(context).textTheme.headlineSmall),
                 content: Text('سيتم حذف التمرين الحالي',
@@ -129,9 +130,9 @@ class WorkoutBottomBar extends StatelessWidget {
         AppConstants.screenPaddingH,
         AppConstants.spaceXL,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.bgSurface,
-        border: Border(top: BorderSide(color: AppColors.borderSubtle)),
+      decoration: BoxDecoration(
+        color: context.colors.bgSurface,
+        border: Border(top: BorderSide(color: context.colors.borderSubtle)),
       ),
       child: Row(
         children: [
@@ -141,19 +142,19 @@ class WorkoutBottomBar extends StatelessWidget {
               child: Container(
                 height: AppConstants.buttonHeightMedium,
                 decoration: BoxDecoration(
-                  color: AppColors.bgElevated,
+                  color: context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
-                  border: Border.all(color: AppColors.borderMedium),
+                  border: Border.all(color: context.colors.borderMedium),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add_rounded,
-                        color: AppColors.textMuted, size: 20),
+                    Icon(Icons.add_rounded,
+                        color: context.colors.textMuted, size: 20),
                     const SizedBox(width: AppConstants.spaceS),
                     Text('إضافة تمرين',
                         style: AppTextStyles.labelMedium
-                            .copyWith(color: AppColors.textMuted)),
+                            .copyWith(color: context.colors.textMuted)),
                   ],
                 ),
               ),

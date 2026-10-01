@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../data/models/food_entity.dart';
@@ -29,7 +30,7 @@ class MealTypePickerSheet extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 17.sp,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
             ),
           ),
           SizedBox(height: 16.h),
@@ -44,7 +45,7 @@ class MealTypePickerSheet extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 8.h),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
-                  color: AppColors.bgElevated,
+                  color: context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(14.r),
                 ),
                 child: Row(
@@ -57,14 +58,14 @@ class MealTypePickerSheet extends StatelessWidget {
                         fontFamily: 'Cairo',
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 14.r,
-                      color: AppColors.textMuted,
+                      color: context.colors.textMuted,
                     ),
                   ],
                 ),

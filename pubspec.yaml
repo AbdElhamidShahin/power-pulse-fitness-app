@@ -35,16 +35,10 @@ dependencies:
 
   # UI / Styling
   flutter_screenutil: ^5.9.3
-  google_fonts: ^6.2.1
-  lottie: ^3.1.2
-  flutter_animate: ^4.5.0
-  flutter_staggered_animations: ^1.1.1
   cupertino_icons: ^1.0.8
-  hexcolor: ^3.0.1
   cached_network_image: ^3.4.1
 
   # Charts / Gauges
-  syncfusion_flutter_gauges: ^31.1.19
 
   # Notifications
   flutter_local_notifications: ^18.0.1
@@ -52,18 +46,16 @@ dependencies:
 
   # Pedometer
   pedometer: ^4.0.2
+  flutter_svg: ^2.2.3
 
   # Misc
-  url_launcher: ^6.3.0
-  provider: ^6.1.2
-  awesome_snackbar_content: ^0.1.7
+
+  # Launcher Icons
 
 dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.14.1
-
 flutter:
   uses-material-design: true
 
@@ -73,10 +65,11 @@ flutter:
     - assets/exercises.json
     - assets/animation/
     - assets/images/
-    - assets/catogry/
+    - assets/category/
     - assets/GIF/chest/
     - assets/GIF/lats/
     - assets/GIF/shorter/
     - assets/GIF/hands/
     - assets/GIF/legs/
     - assets/GIF/beily/
+    - assets/images/123456.jpg

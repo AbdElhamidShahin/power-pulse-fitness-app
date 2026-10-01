@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -23,9 +24,9 @@ class FoodSearchCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(AppConstants.spaceM.r),
         decoration: BoxDecoration(
-          color: AppColors.bgSurface,
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusL.r),
-          border: Border.all(color: AppColors.borderSubtle),
+          border: Border.all(color: context.colors.borderSubtle),
         ),
         child: Row(
           children: [
@@ -33,12 +34,12 @@ class FoodSearchCard extends StatelessWidget {
               width: 48.w,
               height: 48.h,
               decoration: BoxDecoration(
-                color: AppColors.bgElevated,
+                color: context.colors.bgElevated,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
               ),
               child: Icon(
                 Icons.restaurant_rounded,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
                 size: AppConstants.iconM.r,
               ),
             ),

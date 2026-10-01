@@ -3,6 +3,7 @@ import '../../../../../core/router/route_observers.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
 import '../widgets/nutrition_body.dart';
@@ -47,7 +48,7 @@ class _NutritionScreenState extends State<NutritionScreen> with RouteAware {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.bgDeep,
+        backgroundColor: context.colors.bgDeep,
         body: SafeArea(
           child: BlocConsumer<NutritionCubit, NutritionState>(
             listener: (context, state) {

@@ -20,7 +20,7 @@ samples, guidance on mobile development, and a full API reference.
 Supabase credentials are **not** stored in source. They are injected at build time.
 
 ```bash
-cp dart_defines.powerteam.json dart_defines.json   # then fill in real values (git-ignored)
+cp dart_defines.example.json dart_defines.json   # then fill in real values (git-ignored)
 flutter run --dart-define-from-file=dart_defines.json
 flutter build apk --dart-define-from-file=dart_defines.json
 ```

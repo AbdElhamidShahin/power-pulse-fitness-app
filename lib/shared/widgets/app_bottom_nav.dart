@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -23,10 +24,10 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.bgSurface,
+      decoration: BoxDecoration(
+        color: context.colors.bgSurface,
         border: Border(
-          top: BorderSide(color: AppColors.borderSubtle, width: 0.5),
+          top: BorderSide(color: context.colors.borderSubtle, width: 0.5),
         ),
       ),
       child: SafeArea(
@@ -60,8 +61,8 @@ class AppBottomNav extends StatelessWidget {
                             fontWeight:
                                 active ? FontWeight.w700 : FontWeight.w400,
                             color: active
-                                ? AppColors.textPrimary
-                                : AppColors.textMuted,
+                                ? context.colors.textPrimary
+                                : context.colors.textMuted,
                           ),
                         ),
                         SizedBox(height: 3.h),
@@ -69,7 +70,7 @@ class AppBottomNav extends StatelessWidget {
                           duration: const Duration(milliseconds: 200),
                           width: active ? 4.r : 0,
                           height: active ? 4.r : 0,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             color: AppColors.accent,
                             shape: BoxShape.circle,
                           ),

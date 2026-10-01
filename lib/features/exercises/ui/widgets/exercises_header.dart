@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -25,7 +26,7 @@ class ExercisesHeader extends StatelessWidget {
               'مكتبة التمارين',
               style: TextStyle(
                 fontSize: 11.sp,
-                color: const Color(0xFF8A8A8A),
+                color: Color(0xFF8A8A8A),
                 fontFamily: 'Cairo',
               ),
             ),
@@ -34,7 +35,7 @@ class ExercisesHeader extends StatelessWidget {
               style: TextStyle(
                 fontSize: 26.sp,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
                 fontFamily: 'Cairo',
               ),
             ),
@@ -46,12 +47,12 @@ class ExercisesHeader extends StatelessWidget {
             width: 42.w,
             height: 42.h,
             decoration: BoxDecoration(
-              color: isSearching ? AppColors.bgDark : AppColors.bgElevated,
+              color: isSearching ? context.colors.bgDark : context.colors.bgElevated,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               isSearching ? Icons.close_rounded : Icons.search_rounded,
-              color: isSearching ? AppColors.textOnDark : AppColors.textMuted,
+              color: isSearching ? AppColors.textOnDark : context.colors.textMuted,
               size: 24.r,
             ),
           ),

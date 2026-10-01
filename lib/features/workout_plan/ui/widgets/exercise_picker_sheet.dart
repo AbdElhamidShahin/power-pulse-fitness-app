@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -67,7 +68,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.borderMedium,
+              color: context.colors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
@@ -83,8 +84,8 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
                 const Spacer(),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.close_rounded,
-                      color: AppColors.textMuted),
+                  child: Icon(Icons.close_rounded,
+                      color: context.colors.textMuted),
                 ),
               ],
             ),
@@ -98,10 +99,10 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
               style: AppTextStyles.bodyMedium,
               decoration: InputDecoration(
                 hintText: 'ابحث...',
-                prefixIcon: const Icon(Icons.search_rounded,
-                    color: AppColors.textMuted, size: 20),
+                prefixIcon: Icon(Icons.search_rounded,
+                    color: context.colors.textMuted, size: 20),
                 filled: true,
-                fillColor: AppColors.bgElevated,
+                fillColor: context.colors.bgElevated,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   borderSide: BorderSide.none,
@@ -144,7 +145,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
                       vertical: AppConstants.spaceM,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.bgElevated,
+                      color: context.colors.bgElevated,
                       borderRadius:
                       BorderRadius.circular(AppConstants.radiusL),
                     ),
@@ -177,7 +178,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
                             ],
                           ),
                         ),
-                        const Icon(Icons.add_circle_outline_rounded,
+                        Icon(Icons.add_circle_outline_rounded,
                             color: AppColors.accent, size: 22),
                       ],
                     ),

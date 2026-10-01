@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -24,7 +25,7 @@ class BodyStatRow extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
@@ -38,7 +39,7 @@ class BodyStatRow extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
-                    color: const Color(0xFF8A8A8A),
+                    color: Color(0xFF8A8A8A),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -51,7 +52,7 @@ class BodyStatRow extends StatelessWidget {
                         fontFamily: 'Cairo',
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     if (change != null) ...[
@@ -62,7 +63,7 @@ class BodyStatRow extends StatelessWidget {
                           fontFamily: 'Cairo',
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w700,
-                          color: changeColor ?? AppColors.textMuted,
+                          color: changeColor ?? context.colors.textMuted,
                         ),
                       ),
                     ],

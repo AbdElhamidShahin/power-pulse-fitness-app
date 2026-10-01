@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme_colors.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
@@ -29,18 +30,18 @@ class PPSearchBar extends StatelessWidget {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: AppColors.bgElevated,
+          color: context.colors.bgElevated,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: AppColors.borderSubtle),
+          border: Border.all(color: context.colors.borderSubtle),
         ),
         child: Row(
           children: [
             const SizedBox(width: AppConstants.spaceL),
-            const Icon(Icons.search_rounded, color: AppColors.textMuted, size: AppConstants.iconM),
+            Icon(Icons.search_rounded, color: context.colors.textMuted, size: AppConstants.iconM),
             const SizedBox(width: AppConstants.spaceM),
             Expanded(
               child: readOnly
-                  ? Text(hint, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted))
+                  ? Text(hint, style: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted))
                   : TextField(
                       controller: controller,
                       onChanged: onChanged,
@@ -49,7 +50,7 @@ class PPSearchBar extends StatelessWidget {
                       textDirection: TextDirection.rtl,
                       decoration: InputDecoration(
                         hintText: hint,
-                        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+                        hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted),
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -115,7 +116,7 @@ class PPTextField extends StatelessWidget {
           maxLines: maxLines,
           enabled: enabled,
           textDirection: TextDirection.rtl,
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+          style: AppTextStyles.bodyMedium.copyWith(color: context.colors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             suffixIcon: suffixIcon,
@@ -151,7 +152,7 @@ class PPProgressBar extends StatelessWidget {
         value: value.clamp(0.0, 1.0),
         minHeight: height,
         color: color ?? AppColors.accent,
-        backgroundColor: backgroundColor ?? AppColors.bgElevated,
+        backgroundColor: backgroundColor ?? context.colors.bgElevated,
       ),
     );
   }

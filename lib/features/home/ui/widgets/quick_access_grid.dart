@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../../core/theme/app_colors.dart';
@@ -45,7 +46,7 @@ class QuickAccessGrid extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -56,7 +57,7 @@ class QuickAccessGrid extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ],

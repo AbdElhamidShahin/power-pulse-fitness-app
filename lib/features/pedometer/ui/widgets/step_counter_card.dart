@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -35,12 +36,12 @@ class _CountingCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: reached
               ? AppColors.success.withOpacity(0.4)
-              : AppColors.borderSubtle,
+              : context.colors.borderSubtle,
         ),
       ),
       child: Column(
@@ -57,7 +58,7 @@ class _CountingCard extends StatelessWidget {
                   fontFamily: 'Cairo',
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textMuted,
+                  color: context.colors.textMuted,
                 ),
               ),
               const Spacer(),
@@ -104,7 +105,7 @@ class _CountingCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 13.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ),
@@ -118,7 +119,7 @@ class _CountingCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: pct,
               minHeight: 7.h,
-              backgroundColor: AppColors.bgElevated,
+              backgroundColor: context.colors.bgElevated,
               valueColor: AlwaysStoppedAnimation<Color>(
                 reached ? AppColors.success : AppColors.accent,
               ),
@@ -134,7 +135,7 @@ class _CountingCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11.sp,
-              color: reached ? AppColors.success : AppColors.textMuted,
+              color: reached ? AppColors.success : context.colors.textMuted,
             ),
           ),
         ],
@@ -159,7 +160,7 @@ class _LoadingCard extends StatelessWidget {
     return Container(
       height: 110.h,
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: const Center(
@@ -178,9 +179,9 @@ class _UnavailableCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.colors.borderSubtle),
       ),
       child: Row(
         children: [
@@ -196,7 +197,7 @@ class _UnavailableCard extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 Text(
@@ -204,7 +205,7 @@ class _UnavailableCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -45,7 +46,7 @@ class _WeightSheetState extends State<WeightSheet> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: AppColors.bgElevated,
+                  color: context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -57,7 +58,7 @@ class _WeightSheetState extends State<WeightSheet> {
                 fontFamily: 'Cairo',
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(height: 20.h),
@@ -72,7 +73,7 @@ class _WeightSheetState extends State<WeightSheet> {
                 labelText: 'الوزن',
                 suffixText: 'كجم',
                 filled: true,
-                fillColor: AppColors.bgElevated,
+                fillColor: context.colors.bgElevated,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14.r),
                   borderSide: BorderSide.none,
@@ -86,7 +87,7 @@ class _WeightSheetState extends State<WeightSheet> {
               child: BlocBuilder<WeightLogCubit, WeightLogState>(
                 builder: (context, state) => ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.bgDark,
+                    backgroundColor: context.colors.bgDark,
                     foregroundColor: AppColors.textOnDark,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14.r),

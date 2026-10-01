@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
@@ -36,7 +37,7 @@ class DailyGoalsCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(
@@ -48,7 +49,7 @@ class DailyGoalsCard extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 14.sp,
               fontWeight: FontWeight.w700,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
               letterSpacing: 0.5,
             ),
           ),
@@ -100,7 +101,7 @@ class DailyGoalsCard extends StatelessWidget {
                       painter: RingPainter(
                         progress: movePct,
                         color: AppColors.accent,
-                        trackColor: const Color(0xFFE8E8E8),
+                        trackColor: Color(0xFFE8E8E8),
                         strokeWidth: 8.w,
                       ),
                     ),
@@ -109,7 +110,7 @@ class DailyGoalsCard extends StatelessWidget {
                       painter: RingPainter(
                         progress: exPct,
                         color: AppColors.danger,
-                        trackColor: const Color(0xFFE8E8E8),
+                        trackColor: Color(0xFFE8E8E8),
                         strokeWidth: 7.w,
                       ),
                     ),
@@ -118,7 +119,7 @@ class DailyGoalsCard extends StatelessWidget {
                       painter: RingPainter(
                         progress: standPct,
                         color: AppColors.info,
-                        trackColor: const Color(0xFFE8E8E8),
+                        trackColor: Color(0xFFE8E8E8),
                         strokeWidth: 6.w,
                       ),
                     ),
@@ -129,7 +130,7 @@ class DailyGoalsCard extends StatelessWidget {
                         fontFamily: 'Cairo',
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                   ],
@@ -179,7 +180,7 @@ class _GoalRow extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
                 letterSpacing: 0.3,
               ),
             ),
@@ -192,13 +193,13 @@ class _GoalRow extends StatelessWidget {
         ),
         RichText(
           text: TextSpan(
-            style: const TextStyle(fontFamily: 'Cairo'),
+            style: TextStyle(fontFamily: 'Cairo'),
             children: [
               TextSpan(
                 text: '$goal',
                 style: TextStyle(
                   fontSize: 13.sp,
-                  color: const Color(0xFFCCCCCC),
+                  color: Color(0xFFCCCCCC),
                 ),
               ),
               TextSpan(

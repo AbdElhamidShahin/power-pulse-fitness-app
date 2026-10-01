@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -54,16 +55,16 @@ class BodyPartFilterTabs extends StatelessWidget {
                 vertical: AppConstants.spaceS,
               ),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.accent : AppColors.bgElevated,
+                color: isSelected ? AppColors.accent : context.colors.bgElevated,
                 borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                 border: Border.all(
-                  color: isSelected ? AppColors.accent : AppColors.borderSubtle,
+                  color: isSelected ? AppColors.accent : context.colors.borderSubtle,
                 ),
               ),
               child: Text(
                 _label(part),
                 style: AppTextStyles.labelMedium.copyWith(
-                  color: isSelected ? AppColors.textOnAccent : AppColors.textMuted,
+                  color: isSelected ? AppColors.textOnAccent : context.colors.textMuted,
                 ),
               ),
             ),

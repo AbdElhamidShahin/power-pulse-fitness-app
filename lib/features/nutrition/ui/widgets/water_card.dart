@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -27,7 +28,7 @@ class WaterCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Row(
@@ -46,7 +47,7 @@ class WaterCard extends StatelessWidget {
                       fontFamily: 'Cairo',
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textMuted,
+                      color: context.colors.textMuted,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -55,7 +56,7 @@ class WaterCard extends StatelessWidget {
               SizedBox(height: 2.h),
               RichText(
                 text: TextSpan(
-                  style: const TextStyle(fontFamily: 'Cairo'),
+                  style: TextStyle(fontFamily: 'Cairo'),
                   children: [
                     TextSpan(
                       text: '${_round(current)}L',
@@ -70,7 +71,7 @@ class WaterCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.textMuted,
+                        color: context.colors.textMuted,
                       ),
                     ),
                   ],

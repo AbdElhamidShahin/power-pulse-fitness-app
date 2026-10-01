@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme_colors.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 
@@ -28,9 +29,9 @@ class PPCard extends StatelessWidget {
     final container = Container(
       margin: margin,
       decoration: BoxDecoration(
-        color: color ?? AppColors.bgSurface,
+        color: color ?? context.colors.bgSurface,
         borderRadius: BorderRadius.circular(radius ?? AppConstants.radiusL),
-        border: Border.all(color: borderColor ?? AppColors.borderSubtle),
+        border: Border.all(color: borderColor ?? context.colors.borderSubtle),
       ),
       child: Padding(
         padding: padding ?? const EdgeInsets.all(AppConstants.spaceL),
@@ -89,9 +90,9 @@ class PPHeroCard extends StatelessWidget {
                   ? Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _placeholder(),
+                      errorBuilder: (_, __, ___) => _placeholder(context),
                     )
-                  : imageWidget ?? _placeholder(),
+                  : imageWidget ?? _placeholder(context),
 
               // Gradient overlay
               DecoratedBox(
@@ -144,7 +145,7 @@ class PPHeroCard extends StatelessWidget {
                         ),
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 17,
                           fontWeight: FontWeight.w900,
@@ -156,7 +157,7 @@ class PPHeroCard extends StatelessWidget {
                         const SizedBox(height: AppConstants.spaceXS),
                         Text(
                           subtitle!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 11,
                             color: Colors.white60,
@@ -178,9 +179,9 @@ class PPHeroCard extends StatelessWidget {
     );
   }
 
-  Widget _placeholder() => Container(
-        color: AppColors.bgElevated,
-        child: const Icon(Icons.fitness_center, color: AppColors.bgHighest, size: 48),
+  Widget _placeholder(context) => Container(
+        color: context.colors.bgElevated,
+        child: Icon(Icons.fitness_center, color: context.colors.bgHighest, size: 48),
       );
 }
 
@@ -224,21 +225,21 @@ class PPStatCard extends StatelessWidget {
           const SizedBox(height: AppConstants.spaceM),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 24,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
               height: 1.0,
             ),
           ),
           const SizedBox(height: AppConstants.spaceXS),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
             ),
           ),
           if (trend != null) ...[

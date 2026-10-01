@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../data/models/food_entity.dart';
@@ -19,7 +20,7 @@ class CalorieSummaryCard extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(16.r),
           decoration: BoxDecoration(
-            color: AppColors.bgSurface,
+            color: context.colors.bgSurface,
             borderRadius: BorderRadius.circular(20.r),
           ),
           child: Row(
@@ -33,15 +34,15 @@ class CalorieSummaryCard extends StatelessWidget {
                       text: TextSpan(
                         style: TextStyle(fontFamily: 'Cairo', fontSize: 12.sp),
                         children: [
-                          const TextSpan(
+                            TextSpan(
                             text: 'الهدف: ',
-                            style: TextStyle(color: AppColors.textMuted),
+                            style: TextStyle(color: context.colors.textMuted),
                           ),
                           TextSpan(
                             text: '${daily.calorieGoal.toInt()} سعرة',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
+                              color: context.colors.textPrimary,
                             ),
                           ),
                         ],
@@ -52,9 +53,9 @@ class CalorieSummaryCard extends StatelessWidget {
                       text: TextSpan(
                         style: TextStyle(fontFamily: 'Cairo', fontSize: 12.sp),
                         children: [
-                          const TextSpan(
+                            TextSpan(
                             text: 'المتبقي: ',
-                            style: TextStyle(color: AppColors.textMuted),
+                            style: TextStyle(color: context.colors.textMuted),
                           ),
                           TextSpan(
                             text: '${daily.caloriesLeft.toInt()} سعرة',
