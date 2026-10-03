@@ -17,7 +17,15 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
   final GetWorkoutPlanUseCase    _getPlan;
   final SaveWorkoutPlanUseCase   _savePlan;
   final DeleteWorkoutPlanUseCase _deletePlan;
-
+// الشاشة دلوقتي بتعمل الاتنين مع بعض بدون race condition
+  Future<void> loadThenEdit() async {
+    emit(const WorkoutPlanLoading());
+    final result = await _getPlan();
+    result.fold(
+      onFailure: (_) => emit(WorkoutPlanEditing(WorkoutPlan.empty())),
+      onSuccess: (plan) => emit(WorkoutPlanEditing(plan ?? WorkoutPlan.empty())),
+    );
+  }
   Future<void> load() async {
     emit(const WorkoutPlanLoading());
     final result = await _getPlan();

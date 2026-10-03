@@ -360,7 +360,8 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
+        Expanded(
+            child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text(
@@ -369,7 +370,8 @@ class _OrDivider extends StatelessWidget {
                 .copyWith(color: AppColorsDark.textMuted),
           ),
         ),
-        Expanded(child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
+        Expanded(
+            child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
       ],
     );
   }

@@ -8,6 +8,7 @@ import 'core/constants/app_constants.dart';
 import 'core/constants/app_strings.dart';
 import 'core/di/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/notifications/notification_service.dart';
 import 'features/profile/logic/cubit/settings_cubit.dart';
 import 'features/profile/logic/cubit/settings_state.dart';
 import 'core/router/app_router.dart';
@@ -17,7 +18,7 @@ import 'core/theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
-
+  await NotificationService.instance.init();
   // statusBarIconBrightness بيتحدث تلقائياً من AppBarTheme في كل theme
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
