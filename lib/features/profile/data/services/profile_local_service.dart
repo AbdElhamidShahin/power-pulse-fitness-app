@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../core/data/app_data_bus.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,6 +53,7 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
         _key,
         jsonEncode(json),
       );
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(
         message: 'خطأ في حفظ بيانات الملف الشخصي',

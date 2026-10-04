@@ -50,4 +50,19 @@ final class LoginRepositoryImpl implements LoginRepository {
       redirectTo: AppConstants.oauthRedirectUrl,
     );
   }
+
+  @override
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await _supabase.auth.resetPasswordForEmail(
+      email,
+      redirectTo: AppConstants.passwordResetRedirectUrl,
+    );
+  }
+
+  @override
+  Future<void> updatePassword({required String password}) async {
+    await _supabase.auth.updateUser(
+      UserAttributes(password: password),
+    );
+  }
 }

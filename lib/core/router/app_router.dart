@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/entry/ui/entry_choice_screen.dart';
 import '../../features/exercises/logic/cubit/exercises_cubit.dart';
@@ -8,6 +9,7 @@ import '../../features/login/logic/cubit/login_cubit.dart';
 import '../../features/login/ui/login_screen.dart';
 import '../../features/sign_up/logic/cubit/sign_up_cubit.dart';
 import '../../features/sign_up/ui/sign_up_screen.dart';
+import '../../features/reset_password/ui/reset_password_screen.dart';
 import '../../features/exercises/ui/screens/exercise_detail_screen.dart';
 import '../../features/exercises/ui/screens/exercises_screen.dart';
 import '../../features/home/logic/cubit/home_cubit.dart';
@@ -40,6 +42,7 @@ abstract class AppRouter {
   static const String entry      = '/entry';
   static const String login      = '/login';
   static const String signUp     = '/sign-up';
+  static const String resetPassword = '/reset-password';
   static const String onboarding = '/onboarding';
   static const String home       = '/home';
   static const String exercises  = '/exercises';
@@ -61,19 +64,35 @@ abstract class AppRouter {
   // وده بعد AppStartup.determine() في main().
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppStartup.needsEntry ? entry : home,
+    initialLocation: AppStartup.passwordRecoveryPending
+        ? resetPassword
+        : (AppStartup.needsEntry ? entry : home),
     redirect: (context, state) {
       final path = state.uri.path;
-      final authRoutes = {login, signUp, entry};
+      final authRoutes = {login, signUp, resetPassword, entry};
       final needsEntry = AppStartup.needsEntry;
+      final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
       // لسه ماختارش (لا حساب ولا ضيف): وجّهه لشاشة الاختيار
       if (needsEntry && !authRoutes.contains(path)) {
         return entry;
       }
 
-      // مسجّل/ضيف وبيحاول يدخل شاشات الـ auth → home (نفس السلوك القديم)
-      if (!needsEntry && authRoutes.contains(path)) {
+      // Password recovery is a valid authenticated route. The recovery
+      // session is created from the deep link, so never redirect it to home.
+      if (path == resetPassword) {
+        return null;
+      }
+
+      // BUGFIX: الضيف لازم يقدر يفتح login / sign-up من الإعدادات.
+      // قبل كده كان بيتحوّل للرئيسية لأن الشرط كان بيمنع أي مستخدم
+      // "مش محتاج entry" من شاشات الـ auth. دلوقتي بس المسجّل فعلاً يتمنع.
+      if (isLoggedIn && authRoutes.contains(path)) {
+        return home;
+      }
+
+      // الضيف اللي اختار يكمّل بيتخطى شاشة الـ entry
+      if (!needsEntry && path == entry) {
         return home;
       }
 
@@ -103,6 +122,10 @@ abstract class AppRouter {
         ),
       ),
       GoRoute(
+        path: resetPassword,
+        builder: (_, __) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
         path: onboarding,
         builder: (_, __) => BlocProvider(
           create: (_) => sl<ProfileSaveCubit>(),
@@ -114,9 +137,11 @@ abstract class AppRouter {
         builder: (context, state, child) => MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => sl<HomeCubit>()),
-            BlocProvider(create: (_) => sl<AppSettingsCubit>()),
-            BlocProvider(create: (_) => sl<PedometerCubit>()..start()),
-            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
+            // BUGFIX: دول singletons — لو اتحطوا بـ create الـ BlocProvider
+            // بيقفلهم (close) لما الـ shell يتشال، وبعدها أي emit بيضرب.
+            BlocProvider.value(value: sl<AppSettingsCubit>()),
+            BlocProvider.value(value: sl<PedometerCubit>()),
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()..ensureLoaded()),
           ],
           child: MainShell(child: child),
         ),
@@ -202,8 +227,8 @@ abstract class AppRouter {
           providers: [
             BlocProvider(create: (_) => sl<ExercisesCubit>()),
             BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
-            // BUGFIX: لا نستدعي ..load() هنا لأن الشاشة بتستدعي loadThenEdit() في initState
-            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()),
+            // نفس الـ instance المشترك — عشان الحفظ يظهر في الرئيسية فوراً
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()),
           ],
           child: const WorkoutPlanScreen(),
         ),

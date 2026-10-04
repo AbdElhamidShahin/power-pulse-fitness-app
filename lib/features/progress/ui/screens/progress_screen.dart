@@ -11,6 +11,7 @@ import '../../data/models/progress_entity.dart';
 import '../../logic/cubit/progress_cubit.dart';
 import '../../logic/cubit/progress_state.dart';
 import '../widgets/body_stats_section.dart';
+import '../widgets/progress_activity_section.dart';
 import '../widgets/progress_period_selector.dart';
 import '../widgets/progress_stat_card.dart';
 import '../widgets/progress_weekly_chart_card.dart';
@@ -139,6 +140,8 @@ class _LoadedView extends StatelessWidget {
             ),
             SizedBox(height: 14.h),
             ProgressWeeklyChartCard(points: summary.weeklyWorkoutPoints),
+            SizedBox(height: 14.h),
+            ProgressActivitySection(summary: summary),
             SizedBox(height: 14.h),
             BodyStatsSection(summary: summary, weightChange: weightChange),
           ],

@@ -43,6 +43,24 @@ final class ChartPoint {
   final String? label;
 }
 
+/// نشاط يوم واحد — بيجمع الخطوات + الأكل + المياه + التمرين
+/// (البيانات جاية من باقي أجزاء التطبيق)
+final class DailyActivity {
+  const DailyActivity({
+    required this.date,
+    this.steps = 0,
+    this.caloriesIn = 0,
+    this.waterLiters = 0,
+    this.workoutMinutes = 0,
+  });
+
+  final DateTime date;
+  final int steps;
+  final double caloriesIn;
+  final double waterLiters;
+  final int workoutMinutes;
+}
+
 /// ملخص أسبوعي / شهري
 final class ProgressSummary {
   const ProgressSummary({
@@ -56,6 +74,14 @@ final class ProgressSummary {
     required this.weeklyWorkoutPoints,
     required this.weightChartPoints,
     this.currentStreak = 0,
+    this.dailyActivity = const [],
+    this.avgSteps = 0,
+    this.avgCaloriesIn = 0,
+    this.avgWaterLiters = 0,
+    this.plannedDays = 0,
+    this.plannedDaysDone = 0,
+    this.heightCm,
+    this.calorieGoal,
   });
 
   final int totalWorkouts;
@@ -69,9 +95,23 @@ final class ProgressSummary {
   final List<ChartPoint> weightChartPoints;
   final int currentStreak; // وزن على مدى الوقت
 
+  // ─── مربوط بباقي التطبيق ───────────────────────────────
+  final List<DailyActivity> dailyActivity; // آخر 7 أيام
+  final int avgSteps; // متوسط الخطوات (الأيام اللي فيها بيانات)
+  final double avgCaloriesIn; // متوسط السعرات المتناولة
+  final double avgWaterLiters; // متوسط المياه
+  final int plannedDays; // أيام التمرين المخططة (آخر 7 أيام)
+  final int plannedDaysDone; // اللي اتنفّذ منها
+  final double? heightCm; // من الملف الشخصي
+  final double? calorieGoal; // هدف السعرات من الملف الشخصي
+
+  double get planAdherence =>
+      plannedDays == 0 ? 0 : (plannedDaysDone / plannedDays).clamp(0.0, 1.0);
+
+  /// BUGFIX: الطول كان ثابت 1.78 — دلوقتي من الملف الشخصي.
   double? get bmi {
     if (currentWeight == null) return null;
-    const heightInMeters = 1.78;
+    final heightInMeters = ((heightCm ?? 0) > 0 ? heightCm! : 178) / 100;
     return currentWeight! / (heightInMeters * heightInMeters);
   }
 

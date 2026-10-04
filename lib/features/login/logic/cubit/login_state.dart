@@ -29,3 +29,9 @@ final class LoginError extends LoginState {
 
   final String errorMessage;
 }
+
+final class LoginPasswordResetSent extends LoginState {
+  const LoginPasswordResetSent({required this.email});
+
+  final String email;
+}

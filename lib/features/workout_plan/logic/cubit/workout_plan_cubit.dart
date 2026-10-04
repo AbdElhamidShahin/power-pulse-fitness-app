@@ -22,6 +22,52 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
   bool _isSaving = false;
   bool get isSaving => _isSaving;
 
+  /// يحمّل الخطة مرة واحدة بس (لو لسه Initial). آمن للاستدعاء من أي شاشة.
+  Future<void> ensureLoaded() async {
+    if (state is WorkoutPlanInitial) await load();
+  }
+
+  /// يلغي أي تعديلات غير محفوظة (لما المستخدم يطلع من شاشة الخطة من غير حفظ)
+  /// ويرجّع آخر نسخة محفوظة — عشان الرئيسية متعرضش مسودة مش محفوظة.
+  Future<void> discardDraft() async {
+    if (state is WorkoutPlanEditing) await load();
+  }
+
+  /// يضيف تمرين ليوم معيّن ويحفظ فوراً.
+  ///
+  /// BUGFIX: النسخة القديمة كانت بتنادي startEditing() و load() بالتوازي،
+  /// فكانت أحياناً بتبدأ من خطة فاضية وتكتب فوق الخطة الموجودة.
+  /// هنا بنستنى تحميل الخطة الحقيقية الأول وبعدين نضيف ونحفظ.
+  Future<void> addExerciseAndSave(int weekday, PlanExercise exercise) async {
+    final WorkoutPlan base;
+    final s = state;
+    if (s is WorkoutPlanLoaded) {
+      base = s.plan;
+    } else if (s is WorkoutPlanEditing) {
+      base = s.draft;
+    } else {
+      final r = await _getPlan();
+      base = r.dataOrNull ?? WorkoutPlan.empty();
+    }
+
+    final days = base.days.map((d) {
+      if (d.weekday != weekday) return d;
+      if (d.exercises.any((e) => e.exerciseId == exercise.exerciseId)) {
+        return d; // موجود أصلاً
+      }
+      return d.copyWith(isRest: false, exercises: [...d.exercises, exercise]);
+    }).toList();
+    final updated = base.copyWith(days: days);
+
+    _isSaving = true;
+    final result = await _savePlan(updated);
+    _isSaving = false;
+    result.fold(
+      onFailure: (f) => emit(WorkoutPlanError(f.message)),
+      onSuccess: (_) => emit(WorkoutPlanLoaded(updated)),
+    );
+  }
+
   Future<void> load() async {
     emit(const WorkoutPlanLoading());
     final result = await _getPlan();

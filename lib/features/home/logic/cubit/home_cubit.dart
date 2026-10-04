@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/data/app_data_bus.dart';
 
 import '../../../../core/domain/api_result.dart';
 import '../../../../core/domain/app_failure.dart';
@@ -19,14 +23,26 @@ final class HomeCubit extends Cubit<HomeState> {
   })  : _getProfile = getProfile,
         _getDailyNutrition = getDailyNutrition,
         _getProgressSummary = getProgressSummary,
-        super(const HomeInitial());
+        super(const HomeInitial()) {
+    // أي تغيير في الوجبات/التمارين/الوزن/الخطة → الرئيسية تتحدّث لوحدها
+    _busSub = AppDataBus.stream.listen((_) {
+      _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 250), () {
+        if (!isClosed && state is! HomeInitial) load(silent: true);
+      });
+    });
+  }
+
+  StreamSubscription<void>? _busSub;
+  Timer? _debounce;
 
   final GetProfileUseCase _getProfile;
   final GetDailyNutritionUseCase _getDailyNutrition;
   final GetProgressSummaryUseCase _getProgressSummary;
 
-  Future<void> load() async {
-    emit(const HomeLoading());
+  /// [silent] = من غير spinner (للتحديث التلقائي بعد أي تعديل)
+  Future<void> load({bool silent = false}) async {
+    if (!silent || state is! HomeLoaded) emit(const HomeLoading());
 
     final profileResult = await _getProfile();
     if (profileResult.isFailure) {
@@ -71,5 +87,12 @@ final class HomeCubit extends Cubit<HomeState> {
     )));
   }
 
-  Future<void> refresh() => load();
+  Future<void> refresh() => load(silent: true);
+
+  @override
+  Future<void> close() {
+    _debounce?.cancel();
+    _busSub?.cancel();
+    return super.close();
+  }
 }

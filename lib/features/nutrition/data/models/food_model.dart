@@ -35,7 +35,7 @@ final class FoodModel {
     final nameEn = json['product_name']?.toString().trim() ?? '';
 
     return FoodModel(
-      id: json['_id']?.toString() ?? '',
+      id: 'off_${json['code'] ?? json['_id'] ?? ''}',
       name: nameEn.isNotEmpty ? nameEn : nameAr,
       nameAr: nameAr,
       calories: _d(nutriments['energy-kcal_100g']) ?? 0,
@@ -44,7 +44,9 @@ final class FoodModel {
       fat: _d(nutriments['fat_100g']) ?? 0,
       fiber: _d(nutriments['fiber_100g']) ?? 0,
       sugar: _d(nutriments['sugars_100g']) ?? 0,
-      servingSize: _d(json['serving_quantity']) ?? 100,
+      // BUGFIX: قيم Open Food Facts هنا "لكل 100 جرام". قبل كده كان بيتحط
+      // حجم الحصة (مثلاً 30) فالسعرات كانت بتتحسب غلط (×3.3).
+      servingSize: 100,
       imageUrl: json['image_url']?.toString(),
       brand: json['brands']?.toString(),
     );
@@ -61,6 +63,7 @@ final class FoodModel {
     fiber: fiber,
     sugar: sugar,
     servingSize: servingSize,
+    servingUnit: 'جم',
     imageUrl: imageUrl,
     brand: brand,
   );

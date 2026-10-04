@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/notifications/notification_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../logic/cubit/settings_cubit.dart';
 
 /// قسم إعدادات الإشعارات — بيتحط في صفحة الـ Profile
 class NotificationSettingsSection extends StatefulWidget {
@@ -50,31 +52,22 @@ class _NotificationSettingsSectionState
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, value);
 
-    final ns = NotificationService.instance;
-
     switch (key) {
       case _keyWorkout:
         setState(() => _workout = value);
-        if (value) {
-          await ns.scheduleWorkoutMorningReminder();
-          await ns.scheduleWorkoutEveningReminder();
-        } else {
-          await ns.cancelWorkoutReminders();
-        }
       case _keySteps:
         setState(() => _steps = value);
-        if (value) {
-          await ns.scheduleStepsReminder();
-        } else {
-          await ns.cancelStepsReminder();
-        }
       case _keyWater:
         setState(() => _water = value);
-        if (value) {
-          await ns.scheduleWaterReminders();
-        } else {
-          await ns.cancelWaterReminders();
-        }
+    }
+
+    if (!mounted) return;
+    final master = prefs.getBool(NotificationService.kMaster) ?? true;
+    if (value && !master) {
+      // لو الزرار الرئيسي للإشعارات مقفول، تشغيل أي نوع بيفتحه
+      await context.read<AppSettingsCubit>().toggleNotifications(true);
+    } else {
+      await NotificationService.instance.syncFromPrefs(prefs);
     }
   }
 
@@ -123,11 +116,40 @@ class _NotificationSettingsSectionState
               _NotifTile(
                 emoji:    '💧',
                 title:    'تذكير الماء',
-                subtitle: 'كل ساعتين من 8 صباحاً لـ 10 مساءً',
+                subtitle: 'كل ساعتين من 8 صباحاً لـ 8 مساءً',
                 value:    _water,
                 onChanged: (v) => _toggle(_keyWater, v),
               ),
             ],
+          ),
+        ),
+        SizedBox(height: 8.h),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TextButton.icon(
+            onPressed: () async {
+              final granted =
+                  await NotificationService.instance.requestPermissions();
+              await NotificationService.instance.showTest();
+              if (!mounted || granted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      'الإشعارات مقفولة من إعدادات الموبايل — فعّلها للتطبيق'),
+                ),
+              );
+            },
+            icon: const Icon(Icons.notifications_active_outlined,
+                size: 18, color: AppColors.accent),
+            label: Text(
+              'جرّب الإشعار',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.accent,
+              ),
+            ),
           ),
         ),
       ],

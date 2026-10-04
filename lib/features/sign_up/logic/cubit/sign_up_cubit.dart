@@ -120,6 +120,12 @@ final class SignUpCubit extends Cubit<SignUpState> {
     if (lower.contains('user already registered')) return 'البريد الإلكتروني مستخدم بالفعل ⚠️';
     if (lower.contains('password should be at least')) return 'كلمة المرور ضعيفة جداً 🔒';
     if (lower.contains('invalid email')) return 'البريد الإلكتروني غير صحيح';
-    return 'فشل العملية: $message';
+    if (lower.contains('rate limit') || lower.contains('too many requests') || lower.contains('over_email_send_rate_limit')) {
+      return 'تم تجاوز حد إرسال رسائل التأكيد مؤقتاً. حاول بعد قليل 📧';
+    }
+    if (lower.contains('email rate limit exceeded')) {
+      return 'تم تجاوز حد إرسال رسائل التأكيد. إعداد SMTP للإنتاج مطلوب 📧';
+    }
+    return 'فشل إنشاء الحساب، حاول مرة أخرى';
   }
 }

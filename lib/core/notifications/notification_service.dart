@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -24,8 +26,17 @@ class NotificationService {
   static const int idWorkoutMorning = 1;
   static const int idWorkoutEvening = 2;
   static const int idStepsReminder = 3;
-  static const int idWaterReminder = 4;
+  static const int idWaterReminder = 100; // 100 + hour
   static const int idAchievement = 5;
+
+  // ─── SharedPreferences keys (نفس اللي بيستخدمها قسم الإعدادات) ──
+  static const String kMaster = 'settings_notifications';
+  static const String kWorkout = 'notif_workout';
+  static const String kSteps = 'notif_steps';
+  static const String kWater = 'notif_water';
+  static const String _kPermissionAsked = 'notif_permission_asked';
+
+  static const List<int> _waterHours = [8, 10, 12, 14, 16, 18, 20];
 
   // ─── Init ─────────────────────────────────────────────────
 
@@ -36,9 +47,11 @@ class NotificationService {
     tz.initializeTimeZones();
 
     // Egypt timezone.
-    tz.setLocalLocation(
-      tz.getLocation('Africa/Cairo'),
-    );
+    try {
+      tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+    } catch (_) {
+      // fallback: UTC
+    }
 
     // Android initialization.
     const AndroidInitializationSettings android = AndroidInitializationSettings(
@@ -69,6 +82,62 @@ class NotificationService {
     _initialized = true;
   }
 
+  // ─── Sync مع الإعدادات المحفوظة ───────────────────────────
+  //
+  // BUGFIX (السبب الرئيسي لإن الإشعارات مكانتش بتشتغل):
+  // الإعدادات كانت بتتحفظ بس مفيش حد بيجدول الإشعارات عند فتح التطبيق —
+  // الجدولة كانت بتحصل بس لما المستخدم يقلّب السويتش بإيده.
+  // دلوقتي بنطلب الإذن مرة واحدة وبنجدول كل اللي مفعّل في كل تشغيل.
+
+  Future<void> syncFromPrefs(SharedPreferences prefs) async {
+    try {
+      if (!_initialized) await init();
+
+      if (!(prefs.getBool(_kPermissionAsked) ?? false)) {
+        await prefs.setBool(_kPermissionAsked, true);
+        await requestPermissions();
+      }
+
+      final master = prefs.getBool(kMaster) ?? true;
+      if (!master) {
+        await cancelAll();
+        return;
+      }
+
+      if (prefs.getBool(kWorkout) ?? true) {
+        await scheduleWorkoutMorningReminder();
+        await scheduleWorkoutEveningReminder();
+      } else {
+        await cancelWorkoutReminders();
+      }
+
+      if (prefs.getBool(kSteps) ?? true) {
+        await scheduleStepsReminder();
+      } else {
+        await cancelStepsReminder();
+      }
+
+      if (prefs.getBool(kWater) ?? false) {
+        await scheduleWaterReminders();
+      } else {
+        await cancelWaterReminders();
+      }
+    } catch (e) {
+      debugPrint('NotificationService.syncFromPrefs failed: $e');
+    }
+  }
+
+  /// إشعار فوري للتجربة (زرار "جرّب الإشعار")
+  Future<void> showTest() async {
+    if (!_initialized) await init();
+    await _plugin.show(
+      99,
+      '🔔 الإشعارات شغّالة',
+      'تمام! هتوصلك التذكيرات في مواعيدها.',
+      _details(_chAchievement),
+    );
+  }
+
   // ─── Request Permissions ──────────────────────────────────
 
   Future<bool> requestPermissions() async {
@@ -79,6 +148,11 @@ class NotificationService {
         AndroidFlutterLocalNotificationsPlugin>();
     if (android != null) {
       final granted = await android.requestNotificationsPermission();
+      // أندرويد 12+: الجدولة الدقيقة محتاجة إذن "المنبهات والتذكيرات"
+      try {
+        final canExact = await android.canScheduleExactNotifications() ?? false;
+        if (!canExact) await android.requestExactAlarmsPermission();
+      } catch (_) {}
       return granted ?? false;
     }
 
@@ -204,7 +278,7 @@ class NotificationService {
     await _scheduleDailyAt(
       id: idStepsReminder,
       title: '👟 تحرك شوية!',
-      body: 'نص اليوم عدى — قوم اتمشى لو الخطوات أقل من هدفك',
+      body: 'نص اليوم عدّى — افتح التطبيق وشوف وصلت لفين في هدف الخطوات',
       hour: 12,
       minute: 0,
       channel: _chSteps,
@@ -214,17 +288,7 @@ class NotificationService {
   // ─── Water Reminders ─────────────────────────────────────
 
   Future<void> scheduleWaterReminders() async {
-    const List<int> hours = [
-      8,
-      10,
-      12,
-      14,
-      16,
-      18,
-      20,
-    ];
-
-    for (final int hour in hours) {
+    for (final int hour in _waterHours) {
       await _scheduleDailyAt(
         id: idWaterReminder + hour,
         title: '💧 اشرب ماء!',
@@ -246,16 +310,7 @@ class NotificationService {
       idAchievement,
       '🎉 أنهيت تمرينك!',
       '$workoutName — $durationMinutes دقيقة. عمل رائع!',
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _chAchievement,
-          'الإنجازات',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
+      _details(_chAchievement),
     );
   }
 
@@ -264,16 +319,7 @@ class NotificationService {
       idAchievement + 1,
       '🏆 وصلت لهدف الخطوات!',
       '$steps خطوة اليوم — متميز!',
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _chAchievement,
-          'الإنجازات',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
+      _details(_chAchievement),
     );
   }
 
@@ -289,17 +335,7 @@ class NotificationService {
   }
 
   Future<void> cancelWaterReminders() async {
-    const List<int> hours = [
-      8,
-      10,
-      12,
-      14,
-      16,
-      18,
-      20,
-    ];
-
-    for (final int hour in hours) {
+    for (final int hour in _waterHours) {
       await _plugin.cancel(idWaterReminder + hour);
     }
   }
@@ -309,6 +345,40 @@ class NotificationService {
   }
 
   // ─── Internal Schedule Helper ─────────────────────────────
+
+  NotificationDetails _details(String channel) => NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel,
+          _channelName(channel),
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/launcher_icon',
+        ),
+        iOS: const DarwinNotificationDetails(),
+      );
+
+  String _channelName(String id) => switch (id) {
+        _chWorkout => 'تذكير التمرين',
+        _chSteps => 'تذكير الخطوات',
+        _chWater => 'تذكير الماء',
+        _ => 'الإنجازات',
+      };
+
+  /// أندرويد 12+ ممكن يرفض الجدولة الدقيقة لو الإذن مش ممنوح →
+  /// بنرجع للجدولة التقريبية بدل ما الإشعار ميتجدولش خالص.
+  Future<AndroidScheduleMode> _scheduleMode() async {
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (android == null) return AndroidScheduleMode.exactAllowWhileIdle;
+    try {
+      final canExact = await android.canScheduleExactNotifications() ?? false;
+      return canExact
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle;
+    } catch (_) {
+      return AndroidScheduleMode.inexactAllowWhileIdle;
+    }
+  }
 
   Future<void> _scheduleDailyAt({
     required int id,
@@ -329,34 +399,25 @@ class NotificationService {
       minute,
     );
 
-    // If today's time already passed,
-    // schedule it for tomorrow.
-    if (scheduled.isBefore(now)) {
-      scheduled = scheduled.add(
-        const Duration(days: 1),
-      );
+    // If today's time already passed, schedule it for tomorrow.
+    if (!scheduled.isAfter(now)) {
+      scheduled = scheduled.add(const Duration(days: 1));
     }
-    await _plugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduled,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel,
-          channel,
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
-        ),
-        iOS: const DarwinNotificationDetails(),
-      ),
-      androidScheduleMode:
-      AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents:
-      DateTimeComponents.time,
-    );
+
+    try {
+      await _plugin.zonedSchedule(
+        id,
+        title,
+        body,
+        scheduled,
+        _details(channel),
+        androidScheduleMode: await _scheduleMode(),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    } catch (e) {
+      debugPrint('Failed to schedule notification $id: $e');
+    }
   }
 }

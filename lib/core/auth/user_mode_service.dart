@@ -8,11 +8,14 @@ abstract class UserModeService {
   static const _kModeGuest = 'guest';
   static const _kModeAuth = 'authenticated';
 
-  // نسخة في الذاكرة من الـ mode — بتتحدّث مع كل قراءة/كتابة.
-  // الـ Router بيقراها synchronously (من غير أي I/O) في كل navigation.
   static UserMode _cachedMode = UserMode.none;
 
-  /// آخر mode معروف (in-memory). آمن للاستدعاء من الـ router redirect.
+  /// هل الضيف اختار "كمّل كضيف" في الجلسة الحالية (من وقت ما التطبيق فتح)؟
+  /// بنستخدمه عشان التطبيق يفتح دايماً على شاشة الدخول (entry) لو مفيش حساب،
+  /// بدل ما يدخل الرئيسية على طول.
+  static bool _guestSessionActive = false;
+  static bool get guestSessionActive => _guestSessionActive;
+
   static UserMode get cachedMode => _cachedMode;
 
   static Future<UserMode> getMode(SharedPreferences prefs) async {
@@ -30,6 +33,7 @@ abstract class UserModeService {
   static Future<void> setGuest(SharedPreferences prefs) async {
     await prefs.setString(_kMode, _kModeGuest);
     _cachedMode = UserMode.guest;
+    _guestSessionActive = true;
   }
 
   static Future<void> setAuthenticated(SharedPreferences prefs) async {
@@ -41,11 +45,12 @@ abstract class UserModeService {
   static Future<void> setGuestAfterLogout(SharedPreferences prefs) async {
     await prefs.setString(_kMode, _kModeGuest);
     _cachedMode = UserMode.guest;
+    _guestSessionActive = true;
   }
 
-  /// Full reset — used only if we want the entry screen again.
   static Future<void> clearMode(SharedPreferences prefs) async {
     await prefs.remove(_kMode);
     _cachedMode = UserMode.none;
+    _guestSessionActive = false;
   }
 }

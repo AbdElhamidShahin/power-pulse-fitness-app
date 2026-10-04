@@ -19,6 +19,7 @@ abstract class AppConstants {
   // ─── OAuth deep link ───────────────────────────────────────
   static const String oauthScheme      = 'com.powerteam.powerpulse';
   static const String oauthRedirectUrl = '$oauthScheme://login-callback';
+  static const String passwordResetRedirectUrl = '$oauthScheme://reset-password';
 
   // ─── Spacing ───────────────────────────────────────────────
   static const double spaceXXS =  2.0;

@@ -1,3 +1,14 @@
+## [Unreleased] — Bugfix round
+
+- Router: الضيف يقدر يفتح login/sign-up من الإعدادات (كان بيتحوّل للرئيسية).
+- التطبيق بيفتح على شاشة الدخول (entry) لو مفيش حساب مسجّل.
+- عداد الخطوات: طلب صلاحية ACTIVITY_RECOGNITION (permission_handler)، حساب صح عند تغيّر اليوم/ريستارت الموبايل، حفظ سجل يومي.
+- الإشعارات: إضافة ScheduledNotificationReceiver في الـ Manifest، جدولة المفعّل عند كل تشغيل، fallback للـ exact alarms، زرار تجربة، ربط السويتش الرئيسي.
+- حفظ الخطة: WorkoutPlanCubit بقى singleton مشترك + addExerciseAndSave (إصلاح race كان بيمسح الخطة).
+- حفظ البيانات: الاستعادة من السحابة بقت دمج بدل استبدال، وكل الـ keys الصح بتترفع (وجبات، مياه، خطوات، سجل تمارين).
+- Progress: مربوطة بالخطوات والتغذية والمياه وخطة التمرين والملف الشخصي (الطول/الوزن).
+- الأكلات: +250 صنف مصري/عربي/معلبات/مشروبات، بحث عربي مطبّع، Open Food Facts مع منتجات مصر أولاً، إصلاح حساب السعرات لمنتجات الـ API.
+
 # Changelog — Power Pulse
 
 All notable changes to this project will be documented in this file.

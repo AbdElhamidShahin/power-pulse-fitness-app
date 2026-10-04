@@ -11,7 +11,6 @@
     <!-- Notifications (Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <!-- Vibration for notifications -->
@@ -47,12 +46,19 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="com.powerteam.powerpulse"
                       android:host="login-callback"/>
+                <data android:scheme="com.powerteam.powerpulse"
+                      android:host="reset-password"/>
             </intent-filter>
 
             <meta-data
                 android:name="flutter_deeplinking_enabled"
                 android:value="false" />
         </activity>
+
+        <!-- مطلوب لتشغيل الإشعارات المجدولة (كان ناقص — ده سبب إن التذكيرات مكانتش بتظهر) -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
 
         <!-- Boot receiver for re-scheduling notifications after restart -->
         <receiver

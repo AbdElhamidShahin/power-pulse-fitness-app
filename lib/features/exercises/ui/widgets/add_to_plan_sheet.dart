@@ -36,7 +36,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: sl<WorkoutPlanCubit>()..load(),
+      value: sl<WorkoutPlanCubit>()..ensureLoaded(),
       child: BlocBuilder<WorkoutPlanCubit, WorkoutPlanState>(
         builder: (context, state) {
           if (state is WorkoutPlanEmpty || state is WorkoutPlanInitial) {
@@ -215,13 +215,9 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                       ? null
                       : () {
                           final planCubit = context.read<WorkoutPlanCubit>();
-
-                          if (planCubit.state is! WorkoutPlanEditing) {
-                            planCubit.startEditing();
-                          }
-                          planCubit.addExerciseToDay(
-                            _selectedWeekday!,
-                            PlanExercise(
+                    planCubit.addExerciseAndSave(
+                      _selectedWeekday!,
+                      PlanExercise(
                               exerciseId: widget.exercise.id,
                               exerciseName: widget.exercise.nameAr.isNotEmpty
                                   ? widget.exercise.nameAr
@@ -231,8 +227,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                                   : widget.exercise.bodyPart,
                               gifUrl: widget.exercise.gifUrl,
                             ),
-                          );
-                          planCubit.saveDraft();
+                    );
                           setState(() => _added = true);
                         },
                   child: AnimatedContainer(

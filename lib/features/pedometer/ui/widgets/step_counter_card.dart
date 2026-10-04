@@ -15,7 +15,7 @@ class StepCounterCard extends StatelessWidget {
       builder: (context, state) {
         return switch (state) {
           PedometerInitial()     => const _LoadingCard(),
-          PedometerUnavailable() => const _UnavailableCard(),
+          PedometerUnavailable() => _UnavailableCard(state: state),
           PedometerCounting()    => _CountingCard(state: state),
         };
       },
@@ -172,10 +172,15 @@ class _LoadingCard extends StatelessWidget {
 
 // ─── Unavailable ──────────────────────────────────────────────────────
 class _UnavailableCard extends StatelessWidget {
-  const _UnavailableCard();
+  const _UnavailableCard({required this.state});
+  final PedometerUnavailable state;
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<PedometerCubit>();
+    final needsPermission = state.permissionDenied;
+    final permanent = state.permanentlyDenied;
+
     return Container(
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
@@ -183,34 +188,68 @@ class _UnavailableCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: context.colors.borderSubtle),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('👟', style: TextStyle(fontSize: 24.sp)),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'عداد الخطوات',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: context.colors.textPrimary,
-                  ),
+          Row(
+            children: [
+              Text('👟', style: TextStyle(fontSize: 24.sp)),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'عداد الخطوات',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: context.colors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      needsPermission
+                          ? 'محتاجين إذن "النشاط البدني" عشان نعدّ خطواتك'
+                          : 'الجهاز لا يدعم عداد الخطوات',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 11.sp,
+                        color: context.colors.textMuted,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'الجهاز لا يدعم هذه الميزة أو تحتاج لمنح الإذن',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 11.sp,
-                    color: context.colors.textMuted,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+          if (needsPermission) ...[
+            SizedBox(height: 10.h),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: permanent
+                    ? cubit.openSystemSettings
+                    : cubit.retry,
+                style: TextButton.styleFrom(
+                  backgroundColor: AppColors.accent,
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+                child: Text(
+                  permanent ? 'فتح إعدادات التطبيق' : 'منح الإذن',
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -17,7 +17,18 @@ abstract class AppStartup {
   static const Duration _restoreTimeout = Duration(seconds: 10);
 
   static bool _done = false;
+  static bool _passwordRecoveryPending = false;
+
   static bool get isDone => _done;
+  static bool get passwordRecoveryPending => _passwordRecoveryPending;
+
+  static void markPasswordRecoveryPending() {
+    _passwordRecoveryPending = true;
+  }
+
+  static void clearPasswordRecoveryPending() {
+    _passwordRecoveryPending = false;
+  }
 
   /// Flow (نفس المنطق القديم بالظبط):
   ///  1. فيه Supabase session  → restore cloud data → authenticated → home
@@ -29,7 +40,9 @@ abstract class AppStartup {
     final currentUser = supabase.auth.currentUser;
 
     if (currentUser != null) {
+      await UserModeService.setAuthenticated(prefs);
       try {
+        // دمج (مش استبدال): البيانات المحلية الأحدث مبتضيعش.
         await GuestMigrationService.restoreCloudDataToLocal(
           prefs: prefs,
           supabase: supabase,
@@ -38,7 +51,6 @@ abstract class AppStartup {
       } catch (_) {
         // فشل الشبكة مقبول — الـ cache المحلي هو الـ fallback
       }
-      await UserModeService.setAuthenticated(prefs);
     } else {
       final mode = await UserModeService.getMode(prefs);
       if (mode == UserMode.authenticated) {
@@ -50,9 +62,14 @@ abstract class AppStartup {
   }
 
   /// **Synchronous — من غير I/O.** آمن للاستدعاء من `GoRouter.redirect`.
+  ///
+  /// التطبيق بيفتح "بره" (شاشة الدخول) لو مفيش حساب مسجّل، حتى لو المستخدم
+  /// كان ضيف قبل كده. بعد ما يختار "كمّل كضيف" في الجلسة دي بس يدخل الرئيسية.
+  /// (لو عايز الضيف يدخل على الرئيسية على طول: ارجع للشرط
+  ///  `UserModeService.cachedMode != UserMode.guest`)
   static bool get needsEntry {
     if (Supabase.instance.client.auth.currentUser != null) return false;
-    return UserModeService.cachedMode != UserMode.guest;
+    return !UserModeService.guestSessionActive;
   }
 
   /// هل المستخدم لازم يكمل الـ onboarding؟

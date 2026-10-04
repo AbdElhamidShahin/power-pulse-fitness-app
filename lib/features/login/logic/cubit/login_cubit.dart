@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/auth/guest_migration_service.dart';
 import '../../../../core/auth/user_mode_service.dart';
-import '../../../../../core/auth/auth_profile_sync.dart';
+import '../../../../core/auth/auth_profile_sync.dart';
 import '../../data/repo/login_repostry.dart';
 import 'login_state.dart';
 
@@ -75,6 +75,23 @@ final class LoginCubit extends Cubit<LoginState> {
     }
   }
 
+  // ─── Password reset ─────────────────────────────────────────────────────
+
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    emit(const LoginLoading());
+
+    try {
+      await _loginRepository.sendPasswordResetEmail(email: email);
+      if (!isClosed) {
+        emit(LoginPasswordResetSent(email: email));
+      }
+    } on AuthException catch (e) {
+      emit(LoginError(_mapError(e.message)));
+    } catch (_) {
+      emit(const LoginError('تعذر إرسال رسالة استعادة كلمة المرور، حاول مرة أخرى 📧'));
+    }
+  }
+
   void _listenToAuthChanges() {
     _authSubscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
@@ -122,22 +139,25 @@ final class LoginCubit extends Cubit<LoginState> {
     final supabase = Supabase.instance.client;
     final currentMode = await UserModeService.getMode(_prefs);
 
-    if (currentMode == UserMode.guest) {
-      // Flow 3: Guest → Account migration
-      // Upload local guest data to Supabase, then switch to authenticated mode.
-      await GuestMigrationService.migrateGuestDataToCloud(
-        prefs: _prefs,
-        supabase: supabase,
-        uid: uid,
-      );
-    } else {
-      // Flow 4: Existing account sign-in
-      // Firestore/Supabase is the source of truth — restore cloud data.
+    // BUGFIX: النسخة القديمة كانت بترفع بيانات الضيف فوق بيانات حساب موجود
+    // (فبيانات الحساب بتضيع). دلوقتي: نستعيد بيانات الحساب الأول (دمج)،
+    // وبعدين نرفع النسخة المدموجة.
+    try {
       await GuestMigrationService.restoreCloudDataToLocal(
         prefs: _prefs,
         supabase: supabase,
         uid: uid,
+        preferCloud: true,
       );
+      if (currentMode == UserMode.guest) {
+        await GuestMigrationService.migrateGuestDataToCloud(
+          prefs: _prefs,
+          supabase: supabase,
+          uid: uid,
+        );
+      }
+    } catch (_) {
+      // مشكلة شبكة مؤقتة — الدخول يكمل والمزامنة هتتعاد تلقائياً
     }
 
     // Save/update profile from auth data (preserves existing fields if present)
@@ -161,7 +181,14 @@ final class LoginCubit extends Cubit<LoginState> {
     if (message.contains('Email not confirmed')) {
       return 'يرجى تأكيد بريدك الإلكتروني أولاً 📧';
     }
-    return 'فشل تسجيل الدخول: $message';
+    final lower = message.toLowerCase();
+    if (lower.contains('rate limit') || lower.contains('too many requests') || lower.contains('over_email_send_rate_limit')) {
+      return 'تم تجاوز حد إرسال الرسائل مؤقتاً. حاول بعد قليل 📧';
+    }
+    if (lower.contains('invalid email')) {
+      return 'البريد الإلكتروني غير صحيح';
+    }
+    return 'فشل تسجيل الدخول: حاول مرة أخرى';
   }
 
   @override

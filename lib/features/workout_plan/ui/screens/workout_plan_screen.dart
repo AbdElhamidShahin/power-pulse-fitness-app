@@ -23,10 +23,20 @@ class WorkoutPlanScreen extends StatefulWidget {
 class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   int _selectedWeekday = DateTime.now().weekday; // اليوم الحالي مختار افتراضياً
 
+  late final WorkoutPlanCubit _planCubit;
+
   @override
   void initState() {
     super.initState();
-    context.read<WorkoutPlanCubit>().loadThenEdit();
+    _planCubit = context.read<WorkoutPlanCubit>();
+    _planCubit.loadThenEdit();
+  }
+
+  @override
+  void dispose() {
+    // الكيوبت مشترك مع الرئيسية — لو خرج من غير حفظ نرجّع آخر نسخة محفوظة
+    WidgetsBinding.instance.addPostFrameCallback((_) => _planCubit.discardDraft());
+    super.dispose();
   }
 
   @override
@@ -41,7 +51,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               duration: Duration(seconds: 2),
             ),
           );
-          Navigator.pop(context);
+          if (context.canPop()) context.pop();
         }
         if (state is WorkoutPlanError) {
           ScaffoldMessenger.of(context).showSnackBar(

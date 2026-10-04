@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/auth/user_mode_service.dart';
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/pp_button.dart';
-import '../../../../core/utils/app_regex.dart';
+import '../../../core/auth/user_mode_service.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/router/app_router.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../shared/widgets/pp_button.dart';
+import '../../../core/utils/app_regex.dart';
 import '../logic/cubit/login_cubit.dart';
 import '../logic/cubit/login_state.dart';
 
@@ -44,6 +42,51 @@ class _LoginScreenState extends State<LoginScreen> {
         );
   }
 
+  Future<void> _showForgotPasswordDialog(BuildContext context) async {
+    final controller = TextEditingController(text: _emailCtrl.text.trim());
+    final formKey = GlobalKey<FormState>();
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('استعادة كلمة المرور'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'البريد الإلكتروني',
+              hintText: 'example@gmail.com',
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) return 'أدخل بريدك الإلكتروني';
+              if (!AppRegex.isEmailValid(value.trim())) return 'بريد إلكتروني غير صحيح';
+              return null;
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (!formKey.currentState!.validate()) return;
+              Navigator.of(dialogContext).pop();
+              context.read<LoginCubit>().sendPasswordResetEmail(
+                    email: controller.text.trim(),
+                  );
+            },
+            child: const Text('إرسال الرابط'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
@@ -63,6 +106,12 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             context.go(AppRouter.onboarding);
           }
+        } else if (state is LoginPasswordResetSent) {
+          _showBanner(
+            context,
+            message: 'تم إرسال رابط استعادة كلمة المرور إلى ${state.email} 📧',
+            isError: false,
+          );
         } else if (state is LoginError) {
           _showBanner(context, message: state.errorMessage, isError: true);
         }
@@ -136,7 +185,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: AppConstants.space3XL),
+                const SizedBox(height: AppConstants.spaceS),
+
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: TextButton(
+                    onPressed: () => _showForgotPasswordDialog(context),
+                    child: const Text('نسيت كلمة المرور؟'),
+                  ),
+                ),
+
+                const SizedBox(height: AppConstants.spaceL),
 
                 // ── Login button ───────────────────────────────────
                 BlocBuilder<LoginCubit, LoginState>(

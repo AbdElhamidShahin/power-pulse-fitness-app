@@ -238,6 +238,10 @@ void _initProgress() {
   sl.registerLazySingleton<ProgressRepository>(
         () => ProgressRepositoryImpl(
       localService: sl(),
+      nutritionService: sl<NutritionLocalService>(),
+      pedometerService: sl<PedometerService>(),
+      profileService: sl<ProfileLocalService>(),
+      planService: sl<WorkoutPlanService>(),
     ),
   );
 
@@ -350,7 +354,9 @@ void _initWorkoutPlan() {
         () => DeleteWorkoutPlanUseCase(sl()),
   );
 
-  sl.registerFactory(
+  // Singleton مشترك: الرئيسية + شاشة الخطة + إضافة تمرين للخطة كلهم
+  // بيشوفوا نفس الحالة، فأي حفظ بيظهر في كل مكان فوراً.
+  sl.registerLazySingleton(
         () => WorkoutPlanCubit(
       getPlan: sl(),
       savePlan: sl(),

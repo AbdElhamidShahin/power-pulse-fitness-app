@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../core/data/app_data_bus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/workout_session_entity.dart';
@@ -42,6 +43,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
         all.add(session);
         await _prefs.setString(
             _historyKey, jsonEncode(all.map((s) => s.toJson()).toList()));
+        AppDataBus.notify();
       }
     } catch (e) {
       throw CacheException(message: 'فشل حفظ الجلسة: $e');
@@ -57,6 +59,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
       all.removeWhere((s) => s.id == id);
       await _prefs.setString(
           _historyKey, jsonEncode(all.map((s) => s.toJson()).toList()));
+      AppDataBus.notify();
     } catch (e) {
       throw CacheException(message: 'فشل حذف الجلسة: $e');
     }

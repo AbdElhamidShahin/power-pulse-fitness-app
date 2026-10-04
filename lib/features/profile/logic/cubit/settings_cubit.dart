@@ -2,7 +2,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/auth/guest_migration_service.dart';
 import '../../../../core/auth/user_mode_service.dart';
+import '../../../../core/notifications/notification_service.dart';
 import 'settings_state.dart';
 
 class AppSettingsCubit extends Cubit<AppSettings> {
@@ -42,6 +44,9 @@ class AppSettingsCubit extends Cubit<AppSettings> {
   Future<void> toggleNotifications(bool val) async {
     await _prefs.setBool(_kNotifications, val);
     emit(state.copyWith(notificationsEnabled: val));
+    // BUGFIX: السويتش ده كان بيتحفظ بس ومش بيعمل أي حاجة فعلياً
+    if (val) await NotificationService.instance.requestPermissions();
+    await NotificationService.instance.syncFromPrefs(_prefs);
   }
 
   // ─── Language ──────────────────────────────────────────────
@@ -52,11 +57,30 @@ class AppSettingsCubit extends Cubit<AppSettings> {
 
   // ─── Logout ────────────────────────────────────────────────
   Future<void> logout() async {
+    final client = Supabase.instance.client;
+    final uid = client.auth.currentUser?.id;
+
+    // نرفع آخر نسخة للسحابة الأول؛ ولو نجح بس نمسح البيانات المحلية
+    // (عشان الحساب الجاي ميتخلطش بيها). لو فشل (أوفلاين) منمسحش حاجة.
+    var pushed = uid == null;
+    if (uid != null) {
+      try {
+        await GuestMigrationService.pushLocalToCloud(
+          prefs: _prefs,
+          supabase: client,
+          uid: uid,
+        );
+        pushed = true;
+      } catch (_) {}
+    }
+
     try {
-      await Supabase.instance.client.auth.signOut();
+      await client.auth.signOut();
     } catch (_) {}
     await UserModeService.setGuestAfterLogout(_prefs);
-    await _prefs.remove('user_profile');
+    if (pushed) {
+      await GuestMigrationService.clearLocalUserData(_prefs);
+    }
     emit(AppSettings(
       isDarkMode: state.isDarkMode,
       locale: state.locale,

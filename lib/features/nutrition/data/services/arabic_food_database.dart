@@ -1,4 +1,5 @@
 import '../models/food_entity.dart';
+import 'arabic_food_database_extra.dart';
 
 /// قاعدة بيانات الأطعمة العربية المحلية
 /// تشمل: أكلات شعبية، علب معلبة، وجبات سريعة شائعة
@@ -14,6 +15,7 @@ abstract class ArabicFoodDatabase {
     ..._dairyAndEggs,
     ..._vegetablesAndFruits,
     ..._snacksAndSweets,
+    ...ArabicFoodDatabaseExtra.all, // التوسعة (أكلات مصرية/عربية، معلبات، مشروبات…)
   ];
 
   // ─── أكلات مصرية شعبية ───────────────────────────────────
@@ -133,14 +135,52 @@ abstract class ArabicFoodDatabase {
     FoodItem(id: 'sw_007', name: 'Tahini', nameAr: 'طحينة', calories: 592, protein: 17, carbs: 22, fat: 53, servingSize: 30, servingUnit: 'جم'),
   ];
 
-  /// بحث في قاعدة البيانات المحلية
+  /// تطبيع النص العربي عشان البحث يلاقي "فول"/"فُول" و"ملوخيه"/"ملوخية"
+  /// و"أرز"/"ارز" و"مكرونه"/"مكرونة"…
+  static String normalize(String input) {
+    var t = input.toLowerCase().trim();
+    t = t.replaceAll(RegExp('[\u064B-\u0652\u0640]'), ''); // تشكيل + تطويل
+    t = t
+        .replaceAll(RegExp('[أإآ]'), 'ا')
+        .replaceAll('ى', 'ي')
+        .replaceAll('ة', 'ه')
+        .replaceAll('ؤ', 'و')
+        .replaceAll('ئ', 'ي');
+    return t.replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static List<FoodItem>? _cache;
+  static List<String>? _cacheKeys;
+
+  static void _ensureIndex() {
+    if (_cache != null) return;
+    final items = all;
+    _cache = items;
+    _cacheKeys = items
+        .map((f) => normalize('${f.nameAr} ${f.name} ${f.brand ?? ''}'))
+        .toList();
+  }
+
+  /// بحث في قاعدة البيانات المحلية — كل كلمات البحث لازم تتلاقي،
+  /// والنتائج اللي بتبدأ بالكلمة بتطلع الأول.
   static List<FoodItem> search(String query) {
-    if (query.trim().isEmpty) return all.take(20).toList();
-    final q = query.toLowerCase().trim();
-    return all.where((f) {
-      return f.nameAr.contains(q) ||
-          f.name.toLowerCase().contains(q) ||
-          (f.brand?.toLowerCase().contains(q) ?? false);
-    }).toList();
+    _ensureIndex();
+    final items = _cache!;
+    final keys = _cacheKeys!;
+    if (query.trim().isEmpty) return items.take(20).toList();
+
+    final q = normalize(query);
+    final tokens = q.split(' ').where((t) => t.isNotEmpty).toList();
+
+    final scored = <MapEntry<FoodItem, int>>[];
+    for (var i = 0; i < items.length; i++) {
+      final key = keys[i];
+      if (!tokens.every(key.contains)) continue;
+      final ar = normalize(items[i].nameAr);
+      final score = ar.startsWith(q) ? 0 : (ar.contains(q) ? 1 : 2);
+      scored.add(MapEntry(items[i], score));
+    }
+    scored.sort((a, b) => a.value.compareTo(b.value));
+    return scored.map((e) => e.key).toList();
   }
 }

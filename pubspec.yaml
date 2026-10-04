@@ -46,6 +46,7 @@ dependencies:
 
   # Pedometer
   pedometer: ^4.0.2
+  permission_handler: ^11.3.1
   flutter_svg: ^2.2.3
 
   # Localization

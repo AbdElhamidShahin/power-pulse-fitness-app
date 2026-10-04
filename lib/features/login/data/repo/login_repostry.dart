@@ -8,4 +8,8 @@ abstract interface class LoginRepository {
 
   /// تسجيل الدخول بـ Google — يُستدعى من LoginCubit
   Future<void> signInWithGoogle();
+
+  Future<void> sendPasswordResetEmail({required String email});
+
+  Future<void> updatePassword({required String password});
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../core/data/app_data_bus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -45,6 +46,7 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.add(entry);
       await _prefs.setString(
           _weightKey, jsonEncode(all.map(_weightToJson).toList()));
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(message: 'خطأ في حفظ الوزن');
     }
@@ -57,6 +59,7 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.removeWhere((e) => e.id == id);
       await _prefs.setString(
           _weightKey, jsonEncode(all.map(_weightToJson).toList()));
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(message: 'خطأ في حذف الوزن');
     }
@@ -98,6 +101,7 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.add(log);
       await _prefs.setString(
           _workoutKey, jsonEncode(all.map(_workoutToJson).toList()));
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(message: 'خطأ في حفظ التمرين');
     }
