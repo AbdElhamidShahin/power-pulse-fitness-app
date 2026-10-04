@@ -9,10 +9,12 @@ class GreetingHeader extends StatelessWidget {
     super.key,
     required this.greeting,
     required this.name,
+    this.avatarUrl,
   });
 
-  final String greeting;
-  final String name;
+  final String  greeting;
+  final String  name;
+  final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -21,24 +23,7 @@ class GreetingHeader extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () => context.go('/profile'),
-          child: Container(
-            width: 44.r,
-            height: 44.r,
-            decoration: BoxDecoration(
-              color: context.colors.bgDark,
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              name.isNotEmpty ? name[0].toUpperCase() : 'A',
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w900,
-                color: AppColors.textOnDark,
-              ),
-            ),
-          ),
+          child: _HomeAvatar(name: name, avatarUrl: avatarUrl),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -54,6 +39,8 @@ class GreetingHeader extends StatelessWidget {
             ),
             Text(
               '💪 $name',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 26.sp,
@@ -67,4 +54,44 @@ class GreetingHeader extends StatelessWidget {
       ],
     );
   }
+}
+
+// ─── Home Avatar ────────────────────────────────────────────
+class _HomeAvatar extends StatelessWidget {
+  const _HomeAvatar({required this.name, this.avatarUrl});
+  final String  name;
+  final String? avatarUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    if (avatarUrl != null && avatarUrl!.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          avatarUrl!,
+          width: 44.r, height: 44.r,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _initials(context),
+        ),
+      );
+    }
+    return _initials(context);
+  }
+
+  Widget _initials(BuildContext context) => Container(
+        width: 44.r, height: 44.r,
+        decoration: BoxDecoration(
+          color: context.colors.bgDark,
+          shape: BoxShape.circle,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          name.isNotEmpty ? name[0].toUpperCase() : 'A',
+          style: TextStyle(
+            fontFamily: 'Cairo',
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w900,
+            color: AppColors.textOnDark,
+          ),
+        ),
+      );
 }

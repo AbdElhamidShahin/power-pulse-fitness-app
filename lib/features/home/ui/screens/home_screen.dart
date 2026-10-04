@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
+import '../../../../core/router/route_observers.dart';
 import '../../../pedometer/ui/widgets/step_counter_card.dart';
 import '../../logic/cubit/home_cubit.dart';
 import '../../logic/cubit/home_state.dart';
@@ -24,11 +25,34 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with RouteAware {
   @override
   void initState() {
     super.initState();
-    context.read<HomeCubit>().load();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<HomeCubit>().load();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // BUG 8 fix: أعد التحميل لما المستخدم يرجع للشاشة
+    // (بعد إضافة وجبة أو تمرين من شاشة تانية)
+    homeRouteObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    homeRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // رجعنا لشاشة Home من شاشة تانية — حدّث البيانات
+    if (mounted) context.read<HomeCubit>().load(silent: true);
   }
 
   @override
@@ -54,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     GreetingHeader(
                       greeting: summary.greeting,
                       name: summary.profile.name,
+                      avatarUrl: summary.profile.avatarUrl,  // BUG 6 fix
                     ),
                     SizedBox(height: 16.h),
                     StreakCard(streak: summary.currentStreak),

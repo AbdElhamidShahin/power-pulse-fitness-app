@@ -13,7 +13,11 @@ class ProgressActivitySection extends StatelessWidget {
 
   final ProgressSummary summary;
 
-  static const _dayLetters = ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح']; // Mon..Sun
+  // BUG 9 fix: التقويم المصري — السبت أول الأسبوع
+  // weekday: Mon=1..Sat=6..Sun=7
+  static const Map<int, String> _dayLetterMap = {
+    1: 'ن', 2: 'ث', 3: 'ر', 4: 'خ', 5: 'ج', 6: 'س', 7: 'ح',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +164,7 @@ class ProgressActivitySection extends StatelessWidget {
     return v.round().toString();
   }
 
-  static String letterFor(DateTime d) => _dayLetters[d.weekday - 1];
+  static String letterFor(DateTime d) => _dayLetterMap[d.weekday] ?? '';
 }
 
 class _MiniStat extends StatelessWidget {

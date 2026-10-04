@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/auth/user_mode_service.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../shared/widgets/pp_button.dart';
 import '../widgets/notification_settings_section.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -491,6 +493,65 @@ class _LanguagePickerRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+// ─── Guest Profile View ──────────────────────────────────────
+class _GuestProfileView extends StatelessWidget {
+  const _GuestProfileView({required this.onLogin});
+  final VoidCallback onLogin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppConstants.space3XL),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80.r,
+              height: 80.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: context.colors.bgElevated,
+              ),
+              child: Icon(
+                Icons.person_outline_rounded,
+                size: 40.r,
+                color: context.colors.textMuted,
+              ),
+            ),
+            SizedBox(height: AppConstants.spaceXL.h),
+            Text(
+              'أنت في وضع الضيف',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w800,
+                color: context.colors.textPrimary,
+              ),
+            ),
+            SizedBox(height: AppConstants.spaceS.h),
+            Text(
+              'سجّل دخولك لحفظ بياناتك ومتابعة تقدمك',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 14.sp,
+                color: context.colors.textMuted,
+              ),
+            ),
+            SizedBox(height: AppConstants.spaceXXL.h),
+            PPButton(
+              label: 'تسجيل الدخول',
+              onPressed: onLogin,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -46,7 +46,8 @@ class _WeeklyBarChart extends StatelessWidget {
   const _WeeklyBarChart({required this.points});
 
   final List<ChartPoint> points;
-  static const _days = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
+  // BUG 9 fix: السبت أول (يمين) → الجمعة آخر (شمال)
+  static const _days = ['ج', 'خ', 'ر', 'ث', 'ن', 'ح', 'س'];
 
   @override
   Widget build(BuildContext context) {

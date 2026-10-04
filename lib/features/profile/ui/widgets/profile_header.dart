@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../data/models/user_profile_entity.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -36,6 +38,8 @@ class ProfileHeader extends StatelessWidget {
           SizedBox(height: 8.h),
           Text(
             profile.name,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 18.sp,
@@ -97,6 +101,57 @@ class _StatItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ─── Profile Avatar (Google photo or initials) ───────────────
+class _ProfileAvatar extends StatelessWidget {
+  const _ProfileAvatar({required this.profile});
+  final UserProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          profile.avatarUrl!,
+          width: 80.r,
+          height: 80.r,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _Initials(name: profile.name),
+          loadingBuilder: (_, child, progress) =>
+              progress == null ? child : _Initials(name: profile.name),
+        ),
+      );
+    }
+    return _Initials(name: profile.name);
+  }
+}
+
+class _Initials extends StatelessWidget {
+  const _Initials({required this.name});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80.r,
+      height: 80.r,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: context.colors.bgDark,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : 'A',
+        style: TextStyle(
+          fontFamily: 'Cairo',
+          fontSize: 32.sp,
+          fontWeight: FontWeight.w900,
+          color: AppColors.textOnDark,
+        ),
+      ),
     );
   }
 }

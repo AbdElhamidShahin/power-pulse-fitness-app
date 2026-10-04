@@ -41,7 +41,8 @@ Future<void> main() async {
 
   // Register immediately after Supabase initialization so a password-reset
   // deep-link event is not missed before runApp().
-  final authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+  final authSubscription =
+      Supabase.instance.client.auth.onAuthStateChange.listen((data) {
     if (data.event == AuthChangeEvent.passwordRecovery) {
       AppStartup.markPasswordRecoveryPending();
     }
@@ -65,7 +66,8 @@ Future<void> main() async {
   // بعد أول frame: نجدول الإشعارات المفعّلة ونبدأ عداد الخطوات
   // (الاتنين ممكن يطلبوا صلاحيات فمحتاجين الـ UI يكون ظهر).
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    unawaited(NotificationService.instance.syncFromPrefs(sl<SharedPreferences>()));
+    unawaited(
+        NotificationService.instance.syncFromPrefs(sl<SharedPreferences>()));
     unawaited(sl<PedometerCubit>().start());
   });
 }
@@ -142,8 +144,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
       value: sl<AppSettingsCubit>(),
       child: BlocBuilder<AppSettingsCubit, AppSettings>(
         buildWhen: (prev, curr) =>
-            prev.isDarkMode != curr.isDarkMode ||
-            prev.locale != curr.locale,
+            prev.isDarkMode != curr.isDarkMode || prev.locale != curr.locale,
         builder: (context, settings) => ScreenUtilInit(
           designSize: const Size(375, 812),
           minTextAdapt: true,
@@ -155,8 +156,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
               debugShowCheckedModeBanner: false,
               theme: AppTheme.light,
               darkTheme: AppTheme.dark,
-              themeMode:
-                  settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+              themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
               routerConfig: AppRouter.router,
               locale: Locale(settings.locale),
               localizationsDelegates: const [
@@ -170,8 +170,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
                 Locale('en', 'US'),
               ],
               builder: (context, child) => Directionality(
-                textDirection:
-                    isAr ? TextDirection.rtl : TextDirection.ltr,
+                textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
                 child: child!,
               ),
             );

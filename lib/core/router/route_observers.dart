@@ -9,3 +9,6 @@ final RouteObserver<ModalRoute<void>> nutritionRouteObserver =
 
 final RouteObserver<ModalRoute<void>> progressRouteObserver =
     RouteObserver<ModalRoute<void>>();
+
+final RouteObserver<ModalRoute<void>> homeRouteObserver =
+    RouteObserver<ModalRoute<void>>();
