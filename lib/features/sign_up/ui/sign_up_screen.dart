@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
 import '../../../../core/utils/app_regex.dart';
@@ -59,7 +60,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             message: 'مرحباً بك، ${state.name}! حسابك جاهز 🎉',
             isError: false,
           );
-          context.go(AppRouter.home);
+          // الأفضل جمع بيانات المستخدم بعد إنشاء الحساب
+          context.go(AppRouter.onboarding);
         } else if (state is SignUpVerificationRequired) {
           _showVerificationSheet(context, email: state.email);
         } else if (state is SignUpError) {
@@ -67,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColorsDark.bgDeep,
+        backgroundColor: context.colors.bgDeep,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -86,13 +88,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColorsDark.bgSurface,
+                      color: context.colors.bgSurface,
                       borderRadius: BorderRadius.circular(AppConstants.radiusS),
-                      border: Border.all(color: AppColorsDark.borderSubtle),
+                      border: Border.all(color: context.colors.borderSubtle),
                     ),
                     child: Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: AppColorsDark.textSecondary,
+                      color: context.colors.textSecondary,
                       size: 16,
                     ),
                   ),
@@ -227,7 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Text(
                         'لديك حساب بالفعل؟',
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColorsDark.textMuted,
+                          color: context.colors.textMuted,
                         ),
                       ),
                       const SizedBox(width: AppConstants.spaceXS),
@@ -286,7 +288,7 @@ class _SignUpHeader extends StatelessWidget {
         Text(
           'ابدأ رحلتك\nالآن 🔥',
           style: AppTextStyles.displayMedium.copyWith(
-            color: AppColorsDark.textPrimary,
+            color: context.colors.textPrimary,
             height: 1.2,
           ),
         ),
@@ -294,7 +296,7 @@ class _SignUpHeader extends StatelessWidget {
         Text(
           'أنشئ حسابك وانضم لآلاف الرياضيين',
           style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColorsDark.textMuted,
+            color: context.colors.textMuted,
           ),
         ),
       ],
@@ -312,7 +314,7 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: AppTextStyles.titleSmall.copyWith(color: AppColorsDark.textSecondary),
+      style: AppTextStyles.titleSmall.copyWith(color: context.colors.textSecondary),
     );
   }
 }
@@ -347,13 +349,13 @@ class _AuthField extends StatelessWidget {
       validator: validator,
       textDirection: textDirection,
       style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColorsDark.textPrimary,
+        color: context.colors.textPrimary,
         letterSpacing: obscureText ? 2.0 : 0,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColorsDark.borderMedium),
-        prefixIcon: Icon(icon, color: AppColorsDark.textMuted, size: AppConstants.iconM),
+        hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.borderMedium),
+        prefixIcon: Icon(icon, color: context.colors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
           padding: const EdgeInsets.only(left: AppConstants.spaceM),
@@ -361,14 +363,14 @@ class _AuthField extends StatelessWidget {
         )
             : null,
         filled: true,
-        fillColor: AppColorsDark.bgSurface,
+        fillColor: context.colors.bgSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColorsDark.borderSubtle),
+          borderSide: BorderSide(color: context.colors.borderSubtle),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColorsDark.borderSubtle),
+          borderSide: BorderSide(color: context.colors.borderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -397,13 +399,13 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
+        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text('أو',
-              style: AppTextStyles.bodySmall.copyWith(color: AppColorsDark.textMuted)),
+              style: AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted)),
         ),
-        Expanded(child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
+        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
       ],
     );
   }
@@ -426,9 +428,9 @@ class _GoogleButton extends StatelessWidget {
       child: Container(
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
-          color: AppColorsDark.bgSurface,
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: AppColorsDark.borderSubtle),
+          border: Border.all(color: context.colors.borderSubtle),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -448,7 +450,7 @@ class _GoogleButton extends StatelessWidget {
               const SizedBox(width: AppConstants.spaceM),
               Text(
                 label,
-                style: AppTextStyles.labelLarge.copyWith(color: AppColorsDark.textSecondary),
+                style: AppTextStyles.labelLarge.copyWith(color: context.colors.textSecondary),
               ),
             ],
           ],
@@ -538,7 +540,7 @@ void _showBanner(
 void _showVerificationSheet(BuildContext context, {required String email}) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: AppColorsDark.bgSurface,
+    backgroundColor: context.colors.bgSurface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(AppConstants.radiusXL),
@@ -553,7 +555,7 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
             width: 48,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColorsDark.borderMedium,
+              color: context.colors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
@@ -572,7 +574,7 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
           Text(
             'تحقق من بريدك',
             style: AppTextStyles.headlineMedium.copyWith(
-              color: AppColorsDark.textPrimary,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: AppConstants.spaceS),
@@ -580,7 +582,7 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
             'أرسلنا رابط التفعيل إلى\n$email',
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColorsDark.textMuted,
+              color: context.colors.textMuted,
             ),
           ),
           const SizedBox(height: AppConstants.space3XL),

@@ -48,6 +48,9 @@ dependencies:
   pedometer: ^4.0.2
   flutter_svg: ^2.2.3
 
+  # Localization
+  intl: ^0.20.2
+
   # Misc
 
   # Launcher Icons
@@ -64,7 +67,6 @@ flutter:
     - assets/langs/ar.json
     - assets/exercises.json
     - assets/animation/
-    - assets/images/
     - assets/category/
     - assets/GIF/chest/
     - assets/GIF/lats/
@@ -72,4 +74,3 @@ flutter:
     - assets/GIF/hands/
     - assets/GIF/legs/
     - assets/GIF/beily/
-    - assets/images/123456.jpg

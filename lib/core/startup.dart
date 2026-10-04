@@ -50,12 +50,16 @@ abstract class AppStartup {
   }
 
   /// **Synchronous — من غير I/O.** آمن للاستدعاء من `GoRouter.redirect`.
-  ///
-  /// `true` لو المستخدم لسه ماختارش (لا session ولا guest).
-  /// `auth.currentUser` قيمة في الذاكرة، والـ mode متخزّن في
-  /// [UserModeService.cachedMode] ويتحدّث تلقائياً مع كل setter.
   static bool get needsEntry {
     if (Supabase.instance.client.auth.currentUser != null) return false;
     return UserModeService.cachedMode != UserMode.guest;
+  }
+
+  /// هل المستخدم لازم يكمل الـ onboarding؟
+  /// يُستخدم بعد login/signup للتحقق إذا كانت بيانات الـ profile موجودة.
+  static Future<bool> needsOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    final profile = prefs.getString('user_profile');
+    return profile == null || profile.isEmpty;
   }
 }

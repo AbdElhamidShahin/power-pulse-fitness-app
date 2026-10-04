@@ -69,6 +69,36 @@ class NotificationService {
     _initialized = true;
   }
 
+  // ─── Request Permissions ──────────────────────────────────
+
+  Future<bool> requestPermissions() async {
+    if (!_initialized) await init();
+
+    // Android 13+
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (android != null) {
+      final granted = await android.requestNotificationsPermission();
+      return granted ?? false;
+    }
+
+    // iOS
+    final ios = _plugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
+    if (ios != null) {
+      final granted = await ios.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      return granted ?? false;
+    }
+
+    return true;
+  }
+
+
+
   // ─── Background Notification Callback ────────────────────
 
   @pragma('vm:entry-point')

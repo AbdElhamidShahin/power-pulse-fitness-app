@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileSectionTitle extends StatelessWidget {
@@ -54,7 +55,7 @@ class ProfileInfoRow extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 13.sp,
-                color: const Color(0xFF6B7280),
+                color: context.colors.textMuted,
               ),
             ),
             const Spacer(),
@@ -64,13 +65,13 @@ class ProfileInfoRow extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 13.sp,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF111827),
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(width: 8.w),
             Icon(
               Icons.chevron_right_rounded,
-              color: const Color(0xFF9CA3AF),
+              color: context.colors.textMuted,
               size: 20.r,
             ),
           ],
@@ -110,7 +111,7 @@ class ProfileToggleRow extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF111827),
+              color: context.colors.textPrimary,
             ),
           ),
           const Spacer(),
@@ -139,7 +140,7 @@ class ProfileDivider extends StatelessWidget {
       thickness: 0.5,
       indent: 16.w,
       endIndent: 16.w,
-      color: const Color(0xFFF3F4F6),
+      color: context.colors.borderSubtle,
     );
   }
 }

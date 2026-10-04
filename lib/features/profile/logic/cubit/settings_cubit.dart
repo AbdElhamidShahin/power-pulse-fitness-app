@@ -15,12 +15,14 @@ class AppSettingsCubit extends Cubit<AppSettings> {
   static const _kDark          = 'settings_dark_mode';
   static const _kMetric        = 'settings_metric_units';
   static const _kNotifications = 'settings_notifications';
+  static const _kLocale        = 'settings_locale';
 
   void _load() {
     emit(AppSettings(
       isDarkMode:           _prefs.getBool(_kDark)          ?? false,
       isMetricUnits:        _prefs.getBool(_kMetric)        ?? true,
       notificationsEnabled: _prefs.getBool(_kNotifications) ?? true,
+      locale:               _prefs.getString(_kLocale)      ?? 'ar',
     ));
   }
 
@@ -42,25 +44,29 @@ class AppSettingsCubit extends Cubit<AppSettings> {
     emit(state.copyWith(notificationsEnabled: val));
   }
 
-  // ─── Logout — يخرج من الحساب ويحول لوضع الضيف ────────────
-  Future<void> logout() async {
-    try {
-      // سجّل الخروج من Supabase أولاً
-      await Supabase.instance.client.auth.signOut();
-    } catch (_) {
-      // حتى لو فشل الـ signOut، نكمل
-    }
-    // حوّل لوضع الضيف — لا تحذف بيانات Supabase ولا الملف الشخصي
-    // (البيانات المحلية تبقى كـ cache عشان لو رجع يسجل الدخول)
-    await UserModeService.setGuestAfterLogout(_prefs);
-    // امسح فقط الـ token المحلي لا كل الـ prefs
-    await _prefs.remove('user_profile');
-    emit(const AppSettings());
+  // ─── Language ──────────────────────────────────────────────
+  Future<void> setLocale(String locale) async {
+    await _prefs.setString(_kLocale, locale);
+    emit(state.copyWith(locale: locale));
   }
 
-  // Helper للشاشات الأخرى
+  // ─── Logout ────────────────────────────────────────────────
+  Future<void> logout() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+    } catch (_) {}
+    await UserModeService.setGuestAfterLogout(_prefs);
+    await _prefs.remove('user_profile');
+    emit(AppSettings(
+      isDarkMode: state.isDarkMode,
+      locale: state.locale,
+    ));
+  }
+
   ThemeMode get themeMode =>
       state.isDarkMode ? ThemeMode.dark : ThemeMode.light;
+
+  Locale get currentLocale => Locale(state.locale);
 
   String weightUnit(double kg) =>
       state.isMetricUnits ? '${kg.toInt()} كجم' : '${(kg * 2.205).toInt()} رطل';

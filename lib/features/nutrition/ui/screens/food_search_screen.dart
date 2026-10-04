@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../../shared/widgets/pp_input.dart';
 import '../../data/models/food_entity.dart';
+import '../../data/services/arabic_food_database.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
 import '../widgets/food_search_card.dart';
-
 
 class FoodSearchScreen extends StatefulWidget {
   const FoodSearchScreen({super.key, required this.mealType});
@@ -23,6 +24,13 @@ class FoodSearchScreen extends StatefulWidget {
 class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _controller = TextEditingController();
   final _scroll     = ScrollController();
+
+  static final _popularFoods = ArabicFoodDatabase.all
+      .where((f) => [
+    'ar_001', 'ar_002', 'ar_003', 'ar_009', 'ar_010',
+    'ar_011', 'mt_001', 'dy_001', 'gr_001', 'cn_001',
+  ].contains(f.id))
+      .toList();
 
   @override
   void initState() {
@@ -50,74 +58,58 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ─── Header ─────────────────────────────────────
+            _Header(mealType: widget.mealType),
+            // ─── Search Bar ──────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppConstants.screenPaddingH, AppConstants.spaceL,
-                AppConstants.screenPaddingH, AppConstants.spaceM,
+              padding: EdgeInsets.symmetric(
+                horizontal: AppConstants.screenPaddingH.w,
+                vertical: AppConstants.spaceS.h,
               ),
-              child: Row(
-                children: [    Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('إضافة وجبة',
-                          style: Theme.of(context).textTheme.headlineSmall),
-                      Text(widget.mealType.labelAr,
-                          style: AppTextStyles.bodySmall
-                              .copyWith(color: AppColors.accent)),
-                    ],
-                  ),
-                ),
-                  const SizedBox(width: AppConstants.spaceM),
-                               GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      width: 40, height: 40,
-                      decoration: BoxDecoration(
-                        color: context.colors.bgElevated,
-                        borderRadius:
-                        BorderRadius.circular(AppConstants.radiusM),
-                      ),
-                      child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: context.colors.textPrimary,
-                        size: AppConstants.iconS,
-                      ),
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.screenPaddingH),
+              // FIX 1: PPInput → PPSearchBar
               child: PPSearchBar(
-                hint: 'ابحث عن طعام...',
                 controller: _controller,
-                onChanged: (q) => context.read<FoodSearchCubit>().search(q),
-                autofocus: true,
+                hint: 'ابحث عن طعام... (مثلاً: كشري، تونة، فول)',
+                onChanged: (q) {
+                  setState(() {});
+                  if (q.trim().length >= 2) {
+                    context.read<FoodSearchCubit>().search(q.trim());
+                  } else if (q.isEmpty) {
+                    context.read<FoodSearchCubit>().clear();
+                  }
+                },
               ),
             ),
-            const SizedBox(height: AppConstants.spaceL),
+
+            // ─── Body ────────────────────────────────────────
             Expanded(
               child: BlocBuilder<FoodSearchCubit, FoodSearchState>(
-                builder: (context, state) => switch (state) {
-                  FoodSearchIdle()    => const _IdleView(),
-                  FoodSearchLoading() => const _SearchLoadingView(),
-                  FoodSearchError(:final message) =>
-                      _SearchErrorView(message: message, controller: _controller),
-                  FoodSearchLoaded(:final results) when results.isEmpty =>
-                  const _EmptyView(),
-                  FoodSearchLoaded(:final results, :final hasMore) =>
-                      _ResultsList(
-                        results:  results,
-                        hasMore:  hasMore,
-                        scroll:   _scroll,
-                        mealType: widget.mealType,
-                      ),
+                builder: (context, state) {
+                  if (state is FoodSearchIdle) {
+                    return _SuggestionsView(
+                      foods: _popularFoods,
+                      mealType: widget.mealType,
+                    );
+                  }
+                  if (state is FoodSearchLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: AppColors.accent),
+                    );
+                  }
+                  if (state is FoodSearchError) {
+                    return _ErrorView(message: state.message);
+                  }
+                  if (state is FoodSearchLoaded) {
+                    if (state.results.isEmpty) {
+                      return _EmptyView(query: state.query);
+                    }
+                    return _ResultsList(
+                      results: state.results,
+                      hasMore: state.hasMore,
+                      mealType: widget.mealType,
+                      scroll: _scroll,
+                    );
+                  }
+                  return const SizedBox();
                 },
               ),
             ),
@@ -128,268 +120,253 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   }
 }
 
-class _ResultsList extends StatelessWidget {
-  const _ResultsList({
-    required this.results,
-    required this.hasMore,
-    required this.scroll,
-    required this.mealType,
-  });
-
-  final List<FoodItem>    results;
-  final bool              hasMore;
-  final ScrollController  scroll;
-  final MealType          mealType;
+// ─── Header ──────────────────────────────────────────────────────────────────
+class _Header extends StatelessWidget {
+  const _Header({required this.mealType});
+  final MealType mealType;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      controller: scroll,
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.screenPaddingH),
-      itemCount: results.length + (hasMore ? 1 : 0),
-      separatorBuilder: (_, __) =>
-      const SizedBox(height: AppConstants.spaceM),
-      itemBuilder: (context, i) {
-        if (i == results.length) {
-          return const Padding(
-            padding: EdgeInsets.all(AppConstants.spaceXL),
-            child: Center(
-                child: CircularProgressIndicator(color: AppColors.accent)),
-          );
-        }
-        return FoodSearchCard(
-          food:  results[i],
-          onTap: () => _showAddSheet(context, results[i]),
-        );
-      },
-    );
-  }
-
-  void _showAddSheet(BuildContext context, FoodItem food) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.colors.bgSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppConstants.radiusXL)),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        AppConstants.screenPaddingH.w,
+        AppConstants.spaceL.h,
+        AppConstants.screenPaddingH.w,
+        AppConstants.spaceS.h,
       ),
-      builder: (_) => BlocProvider.value(
-        value: context.read<AddMealCubit>(),
-        child: _AddMealSheet(
-          food:           food,
-          mealType:       mealType,
-          nutritionCubit: context.read<NutritionCubit>(),
-        ),
-      ),
-    );
-  }
-}
-
-class _AddMealSheet extends StatefulWidget {
-  const _AddMealSheet({
-    required this.food,
-    required this.mealType,
-    required this.nutritionCubit,
-  });
-  final FoodItem       food;
-  final MealType       mealType;
-  final NutritionCubit nutritionCubit;
-
-  @override
-  State<_AddMealSheet> createState() => _AddMealSheetState();
-}
-
-class _AddMealSheetState extends State<_AddMealSheet> {
-  double _quantity = 100.0;
-  final _qtyCtrl   = TextEditingController(text: '100');
-
-  @override
-  void dispose() {
-    _qtyCtrl.dispose();
-    super.dispose();
-  }
-
-  // ─── Calculated macros ────────────────────────────────────
-  double get _calories =>
-      widget.food.calories * _quantity / widget.food.servingSize;
-  double get _protein  =>
-      widget.food.protein  * _quantity / widget.food.servingSize;
-  double get _carbs    =>
-      widget.food.carbs    * _quantity / widget.food.servingSize;
-  double get _fat      =>
-      widget.food.fat      * _quantity / widget.food.servingSize;
-
-  void _adjustQty(double delta) {
-    final next = (_quantity + delta).clamp(1.0, 9999.0).toDouble();
-    setState(() {
-      _quantity = next;
-      _qtyCtrl.text = next.toInt().toString();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<AddMealCubit, AddMealState>(
-      listener: (context, state) {
-        if (state is AddMealSuccess) {
-          widget.nutritionCubit.loadToday();
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(
-                'تمت إضافة ${widget.food.displayName} للـ${widget.mealType.labelAr}',
-                style: TextStyle(fontFamily: 'Cairo'),
-              ),
-              backgroundColor: AppColors.accent,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              margin: const EdgeInsets.all(16),
-              duration: const Duration(seconds: 2),
-            ));
-          Navigator.of(context)
-            ..pop()
-            ..pop();
-          context.read<AddMealCubit>().reset();
-        }
-        if (state is AddMealError) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(state.message,
-                  style: TextStyle(fontFamily: 'Cairo')),
-              backgroundColor: AppColors.danger,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              margin: const EdgeInsets.all(16),
-            ));
-          context.read<AddMealCubit>().reset();
-        }
-      },
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          AppConstants.screenPaddingH,
-          AppConstants.spaceXL,
-          AppConstants.screenPaddingH,
-          MediaQuery.of(context).viewInsets.bottom + AppConstants.spaceXL,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Center(
-              child: Container(
-                width: 40, height: 4,
-                decoration: BoxDecoration(
-                  color: context.colors.bgElevated,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: AppConstants.spaceL),
-
-            Text(
-              widget.food.displayName,
-              textAlign: TextAlign.right,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            if (widget.food.brand != null) ...[
-              const SizedBox(height: 2),
-              Text(widget.food.brand!,
-                  textAlign: TextAlign.right,
-                  style: AppTextStyles.bodySmall),
-            ],
-            const SizedBox(height: AppConstants.spaceL),
-
-            _MacroPreview(
-              calories: _calories,
-              protein:  _protein,
-              carbs:    _carbs,
-              fat:      _fat,
-            ),
-            const SizedBox(height: AppConstants.spaceL),
-
-            Row(
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _qtyCtrl,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true),
-                    textDirection: TextDirection.ltr,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.titleLarge,
-                    onChanged: (v) {
-                      final parsed = double.tryParse(v);
-                      if (parsed != null && parsed > 0) {
-                        setState(() => _quantity = parsed);
-                      }
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'الكمية',
-                      labelStyle:
-                      TextStyle(fontFamily: 'Cairo'),
-                      suffixText: widget.food.servingUnit,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                            AppConstants.radiusM),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: context.colors.bgElevated,
-                    ),
-                  ),
+                Text(
+                  'إضافة وجبة',
+                  style: AppTextStyles.headlineMedium
+                      .copyWith(color: context.colors.textPrimary),
                 ),
-                const SizedBox(width: AppConstants.spaceL),
-                Column(
+                SizedBox(height: 2.h),
+                Row(
                   children: [
-                    _QtyBtn(
-                      icon:  Icons.add_rounded,
-                      onTap: () => _adjustQty(25),
-                    ),
-                    const SizedBox(height: 6),
-                    _QtyBtn(
-                      icon:  Icons.remove_rounded,
-                      onTap: () => _adjustQty(-25),
+                    Text(mealType.icon, style: TextStyle(fontSize: 14.sp)),
+                    SizedBox(width: 4.w),
+                    Text(
+                      mealType.labelAr,
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: AppColors.accent),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: AppConstants.spaceXXL),
+          ),
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: context.colors.bgElevated,
+                borderRadius: BorderRadius.circular(AppConstants.radiusM.r),
+                border: Border.all(color: context.colors.borderSubtle),
+              ),
+              child: Icon(
+                Icons.close_rounded,
+                color: context.colors.textSecondary,
+                size: 18.r,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-            // ─── زر الإضافة ───────────────────────────────
-            BlocBuilder<AddMealCubit, AddMealState>(
-              builder: (context, state) {
-                final loading = state is AddMealLoading;
-                return SizedBox(
-                  width: double.infinity,
-                  height: AppConstants.buttonHeightLarge,
-                  child: ElevatedButton(
-                    onPressed: loading
-                        ? null
-                        : () => context.read<AddMealCubit>().addMeal(
-                      food:     widget.food,
-                      mealType: widget.mealType,
-                      quantity: _quantity,
+// ─── Suggestions View ─────────────────────────────────────────────────────────
+class _SuggestionsView extends StatelessWidget {
+  const _SuggestionsView({required this.foods, required this.mealType});
+  final List<FoodItem> foods;
+  final MealType mealType;
+
+  static const _categories = [
+    ('🥘', 'أكلات مصرية'),
+    ('🥫', 'معلبات'),
+    ('🍗', 'بروتين'),
+    ('🥗', 'خضروات'),
+    ('🍚', 'حبوب'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.symmetric(horizontal: AppConstants.screenPaddingH.w),
+      children: [
+        SizedBox(height: AppConstants.spaceM.h),
+        Text(
+          'تصفح حسب الفئة',
+          style: AppTextStyles.labelSmall.copyWith(
+            color: context.colors.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        SizedBox(height: AppConstants.spaceS.h),
+        SizedBox(
+          height: 44.h,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: _categories.length,
+            separatorBuilder: (_, __) => SizedBox(width: 8.w),
+            itemBuilder: (context, i) {
+              final cat = _categories[i];
+              return _CategoryChip(emoji: cat.$1, label: cat.$2);
+            },
+          ),
+        ),
+        SizedBox(height: AppConstants.spaceL.h),
+        Text(
+          'الأكثر شيوعاً',
+          style: AppTextStyles.labelSmall.copyWith(
+            color: context.colors.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        SizedBox(height: AppConstants.spaceS.h),
+        ...foods.map((f) => Padding(
+          padding: EdgeInsets.only(bottom: AppConstants.spaceS.h),
+          child: FoodSearchCard(
+            item: f,
+            onAdd: () => _showAddDialog(context, f, mealType),
+          ),
+        )),
+        SizedBox(height: 80.h),
+      ],
+    );
+  }
+}
+
+// ─── Results List ─────────────────────────────────────────────────────────────
+class _ResultsList extends StatelessWidget {
+  const _ResultsList({
+    required this.results,
+    required this.hasMore,
+    required this.mealType,
+    required this.scroll,
+  });
+  final List<FoodItem> results;
+  final bool hasMore;
+  final MealType mealType;
+  final ScrollController scroll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppConstants.screenPaddingH.w,
+            vertical: AppConstants.spaceXS.h,
+          ),
+          child: Text(
+            '${results.length} نتيجة',
+            style: AppTextStyles.labelSmall
+                .copyWith(color: context.colors.textMuted),
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            controller: scroll,
+            padding: EdgeInsets.symmetric(
+              horizontal: AppConstants.screenPaddingH.w,
+              vertical: AppConstants.spaceS.h,
+            ),
+            itemCount: results.length + (hasMore ? 1 : 0),
+            separatorBuilder: (_, __) =>
+                SizedBox(height: AppConstants.spaceS.h),
+            itemBuilder: (context, i) {
+              if (i >= results.length) {
+                return Padding(
+                  padding: EdgeInsets.all(AppConstants.spaceL.h),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.accent,
+                      strokeWidth: 2,
                     ),
-                    child: loading
-                        ? const SizedBox(
-                      width: 20, height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.textOnAccent,
-                      ),
-                    )
-                        : const Text('إضافة للوجبة',
-                        style: TextStyle(fontFamily: 'Cairo')),
                   ),
                 );
-              },
+              }
+              final item = results[i];
+              return FoodSearchCard(
+                item: item,
+                onAdd: () => _showAddDialog(context, item, mealType),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─── Category Chip ────────────────────────────────────────────────────────────
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({required this.emoji, required this.label});
+  final String emoji;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: context.colors.bgSurface,
+        borderRadius: BorderRadius.circular(AppConstants.radiusPill.r),
+        border: Border.all(color: context.colors.borderSubtle),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(emoji, style: TextStyle(fontSize: 14.sp)),
+          SizedBox(width: 6.w),
+          Text(
+            label,
+            style: AppTextStyles.labelSmall
+                .copyWith(color: context.colors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Empty View ───────────────────────────────────────────────────────────────
+class _EmptyView extends StatelessWidget {
+  const _EmptyView({required this.query});
+  final String query;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(AppConstants.space3XL.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('🔍', style: TextStyle(fontSize: 48.sp)),
+            SizedBox(height: AppConstants.spaceL.h),
+            Text(
+              'مش لاقي "$query"',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodyLarge
+                  .copyWith(color: context.colors.textPrimary),
+            ),
+            SizedBox(height: AppConstants.spaceS.h),
+            Text(
+              'جرّب كلمة تانية أو ابحث بالإنجليزي',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: context.colors.textMuted),
             ),
           ],
         ),
@@ -398,166 +375,250 @@ class _AddMealSheetState extends State<_AddMealSheet> {
   }
 }
 
-// ─── Macro Preview ────────────────────────────────────────────
-class _MacroPreview extends StatelessWidget {
-  const _MacroPreview({
-    required this.calories,
-    required this.protein,
-    required this.carbs,
-    required this.fat,
-  });
-  final double calories, protein, carbs, fat;
+// ─── Error View ───────────────────────────────────────────────────────────────
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({required this.message});
+  final String message;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: context.colors.bgElevated,
-        borderRadius: BorderRadius.circular(AppConstants.radiusM),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _MItem(label: 'سعرة',   value: calories, color: AppColors.accent),
-          _MItem(label: 'بروتين', value: protein,  color: AppColors.info),
-          _MItem(label: 'كارب',   value: carbs,    color: AppColors.warning),
-          _MItem(label: 'دهون',   value: fat,      color: AppColors.danger),
-        ],
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(AppConstants.space3XL.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.wifi_off_rounded,
+                size: 48.r, color: context.colors.textMuted),
+            SizedBox(height: AppConstants.spaceL.h),
+            Text(
+              'خطأ في الاتصال',
+              style: AppTextStyles.bodyLarge
+                  .copyWith(color: context.colors.textPrimary),
+            ),
+            SizedBox(height: AppConstants.spaceS.h),
+            Text(
+              'بيعرض الأطعمة المحلية فقط',
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: context.colors.textMuted),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _MItem extends StatelessWidget {
-  const _MItem({
+// ─── Add Food Dialog ──────────────────────────────────────────────────────────
+void _showAddDialog(
+    BuildContext context,
+    FoodItem item,
+    MealType mealType,
+    ) {
+  double quantity = item.servingSize;
+  final controller = TextEditingController(
+    text: item.servingSize.toInt().toString(),
+  );
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: context.colors.bgSurface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(AppConstants.radiusXXL.r),
+      ),
+    ),
+    builder: (ctx) {
+      return StatefulBuilder(
+        builder: (ctx, setModalState) {
+          final cal  = item.calories * quantity / item.servingSize;
+          final prot = item.protein  * quantity / item.servingSize;
+          final carb = item.carbs    * quantity / item.servingSize;
+          final fat  = item.fat      * quantity / item.servingSize;
+
+          return Padding(
+            padding: EdgeInsets.fromLTRB(
+              20.w, 20.h, 20.w,
+              MediaQuery.of(ctx).viewInsets.bottom + 20.h,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle
+                Center(
+                  child: Container(
+                    width: 40.w, height: 4.h,
+                    decoration: BoxDecoration(
+                      color: context.colors.borderSubtle,
+                      borderRadius: BorderRadius.circular(2.r),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+
+                // Food Name
+                Text(
+                  item.displayName,
+                  style: AppTextStyles.headlineSmall
+                      .copyWith(color: context.colors.textPrimary),
+                ),
+                if (item.brand != null) ...[
+                  SizedBox(height: 2.h),
+                  Text(
+                    item.brand!,
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: context.colors.textMuted),
+                  ),
+                ],
+                SizedBox(height: 16.h),
+
+                // Macros Row
+                Row(
+                  children: [
+                    _MacroBadge(
+                        label: 'سعرات',
+                        value: cal.round().toString(),
+                        color: AppColors.warning),
+                    SizedBox(width: 8.w),
+                    _MacroBadge(
+                        label: 'بروتين',
+                        value: '${prot.toStringAsFixed(1)}جم',
+                        color: AppColors.info),
+                    SizedBox(width: 8.w),
+                    _MacroBadge(
+                        label: 'كارب',
+                        value: '${carb.toStringAsFixed(1)}جم',
+                        color: AppColors.accent),
+                    SizedBox(width: 8.w),
+                    _MacroBadge(
+                        label: 'دهون',
+                        value: '${fat.toStringAsFixed(1)}جم',
+                        color: AppColors.danger),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+
+                // Quantity Input
+                Row(
+                  children: [
+                    Text(
+                      'الكمية (${item.servingUnit}):',
+                      style: AppTextStyles.bodySmall
+                          .copyWith(color: context.colors.textSecondary),
+                    ),
+                    SizedBox(width: 12.w),
+                    SizedBox(
+                      width: 80.w,
+                      child: TextField(
+                        controller: controller,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 8.w, vertical: 8.h,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                                AppConstants.radiusS.r),
+                            borderSide: BorderSide(
+                                color: context.colors.borderSubtle),
+                          ),
+                        ),
+                        onChanged: (v) {
+                          final parsed = double.tryParse(v);
+                          if (parsed != null && parsed > 0) {
+                            setModalState(() => quantity = parsed);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+
+                // Add Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accent,
+                      foregroundColor: AppColors.textOnAccent,
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(AppConstants.radiusM.r),
+                      ),
+                    ),
+                    onPressed: () {
+                      // FIX 2: addMeal(entry) → addMeal(food:, mealType:, quantity:)
+                      context.read<AddMealCubit>().addMeal(
+                        food:     item,
+                        mealType: mealType,
+                        quantity: quantity,
+                      );
+                      Navigator.of(ctx).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      'إضافة ${mealType.icon} ${mealType.labelAr}',
+                      style: AppTextStyles.labelMedium,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+class _MacroBadge extends StatelessWidget {
+  const _MacroBadge({
     required this.label,
     required this.value,
     required this.color,
   });
   final String label;
-  final double value;
-  final Color  color;
+  final String value;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('${value.toInt()}',
-            style: TextStyle(
-              fontFamily: 'Cairo', fontSize: 16,
-              fontWeight: FontWeight.w800, color: color,
-            )),
-        Text(label,
-            style: TextStyle(
-              fontFamily: 'Cairo', fontSize: 10,
-              color: context.colors.textMuted,
-            )),
-      ],
-    );
-  }
-}
-
-// ─── Qty Button ───────────────────────────────────────────────
-class _QtyBtn extends StatelessWidget {
-  const _QtyBtn({required this.icon, required this.onTap});
-  final IconData     icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    return Expanded(
       child: Container(
-        width: 36, height: 36,
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: context.colors.bgElevated,
-          borderRadius: BorderRadius.circular(10),
+          color: color.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(AppConstants.radiusS.r),
+          border: Border.all(color: color.withOpacity(0.3)),
         ),
-        child: Icon(icon, size: 18, color: context.colors.textPrimary),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 11.sp,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 9.sp,
+                color: context.colors.textMuted,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
-
-// ─── Empty States ─────────────────────────────────────────────
-class _IdleView extends StatelessWidget {
-  const _IdleView();
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.search_rounded,
-          color: context.colors.textMuted, size: 48),
-      const SizedBox(height: AppConstants.spaceM),
-      Text('ابحث عن طعام لإضافته',
-          style: AppTextStyles.bodyMedium
-              .copyWith(color: context.colors.textMuted)),
-    ]),
-  );
-}
-
-class _SearchLoadingView extends StatelessWidget {
-  const _SearchLoadingView();
-  @override
-  Widget build(BuildContext context) =>
-      const Center(child: CircularProgressIndicator(color: AppColors.accent));
-}
-
-class _EmptyView extends StatelessWidget {
-  const _EmptyView();
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.no_food_rounded,
-          color: context.colors.textMuted, size: 48),
-      const SizedBox(height: AppConstants.spaceM),
-      Text('لا توجد نتائج',
-          style: AppTextStyles.bodyMedium
-              .copyWith(color: context.colors.textMuted)),
-    ]),
-  );
-}
-
-class _SearchErrorView extends StatelessWidget {
-  const _SearchErrorView({
-    required this.message,
-    required this.controller,
-  });
-  final String             message;
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(AppConstants.spaceXL),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Icon(Icons.wifi_off_rounded,
-            color: context.colors.textMuted, size: 48),
-        const SizedBox(height: AppConstants.spaceM),
-        Text(message,
-            style: AppTextStyles.bodyMedium
-                .copyWith(color: context.colors.textMuted),
-            textAlign: TextAlign.center),
-        const SizedBox(height: AppConstants.spaceL),
-        GestureDetector(
-          onTap: () =>
-              context.read<FoodSearchCubit>().search(controller.text),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: AppColors.accent.withOpacity(0.15),
-              borderRadius:
-              BorderRadius.circular(AppConstants.radiusM),
-            ),
-            child: const Text('حاول مجدداً',
-                style: TextStyle(
-                  fontFamily: 'Cairo', fontWeight: FontWeight.w700,
-                  color: AppColors.accent,
-                )),
-          ),
-        ),
-      ]),
-    ),
-  );
 }

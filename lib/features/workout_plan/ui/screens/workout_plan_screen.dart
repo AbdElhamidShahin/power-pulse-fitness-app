@@ -26,14 +26,14 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<WorkoutPlanCubit>().startEditing();
+    context.read<WorkoutPlanCubit>().loadThenEdit();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<WorkoutPlanCubit, WorkoutPlanState>(
       listener: (context, state) {
-        if (state is WorkoutPlanLoaded) {
+        if (state is WorkoutPlanLoaded && context.read<WorkoutPlanCubit>().isSaving == false) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('✓ تم حفظ الخطة'),

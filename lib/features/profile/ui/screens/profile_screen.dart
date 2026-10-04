@@ -13,6 +13,7 @@ import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
 import '../../logic/cubit/profile_state.dart';
 import '../../logic/cubit/settings_cubit.dart';
+import '../../logic/cubit/settings_state.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_items.dart';
 
@@ -83,7 +84,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                 const ProfileSectionTitle(title: 'البيانات الشخصية'),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.bgSurface,
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                   child: Column(
@@ -146,7 +147,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                 const ProfileSectionTitle(title: 'الإعدادات'),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.bgSurface,
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                   child: Column(
@@ -163,11 +164,15 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileToggleRow(
                         icon: Icons.nightlight_round,
                         iconColor: AppColors.profileIconIndigo,
-                        label: 'الوضع الليلي',
+                        label: settings.isArabic
+                              ? 'الوضع الليلي'
+                              : 'Dark Mode',
                         value: settings.isDarkMode,
                         onChanged: (val) =>
                             context.read<AppSettingsCubit>().toggleDarkMode(val),
                       ),
+                      const ProfileDivider(),
+                      _LanguagePickerRow(settings: settings),
                       const ProfileDivider(),
                       ProfileToggleRow(
                         icon: Icons.square_foot_rounded,
@@ -431,6 +436,62 @@ class _PrivacyItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+// ─── Language Picker Row ─────────────────────────────────────────────────
+class _LanguagePickerRow extends StatelessWidget {
+  const _LanguagePickerRow({required this.settings});
+  final AppSettings settings;
+
+  @override
+  Widget build(BuildContext context) {
+    final isAr = settings.isArabic;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Row(
+        children: [
+          Icon(Icons.language_rounded,
+              color: AppColors.profileIconBlue, size: 20.r),
+          SizedBox(width: 12.w),
+          Text(
+            isAr ? 'اللغة' : 'Language',
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: context.colors.textPrimary,
+            ),
+          ),
+          const Spacer(),
+          // Toggle بين العربي والإنجليزي
+          GestureDetector(
+            onTap: () {
+              final newLocale = isAr ? 'en' : 'ar';
+              context.read<AppSettingsCubit>().setLocale(newLocale);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(color: AppColors.accent.withOpacity(0.4)),
+              ),
+              child: Text(
+                isAr ? 'AR | EN' : 'EN | AR',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.accent,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -202,7 +202,8 @@ abstract class AppRouter {
           providers: [
             BlocProvider(create: (_) => sl<ExercisesCubit>()),
             BlocProvider(create: (_) => sl<ExerciseSearchCubit>()),
-            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()..load()),
+            // BUGFIX: لا نستدعي ..load() هنا لأن الشاشة بتستدعي loadThenEdit() في initState
+            BlocProvider(create: (_) => sl<WorkoutPlanCubit>()),
           ],
           child: const WorkoutPlanScreen(),
         ),

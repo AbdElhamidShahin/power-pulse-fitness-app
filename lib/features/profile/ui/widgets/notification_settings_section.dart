@@ -42,6 +42,11 @@ class _NotificationSettingsSectionState
   }
 
   Future<void> _toggle(String key, bool value) async {
+    // طلب permission لما المستخدم يشغّل أي إشعار
+    if (value) {
+      await NotificationService.instance.requestPermissions();
+    }
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, value);
 
@@ -102,7 +107,7 @@ class _NotificationSettingsSectionState
               _NotifTile(
                 emoji:    '💪',
                 title:    'تذكير التمرين',
-                subtitle: '8 ص و 6 م يومياً',
+                subtitle: '8 صباحاً و 6 مساءً يومياً',
                 value:    _workout,
                 onChanged: (v) => _toggle(_keyWorkout, v),
               ),
@@ -110,7 +115,7 @@ class _NotificationSettingsSectionState
               _NotifTile(
                 emoji:    '👟',
                 title:    'تذكير الخطوات',
-                subtitle: '12 الظهر لو لسه بعيد عن الهدف',
+                subtitle: '12 ظهراً لو لسه بعيد عن هدفك',
                 value:    _steps,
                 onChanged: (v) => _toggle(_keySteps, v),
               ),
@@ -118,7 +123,7 @@ class _NotificationSettingsSectionState
               _NotifTile(
                 emoji:    '💧',
                 title:    'تذكير الماء',
-                subtitle: 'كل ساعتين من 8 ص لـ 10 م',
+                subtitle: 'كل ساعتين من 8 صباحاً لـ 10 مساءً',
                 value:    _water,
                 onChanged: (v) => _toggle(_keyWater, v),
               ),

@@ -9,6 +9,7 @@ import '../../../../core/auth/user_mode_service.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/pp_button.dart';
 import '../../../../core/utils/app_regex.dart';
@@ -46,20 +47,28 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is LoginSuccess) {
           _showBanner(
             context,
             message: 'مرحباً بعودتك، ${state.name} 👋',
             isError: false,
           );
-          context.go(AppRouter.home);
+          // تحقق لو المستخدم سبق ومليء بياناته - لو لأ، وجّهه للـ onboarding
+          final prefs = await SharedPreferences.getInstance();
+          final hasProfile = prefs.getString('user_profile') != null;
+          if (!context.mounted) return;
+          if (hasProfile) {
+            context.go(AppRouter.home);
+          } else {
+            context.go(AppRouter.onboarding);
+          }
         } else if (state is LoginError) {
           _showBanner(context, message: state.errorMessage, isError: true);
         }
       },
       child: Scaffold(
-        backgroundColor: AppColorsDark.bgDeep,
+        backgroundColor: context.colors.bgDeep,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -163,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'ليس لديك حساب؟',
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColorsDark.textMuted,
+                          color: context.colors.textMuted,
                         ),
                       ),
                       const SizedBox(width: AppConstants.spaceXS),
@@ -194,9 +203,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'متابعة كضيف بدون حساب',
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColorsDark.textMuted,
+                        color: context.colors.textMuted,
                         decoration: TextDecoration.underline,
-                        decorationColor: AppColorsDark.textMuted,
+                        decorationColor: context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -242,7 +251,7 @@ class _Header extends StatelessWidget {
         Text(
           'أهلاً بعودتك\nمجدداً 💪',
           style: AppTextStyles.displayMedium.copyWith(
-            color: AppColorsDark.textPrimary,
+            color: context.colors.textPrimary,
             height: 1.2,
           ),
         ),
@@ -250,7 +259,7 @@ class _Header extends StatelessWidget {
         Text(
           'سجّل دخولك وواصل رحلتك نحو اللياقة',
           style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColorsDark.textMuted,
+            color: context.colors.textMuted,
           ),
         ),
       ],
@@ -269,7 +278,7 @@ class _FieldLabel extends StatelessWidget {
     return Text(
       text,
       style: AppTextStyles.titleSmall.copyWith(
-        color: AppColorsDark.textSecondary,
+        color: context.colors.textSecondary,
       ),
     );
   }
@@ -305,16 +314,16 @@ class _AuthField extends StatelessWidget {
       validator: validator,
       textDirection: TextDirection.ltr,
       style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColorsDark.textPrimary,
+        color: context.colors.textPrimary,
         letterSpacing: obscureText ? 2.0 : 0,
       ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColorsDark.borderMedium,
+          color: context.colors.borderMedium,
         ),
         prefixIcon: Icon(icon,
-            color: AppColorsDark.textMuted, size: AppConstants.iconM),
+            color: context.colors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
                 padding: const EdgeInsets.only(left: AppConstants.spaceM),
@@ -322,14 +331,14 @@ class _AuthField extends StatelessWidget {
               )
             : null,
         filled: true,
-        fillColor: AppColorsDark.bgSurface,
+        fillColor: context.colors.bgSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColorsDark.borderSubtle),
+          borderSide: BorderSide(color: context.colors.borderSubtle),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColorsDark.borderSubtle),
+          borderSide: BorderSide(color: context.colors.borderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -360,18 +369,16 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-            child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
+        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text(
             'أو',
             style: AppTextStyles.bodySmall
-                .copyWith(color: AppColorsDark.textMuted),
+                .copyWith(color: context.colors.textMuted),
           ),
         ),
-        Expanded(
-            child: Divider(color: AppColorsDark.borderSubtle, thickness: 1)),
+        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
       ],
     );
   }
@@ -391,9 +398,9 @@ class _GoogleButton extends StatelessWidget {
       child: Container(
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
-          color: AppColorsDark.bgSurface,
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: AppColorsDark.borderSubtle),
+          border: Border.all(color: context.colors.borderSubtle),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -413,7 +420,7 @@ class _GoogleButton extends StatelessWidget {
               Text(
                 'الدخول بحساب جوجل',
                 style: AppTextStyles.labelLarge.copyWith(
-                  color: AppColorsDark.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],

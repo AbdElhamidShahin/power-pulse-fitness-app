@@ -2,26 +2,21 @@ abstract class AppConstants {
   AppConstants._();
 
   // ─── Supabase ───────────────────────────────────────────────
-  // القيم بتتحقن وقت الـ build ومش موجودة في الـ source:
-  //   flutter run --dart-define-from-file=dart_defines.json
-  //   flutter build apk --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
-  // شوف dart_defines.example.json
-// ✅ صح — مع defaultValue
+  // BUGFIX: String.fromEnvironment يأخذ اسم المتغير مش القيمة مباشرة.
+  // نستخدم defaultValue عشان التطبيق يشتغل بدون dart-define.
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
     defaultValue: 'https://vzxqyiddmtdfertbtmil.supabase.co',
-  );  static const String supabaseAnonKey =
-      String.fromEnvironment('sb_publishable_NMFyzGbAFH0J39U888BdsQ_sMGZcuXj');
+  );
+  static const String supabaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+    defaultValue: 'sb_publishable_NMFyzGbAFH0J39U888BdsQ_sMGZcuXj',
+  );
 
-  /// لو أي قيمة ناقصة، التطبيق مينفعش يتصل بـ Supabase.
   static bool get isSupabaseConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 
   // ─── OAuth deep link ───────────────────────────────────────
-  // لازم يتطابق حرفياً مع:
-  //  • android/app/src/main/AndroidManifest.xml  (intent-filter)
-  //  • ios/Runner/Info.plist                     (CFBundleURLSchemes)
-  //  • Supabase Dashboard → Authentication → URL Configuration → Redirect URLs
   static const String oauthScheme      = 'com.powerteam.powerpulse';
   static const String oauthRedirectUrl = '$oauthScheme://login-callback';
 

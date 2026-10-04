@@ -5,6 +5,7 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/food_entity.dart';
 import '../models/food_model.dart';
+import 'arabic_food_database.dart';
 
 abstract interface class NutritionService {
   Future<List<FoodItem>> searchFood(String query, {int page});
@@ -18,29 +19,53 @@ final class NutritionServiceImpl implements NutritionService {
 
   @override
   Future<List<FoodItem>> searchFood(String query, {int page = 1}) async {
-    try {
-      final response = await _dio.get(
-        ApiEndpoints.foodSearch,
-        queryParameters: {
-          'search_terms': query,
-          'search_simple': 1,
-          'action': 'process',
-          'json': 1,
-          'page': page,
-          'page_size': 20,
-          'fields':
-          '_id,product_name,product_name_ar,brands,nutriments,serving_quantity,image_url',
-        },
-      );
+    // 1. ابحث في قاعدة البيانات العربية المحلية أولاً
+    final localResults = ArabicFoodDatabase.search(query);
 
-      final data = response.data as Map<String, dynamic>;
-      final products = data['products'] as List<dynamic>? ?? [];
-      return FoodModel.toEntityList(products);
-    } on DioException catch (e) {
-      throw mapDioException(e);
-    } catch (e) {
-      throw ServerException(message: 'خطأ في معالجة بيانات البحث: $e');
+    // 2. اجمع مع نتائج الـ API (Open Food Facts with Arabic preference)
+    try {
+      final apiResults = await _searchOpenFoodFacts(query, page: page);
+
+      // دمج النتائج: المحلية أولاً ثم API بدون تكرار
+      final combined = <String, FoodItem>{};
+      for (final item in localResults) {
+        combined[item.id] = item;
+      }
+      for (final item in apiResults) {
+        if (!combined.containsKey(item.id)) {
+          combined[item.id] = item;
+        }
+      }
+      return combined.values.toList();
+    } catch (_) {
+      // لو الـ API فشل، نرجع النتائج المحلية بس
+      return localResults;
     }
+  }
+
+  Future<List<FoodItem>> _searchOpenFoodFacts(
+    String query, {
+    int page = 1,
+  }) async {
+    final response = await _dio.get(
+      ApiEndpoints.foodSearch,
+      queryParameters: {
+        'search_terms': query,
+        'search_simple': 1,
+        'action': 'process',
+        'json': 1,
+        'page': page,
+        'page_size': 15,
+        // نفضّل المنتجات اللي عندها اسم عربي
+        'fields':
+            '_id,product_name,product_name_ar,brands,nutriments,serving_quantity,image_url',
+        'sort_by': 'popularity',
+      },
+    );
+
+    final data = response.data as Map<String, dynamic>;
+    final products = data['products'] as List<dynamic>? ?? [];
+    return FoodModel.toEntityList(products);
   }
 
   @override

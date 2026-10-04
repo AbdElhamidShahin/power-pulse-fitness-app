@@ -129,6 +129,16 @@ extension MealTypeX on MealType {
     MealType.snack => 'وجبة خفيفة',
   };
 
+  String get labelEn => switch (this) {
+    MealType.breakfast => 'Breakfast',
+    MealType.lunch => 'Lunch',
+    MealType.dinner => 'Dinner',
+    MealType.snack => 'Snack',
+  };
+
+  /// Returns label based on current locale
+  String label({bool isArabic = true}) => isArabic ? labelAr : labelEn;
+
   String get icon => switch (this) {
     MealType.breakfast => '🌅',
     MealType.lunch => '☀️',

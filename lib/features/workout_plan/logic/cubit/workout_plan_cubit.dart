@@ -17,15 +17,11 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
   final GetWorkoutPlanUseCase    _getPlan;
   final SaveWorkoutPlanUseCase   _savePlan;
   final DeleteWorkoutPlanUseCase _deletePlan;
-// الشاشة دلوقتي بتعمل الاتنين مع بعض بدون race condition
-  Future<void> loadThenEdit() async {
-    emit(const WorkoutPlanLoading());
-    final result = await _getPlan();
-    result.fold(
-      onFailure: (_) => emit(WorkoutPlanEditing(WorkoutPlan.empty())),
-      onSuccess: (plan) => emit(WorkoutPlanEditing(plan ?? WorkoutPlan.empty())),
-    );
-  }
+
+  // ─── BUGFIX: track whether save was explicitly triggered ──
+  bool _isSaving = false;
+  bool get isSaving => _isSaving;
+
   Future<void> load() async {
     emit(const WorkoutPlanLoading());
     final result = await _getPlan();
@@ -34,6 +30,22 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
       onSuccess: (plan) => plan != null
           ? emit(WorkoutPlanLoaded(plan))
           : emit(const WorkoutPlanEmpty()),
+    );
+  }
+
+  /// BUGFIX: بدل ما نفصل load و startEditing في مكانين،
+  /// نعملهم في method واحدة عشان نتجنب race condition.
+  Future<void> loadThenEdit() async {
+    emit(const WorkoutPlanLoading());
+    final result = await _getPlan();
+    result.fold(
+      onFailure: (_) {
+        // لو فيه error، ابدأ بخطة فاضية
+        emit(WorkoutPlanEditing(WorkoutPlan.empty()));
+      },
+      onSuccess: (plan) {
+        emit(WorkoutPlanEditing(plan ?? WorkoutPlan.empty()));
+      },
     );
   }
 
@@ -100,13 +112,21 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
 
+  /// BUGFIX: نستخدم _isSaving flag عشان الـ listener يعرف إيه اللي أدى لـ WorkoutPlanLoaded
   Future<void> saveDraft() async {
     final draft = _draft;
     if (draft == null) return;
+    _isSaving = true;
     final result = await _savePlan(draft);
     result.fold(
-      onFailure: (f) => emit(WorkoutPlanError(f.message)),
-      onSuccess: (_) => emit(WorkoutPlanLoaded(draft)),
+      onFailure: (f) {
+        _isSaving = false;
+        emit(WorkoutPlanError(f.message));
+      },
+      onSuccess: (_) {
+        _isSaving = false;
+        emit(WorkoutPlanLoaded(draft));
+      },
     );
   }
 

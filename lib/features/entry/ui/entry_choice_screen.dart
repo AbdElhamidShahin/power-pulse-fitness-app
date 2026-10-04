@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/auth/user_mode_service.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/router/app_router.dart';
 import '../../../shared/widgets/pp_button.dart';
@@ -22,7 +23,7 @@ class EntryChoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColorsDark.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -59,7 +60,7 @@ class EntryChoiceScreen extends StatelessWidget {
               Text(
                 'مرحباً بك 👋',
                 style: AppTextStyles.displayMedium.copyWith(
-                  color: AppColorsDark.textPrimary,
+                  color: context.colors.textPrimary,
                   height: 1.2,
                 ),
               ),
@@ -69,7 +70,7 @@ class EntryChoiceScreen extends StatelessWidget {
               Text(
                 'ابدأ رحلتك نحو اللياقة البدنية',
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColorsDark.textMuted,
+                  color: context.colors.textMuted,
                 ),
               ),
 
@@ -93,8 +94,8 @@ class EntryChoiceScreen extends StatelessWidget {
               // ── Guest Card ──────────────────────────────────────────
               _OptionCard(
                 icon: Icons.person_outline_rounded,
-                iconColor: AppColorsDark.textMuted,
-                iconBg: AppColorsDark.bgSurface,
+                iconColor: context.colors.textMuted,
+                iconBg: context.colors.bgSurface,
                 title: 'متابعة كضيف',
                 description:
                     'ستُحفظ بياناتك على هذا الجهاز فقط. يمكنك إنشاء حساب لاحقًا لحفظها على السحابة واستعادتها.',
@@ -138,10 +139,10 @@ class _OptionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppConstants.spaceXL),
       decoration: BoxDecoration(
-        color: AppColorsDark.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
         border: Border.all(
-          color: isPrimary ? AppColors.accent.withOpacity(0.4) : AppColorsDark.borderSubtle,
+          color: isPrimary ? AppColors.accent.withOpacity(0.4) : context.colors.borderSubtle,
           width: isPrimary ? 1.5 : 1,
         ),
       ),
@@ -164,7 +165,7 @@ class _OptionCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: AppTextStyles.titleMedium.copyWith(
-                    color: AppColorsDark.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ),
@@ -174,7 +175,7 @@ class _OptionCard extends StatelessWidget {
           Text(
             description,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColorsDark.textMuted,
+              color: context.colors.textMuted,
               height: 1.6,
             ),
           ),
@@ -186,8 +187,8 @@ class _OptionCard extends StatelessWidget {
                 : OutlinedButton(
                     onPressed: onTap,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColorsDark.borderMedium),
-                      foregroundColor: AppColorsDark.textMuted,
+                      side:   BorderSide(color: context.colors.borderMedium),
+                      foregroundColor: context.colors.textMuted,
                       padding: const EdgeInsets.symmetric(
                           vertical: AppConstants.spaceM),
                       shape: RoundedRectangleBorder(
@@ -197,7 +198,7 @@ class _OptionCard extends StatelessWidget {
                     ),
                     child: Text(actionLabel,
                         style: AppTextStyles.labelLarge
-                            .copyWith(color: AppColorsDark.textMuted)),
+                            .copyWith(color: context.colors.textMuted)),
                   ),
           ),
         ],

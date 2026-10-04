@@ -67,5 +67,6 @@ abstract class AppColors {
   static const Color profileIconGreen   = Color(0xFF65A30D);
   static const Color profileIconDark    = Color(0xFF3F6212);
   static const Color profileIconDeep    = Color(0xFF1A2E05);
+  static const Color profileIconBlue    = Color(0xFF2563EB);
   static const Color dangerSurface      = Color(0xFFFEE2E2);
 }
