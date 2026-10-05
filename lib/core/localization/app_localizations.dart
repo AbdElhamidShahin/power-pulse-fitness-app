@@ -52,6 +52,9 @@ class AppLocalizations {
   String get profile         => translate('profile');
   String get workoutPlan     => translate('workoutPlan');
   String get settings        => translate('settingsLabel');
+  String get settingsLabel   => translate('settingsLabel');
+  String get notifications   => translate('notifications');
+  String get startSetup      => translate('startSetup');
 
   // ─── Auth ─────────────────────────────────────────────────
   String get login           => translate('login');
@@ -334,6 +337,14 @@ class AppLocalizations {
       default: return '';
     }
   }
+
+  /// Full day names ordered Mon-first (index 0=Mon, matches DateTime.weekday - 1)
+  List<String> get dayNamesMonFirst =>
+      [monday, tuesday, wednesday, thursday, friday, saturday, sunday];
+
+  /// Short day names ordered Mon-first
+  List<String> get shortDaysMonFirst =>
+      [for (var i = 1; i <= 7; i++) shortDay(i)];
 
   /// Full day names ordered Sat-first (index 0=Sat)
   List<String> get dayNamesSatFirst =>

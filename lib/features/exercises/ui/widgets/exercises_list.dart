@@ -23,9 +23,9 @@ class ExercisesList extends StatelessWidget {
         ExercisesInitial() || ExercisesLoading() => const ExercisesShimmer(),
         ExercisesError(:final message) => _ErrorView(message: message),
         ExercisesLoaded() => _LoadedList(
-          state: state,
-          scrollController: scrollController,
-        ),
+            state: state,
+            scrollController: scrollController,
+          ),
       },
     );
   }
@@ -36,7 +36,7 @@ class _LoadedList extends StatelessWidget {
   final ExercisesLoaded state;
   final ScrollController scrollController;
 
-  String _translateBodyPart(String englishName) {
+  String _translateBodyPart(String englishName, dynamic context) {
     switch (englishName.toLowerCase()) {
       case 'all':
         return context.l10n.all;
@@ -90,17 +90,20 @@ class _LoadedList extends StatelessWidget {
                       vertical: 7.h,
                     ),
                     decoration: BoxDecoration(
-                      color: active ? context.colors.bgDark : context.colors.bgElevated,
+                      color: active
+                          ? context.colors.bgDark
+                          : context.colors.bgElevated,
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
-                      _translateBodyPart(p),
+                      _translateBodyPart(p, context),
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
-                        color:
-                        active ? AppColors.textOnDark : context.colors.textMuted,
+                        color: active
+                            ? AppColors.textOnDark
+                            : context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -157,22 +160,22 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.error_outline_rounded,
-          color: AppColors.danger,
-          size: 48.r,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              color: AppColors.danger,
+              size: 48.r,
+            ),
+            SizedBox(height: 16.h),
+            Text(message, style: AppTextStyles.bodyMedium),
+            SizedBox(height: 16.h),
+            GestureDetector(
+              onTap: () => context.read<ExercisesCubit>().loadInitial(),
+              child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
+            ),
+          ],
         ),
-        SizedBox(height: 16.h),
-        Text(message, style: AppTextStyles.bodyMedium),
-        SizedBox(height: 16.h),
-        GestureDetector(
-          onTap: () => context.read<ExercisesCubit>().loadInitial(),
-          child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
-        ),
-      ],
-    ),
-  );
+      );
 }

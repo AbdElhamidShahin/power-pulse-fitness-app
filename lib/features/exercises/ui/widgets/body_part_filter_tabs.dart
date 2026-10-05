@@ -18,7 +18,7 @@ class BodyPartFilterTabs extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onSelect;
 
-  static String _label(String part) => switch (part.toLowerCase()) {
+  static String _label(BuildContext context, String part) => switch (part.toLowerCase()) {
     'all'        => context.l10n.all,
     'chest'      => context.l10n.muscleChest,
     'back'       => context.l10n.muscleBack,
@@ -63,7 +63,7 @@ class BodyPartFilterTabs extends StatelessWidget {
                 ),
               ),
               child: Text(
-                _label(part),
+                _label(context, part),
                 style: AppTextStyles.labelMedium.copyWith(
                   color: isSelected ? AppColors.textOnAccent : context.colors.textMuted,
                 ),

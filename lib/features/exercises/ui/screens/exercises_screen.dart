@@ -270,14 +270,14 @@ class _SearchResults extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ExerciseSearchCubit, ExerciseSearchState>(
       builder: (context, state) => switch (state) {
-        ExerciseSearchIdle() => const Center(
+        ExerciseSearchIdle() => Center(
             child: Text(context.l10n.searchExercise,
                 style:
                 TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
         ExerciseSearchLoading() => const _Shimmer(),
         ExerciseSearchError() => const SizedBox(),
         ExerciseSearchLoaded(:final results) when results.isEmpty =>
-        const Center(
+        Center(
             child: Text(
                 context.l10n.noResults,
                 style: TextStyle(

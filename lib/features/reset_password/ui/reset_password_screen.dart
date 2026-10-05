@@ -60,7 +60,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: AppConstants.space3XL),
-                    const Text(
+                    Text(
                       context.l10n.createNewPassword,
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),

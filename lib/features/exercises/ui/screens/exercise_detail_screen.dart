@@ -278,7 +278,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
   int? _selectedWeekday;
   bool _added = false;
 
-  static const _dayNames = [
+  List<String> get _dayNames => [
     context.l10n.monday, context.l10n.tuesday, context.l10n.wednesday, context.l10n.thursday,
     context.l10n.friday, context.l10n.saturday, context.l10n.sunday,
   ];

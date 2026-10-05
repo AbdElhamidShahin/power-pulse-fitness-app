@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen>
                         SizedBox(width: 12.w),
                         Expanded(
                           child: CaloriesCard(
-                            calories: summary.caloriesConsumed,
+                            calories: summary.caloriesConsumed.round(),
                           ),
                         ),
                       ],

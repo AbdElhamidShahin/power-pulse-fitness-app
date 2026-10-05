@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: TextFormField(
             controller: controller,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: context.l10n.email,
               hintText: 'example@gmail.com',
             ),

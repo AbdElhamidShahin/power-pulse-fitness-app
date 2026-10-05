@@ -14,16 +14,16 @@ class AppBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  static const _items = [
-    _Item('🏠', context.l10n.home),
-    _Item('🏋️', context.l10n.exercises),
-    _Item('🥗', context.l10n.nutrition),
-    _Item('📈', 'تقدمي'),
-    _Item('👤', 'حسابي'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final items = [
+      _Item('🏠', l10n.home),
+      _Item('🏋️', l10n.exercises),
+      _Item('🥗', l10n.nutrition),
+      _Item('📈', l10n.progress),
+      _Item('👤', l10n.profile),
+    ];
     return Container(
       decoration: BoxDecoration(
         color: context.colors.bgSurface,
@@ -37,7 +37,7 @@ class AppBottomNav extends StatelessWidget {
           height: 60.h,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(_items.length, (i) {
+            children: List.generate(items.length, (i) {
               final active = currentIndex == i;
               return Expanded(
                 child: GestureDetector(
@@ -50,12 +50,12 @@ class AppBottomNav extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          _items[i].emoji,
+                          items[i].emoji,
                           style: TextStyle(fontSize: active ? 20.sp : 18.sp),
                         ),
                         SizedBox(height: 2.h),
                         Text(
-                          _items[i].label,
+                          items[i].label,
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 10.sp,

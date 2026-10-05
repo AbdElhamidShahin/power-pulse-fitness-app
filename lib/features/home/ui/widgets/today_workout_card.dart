@@ -61,7 +61,7 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
             _WeekStrip(
               days: plan.days,
               selectedWeekday: _selectedWeekday,
-              dayNamesShort: _dayNamesShort,
+              dayNamesShort: l10n.shortDaysMonFirst,
               onSelect: (wd) => setState(() => _selectedWeekday = wd),
             ),
             SizedBox(height: 12.h),
@@ -69,7 +69,7 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
             // ── Day Card ────────────────────────────────────
             if (selectedDay.isRest)
               _RestDayCard(
-                dayName: l10n.dayNamesSatFirst[selectedDay.weekday - 1],
+                dayName: l10n.dayNamesMonFirst[selectedDay.weekday - 1],
                 isToday: selectedDay.weekday == DateTime.now().weekday,
                 onEdit: () => context.push(AppRouter.workoutPlan),
               )
@@ -82,7 +82,7 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
                   return _WorkoutDayCard(
                     day: selectedDay,
                     isToday: selectedDay.weekday == DateTime.now().weekday,
-                    dayName: l10n.dayNamesSatFirst[selectedDay.weekday - 1],
+                    dayName: l10n.dayNamesMonFirst[selectedDay.weekday - 1],
                     completedToday: completedToday,
                   );
                 },
@@ -184,6 +184,7 @@ class _NoPlantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20.r),

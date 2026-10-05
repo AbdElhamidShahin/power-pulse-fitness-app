@@ -50,7 +50,7 @@ class _MealCardState extends State<MealCard>
     _expanded ? _ctrl.forward() : _ctrl.reverse();
   }
 
-  static const _meta = {
+  Map<MealType, _M> _meta(BuildContext context) => {
     MealType.breakfast: _M(icon: '🌅', name: context.l10n.breakfastLabel, bg: Color(0xFFFFF9E6)),
     MealType.lunch: _M(icon: '☀️', name: context.l10n.lunchLabel, bg: Color(0xFFFFF3CD)),
     MealType.snack: _M(icon: '🍎', name: context.l10n.snackLabel, bg: Color(0xFFFFE5E5)),
@@ -59,7 +59,7 @@ class _MealCardState extends State<MealCard>
 
   @override
   Widget build(BuildContext context) {
-    final meta = _meta[widget.mealType]!;
+    final meta = _meta(context)[widget.mealType]!;
     final isDone = widget.entries.isNotEmpty;
     final totalKcal = widget.entries.fold<double>(0, (s, e) => s + e.calories);
     final names =

@@ -25,7 +25,9 @@ class _PageData {
   final Color color;
 }
 
-const _pages = [
+const _pageCount = 3;
+
+List<_PageData> _buildPages(BuildContext context) => [
   _PageData(
     icon: Icons.fitness_center_rounded,
     title: context.l10n.onboardingTitle1,
@@ -65,7 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _next() {
-    if (_current < _pages.length - 1) {
+    if (_current < _pageCount - 1) {
       _pageCtrl.nextPage(
         duration: AppConstants.durationPage,
         curve: Curves.easeInOut,
@@ -127,8 +129,8 @@ class _IntroPages extends StatelessWidget {
           child: PageView.builder(
             controller: pageCtrl,
             onPageChanged: onPageChanged,
-            itemCount: _pages.length,
-            itemBuilder: (_, i) => _OnboardingPage(page: _pages[i]),
+            itemCount: _pageCount,
+            itemBuilder: (_, i) => _OnboardingPage(page: _buildPages(context)[i]),
           ),
         ),
 
@@ -141,7 +143,7 @@ class _IntroPages extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  _pages.length,
+                  _pageCount,
                   (i) => AnimatedContainer(
                     duration: AppConstants.durationFast,
                     margin: const EdgeInsets.symmetric(horizontal: 3),
@@ -159,7 +161,7 @@ class _IntroPages extends StatelessWidget {
               ),
               const SizedBox(height: AppConstants.spaceXXL),
               PPButton(
-                label: current == _pages.length - 1
+                label: current == _pageCount - 1
                     ? context.l10n.startSetup
                     : context.l10n.next,
                 onPressed: onNext,
@@ -320,7 +322,7 @@ class _SetupFormState extends State<_SetupForm> {
                         keyboardType: TextInputType.number,
                         textDirection: TextDirection.ltr,
                         onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             hintText: '25', suffixText: context.l10n.years),
                       ),
                     ],
