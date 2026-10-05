@@ -42,7 +42,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
           .map((e) => _entryFromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw CacheException(message: 'خطأ في قراءة الوجبات: $e');
+      throw CacheException(message: 'خطأ في قراءة الوجبات');
     }
   }
 
@@ -58,7 +58,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
       );
       AppDataBus.notify();
     } catch (e) {
-      throw CacheException(message: 'خطأ في حفظ الوجبة: $e');
+      throw CacheException(message: 'خطأ في حفظ الوجبة');
     }
   }
 
@@ -73,7 +73,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
       );
       AppDataBus.notify();
     } catch (e) {
-      throw CacheException(message: 'خطأ في حذف الوجبة: $e');
+      throw CacheException(message: 'خطأ في حذف الوجبة');
     }
   }
 
@@ -85,7 +85,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
     try {
       return _prefs.getDouble(_calorieGoalKey) ?? _defaultGoal;
     } catch (e) {
-      throw CacheException(message: 'خطأ في قراءة هدف السعرات: $e');
+      throw CacheException(message: 'خطأ في قراءة هدف السعرات');
     }
   }
 
@@ -95,7 +95,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
       await _prefs.setDouble(_calorieGoalKey, goal);
       AppDataBus.notify();
     } catch (e) {
-      throw CacheException(message: 'خطأ في حفظ هدف السعرات: $e');
+      throw CacheException(message: 'خطأ في حفظ هدف السعرات');
     }
   }
 
@@ -107,7 +107,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
     try {
       return _prefs.getDouble(_waterKey(date)) ?? 0.0;
     } catch (e) {
-      throw CacheException(message: 'خطأ في قراءة كمية المياه: $e');
+      throw CacheException(message: 'خطأ في قراءة كمية المياه');
     }
   }
 
@@ -117,7 +117,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
       await _prefs.setDouble(_waterKey(date), liters.clamp(0.0, 10.0));
       AppDataBus.notify();
     } catch (e) {
-      throw CacheException(message: 'خطأ في حفظ كمية المياه: $e');
+      throw CacheException(message: 'خطأ في حفظ كمية المياه');
     }
   }
 

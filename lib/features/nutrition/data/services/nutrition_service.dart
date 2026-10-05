@@ -123,7 +123,7 @@ final class NutritionServiceImpl implements NutritionService {
     } on DioException catch (e) {
       throw mapDioException(e);
     } catch (e) {
-      throw ServerException(message: 'خطأ في معالجة الـ Barcode: $e');
+      throw const ServerException(message: 'خطأ في معالجة الـ Barcode');
     }
   }
 }

@@ -40,7 +40,8 @@ class _HomeScreenState extends State<HomeScreen>
     super.didChangeDependencies();
     // BUG 8 fix: أعد التحميل لما المستخدم يرجع للشاشة
     // (بعد إضافة وجبة أو تمرين من شاشة تانية)
-    homeRouteObserver.subscribe(this, ModalRoute.of(context)!);
+    final route = ModalRoute.of(context);
+    if (route != null) homeRouteObserver.subscribe(this, route);
   }
 
   @override

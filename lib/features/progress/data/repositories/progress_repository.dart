@@ -131,7 +131,7 @@ final class ProgressRepositoryImpl implements ProgressRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 

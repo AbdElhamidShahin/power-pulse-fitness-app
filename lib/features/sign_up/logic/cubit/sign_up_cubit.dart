@@ -78,11 +78,8 @@ final class SignUpCubit extends Cubit<SignUpState> {
       emit(SignUpSuccess(name: result.name, email: result.email));
     } on AuthException catch (e) {
       emit(SignUpError(_mapError(e.message)));
-    } catch (e) {
-      final msg = e.toString();
-      emit(SignUpError(
-        msg.contains('انتهت مهلة') ? msg : 'فشل التسجيل بحساب جوجل 🚨',
-      ));
+    } catch (_) {
+      emit(const SignUpError('فشل التسجيل بحساب جوجل 🚨'));
     }
   }
 

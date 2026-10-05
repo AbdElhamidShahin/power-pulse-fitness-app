@@ -34,7 +34,7 @@ extension AppFailureX on AppFailure {
   String get userMessage => switch (this) {
         NetworkFailure()    => 'تحقق من اتصال الإنترنت',
         ServerFailure()     => 'خطأ في الخادم، حاول لاحقاً',
-        NotFoundFailure()   => message,
+        NotFoundFailure()   => 'لم يتم العثور على البيانات',
         CacheFailure()      => 'خطأ في التخزين المحلي',
         UnexpectedFailure() => 'حدث خطأ غير متوقع',
       };
@@ -54,7 +54,7 @@ AppFailure mapExceptionToFailure(Exception e) => switch (e) {
                                 message: e.message,
                                 statusCode: e.statusCode,
                               ),
-      _                    => UnexpectedFailure(message: e.toString()),
+      _                    => const UnexpectedFailure(),
     };
 
 // احتفظنا بـ failureMessage للـ backward compat (لو في كود تاني بيستخدمه)

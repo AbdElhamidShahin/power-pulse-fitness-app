@@ -100,7 +100,7 @@ abstract class AppRouter {
       return null;
     },
     debugLogDiagnostics: kDebugMode,
-    observers: [nutritionRouteObserver, progressRouteObserver],
+    observers: [nutritionRouteObserver, progressRouteObserver, homeRouteObserver],
     routes: [
       // ─── Entry choice screen (first launch) ─────────────────
       GoRoute(
@@ -166,7 +166,7 @@ abstract class AppRouter {
                     BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
                   ],
                   child: ExerciseDetailScreen(
-                    exerciseId: state.pathParameters['id']!,
+                    exerciseId: state.pathParameters['id'] ?? '',
                   ),
                 ),
               ),

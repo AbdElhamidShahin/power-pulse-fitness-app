@@ -35,7 +35,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on NetworkException {
       return const Failure(NetworkFailure());
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -50,7 +50,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on ServerException catch (e) {
       return Failure(ServerFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -64,16 +64,19 @@ final class NutritionRepositoryImpl implements NutritionRepository {
         localService.getWaterLiters(date),
       ]);
 
+      final entries = (results[0] as List<dynamic>).cast<MealEntry>();
+      final calorieGoal = (results[1] as num).toDouble();
+      final waterLiters = (results[2] as num).toDouble();
       return Success(DailyNutrition(
         date: date,
-        entries: results[0] as List<MealEntry>,
-        calorieGoal: results[1] as double,
-        waterLiters: results[2] as double,
+        entries: entries,
+        calorieGoal: calorieGoal,
+        waterLiters: waterLiters,
       ));
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -85,7 +88,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -97,7 +100,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -109,7 +112,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -121,7 +124,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -133,7 +136,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 
@@ -145,7 +148,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(UnexpectedFailure(message: e.toString()));
+      return Failure(const UnexpectedFailure());
     }
   }
 }

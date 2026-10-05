@@ -98,24 +98,42 @@ final class NutritionCubit extends Cubit<NutritionState> {
     final prev = state;
     if (prev is! NutritionLoaded) return;
     final next = (prev.daily.waterLiters + _waterStep).clamp(0.0, _waterMax);
-    emit(NutritionLoaded(daily: prev.daily.copyWith(waterLiters: next)));
-    await _repository.saveWaterLiters(next, _today);
+    final result = await _repository.saveWaterLiters(next, _today);
+    if (isClosed) return;
+    switch (result) {
+      case Success():
+        emit(NutritionLoaded(daily: prev.daily.copyWith(waterLiters: next)));
+      case Failure(:final failure):
+        emit(NutritionError(failure.userMessage));
+    }
   }
 
   Future<void> removeWater() async {
     final prev = state;
     if (prev is! NutritionLoaded) return;
     final next = (prev.daily.waterLiters - _waterStep).clamp(0.0, _waterMax);
-    emit(NutritionLoaded(daily: prev.daily.copyWith(waterLiters: next)));
-    await _repository.saveWaterLiters(next, _today);
+    final result = await _repository.saveWaterLiters(next, _today);
+    if (isClosed) return;
+    switch (result) {
+      case Success():
+        emit(NutritionLoaded(daily: prev.daily.copyWith(waterLiters: next)));
+      case Failure(:final failure):
+        emit(NutritionError(failure.userMessage));
+    }
   }
 
   Future<void> setWater(double liters) async {
     final prev = state;
     if (prev is! NutritionLoaded) return;
     final next = liters.clamp(0.0, _waterMax);
-    emit(NutritionLoaded(daily: prev.daily.copyWith(waterLiters: next)));
-    await _repository.saveWaterLiters(next, _today);
+    final result = await _repository.saveWaterLiters(next, _today);
+    if (isClosed) return;
+    switch (result) {
+      case Success():
+        emit(NutritionLoaded(daily: prev.daily.copyWith(waterLiters: next)));
+      case Failure(:final failure):
+        emit(NutritionError(failure.userMessage));
+    }
   }
   // _msg أُزيلت — استخدم AppFailureX.userMessage
 }

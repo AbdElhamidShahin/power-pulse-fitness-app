@@ -123,7 +123,7 @@ class NotificationService {
         await cancelWaterReminders();
       }
     } catch (e) {
-      debugPrint('NotificationService.syncFromPrefs failed: $e');
+      if (kDebugMode) debugPrint('NotificationService.syncFromPrefs failed: $e');
     }
   }
 
@@ -417,7 +417,7 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.time,
       );
     } catch (e) {
-      debugPrint('Failed to schedule notification $id: $e');
+      if (kDebugMode) debugPrint('Failed to schedule notification $id: $e');
     }
   }
 }
