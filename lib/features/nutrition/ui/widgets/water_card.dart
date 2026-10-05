@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,7 +43,7 @@ class WaterCard extends StatelessWidget {
                   Text('💧', style: TextStyle(fontSize: 13.sp)),
                   SizedBox(width: 4.w),
                   Text(
-                    'الماء',
+                    context.l10n.waterLabel,
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 11.sp,

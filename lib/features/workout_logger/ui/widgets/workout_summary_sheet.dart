@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -23,7 +24,7 @@ class WorkoutSummarySheet extends StatelessWidget {
           Icon(Icons.emoji_events_rounded,
               color: AppColors.accent, size: 56),
           const SizedBox(height: AppConstants.spaceL),
-          Text('أحسنت! 💪',
+          Text(context.l10n.greatJob,
               style: Theme.of(context).textTheme.displayMedium),
           const SizedBox(height: AppConstants.spaceS),
           Text('انتهى تمرين "${session.name}"',
@@ -36,22 +37,22 @@ class WorkoutSummarySheet extends StatelessWidget {
             children: [
               _SummaryItem(
                   value: '${session.durationMinutes}',
-                  unit: 'دقيقة',
+                  unit: context.l10n.minute,
                   icon: Icons.timer_rounded,
                   color: AppColors.accent),
               _SummaryItem(
                   value: session.exercises.length.toString(),
-                  unit: 'تمرين',
+                  unit: context.l10n.exerciseUnit,
                   icon: Icons.fitness_center_rounded,
                   color: AppColors.info),
               _SummaryItem(
                   value: session.completedSets.toString(),
-                  unit: 'مجموعة',
+                  unit: context.l10n.setUnit,
                   icon: Icons.check_circle_rounded,
                   color: AppColors.success),
               _SummaryItem(
                   value: session.caloriesBurned.toInt().toString(),
-                  unit: 'سعرة',
+                  unit: context.l10n.kcal,
                   icon: Icons.local_fire_department_rounded,
                   color: AppColors.warning),
             ],
@@ -98,7 +99,7 @@ class WorkoutSummarySheet extends StatelessWidget {
 
           const SizedBox(height: AppConstants.spaceXXL),
           PPButton(
-            label: 'ممتاز! 🎉',
+            label: context.l10n.excellent,
             width: double.infinity,
             onPressed: () {
               // إشعار فوري بخلاص التمرين

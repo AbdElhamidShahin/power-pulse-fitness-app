@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -64,12 +65,12 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('مكتبة التمارين  ',
+                          Text(context.l10n.exerciseLibrary,
                               style: TextStyle(
                                   fontSize: 11,
                                   color: Color(0xFF8A8A8A),
                                   fontFamily: 'Cairo')),
-                          Text('التمارين 🏋️',
+                          Text(context.l10n.qaExercises,
                               style: TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w900,
@@ -111,7 +112,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   if (_isSearching) ...[
                     const SizedBox(height: 12),
                     PPSearchBar(
-                      hint: 'ابحث عن تمرين...',
+                      hint: context.l10n.searchExercise,
                       controller: _searchController,
                       onChanged: (q) =>
                           context.read<ExerciseSearchCubit>().search(q),
@@ -270,7 +271,7 @@ class _SearchResults extends StatelessWidget {
     return BlocBuilder<ExerciseSearchCubit, ExerciseSearchState>(
       builder: (context, state) => switch (state) {
         ExerciseSearchIdle() => const Center(
-            child: Text('ابحث عن تمرين...',
+            child: Text(context.l10n.searchExercise,
                 style:
                 TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
         ExerciseSearchLoading() => const _Shimmer(),
@@ -278,7 +279,7 @@ class _SearchResults extends StatelessWidget {
         ExerciseSearchLoaded(:final results) when results.isEmpty =>
         const Center(
             child: Text(
-                'لا توجد نتائج',
+                context.l10n.noResults,
                 style: TextStyle(
                     color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
         ExerciseSearchLoaded(:final results) => ListView.separated(
@@ -327,7 +328,7 @@ class _ErrorView extends StatelessWidget {
       const SizedBox(height: 16),
       GestureDetector(
         onTap: () => context.read<ExercisesCubit>().loadInitial(),
-        child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
+        child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
       ),
     ]),
   );

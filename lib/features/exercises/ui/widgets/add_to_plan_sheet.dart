@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -77,7 +78,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                 ),
                 const SizedBox(height: 16),
                   Text(
-                  'أضف لأي يوم؟',
+                  context.l10n.addToWhichDay,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 18,
@@ -179,7 +180,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                                 if (!day.isRest)
                                   Text(
                                     alreadyHas
-                                        ? '✓ مضاف بالفعل'
+                                        ? context.l10n.alreadyAdded
                                         : '${day.exercises.length} تمارين',
                                     style: TextStyle(
                                       fontFamily: 'Cairo',
@@ -196,7 +197,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                             Icon(Icons.check_circle_rounded,
                                 color: AppColors.accent, size: 20),
                           if (day.isRest)
-                              Text('راحة',
+                              Text(context.l10n.restLabel,
                                 style: TextStyle(
                                   fontFamily: 'Cairo',
                                   fontSize: 11,
@@ -273,7 +274,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           const Text('💪', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
             Text(
-            'مفيش خطة تمرين بعد',
+            context.l10n.noWorkoutPlan,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 16,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,7 +54,7 @@ class _WeightSheetState extends State<WeightSheet> {
             ),
             SizedBox(height: 20.h),
             Text(
-              'تسجيل الوزن',
+              context.l10n.updateWeight,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 20.sp,
@@ -70,7 +71,7 @@ class _WeightSheetState extends State<WeightSheet> {
               const TextInputType.numberWithOptions(decimal: true),
               style: TextStyle(fontFamily: 'Cairo', fontSize: 16.sp),
               decoration: InputDecoration(
-                labelText: 'الوزن',
+                labelText: context.l10n.weight,
                 suffixText: 'كجم',
                 filled: true,
                 fillColor: context.colors.bgElevated,
@@ -111,7 +112,7 @@ class _WeightSheetState extends State<WeightSheet> {
                     ),
                   )
                       : Text(
-                    'حفظ',
+                    context.l10n.save,
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 16.sp,

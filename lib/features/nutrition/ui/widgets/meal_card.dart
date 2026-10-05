@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,10 +51,10 @@ class _MealCardState extends State<MealCard>
   }
 
   static const _meta = {
-    MealType.breakfast: _M(icon: '🌅', name: 'الإفطار', bg: Color(0xFFFFF9E6)),
-    MealType.lunch: _M(icon: '☀️', name: 'الغداء', bg: Color(0xFFFFF3CD)),
-    MealType.snack: _M(icon: '🍎', name: 'وجبة خفيفة', bg: Color(0xFFFFE5E5)),
-    MealType.dinner: _M(icon: '🌙', name: 'العشاء', bg: Color(0xFFE8F5FF)),
+    MealType.breakfast: _M(icon: '🌅', name: context.l10n.breakfastLabel, bg: Color(0xFFFFF9E6)),
+    MealType.lunch: _M(icon: '☀️', name: context.l10n.lunchLabel, bg: Color(0xFFFFF3CD)),
+    MealType.snack: _M(icon: '🍎', name: context.l10n.snackLabel, bg: Color(0xFFFFE5E5)),
+    MealType.dinner: _M(icon: '🌙', name: context.l10n.dinnerLabel, bg: Color(0xFFE8F5FF)),
   };
 
   @override
@@ -63,7 +64,7 @@ class _MealCardState extends State<MealCard>
     final totalKcal = widget.entries.fold<double>(0, (s, e) => s + e.calories);
     final names =
         widget.entries.map((e) => e.food.displayName).take(3).join('، ');
-    final preview = isDone ? names : 'اضغط لإضافة وجبة';
+    final preview = isDone ? names : context.l10n.tapToAddMeal;
 
     return Column(
       children: [
@@ -180,7 +181,7 @@ class _MealCardState extends State<MealCard>
                             color: AppColors.accent, size: 16.r),
                         SizedBox(width: 4.w),
                         Text(
-                          'إضافة المزيد',
+                          context.l10n.addMoreItems,
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 12.sp,
@@ -225,7 +226,7 @@ class _EntryRow extends StatelessWidget {
                 color: AppColors.danger, size: 18.r),
             SizedBox(width: 6.w),
             Text(
-              'حذف',
+              context.l10n.delete,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 12.sp,
@@ -243,7 +244,7 @@ class _EntryRow extends StatelessWidget {
                 backgroundColor: context.colors.bgSurface,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.r)),
-                title: Text('حذف العنصر؟',
+                title: Text(context.l10n.deleteItemQ,
                     style: TextStyle(
                         fontFamily: 'Cairo',
                         fontWeight: FontWeight.w700,
@@ -264,7 +265,7 @@ class _EntryRow extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(ctx, true),
-                    child: Text('حذف',
+                    child: Text(context.l10n.delete,
                         style: TextStyle(
                             fontFamily: 'Cairo',
                             color: AppColors.danger,

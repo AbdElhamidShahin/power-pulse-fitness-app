@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,20 +28,20 @@ class _PageData {
 const _pages = [
   _PageData(
     icon: Icons.fitness_center_rounded,
-    title: 'مرحباً بك في\nPower Pulse',
-    subtitle: 'تطبيقك المتكامل للياقة البدنية\nتمارين • تغذية • تتبع التقدم',
+    title: context.l10n.onboardingTitle1,
+    subtitle: context.l10n.onboardingSubtitle1,
     color: AppColors.accent,
   ),
   _PageData(
     icon: Icons.restaurant_rounded,
-    title: 'تتبع تغذيتك\nبدقة',
-    subtitle: 'آلاف الأطعمة متاحة\nتتبع السعرات والماكروز يومياً',
+    title: context.l10n.onboardingTitle2,
+    subtitle: context.l10n.onboardingSubtitle2,
     color: AppColors.info,
   ),
   _PageData(
     icon: Icons.bar_chart_rounded,
-    title: 'شاهد تقدمك\nيوماً بيوم',
-    subtitle: 'رسوم بيانية واضحة\nتوضح رحلتك نحو هدفك',
+    title: context.l10n.onboardingTitle3,
+    subtitle: context.l10n.onboardingSubtitle3,
     color: AppColors.warning,
   ),
 ];
@@ -115,7 +116,7 @@ class _IntroPages extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: TextButton(
             onPressed: onSkip,
-            child: Text('تخطي',
+            child: Text(context.l10n.skip,
                 style: AppTextStyles.labelMedium
                     .copyWith(color: context.colors.textMuted)),
           ),
@@ -159,8 +160,8 @@ class _IntroPages extends StatelessWidget {
               const SizedBox(height: AppConstants.spaceXXL),
               PPButton(
                 label: current == _pages.length - 1
-                    ? 'ابدأ الإعداد'
-                    : 'التالي',
+                    ? context.l10n.startSetup
+                    : context.l10n.next,
                 onPressed: onNext,
               ),
             ],
@@ -280,10 +281,10 @@ class _SetupFormState extends State<_SetupForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('أخبرنا عن نفسك',
+                  Text(context.l10n.tellUsAboutYourself,
                       style: Theme.of(context).textTheme.displayMedium),
                   const SizedBox(height: AppConstants.spaceS),
-                  Text('لنحسب أهدافك اليومية بدقة',
+                  Text(context.l10n.calculateGoalsAccurately,
                       style: AppTextStyles.bodyMedium
                           .copyWith(color: context.colors.textMuted)),
                 ],
@@ -297,13 +298,13 @@ class _SetupFormState extends State<_SetupForm> {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Name
-                _Label('الاسم'),
+                _Label(context.l10n.nameLabel),
                 const SizedBox(height: AppConstants.spaceS),
                 TextField(
                   controller: _nameCtrl,
                   textDirection: TextDirection.rtl,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(hintText: 'اسمك'),
+                  decoration: InputDecoration(hintText: context.l10n.yourNameHint),
                 ),
                 const SizedBox(height: AppConstants.spaceL),
 
@@ -312,7 +313,7 @@ class _SetupFormState extends State<_SetupForm> {
                   Expanded(child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _Label('العمر'),
+                      _Label(context.l10n.ageLabel),
                       const SizedBox(height: AppConstants.spaceS),
                       TextField(
                         controller: _ageCtrl,
@@ -320,7 +321,7 @@ class _SetupFormState extends State<_SetupForm> {
                         textDirection: TextDirection.ltr,
                         onChanged: (_) => setState(() {}),
                         decoration: const InputDecoration(
-                            hintText: '25', suffixText: 'سنة'),
+                            hintText: '25', suffixText: context.l10n.years),
                       ),
                     ],
                   )),

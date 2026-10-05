@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,7 +59,7 @@ class EntryChoiceScreen extends StatelessWidget {
               const SizedBox(height: AppConstants.spaceM),
 
               Text(
-                'مرحباً بك 👋',
+                context.l10n.welcomeTitle,
                 style: AppTextStyles.displayMedium.copyWith(
                   color: context.colors.textPrimary,
                   height: 1.2,
@@ -68,7 +69,7 @@ class EntryChoiceScreen extends StatelessWidget {
               const SizedBox(height: AppConstants.spaceS),
 
               Text(
-                'ابدأ رحلتك نحو اللياقة البدنية',
+                context.l10n.startFitnessJourney,
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: context.colors.textMuted,
                 ),
@@ -81,10 +82,10 @@ class EntryChoiceScreen extends StatelessWidget {
                 icon: Icons.cloud_done_rounded,
                 iconColor: AppColors.accent,
                 iconBg: AppColors.accentDim,
-                title: 'إنشاء حساب / تسجيل الدخول',
+                title: context.l10n.createAccountLogin,
                 description:
                     'أنشئ حسابًا أو سجّل دخولك لحفظ بياناتك (الملف الشخصي، التقدم، التمارين، التغذية) بأمان على السحابة واستعادتها متى أعدت تثبيت التطبيق.',
-                actionLabel: 'متابعة بحساب',
+                actionLabel: context.l10n.continueWithAccount,
                 onTap: () => context.go(AppRouter.login),
                 isPrimary: true,
               ),
@@ -96,10 +97,10 @@ class EntryChoiceScreen extends StatelessWidget {
                 icon: Icons.person_outline_rounded,
                 iconColor: context.colors.textMuted,
                 iconBg: context.colors.bgSurface,
-                title: 'متابعة كضيف',
+                title: context.l10n.continueAsGuest,
                 description:
                     'ستُحفظ بياناتك على هذا الجهاز فقط. يمكنك إنشاء حساب لاحقًا لحفظها على السحابة واستعادتها.',
-                actionLabel: 'متابعة بدون حساب',
+                actionLabel: context.l10n.continueAsGuestAction,
                 onTap: () => _continueAsGuest(context),
                 isPrimary: false,
               ),

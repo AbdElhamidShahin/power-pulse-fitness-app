@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -23,7 +24,7 @@ class ExercisesHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'مكتبة التمارين',
+              context.l10n.exerciseLibrary,
               style: TextStyle(
                 fontSize: 11.sp,
                 color: Color(0xFF8A8A8A),
@@ -31,7 +32,7 @@ class ExercisesHeader extends StatelessWidget {
               ),
             ),
             Text(
-              'التمارين 🏋️',
+              context.l10n.qaExercises,
               style: TextStyle(
                 fontSize: 26.sp,
                 fontWeight: FontWeight.w900,

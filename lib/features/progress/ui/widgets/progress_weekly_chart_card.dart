@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -22,7 +23,7 @@ class ProgressWeeklyChartCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'تمارين هذا الأسبوع',
+            context.l10n.weeklyWorkouts,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 16.sp,
@@ -47,7 +48,7 @@ class _WeeklyBarChart extends StatelessWidget {
 
   final List<ChartPoint> points;
   // BUG 9 fix: السبت أول (يمين) → الجمعة آخر (شمال)
-  static const _days = ['ج', 'خ', 'ر', 'ث', 'ن', 'ح', 'س'];
+  // Day letters loaded from l10n
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +88,7 @@ class _WeeklyBarChart extends StatelessWidget {
             ),
             SizedBox(height: 6.h),
             Text(
-              _days[i],
+              context.l10n.dayLettersFriFirst[i],
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 11.sp,

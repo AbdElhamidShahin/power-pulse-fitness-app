@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,6 +24,7 @@ class DailyGoalsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final workoutMins = () {
       final state = context.watch<HomeCubit>().state;
       if (state is HomeLoaded)
@@ -44,7 +46,7 @@ class DailyGoalsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'الأهداف اليومية',
+            l10n.dailyGoals,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 14.sp,
@@ -63,28 +65,28 @@ class DailyGoalsCard extends StatelessWidget {
                   children: [
                     _GoalRow(
                       dot: AppColors.accent,
-                      label: 'الحركة',
+                      label: l10n.movement,
                       value: calories.toInt(),
                       goal: caloriesGoal.toInt(),
-                      unit: 'سعر',
+                      unit: l10n.kcal,
                     ),
                     SizedBox(height: 12.h),
                     _GoalRow(
                       dot: AppColors.danger,
-                      label: 'التمرين',
+                      label: l10n.exerciseLabel,
                       value: workoutMins.toInt(),
                       goal: 60,
-                      unit: 'دقيقة',
+                      unit: l10n.minute,
                       // يظهر ✓ لو حقق الهدف
                       done: workoutMins >= 60,
                     ),
                     SizedBox(height: 12.h),
                     _GoalRow(
                       dot: AppColors.info,
-                      label: 'بروتين',
+                      label: l10n.protein,
                       value: protein.toInt(),
                       goal: 150,
-                      unit: 'جم',
+                      unit: l10n.gram,
                     ),
                   ],
                 ),

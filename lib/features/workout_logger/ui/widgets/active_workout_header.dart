@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -69,21 +70,21 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
               context: context,
               builder: (_) => AlertDialog(
                 backgroundColor: context.colors.bgSurface,
-                title: Text('إلغاء التمرين؟',
+                title: Text(context.l10n.cancelWorkoutQ,
                     style: Theme.of(context).textTheme.headlineSmall),
-                content: Text('سيتم حذف التمرين الحالي',
+                content: Text(context.l10n.cancelWorkoutConfirm,
                     style: AppTextStyles.bodyMedium),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('لا', style: AppTextStyles.accentLabel),
+                    child: Text(context.l10n.no, style: AppTextStyles.accentLabel),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                       widget.onCancel();
                     },
-                    child: Text('نعم',
+                    child: Text(context.l10n.yes,
                         style: AppTextStyles.labelMedium
                             .copyWith(color: AppColors.danger)),
                   ),
@@ -98,7 +99,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                 color: AppColors.dangerDim,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
-              child: Text('إلغاء',
+              child: Text(context.l10n.cancel,
                   style: AppTextStyles.labelSmall
                       .copyWith(color: AppColors.danger)),
             ),
@@ -152,7 +153,7 @@ class WorkoutBottomBar extends StatelessWidget {
                     Icon(Icons.add_rounded,
                         color: context.colors.textMuted, size: 20),
                     const SizedBox(width: AppConstants.spaceS),
-                    Text('إضافة تمرين',
+                    Text(context.l10n.addExercise,
                         style: AppTextStyles.labelMedium
                             .copyWith(color: context.colors.textMuted)),
                   ],
@@ -171,7 +172,7 @@ class WorkoutBottomBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
                 ),
               ),
-              child: Text('إنهاء التمرين ✅',
+              child: Text(context.l10n.finishWorkout,
                   style: AppTextStyles.labelMedium
                       .copyWith(color: AppColors.textOnAccent)),
             ),

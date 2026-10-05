@@ -1,21 +1,23 @@
+/// App-wide string constants (English only).
+/// UI strings that need localization → use context.l10n instead.
 abstract class AppStrings {
   AppStrings._();
 
-  // ─── App ───────────────────────────────────────────────────
+  // ─── App ────────────────────────────────────────────────────
   static const String appName = 'Power Pulse';
 
-  // ─── Muscle Groups ─────────────────────────────────────────
-  static const String muscleChest = 'صدر';
-  static const String muscleBack = 'ظهر';
-  static const String muscleLegs = 'أرجل';
-  static const String muscleShoulder = 'كتف';
-  static const String muscleArms = 'أذرع';
-  static const String muscleCore = 'بطن';
-  static const String muscleCardio = 'كارديو';
+  // ─── Muscle Groups (English keys for API mapping) ───────────
+  static const String muscleChest    = 'chest';
+  static const String muscleBack     = 'back';
+  static const String muscleLegs     = 'legs';
+  static const String muscleShoulder = 'shoulders';
+  static const String muscleArms     = 'upper arms';
+  static const String muscleCore     = 'core';
+  static const String muscleCardio   = 'cardio';
 
-  // ─── Levels ────────────────────────────────────────────────
-  static const String levelBeginner = 'مبتدئ';
-  static const String levelIntermediate = 'متوسط';
-  static const String levelAdvanced = 'متقدم';
-  static const String level = 'مستوى';
+  // ─── Levels (English keys for API mapping) ──────────────────
+  static const String levelBeginner    = 'beginner';
+  static const String levelIntermediate = 'intermediate';
+  static const String levelAdvanced    = 'advanced';
+  static const String level            = 'level';
 }

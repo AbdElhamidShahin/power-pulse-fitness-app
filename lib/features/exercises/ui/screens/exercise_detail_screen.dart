@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -151,7 +152,7 @@ class _DetailContent extends StatelessWidget {
               const SizedBox(height: AppConstants.spaceXXL),
 
               if (muscles.isNotEmpty) ...[
-                Text('العضلات الثانوية',
+                Text(context.l10n.secondaryMuscles,
                     style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: AppConstants.spaceM),
                 Wrap(
@@ -170,7 +171,7 @@ class _DetailContent extends StatelessWidget {
 
               // Instructions
               if (steps.isNotEmpty) ...[
-                Text('كيفية الأداء',
+                Text(context.l10n.howToPerform,
                     style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: AppConstants.spaceL),
                 ...steps.asMap().entries.map(
@@ -219,7 +220,7 @@ class _DetailContent extends StatelessWidget {
               const SizedBox(height: AppConstants.space3XL),
 
               PPButton(
-                label: 'أضف للخطة',
+                label: context.l10n.addToPlan,
                 onPressed: () => _showAddToPlanSheet(context, exercise),
                 icon: Icons.add_rounded,
               ),
@@ -278,8 +279,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
   bool _added = false;
 
   static const _dayNames = [
-    'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس',
-    'الجمعة', 'السبت', 'الأحد',
+    context.l10n.monday, context.l10n.tuesday, context.l10n.wednesday, context.l10n.thursday,
+    context.l10n.friday, context.l10n.saturday, context.l10n.sunday,
   ];
 
   @override
@@ -325,7 +326,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'أضف لأي يوم؟',
+                  context.l10n.addToWhichDay,
                   style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 18,
                     fontWeight: FontWeight.w900, color: context.colors.textPrimary,
@@ -404,7 +405,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                         color: AppColors.accentDim,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: const Text('اليوم',
+                                      child: Text(context.l10n.today,
                                           style: TextStyle(
                                             fontFamily: 'Cairo', fontSize: 10,
                                             color: AppColors.accent,
@@ -416,7 +417,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                 if (!day.isRest)
                                   Text(
                                     alreadyHas
-                                        ? '✓ مضاف بالفعل'
+                                        ? context.l10n.alreadyAdded
                                         : '${day.exercises.length} تمارين',
                                     style: TextStyle(
                                       fontFamily: 'Cairo', fontSize: 11,
@@ -432,7 +433,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                             Icon(Icons.check_circle_rounded,
                                 color: AppColors.accent, size: 20),
                           if (day.isRest)
-                              Text('راحة',
+                              Text(context.l10n.restLabel,
                                 style: TextStyle(
                                   fontFamily: 'Cairo', fontSize: 11,
                                   color: context.colors.textMuted,
@@ -508,7 +509,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
           const Text('💪', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
             Text(
-            'مفيش خطة تمرين بعد',
+            context.l10n.noWorkoutPlan,
             style: TextStyle(
               fontFamily: 'Cairo', fontSize: 16,
               fontWeight: FontWeight.w900, color: context.colors.textPrimary,

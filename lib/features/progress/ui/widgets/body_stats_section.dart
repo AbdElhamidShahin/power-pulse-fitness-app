@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,10 +43,10 @@ class BodyStatsSection extends StatelessWidget {
     // تصنيف الوزن
     final bmiCategory = bmi == null
         ? '--'
-        : bmi < 18.5 ? 'نقص في الوزن'
-        : bmi < 25.0 ? 'وزن طبيعي ✓'
-        : bmi < 30.0 ? 'زيادة في الوزن'
-        : 'سمنة';
+        : bmi < 18.5 ? context.l10n.underweight
+        : bmi < 25.0 ? context.l10n.normalWeight
+        : bmi < 30.0 ? context.l10n.overweight
+        : context.l10n.obese;
 
     final bmiColor = bmi == null
         ? context.colors.textMuted
@@ -60,7 +61,7 @@ class BodyStatsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'قياسات الجسم',
+              context.l10n.bodyMeasurements,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 14.sp,
@@ -72,7 +73,7 @@ class BodyStatsSection extends StatelessWidget {
             GestureDetector(
               onTap: () => _showWeightSheet(context),
               child: Text(
-                'تحديث الوزن',
+                context.l10n.updateWeight,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 14.sp,
@@ -88,7 +89,7 @@ class BodyStatsSection extends StatelessWidget {
         // ── الوزن ──────────────────────────────────────────────
         BodyStatRow(
           emoji: '⚖️',
-          label: 'الوزن',
+          label: context.l10n.weight,
           value: currentWeight != null
               ? '${currentWeight.toStringAsFixed(1)} كجم'
               : '--',
@@ -104,7 +105,7 @@ class BodyStatsSection extends StatelessWidget {
         // ── الطول — من الـ profile الحقيقي ────────────────────
         BodyStatRow(
           emoji: '📏',
-          label: 'الطول',
+          label: context.l10n.height,
           value: profile != null
               ? '${profile.heightCm.toInt()} سم'
               : '-- سم',
@@ -114,7 +115,7 @@ class BodyStatsSection extends StatelessWidget {
         // ── BMI — حقيقي ────────────────────────────────────────
         BodyStatRow(
           emoji: '🧮',
-          label: 'مؤشر كتلة الجسم',
+          label: context.l10n.bmiLabel,
           value: bmi != null ? bmi.toStringAsFixed(1) : '--',
           change: bmiCategory,
           changeColor: bmiColor,

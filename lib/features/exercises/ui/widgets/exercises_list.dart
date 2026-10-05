@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,27 +39,27 @@ class _LoadedList extends StatelessWidget {
   String _translateBodyPart(String englishName) {
     switch (englishName.toLowerCase()) {
       case 'all':
-        return 'الكل';
+        return context.l10n.all;
       case 'back':
-        return 'الظهر';
+        return context.l10n.muscleBack;
       case 'cardio':
-        return 'كارديو';
+        return context.l10n.muscleCardio;
       case 'chest':
-        return 'الصدر';
+        return context.l10n.muscleChest;
       case 'lower arms':
-        return 'الساعدين';
+        return context.l10n.forearms;
       case 'lower legs':
-        return 'السمانة / الساق';
+        return context.l10n.calves;
       case 'neck':
-        return 'الرقبة';
+        return context.l10n.neck;
       case 'shoulders':
-        return 'الكتفين';
+        return context.l10n.muscleShoulder;
       case 'upper arms':
-        return 'الباي والذراع';
+        return context.l10n.muscleArms;
       case 'upper legs':
-        return 'الفخذين';
+        return context.l10n.upperLegs;
       case 'waist':
-        return 'الوسط / البطن';
+        return context.l10n.muscleCore;
       default:
         return englishName;
     }
@@ -169,7 +170,7 @@ class _ErrorView extends StatelessWidget {
         SizedBox(height: 16.h),
         GestureDetector(
           onTap: () => context.read<ExercisesCubit>().loadInitial(),
-          child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
+          child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
         ),
       ],
     ),

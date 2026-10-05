@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import '../../../../../core/router/route_observers.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -98,7 +99,7 @@ class _LoadedView extends StatelessWidget {
                   child: ProgressStatCard(
                     emoji: '🔥',
                     value: summary.currentStreak.toString(),
-                    label: 'يوم متتالي',
+                    label: context.l10n.consecutiveDay,
                     valueColor: AppColors.warning,
                   ),
                 ),
@@ -107,7 +108,7 @@ class _LoadedView extends StatelessWidget {
                   child: ProgressStatCard(
                     emoji: '🏋️',
                     value: summary.totalWorkouts.toString(),
-                    label: 'تمرين',
+                    label: context.l10n.exerciseUnit,
                     valueColor: AppColors.accent,
                   ),
                 ),
@@ -122,7 +123,7 @@ class _LoadedView extends StatelessWidget {
                     value: summary.totalCaloriesBurned > 999
                         ? '${(summary.totalCaloriesBurned / 1000).toStringAsFixed(0)},${(summary.totalCaloriesBurned % 1000).toInt().toString().padLeft(3, '0')}'
                         : summary.totalCaloriesBurned.toInt().toString(),
-                    label: 'إجمالي السعرات',
+                    label: context.l10n.totalCalories,
                     valueColor: AppColors.danger,
                     valueFontSize: 22,
                   ),
@@ -132,7 +133,7 @@ class _LoadedView extends StatelessWidget {
                   child: ProgressStatCard(
                     emoji: '⏱',
                     value: '${totalHours}h',
-                    label: 'وقت النشاط',
+                    label: context.l10n.activeTime,
                     valueColor: AppColors.info,
                   ),
                 ),
@@ -160,7 +161,7 @@ class _HeaderSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'رحلتك الرياضية',
+          context.l10n.sportsJourney,
           style: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 11.sp,
@@ -171,7 +172,7 @@ class _HeaderSection extends StatelessWidget {
         ),
         SizedBox(height: 2.h),
         Text(
-          'تقدمي 📈',
+          context.l10n.progressTitle,
           style: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 28.sp,
@@ -212,7 +213,7 @@ class _ErrorView extends StatelessWidget {
         SizedBox(height: 16.h),
         GestureDetector(
           onTap: () => context.read<ProgressCubit>().load(),
-          child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
+          child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
         ),
       ],
     ),

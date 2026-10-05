@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -96,7 +97,7 @@ class DayDetailState extends State<DayDetail> {
                   ],
                 ),
                 Text(
-                  day.isRest ? 'يوم راحة' : '${day.exercises.length} تمارين',
+                  day.isRest ? context.l10n.restDay : '${day.exercises.length} تمارين',
                   style: AppTextStyles.bodySmall
                       .copyWith(color: context.colors.textMuted),
                 ),
@@ -156,7 +157,7 @@ class DayDetailState extends State<DayDetail> {
               children: [
                 const Text('😴', style: TextStyle(fontSize: 40)),
                 const SizedBox(height: AppConstants.spaceM),
-                Text('يوم راحة', style: AppTextStyles.labelLarge),
+                Text(context.l10n.restDay, style: AppTextStyles.labelLarge),
                 const SizedBox(height: AppConstants.spaceS),
                 Text('اضغط على "راحة" أعلاه لتحويله ليوم تمرين',
                     style: AppTextStyles.bodySmall
@@ -293,7 +294,7 @@ class DayDetailState extends State<DayDetail> {
                   Icon(Icons.add_rounded,
                       color: AppColors.accent, size: 20),
                   const SizedBox(width: AppConstants.spaceS),
-                  Text('إضافة تمرين',
+                  Text(context.l10n.addExercise,
                       style: AppTextStyles.labelMedium
                           .copyWith(color: AppColors.accent)),
                 ],

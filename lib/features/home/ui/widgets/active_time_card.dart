@@ -1,50 +1,51 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
 
 class ActiveTimeCard extends StatelessWidget {
   const ActiveTimeCard({super.key, required this.minutes});
-
   final int minutes;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 14.h, 24.w, 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: context.colors.bgDark,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(18.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'وقت النشاط',
+            l10n.activeTime,
             style: TextStyle(
               fontFamily: 'Cairo',
-              fontSize: 14.sp,
-              color: Color(0xFF888888),
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            '$minutes',
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 30.sp,
-              fontWeight: FontWeight.w900,
-              color: AppColors.accent,
-              height: 1.0,
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF888888),
             ),
           ),
           SizedBox(height: 4.h),
           Text(
-            'دقيقة اليوم',
+            '$minutes',
             style: TextStyle(
               fontFamily: 'Cairo',
-              fontSize: 14.sp,
-              color: Color(0xFF888888),
+              fontSize: 28.sp,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              height: 1.0,
+            ),
+          ),
+          Text(
+            l10n.minutesToday,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 11.sp,
+              color: AppColors.accent,
             ),
           ),
         ],

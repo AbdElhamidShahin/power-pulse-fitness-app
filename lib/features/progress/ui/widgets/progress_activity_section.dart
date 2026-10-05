@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -16,7 +17,7 @@ class ProgressActivitySection extends StatelessWidget {
   // BUG 9 fix: التقويم المصري — السبت أول الأسبوع
   // weekday: Mon=1..Sat=6..Sun=7
   static const Map<int, String> _dayLetterMap = {
-    1: 'ن', 2: 'ث', 3: 'ر', 4: 'خ', 5: 'ج', 6: 'س', 7: 'ح',
+    // Day letters now come from l10n
   };
 
   @override
@@ -37,7 +38,7 @@ class ProgressActivitySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'نشاطك اليومي',
+            context.l10n.dailyActivity,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 15.sp,
@@ -47,7 +48,7 @@ class ProgressActivitySection extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
           Text(
-            'من عداد الخطوات والتغذية وخطة التمرين',
+            context.l10n.fromStepsAndNutrition,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11.sp,
@@ -63,7 +64,7 @@ class ProgressActivitySection extends StatelessWidget {
                 child: _MiniStat(
                   emoji: '👟',
                   value: _fmt(summary.avgSteps.toDouble()),
-                  label: 'متوسط الخطوات',
+                  label: context.l10n.avgSteps,
                   color: AppColors.accent,
                 ),
               ),
@@ -72,7 +73,7 @@ class ProgressActivitySection extends StatelessWidget {
                 child: _MiniStat(
                   emoji: '🍽',
                   value: _fmt(summary.avgCaloriesIn),
-                  label: 'متوسط السعرات',
+                  label: context.l10n.avgCalories,
                   color: AppColors.warning,
                 ),
               ),
@@ -81,7 +82,7 @@ class ProgressActivitySection extends StatelessWidget {
                 child: _MiniStat(
                   emoji: '💧',
                   value: '${summary.avgWaterLiters.toStringAsFixed(1)} ل',
-                  label: 'متوسط المياه',
+                  label: context.l10n.avgWater,
                   color: AppColors.info,
                 ),
               ),
@@ -94,7 +95,7 @@ class ProgressActivitySection extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'التزامك بخطة التمرين (آخر 7 أيام)',
+                  context.l10n.workoutPlanCommitment,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 12.sp,
@@ -130,7 +131,7 @@ class ProgressActivitySection extends StatelessWidget {
           // ─── آخر 7 أيام ────────────────────────────────
           SizedBox(height: 16.h),
           Text(
-            'آخر 7 أيام',
+            context.l10n.last7Days,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 12.sp,
@@ -143,7 +144,7 @@ class ProgressActivitySection extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 8.h),
               child: Text(
-                'سجّل وجباتك ومشي النهارده وهتلاقي نشاطك هنا 👌',
+                context.l10n.logMealsAndSteps,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 11.sp,

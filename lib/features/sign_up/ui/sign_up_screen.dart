@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -113,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('الاسم الكامل'),
+                      _FieldLabel(context.l10n.name),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _nameCtrl,
@@ -121,13 +122,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.person_outline_rounded,
                         textDirection: TextDirection.rtl,
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'أدخل اسمك';
-                          if (v.trim().length < 2) return 'الاسم قصير جداً';
+                          if (v == null || v.trim().isEmpty) return context.l10n.enterFullName;
+                          if (v.trim().length < 2) return context.l10n.nameTooShort;
                           return null;
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('البريد الإلكتروني'),
+                      _FieldLabel(context.l10n.email),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _emailCtrl,
@@ -135,13 +136,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أدخل بريدك الإلكتروني';
-                          if (!AppRegex.isEmailValid(v)) return 'بريد إلكتروني غير صحيح';
+                          if (v == null || v.isEmpty) return context.l10n.enterEmail;
+                          if (!AppRegex.isEmailValid(v)) return context.l10n.invalidEmail;
                           return null;
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('كلمة المرور'),
+                      _FieldLabel(context.l10n.password),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _passCtrl,
@@ -159,13 +160,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أدخل كلمة المرور';
-                          if (!AppRegex.hasMinLength(v)) return '8 أحرف على الأقل';
+                          if (v == null || v.isEmpty) return context.l10n.enterPassword;
+                          if (!AppRegex.hasMinLength(v)) return context.l10n.atLeast8Chars;
                           return null;
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('تأكيد كلمة المرور'),
+                      _FieldLabel(context.l10n.confirmPassword),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _confirmPassCtrl,
@@ -183,8 +184,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أكّد كلمة المرور';
-                          if (v != _passCtrl.text) return 'كلمتا المرور غير متطابقتين';
+                          if (v == null || v.isEmpty) return context.l10n.confirmPasswordHint;
+                          if (v != _passCtrl.text) return context.l10n.passwordsMismatch;
                           return null;
                         },
                       ),
@@ -197,7 +198,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // ── Create account button ──────────────────────────
                 BlocBuilder<SignUpCubit, SignUpState>(
                   builder: (context, state) => PPButton(
-                    label: 'إنشاء الحساب',
+                    label: context.l10n.createAccount,
                     onPressed: _submit,
                     isLoading: state is SignUpLoading,
                   ),
@@ -214,7 +215,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 BlocBuilder<SignUpCubit, SignUpState>(
                   builder: (context, state) => _GoogleButton(
                     isLoading: state is SignUpLoading,
-                    label: 'التسجيل بحساب جوجل',
+                    label: context.l10n.signUpWithGoogle,
                     onTap: () => context.read<SignUpCubit>().signUpWithGoogle(),
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,7 +40,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           if (state is ResetPasswordSuccess) {
             AppStartup.clearPasswordRecoveryPending();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('تم تغيير كلمة المرور بنجاح ✅')),
+              SnackBar(content: Text(context.l10n.passwordChangedSuccess)),
             );
             context.go(AppRouter.login);
           } else if (state is ResetPasswordError) {
@@ -49,7 +50,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           }
         },
         child: Scaffold(
-          appBar: AppBar(title: const Text('تغيير كلمة المرور')),
+          appBar: AppBar(title: Text(context.l10n.changePassword)),
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(AppConstants.screenPaddingH),
@@ -60,25 +61,25 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   children: [
                     const SizedBox(height: AppConstants.space3XL),
                     const Text(
-                      'أنشئ كلمة مرور جديدة',
+                      context.l10n.createNewPassword,
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: AppConstants.spaceS),
-                    const Text('استخدم كلمة مرور قوية لا تقل عن 8 أحرف.'),
+                    Text(context.l10n.useStrongPassword),
                     const SizedBox(height: AppConstants.spaceXXL),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _hidden,
                       decoration: InputDecoration(
-                        labelText: 'كلمة المرور الجديدة',
+                        labelText: context.l10n.newPassword,
                         suffixIcon: IconButton(
                           onPressed: () => setState(() => _hidden = !_hidden),
                           icon: Icon(_hidden ? Icons.visibility_off : Icons.visibility),
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'أدخل كلمة المرور';
-                        if (!AppRegex.hasMinLength(value)) return '8 أحرف على الأقل';
+                        if (value == null || value.isEmpty) return context.l10n.enterPassword;
+                        if (!AppRegex.hasMinLength(value)) return context.l10n.atLeast8Chars;
                         return null;
                       },
                     ),
@@ -87,14 +88,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       controller: _confirmController,
                       obscureText: _confirmHidden,
                       decoration: InputDecoration(
-                        labelText: 'تأكيد كلمة المرور',
+                        labelText: context.l10n.confirmPassword,
                         suffixIcon: IconButton(
                           onPressed: () => setState(() => _confirmHidden = !_confirmHidden),
                           icon: Icon(_confirmHidden ? Icons.visibility_off : Icons.visibility),
                         ),
                       ),
                       validator: (value) {
-                        if (value != _passwordController.text) return 'كلمتا المرور غير متطابقتين';
+                        if (value != _passwordController.text) return context.l10n.passwordsMismatch;
                         return null;
                       },
                     ),
@@ -115,7 +116,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
-                            : const Text('حفظ كلمة المرور'),
+                            : Text(context.l10n.savePassword),
                       ),
                     ),
                   ],

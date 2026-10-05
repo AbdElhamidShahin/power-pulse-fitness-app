@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,20 +22,13 @@ class TodayWorkoutCard extends StatefulWidget {
 class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
   int _selectedWeekday = DateTime.now().weekday;
 
-  static const _dayNamesShort = ['س', 'أح', 'إث', 'ث', 'أر', 'خ', 'ج'];
+  // Day names are now loaded from l10n in build()
 
-  static const _dayNamesFull = [
-    'السبت',
-    'الأحد',
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-  ];
+  // Day names loaded from l10n
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return BlocBuilder<WorkoutPlanCubit, WorkoutPlanState>(
       builder: (context, state) {
         if (state is WorkoutPlanEmpty || state is WorkoutPlanInitial) {
@@ -75,7 +69,7 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
             // ── Day Card ────────────────────────────────────
             if (selectedDay.isRest)
               _RestDayCard(
-                dayName: _dayNamesFull[selectedDay.weekday - 1],
+                dayName: l10n.dayNamesSatFirst[selectedDay.weekday - 1],
                 isToday: selectedDay.weekday == DateTime.now().weekday,
                 onEdit: () => context.push(AppRouter.workoutPlan),
               )
@@ -88,7 +82,7 @@ class _TodayWorkoutCardState extends State<TodayWorkoutCard> {
                   return _WorkoutDayCard(
                     day: selectedDay,
                     isToday: selectedDay.weekday == DateTime.now().weekday,
-                    dayName: _dayNamesFull[selectedDay.weekday - 1],
+                    dayName: l10n.dayNamesSatFirst[selectedDay.weekday - 1],
                     completedToday: completedToday,
                   );
                 },
@@ -202,7 +196,7 @@ class _NoPlantCard extends StatelessWidget {
         children: [
           Text('💪', style: TextStyle(fontSize: 32.sp)),
           SizedBox(height: 8.h),
-          Text('ابدأ بإعداد خطة الأسبوع',
+          Text(l10n.startWeeklySetup,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 15.sp,
@@ -210,7 +204,7 @@ class _NoPlantCard extends StatelessWidget {
                 color: context.colors.textPrimary,
               )),
           SizedBox(height: 4.h),
-          Text('حدد تمارينك لكل يوم ويوم الراحة مرة واحدة',
+          Text(l10n.selectExercisesForEachDay,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 12.sp,
@@ -228,7 +222,7 @@ class _NoPlantCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14.r),
               ),
               alignment: Alignment.center,
-              child: Text('إعداد الخطة الأسبوعية',
+              child: Text(l10n.setupWeeklyPlan,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 13.sp,

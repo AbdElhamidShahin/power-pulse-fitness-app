@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,19 +50,19 @@ class _LoginScreenState extends State<LoginScreen> {
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('استعادة كلمة المرور'),
+        title: Text(context.l10n.recoverPassword),
         content: Form(
           key: formKey,
           child: TextFormField(
             controller: controller,
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(
-              labelText: 'البريد الإلكتروني',
+              labelText: context.l10n.email,
               hintText: 'example@gmail.com',
             ),
             validator: (value) {
-              if (value == null || value.trim().isEmpty) return 'أدخل بريدك الإلكتروني';
-              if (!AppRegex.isEmailValid(value.trim())) return 'بريد إلكتروني غير صحيح';
+              if (value == null || value.trim().isEmpty) return context.l10n.enterEmail;
+              if (!AppRegex.isEmailValid(value.trim())) return context.l10n.invalidEmail;
               return null;
             },
           ),
@@ -69,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('إلغاء'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -79,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     email: controller.text.trim(),
                   );
             },
-            child: const Text('إرسال الرابط'),
+            child: Text(context.l10n.sendLink),
           ),
         ],
       ),
@@ -140,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('البريد الإلكتروني'),
+                      _FieldLabel(context.l10n.email),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _emailCtrl,
@@ -149,14 +150,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         icon: Icons.alternate_email_rounded,
                         validator: (v) {
                           if (v == null || v.isEmpty)
-                            return 'أدخل بريدك الإلكتروني';
+                            return context.l10n.enterEmail;
                           if (!AppRegex.isEmailValid(v))
-                            return 'بريد إلكتروني غير صحيح';
+                            return context.l10n.invalidEmail;
                           return null;
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('كلمة المرور'),
+                      _FieldLabel(context.l10n.password),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _passCtrl,
@@ -175,9 +176,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أدخل كلمة المرور';
+                          if (v == null || v.isEmpty) return context.l10n.enterPassword;
                           if (!AppRegex.hasMinLength(v))
-                            return 'كلمة المرور قصيرة جداً (8 أحرف على الأقل)';
+                            return context.l10n.passwordTooShort;
                           return null;
                         },
                       ),
@@ -191,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: TextButton(
                     onPressed: () => _showForgotPasswordDialog(context),
-                    child: const Text('نسيت كلمة المرور؟'),
+                    child: Text(context.l10n.forgotPassword),
                   ),
                 ),
 

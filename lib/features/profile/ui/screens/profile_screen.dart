@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -36,9 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl, // لضمان صحة الاتجاهات عربيًا
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: context.colors.bgDeep,
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) => switch (state) {
@@ -49,7 +48,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
           },
         ),
-      ),
     );
   }
 }
@@ -83,7 +81,7 @@ class _ProfileContentState extends State<_ProfileContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ProfileSectionTitle(title: 'البيانات الشخصية'),
+                ProfileSectionTitle(title: context.l10n.personalData),
                 Container(
                   decoration: BoxDecoration(
                     color: context.colors.bgSurface,
@@ -94,7 +92,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileInfoRow(
                         icon: Icons.person_rounded,
                         iconColor: AppColors.profileIconPurple,
-                        label: 'الاسم',
+                        label: context.l10n.nameLabel,
                         value: profile.name,
                         onTap: () => context.push('/profile/edit'),
                       ),
@@ -102,7 +100,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileInfoRow(
                         icon: Icons.cake_rounded,
                         iconColor: AppColors.profileIconOrange,
-                        label: 'العمر',
+                        label: context.l10n.ageLabel,
                         value: '${profile.age} سنة',
                         onTap: () => context.push('/profile/edit'),
                       ),
@@ -110,7 +108,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileInfoRow(
                         icon: Icons.edit_rounded,
                         iconColor: context.colors.textMuted,
-                        label: 'الطول',
+                        label: context.l10n.height,
                         value: '${profile.heightCm.toInt()} سم',
                         onTap: () => context.push('/profile/edit'),
                       ),
@@ -118,7 +116,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileInfoRow(
                         icon: Icons.balance_rounded,
                         iconColor: AppColors.warning,
-                        label: 'الوزن',
+                        label: context.l10n.weight,
                         value: '${profile.weightKg.toInt()} كجم',
                         onTap: () => context.push('/profile/edit'),
                       ),
@@ -126,7 +124,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileInfoRow(
                         icon: Icons.track_changes_rounded,
                         iconColor: AppColors.profileIconPink,
-                        label: 'الهدف',
+                        label: context.l10n.goal,
                         value: profile.goal.labelAr,
                         onTap: () => context.push('/profile/edit'),
                       ),
@@ -146,7 +144,7 @@ class _ProfileContentState extends State<_ProfileContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ProfileSectionTitle(title: 'الإعدادات'),
+                ProfileSectionTitle(title: context.l10n.settingsLabel),
                 Container(
                   decoration: BoxDecoration(
                     color: context.colors.bgSurface,
@@ -366,15 +364,15 @@ class _ProfileContentState extends State<_ProfileContent> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('تسجيل الخروج',
+        title: Text(context.l10n.logout,
             style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
-        content: const Text('هل أنت متأكد؟ ستستمر بياناتك محفوظة على السحابة ويمكنك تسجيل الدخول مجددًا لاستعادتها.',
+        content: Text(context.l10n.logoutConfirmContent,
             style: TextStyle(fontFamily: 'Cairo')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء',
-                style: TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
+            child: Text(context.l10n.cancel,
+                style: const TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
           ),
           TextButton(
             onPressed: () async {
@@ -384,8 +382,8 @@ class _ProfileContentState extends State<_ProfileContent> {
               // (user can still use the app as a guest; can sign in again from profile)
               if (context.mounted) context.go(AppRouter.home);
             },
-            child: const Text('تسجيل الخروج',
-                style: TextStyle(
+            child: Text(context.l10n.logout,
+                style: const TextStyle(
                     fontFamily: 'Cairo', color: AppColors.danger,
                     fontWeight: FontWeight.bold)),
           ),
@@ -459,7 +457,7 @@ class _LanguagePickerRow extends StatelessWidget {
               color: AppColors.profileIconBlue, size: 20.r),
           SizedBox(width: 12.w),
           Text(
-            isAr ? 'اللغة' : 'Language',
+            context.l10n.language,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 13.sp,
@@ -527,7 +525,7 @@ class _GuestProfileView extends StatelessWidget {
             ),
             SizedBox(height: AppConstants.spaceXL.h),
             Text(
-              'أنت في وضع الضيف',
+              context.l10n.guestModeTitle,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 20.sp,
@@ -537,7 +535,7 @@ class _GuestProfileView extends StatelessWidget {
             ),
             SizedBox(height: AppConstants.spaceS.h),
             Text(
-              'سجّل دخولك لحفظ بياناتك ومتابعة تقدمك',
+              context.l10n.guestModeSubtitle,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Cairo',
@@ -547,7 +545,7 @@ class _GuestProfileView extends StatelessWidget {
             ),
             SizedBox(height: AppConstants.spaceXXL.h),
             PPButton(
-              label: 'تسجيل الدخول',
+              label: context.l10n.login,
               onPressed: onLogin,
             ),
           ],

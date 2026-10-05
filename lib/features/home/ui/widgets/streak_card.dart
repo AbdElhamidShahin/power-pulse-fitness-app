@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
@@ -11,6 +12,7 @@ class StreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final pct = (streak / 30).clamp(0.0, 1.0);
 
     return Container(
@@ -34,7 +36,7 @@ class StreakCard extends StatelessWidget {
                   painter: RingPainter(
                     progress: pct,
                     color: AppColors.accent,
-                    trackColor: Color(0xFF333333),
+                    trackColor: const Color(0xFF333333),
                     strokeWidth: 5.w,
                   ),
                 ),
@@ -55,12 +57,12 @@ class StreakCard extends StatelessWidget {
             children: [
               SizedBox(width: 6.w),
               Text(
-                'السلسلة الحالية',
+                l10n.currentStreak,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF888888),
+                  color: const Color(0xFF888888),
                   letterSpacing: 0.5,
                 ),
               ),
@@ -68,7 +70,7 @@ class StreakCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '$streak يوم',
+                    '$streak ${l10n.day}',
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 28.sp,

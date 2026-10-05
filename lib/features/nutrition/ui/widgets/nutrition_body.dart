@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +45,7 @@ class NutritionBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'تتبع يومك',
+                  context.l10n.trackYourDay,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
@@ -56,7 +57,7 @@ class NutritionBody extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'التغذية',
+                      context.l10n.nutrition,
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 24.sp,
@@ -84,7 +85,7 @@ class NutritionBody extends StatelessWidget {
                                 color: AppColors.accent, size: 16.r),
                             SizedBox(width: 4.w),
                             Text(
-                              'إضافة',
+                              context.l10n.add,
                               style: TextStyle(
                                 fontFamily: 'Cairo',
                                 fontSize: 13.sp,
@@ -123,7 +124,7 @@ class NutritionBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'الوجبات',
+                  context.l10n.mealsLabel,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 12.sp,
@@ -134,7 +135,7 @@ class NutritionBody extends StatelessWidget {
                 GestureDetector(
                   onTap: () => _showPicker(context),
                   child: Text(
-                    'إضافة +',
+                    context.l10n.addMore,
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 13.sp,

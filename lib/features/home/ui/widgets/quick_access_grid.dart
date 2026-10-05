@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../../core/theme/app_colors.dart';
 
 class QuickAccessGrid extends StatelessWidget {
   const QuickAccessGrid({super.key});
 
-  static const _items = [
-    _QAItem('📈', 'تقدمي', 'عرض الإحصائيات', Color(0xFFE3F2FD), '/progress'),
-    _QAItem('🥗', 'التغذية', 'تتبع وجباتك', Color(0xFFE8F5E9), '/nutrition'),
-    _QAItem('🏋️', 'التمارين', 'استعرض المكتبة', Color(0xFFFCE4EC), '/exercises'),
-    _QAItem('👤', 'حسابي', 'البيانات الشخصية', Color(0xFFFFF3E0), '/profile'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final items = [
+      _QAItem('📈', l10n.qaMyProgress,    l10n.qaViewStats,     const Color(0xFFE3F2FD), '/progress'),
+      _QAItem('🥗', l10n.qaNutrition,     l10n.qaTrackMeals,    const Color(0xFFE8F5E9), '/nutrition'),
+      _QAItem('🏋️', l10n.qaExercises,    l10n.qaBrowseLibrary,  const Color(0xFFFCE4EC), '/exercises'),
+      _QAItem('👤', l10n.qaMyAccount,     l10n.qaPersonalData,   const Color(0xFFFFF3E0), '/profile'),
+    ];
+
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -23,7 +24,7 @@ class QuickAccessGrid extends StatelessWidget {
       crossAxisSpacing: 12.w,
       mainAxisSpacing: 12.h,
       childAspectRatio: 1.45,
-      children: _items
+      children: items
           .map(
             (item) => GestureDetector(
           onTap: () => context.push(item.route),
@@ -41,7 +42,7 @@ class QuickAccessGrid extends StatelessWidget {
                 SizedBox(height: 6.h),
                 Text(
                   item.label,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 13.sp,
@@ -51,7 +52,7 @@ class QuickAccessGrid extends StatelessWidget {
                 ),
                 Text(
                   item.sublabel,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

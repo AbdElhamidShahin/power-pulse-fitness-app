@@ -67,8 +67,6 @@ flutter:
     - assets/langs/en.json
     - assets/langs/ar.json
     - assets/exercises.json
-    - assets/animation/
-    - assets/category/
     - assets/GIF/chest/
     - assets/GIF/lats/
     - assets/GIF/shorter/

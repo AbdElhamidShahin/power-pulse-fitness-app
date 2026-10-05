@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -18,19 +19,19 @@ class BodyPartFilterTabs extends StatelessWidget {
   final ValueChanged<String> onSelect;
 
   static String _label(String part) => switch (part.toLowerCase()) {
-    'all'        => 'الكل',
-    'chest'      => 'صدر',
-    'back'       => 'ظهر',
-    'legs'       => 'أرجل',
-    'shoulders'  => 'كتف',
-    'upper arms' => 'أذرع',
-    'lower arms' => 'سواعد',
-    'upper legs' => 'فخذ',
-    'lower legs' => 'ساق',
-    'core'       => 'بطن',
-    'waist'      => 'خصر',
-    'cardio'     => 'كارديو',
-    'neck'       => 'رقبة',
+    'all'        => context.l10n.all,
+    'chest'      => context.l10n.muscleChest,
+    'back'       => context.l10n.muscleBack,
+    'legs'       => context.l10n.muscleLegs,
+    'shoulders'  => context.l10n.muscleShoulder,
+    'upper arms' => context.l10n.muscleArms,
+    'lower arms' => context.l10n.forearms,
+    'upper legs' => context.l10n.upperLegs,
+    'lower legs' => context.l10n.calves,
+    'core'       => context.l10n.muscleCore,
+    'waist'      => context.l10n.waist,
+    'cardio'     => context.l10n.muscleCardio,
+    'neck'       => context.l10n.neck,
     _            => part,
   };
 

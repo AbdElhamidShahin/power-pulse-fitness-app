@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/theme/app_colors.dart';
@@ -14,9 +15,9 @@ class AppBottomNav extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   static const _items = [
-    _Item('🏠', 'الرئيسية'),
-    _Item('🏋️', 'التمارين'),
-    _Item('🥗', 'التغذية'),
+    _Item('🏠', context.l10n.home),
+    _Item('🏋️', context.l10n.exercises),
+    _Item('🥗', context.l10n.nutrition),
     _Item('📈', 'تقدمي'),
     _Item('👤', 'حسابي'),
   ];

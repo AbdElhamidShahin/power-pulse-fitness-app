@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -79,7 +80,7 @@ class _NotificationSettingsSectionState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'الإشعارات',
+          context.l10n.notifications,
           style: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 14.sp,
@@ -99,7 +100,7 @@ class _NotificationSettingsSectionState
             children: [
               _NotifTile(
                 emoji:    '💪',
-                title:    'تذكير التمرين',
+                title:    context.l10n.workoutReminder,
                 subtitle: '8 صباحاً و 6 مساءً يومياً',
                 value:    _workout,
                 onChanged: (v) => _toggle(_keyWorkout, v),
@@ -107,7 +108,7 @@ class _NotificationSettingsSectionState
               Divider(height: 1, color: context.colors.borderSubtle),
               _NotifTile(
                 emoji:    '👟',
-                title:    'تذكير الخطوات',
+                title:    context.l10n.stepsReminder,
                 subtitle: '12 ظهراً لو لسه بعيد عن هدفك',
                 value:    _steps,
                 onChanged: (v) => _toggle(_keySteps, v),
@@ -115,7 +116,7 @@ class _NotificationSettingsSectionState
               Divider(height: 1, color: context.colors.borderSubtle),
               _NotifTile(
                 emoji:    '💧',
-                title:    'تذكير الماء',
+                title:    context.l10n.waterReminder,
                 subtitle: 'كل ساعتين من 8 صباحاً لـ 8 مساءً',
                 value:    _water,
                 onChanged: (v) => _toggle(_keyWater, v),

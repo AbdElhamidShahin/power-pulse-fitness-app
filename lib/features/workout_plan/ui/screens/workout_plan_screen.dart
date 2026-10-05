@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -194,13 +195,13 @@ class _WeekStrip extends StatelessWidget {
 
   static const _names = ['إث', 'ث', 'أر', 'خ', 'ج', 'س', 'أح'];
   static const _fullNames = [
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-    'الأحد'
+    context.l10n.monday,
+    context.l10n.tuesday,
+    context.l10n.wednesday,
+    context.l10n.thursday,
+    context.l10n.friday,
+    context.l10n.saturday,
+    context.l10n.sunday
   ];
 
   @override
@@ -364,7 +365,7 @@ class _DayDetailState extends State<_DayDetail> {
                   ],
                 ),
                 Text(
-                  day.isRest ? 'يوم راحة' : '${day.exercises.length} تمارين',
+                  day.isRest ? context.l10n.restDay : '${day.exercises.length} تمارين',
                   style: AppTextStyles.bodySmall
                       .copyWith(color: context.colors.textMuted),
                 ),
@@ -424,7 +425,7 @@ class _DayDetailState extends State<_DayDetail> {
               children: [
                 const Text('😴', style: TextStyle(fontSize: 40)),
                 const SizedBox(height: AppConstants.spaceM),
-                Text('يوم راحة', style: AppTextStyles.labelLarge),
+                Text(context.l10n.restDay, style: AppTextStyles.labelLarge),
                 const SizedBox(height: AppConstants.spaceS),
                 Text('اضغط على "راحة" أعلاه لتحويله ليوم تمرين',
                     style: AppTextStyles.bodySmall
@@ -561,7 +562,7 @@ class _DayDetailState extends State<_DayDetail> {
                   Icon(Icons.add_rounded,
                       color: AppColors.accent, size: 20),
                   const SizedBox(width: AppConstants.spaceS),
-                  Text('إضافة تمرين',
+                  Text(context.l10n.addExercise,
                       style: AppTextStyles.labelMedium
                           .copyWith(color: AppColors.accent)),
                 ],
