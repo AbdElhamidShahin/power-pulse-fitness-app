@@ -55,14 +55,16 @@ class DioClient {
     }
 
     // Error handler
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onError: (DioException e, ErrorInterceptorHandler handler) {
-          debugPrint('[$name] Error: ${e.type} — ${e.message}');
-          handler.next(e);
-        },
-      ),
-    );
+    if (kDebugMode) {
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onError: (DioException e, ErrorInterceptorHandler handler) {
+            debugPrint('[$name] Error: ${e.type} — ${e.message}');
+            handler.next(e);
+          },
+        ),
+      );
+    }
   }
 }
 

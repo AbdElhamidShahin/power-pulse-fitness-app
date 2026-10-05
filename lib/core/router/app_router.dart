@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -98,7 +99,7 @@ abstract class AppRouter {
 
       return null;
     },
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
       // ─── Entry choice screen (first launch) ─────────────────

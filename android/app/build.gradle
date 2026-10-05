@@ -12,14 +12,14 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.powerteam.powerpulse"
-    compileSdk = 35   // لازم 35
+    compileSdk = 36
 
     ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.powerteam.powerpulse"
         minSdk = 21 // أو flutter.minSdkVersion لو معرفه
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 22
         versionName = flutter.versionName
     }
