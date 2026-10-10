@@ -33,7 +33,7 @@ final class ProfileRepositoryImpl implements ProfileRepository {
       );
     } catch (e) {
       return Failure(
-        const UnexpectedFailure(),
+        UnexpectedFailure(message: e.toString()),
       );
     }
   }
@@ -52,7 +52,7 @@ final class ProfileRepositoryImpl implements ProfileRepository {
       );
     } catch (e) {
       return Failure(
-        const UnexpectedFailure(),
+        UnexpectedFailure(message: e.toString()),
       );
     }
   }
@@ -65,7 +65,7 @@ final class ProfileRepositoryImpl implements ProfileRepository {
       return Success(hasProfile);
     } catch (e) {
       return Failure(
-        const UnexpectedFailure(),
+        UnexpectedFailure(message: e.toString()),
       );
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:power_pulse/core/theme/app_theme_colors.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/models/user_profile_entity.dart';
 
@@ -60,11 +61,11 @@ class ProfileHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _StatItem(value: '47', label: 'تمرين'),
-              _StatItem(value: '14', label: 'سلسلة'),
+              _StatItem(value: '47', label: context.l10n.exerciseUnit),
+              _StatItem(value: '14', label: context.l10n.currentStreak),
               _StatItem(
-                value: '${profile.weightKg.toInt()} كجم',
-                label: 'الوزن',
+                value: context.l10n.valueKg.replaceFirst('{value}', '${profile.weightKg.toInt()}'),
+                label: context.l10n.weight,
               ),
             ],
           ),

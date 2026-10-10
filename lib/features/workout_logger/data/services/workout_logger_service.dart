@@ -46,7 +46,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
         AppDataBus.notify();
       }
     } catch (e) {
-      throw const CacheException(message: 'فشل حفظ الجلسة');
+      throw CacheException(message: 'فشل حفظ الجلسة: $e');
     }
   }
 
@@ -61,7 +61,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
           _historyKey, jsonEncode(all.map((s) => s.toJson()).toList()));
       AppDataBus.notify();
     } catch (e) {
-      throw const CacheException(message: 'فشل حذف الجلسة');
+      throw CacheException(message: 'فشل حذف الجلسة: $e');
     }
   }
 

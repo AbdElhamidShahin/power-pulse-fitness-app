@@ -24,15 +24,9 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
   int? _selectedWeekday;
   bool _added = false;
 
-  static const _dayNames = [
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-    'الأحد',
-  ];
+  /// Returns the ordered day-name list (Mon→Sun) from the active locale.
+  List<String> _dayNamesFor(BuildContext context) =>
+      context.l10n.dayNamesMonFirst;
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +142,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                               children: [
                                 Row(children: [
                                   Text(
-                                    _dayNames[i],
+                                    _dayNamesFor(context)[i],
                                     style: TextStyle(
                                       fontFamily: 'Cairo',
                                       fontSize: 14,
@@ -167,8 +161,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                                         color: AppColors.accentDim,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: const Text('اليوم',
-                                          style: TextStyle(
+                                      child: Text(context.l10n.today,
+                                          style: const TextStyle(
                                             fontFamily: 'Cairo',
                                             fontSize: 10,
                                             color: AppColors.accent,
@@ -181,7 +175,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                                   Text(
                                     alreadyHas
                                         ? context.l10n.alreadyAdded
-                                        : '${day.exercises.length} تمارين',
+                                        : '${day.exercises.length} ${context.l10n.exerciseUnit}',
                                     style: TextStyle(
                                       fontFamily: 'Cairo',
                                       fontSize: 11,
@@ -244,8 +238,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     alignment: Alignment.center,
                     child: Text(
                       _selectedWeekday != null
-                          ? 'أضف ليوم ${_dayNames[_selectedWeekday! - 1]}'
-                          : 'اختار اليوم الأول',
+                          ? context.l10n.addToDay.replaceFirst('{day}', _dayNamesFor(context)[_selectedWeekday! - 1])
+                          : context.l10n.chooseFirstDay,
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 14,
@@ -284,7 +278,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           ),
           const SizedBox(height: 8),
             Text(
-            'اعمل خطة الأسبوع الأول وبعدين ضيف التمارين',
+            context.l10n.setupPlanFirst,
             style: TextStyle(
                 fontFamily: 'Cairo', fontSize: 13, color: context.colors.textMuted),
             textAlign: TextAlign.center,
@@ -303,9 +297,9 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
               ),
               alignment: Alignment.center,
-              child: const Text(
-                'إعداد الخطة الأسبوعية',
-                style: TextStyle(
+              child: Text(
+                context.l10n.setupWeeklyPlan,
+                style: const TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -337,7 +331,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           ),
           const SizedBox(height: 16),
             Text(
-            'تمت الإضافة! 🎉',
+            context.l10n.exerciseAdded,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 18,
@@ -347,7 +341,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           ),
           const SizedBox(height: 8),
           Text(
-            'اتضاف لـ ${_dayNames[(_selectedWeekday ?? 1) - 1]}',
+            context.l10n.addedToDay.replaceFirst('{day}', _dayNamesFor(context)[(_selectedWeekday ?? 1) - 1]),
             style: TextStyle(
                 fontFamily: 'Cairo', fontSize: 14, color: context.colors.textMuted),
           ),
@@ -363,7 +357,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   ),
                   alignment: Alignment.center,
-                  child:   Text('تمام',
+                  child: Text(context.l10n.ok,
                       style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 14,
@@ -387,8 +381,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     border: Border.all(color: AppColors.accent),
                   ),
                   alignment: Alignment.center,
-                  child: const Text('عرض الخطة',
-                      style: TextStyle(
+                  child: Text(context.l10n.viewPlan,
+                      style: const TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,

@@ -101,7 +101,7 @@ class _NotificationSettingsSectionState
               _NotifTile(
                 emoji:    '💪',
                 title:    context.l10n.workoutReminder,
-                subtitle: '8 صباحاً و 6 مساءً يومياً',
+                subtitle: context.l10n.workoutReminderSubtitle,
                 value:    _workout,
                 onChanged: (v) => _toggle(_keyWorkout, v),
               ),
@@ -109,7 +109,7 @@ class _NotificationSettingsSectionState
               _NotifTile(
                 emoji:    '👟',
                 title:    context.l10n.stepsReminder,
-                subtitle: '12 ظهراً لو لسه بعيد عن هدفك',
+                subtitle: context.l10n.stepsReminderSubtitle,
                 value:    _steps,
                 onChanged: (v) => _toggle(_keySteps, v),
               ),
@@ -117,7 +117,7 @@ class _NotificationSettingsSectionState
               _NotifTile(
                 emoji:    '💧',
                 title:    context.l10n.waterReminder,
-                subtitle: 'كل ساعتين من 8 صباحاً لـ 8 مساءً',
+                subtitle: context.l10n.waterIntervalNote,
                 value:    _water,
                 onChanged: (v) => _toggle(_keyWater, v),
               ),
@@ -134,16 +134,15 @@ class _NotificationSettingsSectionState
               await NotificationService.instance.showTest();
               if (!mounted || granted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                      'الإشعارات مقفولة من إعدادات الموبايل — فعّلها للتطبيق'),
+                SnackBar(
+                  content: Text(context.l10n.notificationsDisabledSystem),
                 ),
               );
             },
             icon: const Icon(Icons.notifications_active_outlined,
                 size: 18, color: AppColors.accent),
             label: Text(
-              'جرّب الإشعار',
+              context.l10n.testNotification,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 12.sp,

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
 import '../../../exercises/data/models/exercise_entity.dart';
@@ -28,9 +27,6 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   final GetActiveSessionUseCase _getActive;
   final SaveSessionUseCase _save;
   final DeleteSessionUseCase _delete;
-
-  // Guard: prevents concurrent finishSession calls (double-tap → double LogWorkout)
-  bool _isFinishing = false;
 
   // ─── Load ──────────────────────────────────────────────────
   Future<void> load() async {
@@ -62,14 +58,8 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       startTime: DateTime.now(),
       exercises: exercises,
     );
-    final result = await _save(session);
-    if (isClosed) return;
-    switch (result) {
-      case Success():
-        emit(WorkoutLoggerActive(session));
-      case Failure(:final failure):
-        emit(WorkoutLoggerError(failure.userMessage));
-    }
+    await _save(session);
+    emit(WorkoutLoggerActive(session));
   }
 
   // ─── Add / Remove Exercise ─────────────────────────────────
@@ -173,34 +163,23 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   /// الـ UI (workout_logger_screen) مسؤول عن استدعاء LogWorkoutUseCase
   /// بعد ما يستقبل هذه الحالة — عشان نتجنب الـ cross-feature coupling.
   Future<void> finishSession() async {
-    // Synchronous guard — prevents a concurrent second call (rapid double-tap)
-    // from saving the session twice and firing LogWorkoutUseCase twice.
-    if (_isFinishing) return;
     final current = _active;
     if (current == null) return;
-    _isFinishing = true;
 
     final finished = current.copyWith(
       endTime: DateTime.now(),
       caloriesBurned: current.durationMinutes * 5.0,
     );
 
-    final result = await _save(finished);
-    _isFinishing = false;
-    if (isClosed) return;
-    switch (result) {
-      case Success():
-        emit(WorkoutLoggerFinished(finished));
-      case Failure(:final failure):
-        emit(WorkoutLoggerError(failure.userMessage));
-    }
+    await _save(finished);
+    emit(WorkoutLoggerFinished(finished));
   }
 
   // ─── Cancel / Reset ────────────────────────────────────────
   Future<void> cancelSession() async {
     final current = _active;
     if (current != null) await _delete(current.id);
-    if (!isClosed) emit(const WorkoutLoggerIdle());
+    emit(const WorkoutLoggerIdle());
   }
 
   void reset() => emit(const WorkoutLoggerIdle());
@@ -211,15 +190,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       : null;
 
   Future<void> _updateActive(WorkoutSession session) async {
-    final result = await _save(session);
-    // Mid-workout auto-save: always update the UI to reflect in-memory state.
-    // A transient save failure is logged but does NOT abort the active workout —
-    // the next successful save (set update, exercise add, or finishSession) will
-    // persist the accumulated changes.
-    if (result is Failure && kDebugMode) {
-      debugPrint('[WorkoutLogger] mid-workout save failed: '
-          '${(result as Failure).failure.userMessage}');
-    }
-    if (!isClosed) emit(WorkoutLoggerActive(session));
+    await _save(session);
+    emit(WorkoutLoggerActive(session));
   }
 }

@@ -101,7 +101,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.cake_rounded,
                         iconColor: AppColors.profileIconOrange,
                         label: context.l10n.ageLabel,
-                        value: '${profile.age} سنة',
+                        value: context.l10n.valueYears.replaceFirst('{value}', '${profile.age}'),
                         onTap: () => context.push('/profile/edit'),
                       ),
                       const ProfileDivider(),
@@ -109,7 +109,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.edit_rounded,
                         iconColor: context.colors.textMuted,
                         label: context.l10n.height,
-                        value: '${profile.heightCm.toInt()} سم',
+                        value: context.l10n.valueCm.replaceFirst('{value}', '${profile.heightCm.toInt()}'),
                         onTap: () => context.push('/profile/edit'),
                       ),
                       const ProfileDivider(),
@@ -117,7 +117,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.balance_rounded,
                         iconColor: AppColors.warning,
                         label: context.l10n.weight,
-                        value: '${profile.weightKg.toInt()} كجم',
+                        value: context.l10n.valueKg.replaceFirst('{value}', '${profile.weightKg.toInt()}'),
                         onTap: () => context.push('/profile/edit'),
                       ),
                       const ProfileDivider(),
@@ -155,7 +155,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileToggleRow(
                         icon: Icons.notifications_rounded,
                         iconColor: AppColors.warning,
-                        label: 'الإشعارات',
+                        label: context.l10n.notificationsLabel,
                         value: settings.notificationsEnabled,
                         onChanged: (val) =>
                             context.read<AppSettingsCubit>().toggleNotifications(val),
@@ -164,9 +164,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileToggleRow(
                         icon: Icons.nightlight_round,
                         iconColor: AppColors.profileIconIndigo,
-                        label: settings.isArabic
-                              ? 'الوضع الليلي'
-                              : 'Dark Mode',
+                        label: context.l10n.darkModeLabel,
                         value: settings.isDarkMode,
                         onChanged: (val) =>
                             context.read<AppSettingsCubit>().toggleDarkMode(val),
@@ -177,7 +175,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileToggleRow(
                         icon: Icons.square_foot_rounded,
                         iconColor: AppColors.profileIconTeal,
-                        label: 'الوحدات (كجم/سم)',
+                        label: context.l10n.unitsLabel,
                         value: settings.isMetricUnits,
                         onChanged: (val) =>
                             context.read<AppSettingsCubit>().toggleMetricUnits(val),
@@ -186,7 +184,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       ProfileInfoRow(
                         icon: Icons.lock_rounded,
                         iconColor: AppColors.warning,
-                        label: 'الخصوصية',
+                        label: context.l10n.privacyLabel,
                         value: '',
                         onTap: () => _showPrivacySheet(context),
                       ),
@@ -233,7 +231,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                       SizedBox(width: 10.w),
                       Expanded(
                         child: Text(
-                          'أنت في وضع الضيف. أنشئ حسابًا لحفظ بياناتك على السحابة.',
+                          context.l10n.guestModeDesc,
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 12.sp,
@@ -253,7 +251,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                           ),
                         ),
                         child: Text(
-                          'تسجيل الدخول',
+                          context.l10n.login,
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 11.sp,
@@ -290,7 +288,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         color: AppColors.danger, size: 18.r),
                     SizedBox(width: 6.w),
                     Text(
-                      'تسجيل الخروج',
+                      context.l10n.logoutLabel,
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 14.sp,
@@ -331,27 +329,27 @@ class _ProfileContentState extends State<_ProfileContent> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              Text('الخصوصية والبيانات',
+              Text(context.l10n.privacyAndData,
                 style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 18,
                     fontWeight: FontWeight.w900, color: context.colors.textPrimary)),
             const SizedBox(height: 16),
             _PrivacyItem(
               icon: Icons.phone_android_rounded,
-              title: 'البيانات محفوظة محلياً',
-              desc: 'كل بياناتك محفوظة على جهازك فقط ولا تُرسل لأي خادم',
+              title: context.l10n.dataStoredLocally,
+              desc: context.l10n.dataStoredDesc,
             ),
             const SizedBox(height: 12),
             _PrivacyItem(
               icon: Icons.block_rounded,
-              title: 'لا إعلانات',
-              desc: 'التطبيق خالي من الإعلانات وتتبع البيانات',
+              title: context.l10n.noAds,
+              desc: context.l10n.noAdsDesc,
             ),
             const SizedBox(height: 12),
             _PrivacyItem(
               icon: Icons.delete_forever_rounded,
-              title: 'حذف البيانات',
-              desc: 'يمكنك حذف كل بياناتك من خلال تسجيل الخروج',
+              title: context.l10n.deleteData,
+              desc: context.l10n.deleteDataDesc,
             ),
             const SizedBox(height: 24),
           ],

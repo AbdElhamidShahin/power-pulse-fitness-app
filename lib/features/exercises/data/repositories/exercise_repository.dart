@@ -125,7 +125,7 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
     } on NetworkException {
       return const Failure(NetworkFailure());
     } catch (e) {
-      return Failure(const UnexpectedFailure());
+      return Failure(UnexpectedFailure(message: e.toString()));
     }
   }
 }

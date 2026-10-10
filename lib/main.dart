@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -27,26 +26,6 @@ import 'core/localization/app_localizations.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
-
-  // ─── Global error handlers ────────────────────────────────
-  // Prevent raw Flutter framework exceptions from surfacing as
-  // a red crash overlay in release or crashing the process.
-  FlutterError.onError = (FlutterErrorDetails details) {
-    if (kDebugMode) {
-      // In debug: show full error in console as normal
-      FlutterError.presentError(details);
-    }
-    // In release: swallow silently — user sees last good state.
-    // TODO (Phase 9/10): forward to crash reporting here.
-  };
-
-  // Catches async/platform errors that escape the widget tree.
-  PlatformDispatcher.instance.onError = (error, stack) {
-    if (kDebugMode) {
-      debugPrint('Uncaught platform error: $error\n$stack');
-    }
-    return true; // Returning true marks the error as handled.
-  };
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),

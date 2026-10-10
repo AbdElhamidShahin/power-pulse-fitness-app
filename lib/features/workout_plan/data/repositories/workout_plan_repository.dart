@@ -22,7 +22,7 @@ final class WorkoutPlanRepositoryImpl implements WorkoutPlanRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(const UnexpectedFailure());
+      return Failure(UnexpectedFailure(message: e.toString()));
     }
   }
 
@@ -34,7 +34,7 @@ final class WorkoutPlanRepositoryImpl implements WorkoutPlanRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(const UnexpectedFailure());
+      return Failure(UnexpectedFailure(message: e.toString()));
     }
   }
 
@@ -49,7 +49,7 @@ final class WorkoutPlanRepositoryImpl implements WorkoutPlanRepository {
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
     } catch (e) {
-      return Failure(const UnexpectedFailure());
+      return Failure(UnexpectedFailure(message: e.toString()));
     }
   }
 }

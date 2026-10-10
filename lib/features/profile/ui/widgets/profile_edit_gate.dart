@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -52,9 +53,9 @@ class _ProfileEditGateState extends State<ProfileEditGate> {
                     size: 48,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'تعذّر تحميل البيانات',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.profileLoadError,
+                    style: const TextStyle(
                       fontFamily: 'Cairo',
                       color: AppColors.textOnDark,
                       fontSize: 16,
@@ -64,9 +65,9 @@ class _ProfileEditGateState extends State<ProfileEditGate> {
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: () => context.read<ProfileCubit>().load(),
-                    child: const Text(
-                      'إعادة المحاولة',
-                      style: TextStyle(
+                    child: Text(
+                      context.l10n.retryAction,
+                      style: const TextStyle(
                         fontFamily: 'Cairo',
                         color: AppColors.accent,
                       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../localization/app_localizations.dart';
 
 import '../../features/entry/ui/entry_choice_screen.dart';
 import '../../features/exercises/logic/cubit/exercises_cubit.dart';
@@ -100,7 +101,7 @@ abstract class AppRouter {
       return null;
     },
     debugLogDiagnostics: kDebugMode,
-    observers: [nutritionRouteObserver, progressRouteObserver, homeRouteObserver],
+    observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
       // ─── Entry choice screen (first launch) ─────────────────
       GoRoute(
@@ -166,7 +167,7 @@ abstract class AppRouter {
                     BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
                   ],
                   child: ExerciseDetailScreen(
-                    exerciseId: state.pathParameters['id'] ?? '',
+                    exerciseId: state.pathParameters['id']!,
                   ),
                 ),
               ),
@@ -245,11 +246,11 @@ abstract class AppRouter {
         ),
       ),
     ],
-    errorBuilder: (_, state) => const Scaffold(
+    errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: Text(
-          'الصفحة غير موجودة',
-          style: TextStyle(fontFamily: 'Cairo', color: Colors.white),
+          context.l10n.pageNotFound,
+          style: const TextStyle(fontFamily: 'Cairo', color: Colors.white),
         ),
       ),
     ),

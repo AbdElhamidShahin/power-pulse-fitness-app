@@ -418,7 +418,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                   Text(
                                     alreadyHas
                                         ? context.l10n.alreadyAdded
-                                        : '${day.exercises.length} تمارين',
+                                        : '${day.exercises.length} ${context.l10n.exerciseUnit}',
                                     style: TextStyle(
                                       fontFamily: 'Cairo', fontSize: 11,
                                       color: alreadyHas
@@ -479,8 +479,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                     alignment: Alignment.center,
                     child: Text(
                       _selectedWeekday != null
-                          ? 'أضف ليوم ${_dayNames[_selectedWeekday! - 1]}'
-                          : 'اختار اليوم الأول',
+                          ? context.l10n.addToDay.replaceFirst('{day}', _dayNames[_selectedWeekday! - 1])
+                          : context.l10n.chooseFirstDay,
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 14,
@@ -517,7 +517,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
           ),
           const SizedBox(height: 8),
             Text(
-            'اعمل خطة الأسبوع الأول وبعدين ضيف التمارين',
+            context.l10n.setupPlanFirst,
             style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
                 color: context.colors.textMuted),
             textAlign: TextAlign.center,
@@ -536,9 +536,9 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
               ),
               alignment: Alignment.center,
-              child: const Text(
-                'إعداد الخطة الأسبوعية',
-                style: TextStyle(
+              child: Text(
+                context.l10n.setupWeeklyPlan,
+                style: const TextStyle(
                   fontFamily: 'Cairo', fontSize: 14,
                   fontWeight: FontWeight.w700, color: AppColors.textOnAccent,
                 ),
@@ -566,7 +566,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
           ),
           const SizedBox(height: 16),
             Text(
-            'تمت الإضافة! 🎉',
+            context.l10n.exerciseAdded,
             style: TextStyle(
               fontFamily: 'Cairo', fontSize: 18,
               fontWeight: FontWeight.w900, color: context.colors.textPrimary,
@@ -574,7 +574,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
           ),
           const SizedBox(height: 8),
           Text(
-            'اتضاف لـ ${_dayNames[(_selectedWeekday ?? 1) - 1]}',
+            context.l10n.addedToDay.replaceFirst('{day}', _dayNames[(_selectedWeekday ?? 1) - 1]),
             style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
                 color: context.colors.textMuted),
           ),
@@ -590,7 +590,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   ),
                   alignment: Alignment.center,
-                  child:   Text('تمام',
+                  child: Text(context.l10n.ok,
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: context.colors.textPrimary)),
@@ -612,8 +612,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                     border: Border.all(color: AppColors.accent),
                   ),
                   alignment: Alignment.center,
-                  child: const Text('عرض الخطة',
-                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
+                  child: Text(context.l10n.viewPlan,
+                      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: AppColors.accent)),
                 ),

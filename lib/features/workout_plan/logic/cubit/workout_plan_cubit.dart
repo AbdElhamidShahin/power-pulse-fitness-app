@@ -63,7 +63,7 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     final result = await _savePlan(updated);
     _isSaving = false;
     result.fold(
-      onFailure: (f) => emit(WorkoutPlanError(f.userMessage)),
+      onFailure: (f) => emit(WorkoutPlanError(f.message)),
       onSuccess: (_) => emit(WorkoutPlanLoaded(updated)),
     );
   }
@@ -72,7 +72,7 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     emit(const WorkoutPlanLoading());
     final result = await _getPlan();
     result.fold(
-      onFailure: (f) => emit(WorkoutPlanError(f.userMessage)),
+      onFailure: (f) => emit(WorkoutPlanError(f.message)),
       onSuccess: (plan) => plan != null
           ? emit(WorkoutPlanLoaded(plan))
           : emit(const WorkoutPlanEmpty()),
@@ -167,7 +167,7 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     result.fold(
       onFailure: (f) {
         _isSaving = false;
-        emit(WorkoutPlanError(f.userMessage));
+        emit(WorkoutPlanError(f.message));
       },
       onSuccess: (_) {
         _isSaving = false;

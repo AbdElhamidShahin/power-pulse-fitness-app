@@ -308,6 +308,77 @@ class AppLocalizations {
   String get monthly         => translate('monthly');
   String get stepsGoal       => translate('stepsGoal');
 
+  // ─── Exercises — stat bar ─────────────────────────────────
+  String get thisWeekWorkouts => translate('thisWeekWorkouts');
+  String get todayMinutes    => translate('todayMinutes');
+
+  // ─── Add to Plan Sheet ────────────────────────────────────
+  String get exerciseAdded   => translate('exerciseAdded');
+  /// Template: pass day name as {day}. Caller does replaceFirst('{day}', dayName).
+  String get addedToDay      => translate('addedToDay');
+  String get chooseFirstDay  => translate('chooseFirstDay');
+  /// Template: pass day name as {day}.
+  String get addToDay        => translate('addToDay');
+  String get viewPlan        => translate('viewPlan');
+  String get setupPlanFirst  => translate('setupPlanFirst');
+
+  // ─── Profile — settings labels ────────────────────────────
+  String get notificationsLabel => translate('notificationsLabel');
+  String get darkModeLabel   => translate('darkModeLabel');
+  String get unitsLabel      => translate('unitsLabel');
+  String get privacyLabel    => translate('privacyLabel');
+  String get guestModeDesc   => translate('guestModeDesc');
+  String get privacyAndData  => translate('privacyAndData');
+  String get dataStoredLocally => translate('dataStoredLocally');
+  String get dataStoredDesc  => translate('dataStoredDesc');
+  String get noAds           => translate('noAds');
+  String get noAdsDesc       => translate('noAdsDesc');
+  String get deleteData      => translate('deleteData');
+  String get deleteDataDesc  => translate('deleteDataDesc');
+  String get logoutLabel     => translate('logoutLabel');
+
+  // ─── Edit Profile ─────────────────────────────────────────
+  String get editProfileTitle => translate('editProfileTitle');
+  String get basicInfo       => translate('basicInfo');
+  String get nameFieldLabel  => translate('nameFieldLabel');
+  String get nameHint        => translate('nameHint');
+  String get ageFieldLabel   => translate('ageFieldLabel');
+  String get heightFieldLabel => translate('heightFieldLabel');
+  String get weightFieldLabel => translate('weightFieldLabel');
+  String get genderSection   => translate('genderSection');
+  String get goalSection     => translate('goalSection');
+  String get activitySection => translate('activitySection');
+  String get saveChanges     => translate('saveChanges');
+  String get yearsUnit       => translate('yearsUnit');
+  String get cmUnit          => translate('cmUnit');
+  String get kgUnit          => translate('kgUnit');
+  /// Template: pass value. Caller does replaceFirst('{value}', value.toString()).
+  String get valueYears      => translate('valueYears');
+  String get valueCm         => translate('valueCm');
+  String get valueKg         => translate('valueKg');
+
+  // ─── Notification Settings ────────────────────────────────
+  String get waterIntervalNote       => translate('waterIntervalNote');
+  String get notificationsDisabledSystem => translate('notificationsDisabledSystem');
+  String get testNotification        => translate('testNotification');
+
+  // ─── Notification Settings ─────────────────────────────────
+  String get workoutReminderSubtitle  => translate('workoutReminderSubtitle');
+  String get stepsReminderSubtitle    => translate('stepsReminderSubtitle');
+
+  // ─── Edit Profile ──────────────────────────────────────────
+  String get profileSaved        => translate('profileSaved');
+  String get basicInfoSection    => translate('basicInfoSection');
+  String get genderSectionTitle  => translate('genderSectionTitle');
+  String get goalSectionTitle    => translate('goalSectionTitle');
+  String get activitySectionTitle => translate('activitySectionTitle');
+
+  // ─── Errors & Actions ─────────────────────────────────────
+  String get profileLoadError => translate('profileLoadError');
+  String get retryAction      => translate('retryAction');
+  String get pageNotFound     => translate('pageNotFound');
+  String get exerciseNotFound => translate('exerciseNotFound');
+
   bool get isRtl => locale.languageCode == 'ar';
 
   /// Convenience: day letter from weekday (1=Mon … 7=Sun)

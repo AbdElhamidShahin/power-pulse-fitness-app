@@ -154,9 +154,9 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              _StatItem(value: '$thisWeek', label: 'هذا الأسبوع'),
-                              _StatItem(value: '$todayEx', label: 'تمارين اليوم'),
-                              _StatItem(value: '$totalMins', label: 'دقيقة اليوم'),
+                              _StatItem(value: '$thisWeek', label: context.l10n.thisWeekWorkouts),
+                              _StatItem(value: '$todayEx', label: context.l10n.todayExercises),
+                              _StatItem(value: '$totalMins', label: context.l10n.todayMinutes),
                             ],
                           ),
                         );

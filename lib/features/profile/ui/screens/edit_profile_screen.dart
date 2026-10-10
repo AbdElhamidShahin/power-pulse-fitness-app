@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -69,9 +70,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (state is ProfileSaveSuccess) {
           context.read<ProfileCubit>().onProfileSaved(_built);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✓ تم حفظ البيانات',
-                  style: TextStyle(fontFamily: 'Cairo')),
+            SnackBar(
+              content: Text(context.l10n.profileSaved,
+                  style: const TextStyle(fontFamily: 'Cairo')),
               backgroundColor: AppColors.success,
               duration: Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
@@ -112,7 +113,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       const SizedBox(width: AppConstants.spaceM),
-                      Text('تعديل الملف الشخصي',
+                      Text(context.l10n.editProfileTitle,
                           style: Theme.of(context).textTheme.headlineMedium),
                     ],
                   ),
@@ -126,30 +127,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   delegate: SliverChildListDelegate([
 
                     // ─── Basic Info ──────────────────────────
-                    _SectionTitle('المعلومات الأساسية'),
+                    _SectionTitle(context.l10n.basicInfoSection),
                     const SizedBox(height: AppConstants.spaceM),
-                    _Field(label: 'الاسم', controller: _nameCtrl,
-                        hint: 'اسمك', type: TextInputType.name),
+                    _Field(label: context.l10n.nameFieldLabel, controller: _nameCtrl,
+                        hint: context.l10n.nameHint, type: TextInputType.name),
                     const SizedBox(height: AppConstants.spaceM),
 
                     Row(children: [
                       Expanded(child: _Field(
-                          label: 'العمر', controller: _ageCtrl,
-                          hint: '25', type: TextInputType.number, suffix: 'سنة')),
+                          label: context.l10n.ageFieldLabel, controller: _ageCtrl,
+                          hint: '25', type: TextInputType.number, suffix: context.l10n.yearsUnit)),
                       const SizedBox(width: AppConstants.spaceM),
                       Expanded(child: _Field(
-                          label: 'الطول', controller: _heightCtrl,
-                          hint: '175', type: TextInputType.number, suffix: 'سم')),
+                          label: context.l10n.heightFieldLabel, controller: _heightCtrl,
+                          hint: '175', type: TextInputType.number, suffix: context.l10n.cmUnit)),
                     ]),
                     const SizedBox(height: AppConstants.spaceM),
 
-                    _Field(label: 'الوزن', controller: _weightCtrl,
+                    _Field(label: context.l10n.weightFieldLabel, controller: _weightCtrl,
                         hint: '75.0', type: const TextInputType.numberWithOptions(decimal: true),
-                        suffix: 'كج'),
+                        suffix: context.l10n.kgUnit),
                     const SizedBox(height: AppConstants.spaceXXL),
 
                     // ─── Gender ──────────────────────────────
-                    _SectionTitle('الجنس'),
+                    _SectionTitle(context.l10n.genderSectionTitle),
                     const SizedBox(height: AppConstants.spaceM),
                     _SegmentedPicker<Gender>(
                       values: Gender.values,
@@ -160,7 +161,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: AppConstants.spaceXXL),
 
                     // ─── Goal ────────────────────────────────
-                    _SectionTitle('هدفك'),
+                    _SectionTitle(context.l10n.goalSectionTitle),
                     const SizedBox(height: AppConstants.spaceM),
                     ...FitnessGoal.values.map((g) => Padding(
                       padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
@@ -173,7 +174,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: AppConstants.spaceL),
 
                     // ─── Activity ────────────────────────────
-                    _SectionTitle('مستوى النشاط'),
+                    _SectionTitle(context.l10n.activitySectionTitle),
                     const SizedBox(height: AppConstants.spaceM),
                     ...ActivityLevel.values.map((a) => Padding(
                       padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
@@ -188,7 +189,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     // ─── Save ────────────────────────────────
                     BlocBuilder<ProfileSaveCubit, ProfileSaveState>(
                       builder: (context, state) => PPButton(
-                        label: 'حفظ التغييرات',
+                        label: context.l10n.saveChanges,
                         isLoading: state is ProfileSaveLoading,
                         onPressed: () =>
                             context.read<ProfileSaveCubit>().save(_built),
