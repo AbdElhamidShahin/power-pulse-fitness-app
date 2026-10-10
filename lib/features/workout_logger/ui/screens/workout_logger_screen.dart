@@ -4,6 +4,7 @@ import '../../../../core/localization/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/data/app_data_bus.dart';
 import '../../../../core/di/injection.dart';
 import '../../../exercises/logic/usecases/exercise_usecases.dart';
 import '../../../progress/data/models/progress_entity.dart';
@@ -70,21 +71,28 @@ class _WorkoutLoggerScreenState extends State<WorkoutLoggerScreen> {
     }
   }
 
+  Future<void> _logFinishedSession(WorkoutSession session) async {
+    await sl<LogWorkoutUseCase>()(WorkoutLog(
+      id: session.id,
+      name: session.name,
+      date: session.startTime,
+      durationMinutes: session.durationMinutes,
+      caloriesBurned: session.caloriesBurned,
+      exerciseCount: session.exercises.length,
+    ));
+    // الرئيسية وصفحة التقدم بيستمعوا لـ AppDataBus — بيتحدّثوا تلقائياً
+    AppDataBus.notify();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<WorkoutLoggerCubit, WorkoutLoggerState>(
       listener: (context, state) {
         if (state is WorkoutLoggerFinished) {
           // (P1 fix) LogWorkoutUseCase انتقل هنا من WorkoutLoggerCubit
-          // عشان الـ Cubit ميعرفش عن progress feature
-          sl<LogWorkoutUseCase>()(WorkoutLog(
-            id: state.session.id,
-            name: state.session.name,
-            date: state.session.startTime,
-            durationMinutes: state.session.durationMinutes,
-            caloriesBurned: state.session.caloriesBurned,
-            exerciseCount: state.session.exercises.length,
-          ));
+          // عشان الـ Cubit ميعرفش عن progress feature.
+          // (P5 fix) نستنى الـ use case ونعمل notify بعد ما ينجح.
+          _logFinishedSession(state.session);
           _showSummarySheet(context, state.session);
         }
       },

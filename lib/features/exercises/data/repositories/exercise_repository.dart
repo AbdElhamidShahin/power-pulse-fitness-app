@@ -12,7 +12,6 @@ abstract interface class ExerciseRepository {
   Future<ApiResult<List<Exercise>>>  searchExercises(String name);
   Future<ApiResult<Exercise>>        getExerciseById(String id);
   Future<ApiResult<List<String>>>    getBodyPartList();
-  Future<ApiResult<void>>            refreshExercises();
 }
 
 final class ExerciseRepositoryImpl implements ExerciseRepository {
@@ -100,7 +99,6 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
     );
   }
 
-  @override
   Future<ApiResult<void>> refreshExercises() async {
     await localService.clearCache();
     final result = await _fetchAndCache();

@@ -29,9 +29,18 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   final DeleteSessionUseCase _delete;
 
   // ─── Load ──────────────────────────────────────────────────
+  /// يحمّل الجلسة النشطة المحفوظة (لو التطبيق أُغلق وسط التمرين).
+  /// لو مافيش جلسة محفوظة → WorkoutLoggerIdle.
   Future<void> load() async {
     emit(const WorkoutLoggerLoading());
-    emit(const WorkoutLoggerIdle());
+    final result = await _getActive();
+    if (isClosed) return;
+    switch (result) {
+      case Success(:final data) when data != null:
+        emit(WorkoutLoggerActive(data));
+      default:
+        emit(const WorkoutLoggerIdle());
+    }
   }
 
   // ─── Start ─────────────────────────────────────────────────
@@ -59,6 +68,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       exercises: exercises,
     );
     await _save(session);
+    if (isClosed) return;
     emit(WorkoutLoggerActive(session));
   }
 
@@ -172,6 +182,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     );
 
     await _save(finished);
+    if (isClosed) return;
     emit(WorkoutLoggerFinished(finished));
   }
 
@@ -179,6 +190,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   Future<void> cancelSession() async {
     final current = _active;
     if (current != null) await _delete(current.id);
+    if (isClosed) return;
     emit(const WorkoutLoggerIdle());
   }
 
@@ -191,6 +203,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
 
   Future<void> _updateActive(WorkoutSession session) async {
     await _save(session);
+    if (isClosed) return;
     emit(WorkoutLoggerActive(session));
   }
 }

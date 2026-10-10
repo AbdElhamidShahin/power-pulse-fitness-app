@@ -52,9 +52,4 @@ final class GetBodyPartListUseCase {
   Future<ApiResult<List<String>>> call() => _repository.getBodyPartList();
 }
 
-final class RefreshExercisesUseCase {
-  const RefreshExercisesUseCase(this._repository);
-  final ExerciseRepository _repository;
 
-  Future<ApiResult<void>> call() => _repository.refreshExercises();
-}

@@ -53,10 +53,7 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  await initDependencies();
-
-  // ─── Init Notification Service ────────────────────────────
-  await NotificationService.instance.init();
+  await initDependencies(); // calls _initNotifications() → NotificationService.instance.init()
 
   // ─── Startup: determine initial route ─────────────────────
   await AppStartup.determine();
