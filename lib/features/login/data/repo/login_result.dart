@@ -1,3 +1,4 @@
+
 final class LoginResult {
   const LoginResult({
     required this.userId,
@@ -11,3 +12,4 @@ final class LoginResult {
   final String name;
   final String? avatarUrl;
 }
+

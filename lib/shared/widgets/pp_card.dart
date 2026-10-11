@@ -122,16 +122,14 @@ class PPHeroCard extends StatelessWidget {
                     children: [
                       if (tag != null)
                         Container(
-                          margin: const EdgeInsets.only(
-                              bottom: AppConstants.spaceS),
+                          margin: const EdgeInsets.only(bottom: AppConstants.spaceS),
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppConstants.spaceM,
                             vertical: AppConstants.spaceXXS + 2,
                           ),
                           decoration: BoxDecoration(
                             color: tagColor ?? AppColors.accent,
-                            borderRadius:
-                                BorderRadius.circular(AppConstants.radiusPill),
+                            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                           ),
                           child: Text(
                             tag!,
@@ -183,8 +181,7 @@ class PPHeroCard extends StatelessWidget {
 
   Widget _placeholder(context) => Container(
         color: context.colors.bgElevated,
-        child: Icon(Icons.fitness_center,
-            color: context.colors.bgHighest, size: 48),
+        child: Icon(Icons.fitness_center, color: context.colors.bgHighest, size: 48),
       );
 }
 

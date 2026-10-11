@@ -51,3 +51,5 @@ final class GetBodyPartListUseCase {
 
   Future<ApiResult<List<String>>> call() => _repository.getBodyPartList();
 }
+
+

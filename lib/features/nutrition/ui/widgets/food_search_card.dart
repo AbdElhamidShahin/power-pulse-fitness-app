@@ -26,10 +26,8 @@ class FoodSearchCard extends StatelessWidget {
     if (id.startsWith('gr_')) return '🌾';
     if (id.startsWith('vg_')) return '🥬';
     if (id.startsWith('sw_')) return '🍬';
-    if (item.nameAr.contains('سمك') || item.nameAr.contains('سمكة'))
-      return '🐟';
-    if (item.nameAr.contains('فراخ') || item.nameAr.contains('دجاج'))
-      return '🍗';
+    if (item.nameAr.contains('سمك') || item.nameAr.contains('سمكة')) return '🐟';
+    if (item.nameAr.contains('فراخ') || item.nameAr.contains('دجاج')) return '🍗';
     if (item.nameAr.contains('أرز') || item.nameAr.contains('رز')) return '🍚';
     if (item.nameAr.contains('خبز') || item.nameAr.contains('عيش')) return '🍞';
     return '🍽️';
@@ -39,10 +37,9 @@ class FoodSearchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayName = item.displayName;
     final hasArabicName = item.nameAr.trim().isNotEmpty;
-    final subName =
-        hasArabicName && item.name.isNotEmpty && item.name != displayName
-            ? item.name
-            : item.brand;
+    final subName = hasArabicName && item.name.isNotEmpty && item.name != displayName
+        ? item.name
+        : item.brand;
 
     return Material(
       color: Colors.transparent,

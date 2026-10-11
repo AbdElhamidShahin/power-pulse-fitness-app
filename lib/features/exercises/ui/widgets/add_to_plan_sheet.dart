@@ -71,7 +71,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
+                  Text(
                   context.l10n.addToWhichDay,
                   style: TextStyle(
                     fontFamily: 'Cairo',
@@ -191,7 +191,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                             Icon(Icons.check_circle_rounded,
                                 color: AppColors.accent, size: 20),
                           if (day.isRest)
-                            Text(context.l10n.restLabel,
+                              Text(context.l10n.restLabel,
                                 style: TextStyle(
                                   fontFamily: 'Cairo',
                                   fontSize: 11,
@@ -210,9 +210,9 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                       ? null
                       : () {
                           final planCubit = context.read<WorkoutPlanCubit>();
-                          planCubit.addExerciseAndSave(
-                            _selectedWeekday!,
-                            PlanExercise(
+                    planCubit.addExerciseAndSave(
+                      _selectedWeekday!,
+                      PlanExercise(
                               exerciseId: widget.exercise.id,
                               exerciseName: widget.exercise.nameAr.isNotEmpty
                                   ? widget.exercise.nameAr
@@ -222,7 +222,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                                   : widget.exercise.bodyPart,
                               gifUrl: widget.exercise.gifUrl,
                             ),
-                          );
+                    );
                           setState(() => _added = true);
                         },
                   child: AnimatedContainer(
@@ -238,8 +238,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     alignment: Alignment.center,
                     child: Text(
                       _selectedWeekday != null
-                          ? context.l10n.addToDay.replaceFirst('{day}',
-                              _dayNamesFor(context)[_selectedWeekday! - 1])
+                          ? context.l10n.addToDay.replaceFirst('{day}', _dayNamesFor(context)[_selectedWeekday! - 1])
                           : context.l10n.chooseFirstDay,
                       style: TextStyle(
                         fontFamily: 'Cairo',
@@ -268,7 +267,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
         children: [
           const Text('💪', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
-          Text(
+            Text(
             context.l10n.noWorkoutPlan,
             style: TextStyle(
               fontFamily: 'Cairo',
@@ -278,12 +277,10 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+            Text(
             context.l10n.setupPlanFirst,
             style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 13,
-                color: context.colors.textMuted),
+                fontFamily: 'Cairo', fontSize: 13, color: context.colors.textMuted),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -329,11 +326,11 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
               color: AppColors.successDim,
               shape: BoxShape.circle,
             ),
-            child:
-                Icon(Icons.check_rounded, color: AppColors.success, size: 40),
+            child: Icon(Icons.check_rounded,
+                color: AppColors.success, size: 40),
           ),
           const SizedBox(height: 16),
-          Text(
+            Text(
             context.l10n.exerciseAdded,
             style: TextStyle(
               fontFamily: 'Cairo',
@@ -344,12 +341,9 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           ),
           const SizedBox(height: 8),
           Text(
-            context.l10n.addedToDay.replaceFirst(
-                '{day}', _dayNamesFor(context)[(_selectedWeekday ?? 1) - 1]),
+            context.l10n.addedToDay.replaceFirst('{day}', _dayNamesFor(context)[(_selectedWeekday ?? 1) - 1]),
             style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 14,
-                color: context.colors.textMuted),
+                fontFamily: 'Cairo', fontSize: 14, color: context.colors.textMuted),
           ),
           const SizedBox(height: 24),
           Row(children: [

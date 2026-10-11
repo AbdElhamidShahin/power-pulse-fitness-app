@@ -8,7 +8,7 @@ class WorkoutLoggerIdleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // لحظة انتقالية — الـ screen بتبدأ الجلسة تلقائياً في initState
-    return Scaffold(
+    return   Scaffold(
       backgroundColor: context.colors.bgDeep,
       body: Center(
         child: CircularProgressIndicator(color: AppColors.accent),

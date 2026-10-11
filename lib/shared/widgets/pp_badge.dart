@@ -57,32 +57,31 @@ class PPBadge extends StatelessWidget {
 }
 
 class MuscleGroupBadge extends StatelessWidget {
-  const MuscleGroupBadge(
-      {super.key, required this.muscle, this.size = PPBadgeSize.medium});
+  const MuscleGroupBadge({super.key, required this.muscle, this.size = PPBadgeSize.medium});
 
   final String muscle;
   final PPBadgeSize size;
 
   Color _color() => switch (muscle.toLowerCase()) {
-        'chest' || 'صدر' => AppColors.muscleChest,
-        'back' || 'ظهر' => AppColors.muscleBack,
-        'legs' || 'أرجل' => AppColors.muscleLegs,
-        'shoulder' || 'كتف' => AppColors.muscleShoulder,
-        'arms' || 'أذرع' => AppColors.muscleArms,
-        'core' || 'بطن' => AppColors.muscleCore,
-        'cardio' || 'كارديو' => AppColors.muscleCardio,
-        _ => AppColors.accent,
+        'chest'    || 'صدر'   => AppColors.muscleChest,
+        'back'     || 'ظهر'   => AppColors.muscleBack,
+        'legs'     || 'أرجل'  => AppColors.muscleLegs,
+        'shoulder' || 'كتف'   => AppColors.muscleShoulder,
+        'arms'     || 'أذرع'  => AppColors.muscleArms,
+        'core'     || 'بطن'   => AppColors.muscleCore,
+        'cardio'   || 'كارديو'=> AppColors.muscleCardio,
+        _                      => AppColors.accent,
       };
 
   String _label() => switch (muscle.toLowerCase()) {
-        'chest' => AppStrings.muscleChest,
-        'back' => AppStrings.muscleBack,
-        'legs' => AppStrings.muscleLegs,
-        'shoulder' => AppStrings.muscleShoulder,
-        'arms' => AppStrings.muscleArms,
-        'core' => AppStrings.muscleCore,
-        'cardio' => AppStrings.muscleCardio,
-        _ => muscle,
+        'chest'     => AppStrings.muscleChest,
+        'back'      => AppStrings.muscleBack,
+        'legs'      => AppStrings.muscleLegs,
+        'shoulder'  => AppStrings.muscleShoulder,
+        'arms'      => AppStrings.muscleArms,
+        'core'      => AppStrings.muscleCore,
+        'cardio'    => AppStrings.muscleCardio,
+        _           => muscle,
       };
 
   @override
@@ -91,24 +90,23 @@ class MuscleGroupBadge extends StatelessWidget {
 }
 
 class LevelBadge extends StatelessWidget {
-  const LevelBadge(
-      {super.key, required this.level, this.size = PPBadgeSize.medium});
+  const LevelBadge({super.key, required this.level, this.size = PPBadgeSize.medium});
 
   final String level;
   final PPBadgeSize size;
 
   Color _color() => switch (level.toLowerCase()) {
-        'beginner' || 'مبتدئ' => AppColors.levelBeginner,
-        'intermediate' || 'متوسط' => AppColors.levelIntermediate,
-        'advanced' || 'متقدم' => AppColors.levelAdvanced,
-        _ => AppColors.textMuted,
+        'beginner'     || 'مبتدئ'  => AppColors.levelBeginner,
+        'intermediate' || 'متوسط'  => AppColors.levelIntermediate,
+        'advanced'     || 'متقدم'  => AppColors.levelAdvanced,
+        _                           => AppColors.textMuted,
       };
 
   String _label() => switch (level.toLowerCase()) {
-        'beginner' => AppStrings.levelBeginner,
+        'beginner'     => AppStrings.levelBeginner,
         'intermediate' => AppStrings.levelIntermediate,
-        'advanced' => AppStrings.levelAdvanced,
-        _ => level,
+        'advanced'     => AppStrings.levelAdvanced,
+        _              => level,
       };
 
   @override

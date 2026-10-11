@@ -59,10 +59,11 @@ final class SignUpRepositoryImpl implements SignUpRepository {
         return;
       }
 
-      final name = user.userMetadata?['full_name'] as String? ??
-          user.userMetadata?['name'] as String? ??
-          user.userMetadata?['display_name'] as String? ??
-          'مستخدم جديد';
+      final name =
+          user.userMetadata?['full_name'] as String? ??
+              user.userMetadata?['name'] as String? ??
+              user.userMetadata?['display_name'] as String? ??
+              'مستخدم جديد';
 
       completer.complete(
         SignUpResult(
@@ -88,15 +89,13 @@ final class SignUpRepositoryImpl implements SignUpRepository {
       const Duration(minutes: 2),
       onTimeout: () {
         sub?.cancel();
-        throw Exception(
-            'انتهت مهلة تسجيل الدخول بجوجل، يرجى المحاولة مرة أخرى');
+        throw Exception('انتهت مهلة تسجيل الدخول بجوجل، يرجى المحاولة مرة أخرى');
       },
     );
   }
 
   String? _getAvatarUrl(User user) {
     final metadata = user.userMetadata;
-    return metadata?['avatar_url'] as String? ??
-        metadata?['picture'] as String?;
+    return metadata?['avatar_url'] as String? ?? metadata?['picture'] as String?;
   }
 }

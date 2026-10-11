@@ -18,11 +18,12 @@ final class NutritionRepositoryImpl implements NutritionRepository {
   final NutritionLocalService localService;
   final NetworkInfo networkInfo;
 
+
   @override
   Future<ApiResult<List<FoodItem>>> searchFood(
-    String query, {
-    int page = 1,
-  }) async {
+      String query, {
+        int page = 1,
+      }) async {
     if (!await networkInfo.isConnected) {
       return const Failure(NetworkFailure());
     }
@@ -52,6 +53,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
       return Failure(UnexpectedFailure(message: e.toString()));
     }
   }
+
 
   @override
   Future<ApiResult<DailyNutrition>> getDailyNutrition(DateTime date) async {
@@ -99,6 +101,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
     }
   }
 
+
   @override
   Future<ApiResult<double>> getCalorieGoal() async {
     try {
@@ -121,6 +124,7 @@ final class NutritionRepositoryImpl implements NutritionRepository {
       return Failure(UnexpectedFailure(message: e.toString()));
     }
   }
+
 
   @override
   Future<ApiResult<double>> getWaterLiters(DateTime date) async {

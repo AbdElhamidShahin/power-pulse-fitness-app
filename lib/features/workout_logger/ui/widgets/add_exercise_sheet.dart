@@ -56,22 +56,18 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
       _load('');
       return;
     }
-    _searchDebounce =
-        Timer(const Duration(milliseconds: 300), () => _load(query));
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () => _load(query));
   }
 
   Future<void> _load(String query) async {
     if (!mounted) return;
     setState(() => _loading = true);
 
-    final list =
-        await (query.isEmpty ? _browseExercises() : _searchLibrary(query));
+    final list = await (query.isEmpty
+        ? _browseExercises()
+        : _searchLibrary(query));
 
-    if (mounted)
-      setState(() {
-        _results = list;
-        _loading = false;
-      });
+    if (mounted) setState(() { _results = list; _loading = false; });
   }
 
   Future<List<Exercise>> _browseExercises() async {
@@ -106,8 +102,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
           // Handle
           Container(
             margin: const EdgeInsets.only(top: AppConstants.spaceM),
-            width: 40,
-            height: 4,
+            width: 40, height: 4,
             decoration: BoxDecoration(
               color: context.colors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
@@ -123,14 +118,11 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
             ),
             child: TextField(
               controller: _searchCtrl,
-              style: TextStyle(
-                  fontFamily: 'Cairo', color: context.colors.textPrimary),
+              style: TextStyle(fontFamily: 'Cairo', color: context.colors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'ابحث عن تمرين...',
-                hintStyle: AppTextStyles.bodyMedium
-                    .copyWith(color: context.colors.textMuted),
-                prefixIcon:
-                    Icon(Icons.search_rounded, color: context.colors.textMuted),
+                hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted),
+                prefixIcon: Icon(Icons.search_rounded, color: context.colors.textMuted),
                 filled: true,
                 fillColor: context.colors.bgElevated,
                 border: OutlineInputBorder(
@@ -144,8 +136,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
           // Results
           Expanded(
             child: _loading
-                ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.accent))
+                ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
                 : _results.isEmpty
                     ? Center(
                         child: Text('لا يوجد نتائج',
@@ -171,9 +162,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
                               ),
                             ),
                             subtitle: Text(
-                              ex.bodyPartAr.isNotEmpty
-                                  ? ex.bodyPartAr
-                                  : ex.bodyPart,
+                              ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
                               style: AppTextStyles.bodySmall
                                   .copyWith(color: context.colors.textMuted),
                             ),

@@ -74,9 +74,8 @@ class _SetRowWidgetState extends State<SetRowWidget> {
         color: done ? AppColors.accentDim : context.colors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         border: Border.all(
-          color: done
-              ? AppColors.accent.withOpacity(0.4)
-              : context.colors.borderSubtle,
+          color:
+              done ? AppColors.accent.withOpacity(0.4) : context.colors.borderSubtle,
           width: 0.5,
         ),
       ),
@@ -201,8 +200,7 @@ class _NumField extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle:
-            AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
+        hintStyle: AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
         suffixText: label,
         suffixStyle:
             AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),

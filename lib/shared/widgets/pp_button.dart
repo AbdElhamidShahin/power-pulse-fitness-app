@@ -4,7 +4,6 @@ import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 
 enum PPButtonVariant { primary, outline, ghost }
-
 enum PPButtonSize { large, medium, small }
 
 class PPButton extends StatelessWidget {
@@ -30,9 +29,9 @@ class PPButton extends StatelessWidget {
   final double? width;
 
   double get _height => switch (size) {
-        PPButtonSize.large => AppConstants.buttonHeightLarge,
+        PPButtonSize.large  => AppConstants.buttonHeightLarge,
         PPButtonSize.medium => AppConstants.buttonHeightMedium,
-        PPButtonSize.small => AppConstants.buttonHeightSmall,
+        PPButtonSize.small  => AppConstants.buttonHeightSmall,
       };
 
   @override
@@ -44,24 +43,16 @@ class PPButton extends StatelessWidget {
       width: width ?? double.infinity,
       child: switch (variant) {
         PPButtonVariant.primary => _PrimaryButton(
-            label: label,
-            onPressed: disabled ? null : onPressed,
-            icon: icon,
-            isLoading: isLoading,
-            size: size,
+            label: label, onPressed: disabled ? null : onPressed,
+            icon: icon, isLoading: isLoading, size: size,
           ),
         PPButtonVariant.outline => _OutlineButton(
-            label: label,
-            onPressed: disabled ? null : onPressed,
-            icon: icon,
-            isLoading: isLoading,
-            size: size,
+            label: label, onPressed: disabled ? null : onPressed,
+            icon: icon, isLoading: isLoading, size: size,
           ),
         PPButtonVariant.ghost => _GhostButton(
-            label: label,
-            onPressed: disabled ? null : onPressed,
-            icon: icon,
-            size: size,
+            label: label, onPressed: disabled ? null : onPressed,
+            icon: icon, size: size,
           ),
       },
     );
@@ -70,11 +61,8 @@ class PPButton extends StatelessWidget {
 
 class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({
-    required this.label,
-    required this.onPressed,
-    required this.isLoading,
-    required this.size,
-    this.icon,
+    required this.label, required this.onPressed,
+    required this.isLoading, required this.size, this.icon,
   });
   final String label;
   final VoidCallback? onPressed;
@@ -87,10 +75,8 @@ class _PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor:
-            onPressed == null ? AppColors.bgElevated : AppColors.accent,
-        foregroundColor:
-            onPressed == null ? AppColors.textMuted : AppColors.textOnAccent,
+        backgroundColor: onPressed == null ? AppColors.bgElevated : AppColors.accent,
+        foregroundColor: onPressed == null ? AppColors.textMuted : AppColors.textOnAccent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
         ),
@@ -99,10 +85,8 @@ class _PrimaryButton extends StatelessWidget {
       ),
       child: isLoading
           ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, color: AppColors.textOnAccent),
+              width: 20, height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnAccent),
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -112,12 +96,9 @@ class _PrimaryButton extends StatelessWidget {
                   Icon(icon, size: AppConstants.iconS),
                   const SizedBox(width: AppConstants.spaceS),
                 ],
-                Text(label,
-                    style: AppTextStyles.labelLarge.copyWith(
-                      color: onPressed == null
-                          ? AppColors.textMuted
-                          : AppColors.textOnAccent,
-                    )),
+                Text(label, style: AppTextStyles.labelLarge.copyWith(
+                  color: onPressed == null ? AppColors.textMuted : AppColors.textOnAccent,
+                )),
               ],
             ),
     );
@@ -126,11 +107,8 @@ class _PrimaryButton extends StatelessWidget {
 
 class _OutlineButton extends StatelessWidget {
   const _OutlineButton({
-    required this.label,
-    required this.onPressed,
-    required this.isLoading,
-    required this.size,
-    this.icon,
+    required this.label, required this.onPressed,
+    required this.isLoading, required this.size, this.icon,
   });
   final String label;
   final VoidCallback? onPressed;
@@ -155,10 +133,8 @@ class _OutlineButton extends StatelessWidget {
       ),
       child: isLoading
           ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, color: AppColors.accent),
+              width: 20, height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -168,9 +144,7 @@ class _OutlineButton extends StatelessWidget {
                   Icon(icon, size: AppConstants.iconS),
                   const SizedBox(width: AppConstants.spaceS),
                 ],
-                Text(label,
-                    style: AppTextStyles.labelLarge
-                        .copyWith(color: AppColors.accent)),
+                Text(label, style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
               ],
             ),
     );
@@ -179,10 +153,8 @@ class _OutlineButton extends StatelessWidget {
 
 class _GhostButton extends StatelessWidget {
   const _GhostButton({
-    required this.label,
-    required this.onPressed,
-    required this.size,
-    this.icon,
+    required this.label, required this.onPressed,
+    required this.size, this.icon,
   });
   final String label;
   final VoidCallback? onPressed;
@@ -208,9 +180,7 @@ class _GhostButton extends StatelessWidget {
             Icon(icon, size: AppConstants.iconS),
             const SizedBox(width: AppConstants.spaceS),
           ],
-          Text(label,
-              style:
-                  AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
+          Text(label, style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
         ],
       ),
     );

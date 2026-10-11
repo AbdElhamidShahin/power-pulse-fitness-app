@@ -8,6 +8,7 @@ import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../logic/cubit/progress_cubit.dart';
 import '../../logic/cubit/progress_state.dart';
 
+
 class WeightSheet extends StatefulWidget {
   const WeightSheet({super.key});
 
@@ -67,7 +68,7 @@ class _WeightSheetState extends State<WeightSheet> {
               autofocus: true,
               textDirection: TextDirection.ltr,
               keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              const TextInputType.numberWithOptions(decimal: true),
               style: TextStyle(fontFamily: 'Cairo', fontSize: 16.sp),
               decoration: InputDecoration(
                 labelText: context.l10n.weight,
@@ -96,28 +97,28 @@ class _WeightSheetState extends State<WeightSheet> {
                   onPressed: state is WeightLogLoading
                       ? null
                       : () {
-                          final w = double.tryParse(_ctrl.text);
-                          if (w != null && w > 0) {
-                            context.read<WeightLogCubit>().addEntry(w);
-                          }
-                        },
+                    final w = double.tryParse(_ctrl.text);
+                    if (w != null && w > 0) {
+                      context.read<WeightLogCubit>().addEntry(w);
+                    }
+                  },
                   child: state is WeightLogLoading
                       ? SizedBox(
-                          width: 20.w,
-                          height: 20.h,
-                          child: const CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
+                    width: 20.w,
+                    height: 20.h,
+                    child: const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
                       : Text(
-                          context.l10n.save,
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                    context.l10n.save,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ),

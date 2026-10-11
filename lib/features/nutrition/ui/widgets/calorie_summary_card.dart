@@ -34,7 +34,7 @@ class CalorieSummaryCard extends StatelessWidget {
                       text: TextSpan(
                         style: TextStyle(fontFamily: 'Cairo', fontSize: 12.sp),
                         children: [
-                          TextSpan(
+                            TextSpan(
                             text: 'الهدف: ',
                             style: TextStyle(color: context.colors.textMuted),
                           ),
@@ -53,7 +53,7 @@ class CalorieSummaryCard extends StatelessWidget {
                       text: TextSpan(
                         style: TextStyle(fontFamily: 'Cairo', fontSize: 12.sp),
                         children: [
-                          TextSpan(
+                            TextSpan(
                             text: 'المتبقي: ',
                             style: TextStyle(color: context.colors.textMuted),
                           ),

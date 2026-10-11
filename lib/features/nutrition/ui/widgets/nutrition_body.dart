@@ -163,7 +163,7 @@ class NutritionBody extends StatelessWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               ...MealType.values.map(
-                (type) => Padding(
+                    (type) => Padding(
                   padding: EdgeInsets.only(bottom: 10.h),
                   child: MealCard(
                     mealType: type,

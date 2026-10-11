@@ -20,12 +20,12 @@ class NotificationSettingsSection extends StatefulWidget {
 class _NotificationSettingsSectionState
     extends State<NotificationSettingsSection> {
   static const _keyWorkout = 'notif_workout';
-  static const _keySteps = 'notif_steps';
-  static const _keyWater = 'notif_water';
+  static const _keySteps   = 'notif_steps';
+  static const _keyWater   = 'notif_water';
 
   bool _workout = true;
-  bool _steps = true;
-  bool _water = false;
+  bool _steps   = true;
+  bool _water   = false;
   bool _loading = true;
 
   @override
@@ -38,8 +38,8 @@ class _NotificationSettingsSectionState
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _workout = prefs.getBool(_keyWorkout) ?? true;
-      _steps = prefs.getBool(_keySteps) ?? true;
-      _water = prefs.getBool(_keyWater) ?? false;
+      _steps   = prefs.getBool(_keySteps)   ?? true;
+      _water   = prefs.getBool(_keyWater)   ?? false;
       _loading = false;
     });
   }
@@ -99,26 +99,26 @@ class _NotificationSettingsSectionState
           child: Column(
             children: [
               _NotifTile(
-                emoji: '💪',
-                title: context.l10n.workoutReminder,
+                emoji:    '💪',
+                title:    context.l10n.workoutReminder,
                 subtitle: context.l10n.workoutReminderSubtitle,
-                value: _workout,
+                value:    _workout,
                 onChanged: (v) => _toggle(_keyWorkout, v),
               ),
               Divider(height: 1, color: context.colors.borderSubtle),
               _NotifTile(
-                emoji: '👟',
-                title: context.l10n.stepsReminder,
+                emoji:    '👟',
+                title:    context.l10n.stepsReminder,
                 subtitle: context.l10n.stepsReminderSubtitle,
-                value: _steps,
+                value:    _steps,
                 onChanged: (v) => _toggle(_keySteps, v),
               ),
               Divider(height: 1, color: context.colors.borderSubtle),
               _NotifTile(
-                emoji: '💧',
-                title: context.l10n.waterReminder,
+                emoji:    '💧',
+                title:    context.l10n.waterReminder,
                 subtitle: context.l10n.waterIntervalNote,
-                value: _water,
+                value:    _water,
                 onChanged: (v) => _toggle(_keyWater, v),
               ),
             ],

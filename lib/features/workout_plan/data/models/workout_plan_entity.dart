@@ -19,31 +19,31 @@ final class PlanExercise {
   final int defaultReps;
 
   PlanExercise copyWith({int? defaultSets, int? defaultReps}) => PlanExercise(
-        exerciseId: exerciseId,
-        exerciseName: exerciseName,
-        bodyPart: bodyPart,
-        gifUrl: gifUrl,
-        defaultSets: defaultSets ?? this.defaultSets,
-        defaultReps: defaultReps ?? this.defaultReps,
-      );
+    exerciseId: exerciseId,
+    exerciseName: exerciseName,
+    bodyPart: bodyPart,
+    gifUrl: gifUrl,
+    defaultSets: defaultSets ?? this.defaultSets,
+    defaultReps: defaultReps ?? this.defaultReps,
+  );
 
   Map<String, dynamic> toJson() => {
-        'exerciseId': exerciseId,
-        'exerciseName': exerciseName,
-        'bodyPart': bodyPart,
-        'gifUrl': gifUrl,
-        'defaultSets': defaultSets,
-        'defaultReps': defaultReps,
-      };
+    'exerciseId': exerciseId,
+    'exerciseName': exerciseName,
+    'bodyPart': bodyPart,
+    'gifUrl': gifUrl,
+    'defaultSets': defaultSets,
+    'defaultReps': defaultReps,
+  };
 
   factory PlanExercise.fromJson(Map<String, dynamic> j) => PlanExercise(
-        exerciseId: j['exerciseId'] as String,
-        exerciseName: j['exerciseName'] as String,
-        bodyPart: j['bodyPart'] as String,
-        gifUrl: j['gifUrl'] as String? ?? '',
-        defaultSets: j['defaultSets'] as int? ?? 3,
-        defaultReps: j['defaultReps'] as int? ?? 10,
-      );
+    exerciseId: j['exerciseId'] as String,
+    exerciseName: j['exerciseName'] as String,
+    bodyPart: j['bodyPart'] as String,
+    gifUrl: j['gifUrl'] as String? ?? '',
+    defaultSets: j['defaultSets'] as int? ?? 3,
+    defaultReps: j['defaultReps'] as int? ?? 10,
+  );
 }
 
 // يوم واحد في الخطة — إما تمرين أو راحة
@@ -57,7 +57,7 @@ final class PlanDay {
 
   final int weekday;
   final bool isRest;
-  final String name; // مثلاً "تمرين الصدر"
+  final String name;          // مثلاً "تمرين الصدر"
   final List<PlanExercise> exercises;
 
   bool get hasExercises => !isRest && exercises.isNotEmpty;
@@ -77,20 +77,20 @@ final class PlanDay {
       );
 
   Map<String, dynamic> toJson() => {
-        'weekday': weekday,
-        'isRest': isRest,
-        'name': name,
-        'exercises': exercises.map((e) => e.toJson()).toList(),
-      };
+    'weekday': weekday,
+    'isRest': isRest,
+    'name': name,
+    'exercises': exercises.map((e) => e.toJson()).toList(),
+  };
 
   factory PlanDay.fromJson(Map<String, dynamic> j) => PlanDay(
-        weekday: j['weekday'] as int,
-        isRest: j['isRest'] as bool? ?? false,
-        name: j['name'] as String? ?? '',
-        exercises: (j['exercises'] as List<dynamic>? ?? [])
-            .map((e) => PlanExercise.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    weekday: j['weekday'] as int,
+    isRest: j['isRest'] as bool? ?? false,
+    name: j['name'] as String? ?? '',
+    exercises: (j['exercises'] as List<dynamic>? ?? [])
+        .map((e) => PlanExercise.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 // الخطة كاملة — 7 أيام
@@ -109,7 +109,7 @@ final class WorkoutPlan {
   PlanDay dayFor(DateTime date) {
     final wd = date.weekday; // dart: 1=Mon .. 7=Sun
     return days.firstWhere(
-      (d) => d.weekday == wd,
+          (d) => d.weekday == wd,
       orElse: () => PlanDay(weekday: wd, isRest: true),
     );
   }
@@ -118,43 +118,35 @@ final class WorkoutPlan {
   int get activeDaysCount => days.where((d) => d.hasExercises).length;
 
   WorkoutPlan copyWith({List<PlanDay>? days}) => WorkoutPlan(
-        id: id,
-        days: days ?? this.days,
-        createdAt: createdAt,
-      );
+    id: id,
+    days: days ?? this.days,
+    createdAt: createdAt,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdAt': createdAt.toIso8601String(),
-        'days': days.map((d) => d.toJson()).toList(),
-      };
+    'id': id,
+    'createdAt': createdAt.toIso8601String(),
+    'days': days.map((d) => d.toJson()).toList(),
+  };
 
   factory WorkoutPlan.fromJson(Map<String, dynamic> j) => WorkoutPlan(
-        id: j['id'] as String,
-        createdAt: DateTime.parse(j['createdAt'] as String),
-        days: (j['days'] as List<dynamic>)
-            .map((d) => PlanDay.fromJson(d as Map<String, dynamic>))
-            .toList(),
-      );
+    id: j['id'] as String,
+    createdAt: DateTime.parse(j['createdAt'] as String),
+    days: (j['days'] as List<dynamic>)
+        .map((d) => PlanDay.fromJson(d as Map<String, dynamic>))
+        .toList(),
+  );
 
   // خطة فارغة — كل الأيام راحة كنقطة بداية
   static WorkoutPlan empty() => WorkoutPlan(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        createdAt: DateTime.now(),
-        days: List.generate(
-          7,
+    id: DateTime.now().millisecondsSinceEpoch.toString(),
+    createdAt: DateTime.now(),
+    days: List.generate(
+      7,
           (i) => PlanDay(weekday: i + 1, isRest: true),
-        ),
-      );
+    ),
+  );
 }
 
 // أسماء الأيام بالعربي
-const weekdayNamesAr = [
-  'الإثنين',
-  'الثلاثاء',
-  'الأربعاء',
-  'الخميس',
-  'الجمعة',
-  'السبت',
-  'الأحد'
-];
+const weekdayNamesAr = ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'];

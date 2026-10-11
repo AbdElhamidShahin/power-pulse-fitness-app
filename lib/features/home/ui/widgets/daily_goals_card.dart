@@ -193,18 +193,18 @@ class _GoalRow extends StatelessWidget {
             style: TextStyle(fontFamily: 'Cairo'),
             children: [
               TextSpan(
-                text: '$goal',
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: Color(0xFFCCCCCC),
-                ),
-              ),
-              TextSpan(
-                text: '/$value',
+                text: '$value',
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w800,
                   color: done ? AppColors.success : dot,
+                ),
+              ),
+              TextSpan(
+                text: '/$goal',
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  color: const Color(0xFFCCCCCC),
                 ),
               ),
             ],

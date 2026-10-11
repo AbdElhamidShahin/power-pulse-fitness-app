@@ -25,8 +25,7 @@ class ProgressPeriodSelector extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color:
-                    active ? context.colors.bgDark : context.colors.bgSurface,
+                color: active ? context.colors.bgDark : context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Text(
@@ -35,8 +34,7 @@ class ProgressPeriodSelector extends StatelessWidget {
                   fontFamily: 'Cairo',
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
-                  color:
-                      active ? AppColors.textOnDark : context.colors.textMuted,
+                  color: active ? AppColors.textOnDark : context.colors.textMuted,
                 ),
               ),
             ),

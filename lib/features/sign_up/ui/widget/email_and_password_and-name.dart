@@ -103,9 +103,9 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
               return null;
             },
             suffixIcon: _buildPasswordIcon(
-                _isPasswordHidden,
-                () => setState(() => _isPasswordHidden = !_isPasswordHidden),
-                context),
+              _isPasswordHidden,
+              () => setState(() => _isPasswordHidden = !_isPasswordHidden),context
+            ),
           ),
           SizedBox(height: 16.h),
           _buildLabel(context, 'تأكيد كلمة المرور'),
@@ -123,12 +123,11 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
               return null;
             },
             suffixIcon: _buildPasswordIcon(
-                _isConfirmPasswordHidden,
-                () => setState(
-                      () =>
-                          _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
-                    ),
-                context),
+              _isConfirmPasswordHidden,
+              () => setState(
+                () => _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
+              ),context
+            ),
           ),
           SizedBox(height: 20.h),
           SizedBox(
@@ -137,9 +136,9 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
             child: BlocBuilder<SignUpCubit, SignUpState>(
               builder: (context, state) {
                 if (state is SignUpLoading) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                        color: context.colors.textPrimary),
+                  return   Center(
+                    child:
+                        CircularProgressIndicator(color: context.colors.textPrimary),
                   );
                 }
                 return ElevatedButton(
@@ -194,7 +193,7 @@ Widget _buildSuffixIcon(IconData icon, context) {
   );
 }
 
-Widget _buildPasswordIcon(bool obscure, VoidCallback onTap, context) {
+Widget _buildPasswordIcon(bool obscure, VoidCallback onTap,context) {
   return GestureDetector(
     onTap: onTap,
     child: Padding(

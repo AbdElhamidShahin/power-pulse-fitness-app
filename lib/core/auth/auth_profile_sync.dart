@@ -25,8 +25,7 @@ abstract class AuthProfileSync {
         await prefs.setString(_key, jsonEncode(json));
       } catch (_) {
         // لو فشل التحديث، نكتب profile جديد
-        await _writeDefault(prefs,
-            name: name, email: email, avatarUrl: avatarUrl);
+        await _writeDefault(prefs, name: name, email: email, avatarUrl: avatarUrl);
       }
       return;
     }

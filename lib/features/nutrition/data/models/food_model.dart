@@ -53,24 +53,24 @@ final class FoodModel {
   }
 
   FoodItem toEntity() => FoodItem(
-        id: id,
-        name: name,
-        nameAr: nameAr,
-        calories: calories,
-        protein: protein,
-        carbs: carbs,
-        fat: fat,
-        fiber: fiber,
-        sugar: sugar,
-        servingSize: servingSize,
-        servingUnit: 'جم',
-        imageUrl: imageUrl,
-        brand: brand,
-      );
+    id: id,
+    name: name,
+    nameAr: nameAr,
+    calories: calories,
+    protein: protein,
+    carbs: carbs,
+    fat: fat,
+    fiber: fiber,
+    sugar: sugar,
+    servingSize: servingSize,
+    servingUnit: 'جم',
+    imageUrl: imageUrl,
+    brand: brand,
+  );
 
   static List<FoodItem> toEntityList(List<dynamic> products) => products
       .map((p) =>
-          FoodModel.fromOpenFoodFacts(p as Map<String, dynamic>).toEntity())
+      FoodModel.fromOpenFoodFacts(p as Map<String, dynamic>).toEntity())
       .where((f) => f.name.isNotEmpty && f.calories > 0)
       .toList();
 

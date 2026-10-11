@@ -32,10 +32,10 @@ extension AppFailureX on AppFailure {
   /// رسالة عربية مناسبة للعرض في الـ UI.
   /// لو الـ Cubit عنده رسالة خاصة (زي "التمرين غير موجود") يستخدم [withOverrides].
   String get userMessage => switch (this) {
-        NetworkFailure() => 'تحقق من اتصال الإنترنت',
-        ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
-        NotFoundFailure() => message,
-        CacheFailure() => 'خطأ في التخزين المحلي',
+        NetworkFailure()    => 'تحقق من اتصال الإنترنت',
+        ServerFailure()     => 'خطأ في الخادم، حاول لاحقاً',
+        NotFoundFailure()   => message,
+        CacheFailure()      => 'خطأ في التخزين المحلي',
         UnexpectedFailure() => 'حدث خطأ غير متوقع',
       };
 
@@ -47,14 +47,14 @@ extension AppFailureX on AppFailure {
 // ─── mapExceptionToFailure ─────────────────────────────────────────────────
 // يدمج منطق failure_mapper.dart القديم — اللي بيستخدمه مش محتاج يعمل import منفصل
 AppFailure mapExceptionToFailure(Exception e) => switch (e) {
-      NetworkException() => const NetworkFailure(),
-      NotFoundException() => NotFoundFailure(message: e.message),
-      CacheException() => CacheFailure(message: e.message),
-      ServerException() => ServerFailure(
-          message: e.message,
-          statusCode: e.statusCode,
-        ),
-      _ => UnexpectedFailure(message: e.toString()),
+      NetworkException()   => const NetworkFailure(),
+      NotFoundException()  => NotFoundFailure(message: e.message),
+      CacheException()     => CacheFailure(message: e.message),
+      ServerException()    => ServerFailure(
+                                message: e.message,
+                                statusCode: e.statusCode,
+                              ),
+      _                    => UnexpectedFailure(message: e.toString()),
     };
 
 // احتفظنا بـ failureMessage للـ backward compat (لو في كود تاني بيستخدمه)

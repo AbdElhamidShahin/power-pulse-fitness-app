@@ -9,6 +9,7 @@ import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
 import '../widgets/nutrition_body.dart';
 
+
 class NutritionScreen extends StatefulWidget {
   const NutritionScreen({super.key});
 

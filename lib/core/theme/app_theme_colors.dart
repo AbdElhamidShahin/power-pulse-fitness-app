@@ -40,18 +40,18 @@ abstract class _AppColors {
   Color get borderMedium;
 
   // ─── Semantic (مش بتتغير مع الـ theme) ────────────────────
-  Color get accent => AppColors.accent;
-  Color get accentDim => AppColors.accentDim;
-  Color get success => AppColors.success;
-  Color get successDim => AppColors.successDim;
-  Color get warning => AppColors.warning;
-  Color get warningDim => AppColors.warningDim;
-  Color get danger => AppColors.danger;
-  Color get dangerDim => AppColors.dangerDim;
-  Color get info => AppColors.info;
-  Color get infoDim => AppColors.infoDim;
-  Color get textOnAccent => AppColors.textOnAccent;
-  Color get textOnDark => AppColors.textOnDark;
+  Color get accent        => AppColors.accent;
+  Color get accentDim     => AppColors.accentDim;
+  Color get success       => AppColors.success;
+  Color get successDim    => AppColors.successDim;
+  Color get warning       => AppColors.warning;
+  Color get warningDim    => AppColors.warningDim;
+  Color get danger        => AppColors.danger;
+  Color get dangerDim     => AppColors.dangerDim;
+  Color get info          => AppColors.info;
+  Color get infoDim       => AppColors.infoDim;
+  Color get textOnAccent  => AppColors.textOnAccent;
+  Color get textOnDark    => AppColors.textOnDark;
 
   // ─── Dark Cards (بتتغير) ───────────────────────────────────
   Color get bgDark;
@@ -62,55 +62,33 @@ abstract class _AppColors {
 class _LightColors extends _AppColors {
   const _LightColors();
 
-  @override
-  Color get bgDeep => AppColors.bgDeep;
-  @override
-  Color get bgSurface => AppColors.bgSurface;
-  @override
-  Color get bgElevated => AppColors.bgElevated;
-  @override
-  Color get bgHighest => AppColors.bgHighest;
-  @override
-  Color get textPrimary => AppColors.textPrimary;
-  @override
-  Color get textSecondary => AppColors.textSecondary;
-  @override
-  Color get textMuted => AppColors.textMuted;
-  @override
-  Color get borderSubtle => AppColors.borderSubtle;
-  @override
-  Color get borderMedium => AppColors.borderMedium;
-  @override
-  Color get bgDark => AppColors.bgDark;
-  @override
-  Color get bgDarkAlt => AppColors.bgDarkAlt;
+  @override Color get bgDeep      => AppColors.bgDeep;
+  @override Color get bgSurface   => AppColors.bgSurface;
+  @override Color get bgElevated  => AppColors.bgElevated;
+  @override Color get bgHighest   => AppColors.bgHighest;
+  @override Color get textPrimary   => AppColors.textPrimary;
+  @override Color get textSecondary => AppColors.textSecondary;
+  @override Color get textMuted     => AppColors.textMuted;
+  @override Color get borderSubtle  => AppColors.borderSubtle;
+  @override Color get borderMedium  => AppColors.borderMedium;
+  @override Color get bgDark        => AppColors.bgDark;
+  @override Color get bgDarkAlt     => AppColors.bgDarkAlt;
 }
 
 /// Dark palette
 class _DarkColors extends _AppColors {
   const _DarkColors();
 
-  @override
-  Color get bgDeep => AppColorsDark.bgDeep;
-  @override
-  Color get bgSurface => AppColorsDark.bgSurface;
-  @override
-  Color get bgElevated => AppColorsDark.bgElevated;
-  @override
-  Color get bgHighest => AppColorsDark.bgHighest;
-  @override
-  Color get textPrimary => AppColorsDark.textPrimary;
-  @override
-  Color get textSecondary => AppColorsDark.textSecondary;
-  @override
-  Color get textMuted => AppColorsDark.textMuted;
-  @override
-  Color get borderSubtle => AppColorsDark.borderSubtle;
-  @override
-  Color get borderMedium => AppColorsDark.borderMedium;
+  @override Color get bgDeep      => AppColorsDark.bgDeep;
+  @override Color get bgSurface   => AppColorsDark.bgSurface;
+  @override Color get bgElevated  => AppColorsDark.bgElevated;
+  @override Color get bgHighest   => AppColorsDark.bgHighest;
+  @override Color get textPrimary   => AppColorsDark.textPrimary;
+  @override Color get textSecondary => AppColorsDark.textSecondary;
+  @override Color get textMuted     => AppColorsDark.textMuted;
+  @override Color get borderSubtle  => AppColorsDark.borderSubtle;
+  @override Color get borderMedium  => AppColorsDark.borderMedium;
   // في dark mode الكارت الداكنة بتبقى أغمق من bgSurface
-  @override
-  Color get bgDark => AppColorsDark.bgDeep;
-  @override
-  Color get bgDarkAlt => AppColorsDark.bgSurface;
+  @override Color get bgDark        => AppColorsDark.bgDeep;
+  @override Color get bgDarkAlt     => AppColorsDark.bgSurface;
 }

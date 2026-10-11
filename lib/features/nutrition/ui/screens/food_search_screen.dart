@@ -29,21 +29,13 @@ class FoodSearchScreen extends StatefulWidget {
 
 class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _controller = TextEditingController();
-  final _scroll = ScrollController();
+  final _scroll     = ScrollController();
 
   static final _popularFoods = ArabicFoodDatabase.all
       .where((f) => [
-            'ar_001',
-            'ar_002',
-            'ar_003',
-            'ar_009',
-            'ar_010',
-            'ar_011',
-            'mt_001',
-            'dy_001',
-            'gr_001',
-            'cn_001',
-          ].contains(f.id))
+    'ar_001', 'ar_002', 'ar_003', 'ar_009', 'ar_010',
+    'ar_011', 'mt_001', 'dy_001', 'gr_001', 'cn_001',
+  ].contains(f.id))
       .toList();
 
   @override
@@ -247,12 +239,12 @@ class _SuggestionsView extends StatelessWidget {
         ),
         SizedBox(height: AppConstants.spaceS.h),
         ...foods.map((f) => Padding(
-              padding: EdgeInsets.only(bottom: AppConstants.spaceS.h),
-              child: FoodSearchCard(
-                item: f,
-                onAdd: () => _showAddDialog(context, f, mealType),
-              ),
-            )),
+          padding: EdgeInsets.only(bottom: AppConstants.spaceS.h),
+          child: FoodSearchCard(
+            item: f,
+            onAdd: () => _showAddDialog(context, f, mealType),
+          ),
+        )),
         SizedBox(height: 80.h),
       ],
     );
@@ -425,10 +417,10 @@ class _ErrorView extends StatelessWidget {
 
 // ─── Add Food Dialog ──────────────────────────────────────────────────────────
 void _showAddDialog(
-  BuildContext context,
-  FoodItem item,
-  MealType mealType,
-) {
+    BuildContext context,
+    FoodItem item,
+    MealType mealType,
+    ) {
   double quantity = item.servingSize;
   final controller = TextEditingController(
     text: item.servingSize.toInt().toString(),
@@ -446,16 +438,14 @@ void _showAddDialog(
     builder: (ctx) {
       return StatefulBuilder(
         builder: (ctx, setModalState) {
-          final cal = item.calories * quantity / item.servingSize;
-          final prot = item.protein * quantity / item.servingSize;
-          final carb = item.carbs * quantity / item.servingSize;
-          final fat = item.fat * quantity / item.servingSize;
+          final cal  = item.calories * quantity / item.servingSize;
+          final prot = item.protein  * quantity / item.servingSize;
+          final carb = item.carbs    * quantity / item.servingSize;
+          final fat  = item.fat      * quantity / item.servingSize;
 
           return Padding(
             padding: EdgeInsets.fromLTRB(
-              20.w,
-              20.h,
-              20.w,
+              20.w, 20.h, 20.w,
               MediaQuery.of(ctx).viewInsets.bottom + 20.h,
             ),
             child: Column(
@@ -465,8 +455,7 @@ void _showAddDialog(
                 // Handle
                 Center(
                   child: Container(
-                    width: 40.w,
-                    height: 4.h,
+                    width: 40.w, height: 4.h,
                     decoration: BoxDecoration(
                       color: context.colors.borderSubtle,
                       borderRadius: BorderRadius.circular(2.r),
@@ -535,14 +524,13 @@ void _showAddDialog(
                         decoration: InputDecoration(
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(
-                            horizontal: 8.w,
-                            vertical: 8.h,
+                            horizontal: 8.w, vertical: 8.h,
                           ),
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppConstants.radiusS.r),
-                            borderSide:
-                                BorderSide(color: context.colors.borderSubtle),
+                            borderRadius: BorderRadius.circular(
+                                AppConstants.radiusS.r),
+                            borderSide: BorderSide(
+                                color: context.colors.borderSubtle),
                           ),
                         ),
                         onChanged: (v) {
@@ -567,17 +555,16 @@ void _showAddDialog(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius.circular(AppConstants.radiusM.r),
+                        BorderRadius.circular(AppConstants.radiusM.r),
                       ),
                     ),
                     onPressed: () async {
                       final saved = await context.read<AddMealCubit>().addMeal(
-                            food: item,
-                            mealType: mealType,
-                            quantity: quantity,
-
-                            // loggedAt: selectedDate,
-                          );
+                        food: item,
+                        mealType: mealType,
+                        quantity: quantity,
+                        // loggedAt: selectedDate,
+                      );
                       if (!context.mounted) return;
                       if (!saved) {
                         final state = context.read<AddMealCubit>().state;

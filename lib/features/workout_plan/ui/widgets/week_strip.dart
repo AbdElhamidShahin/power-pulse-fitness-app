@@ -25,7 +25,7 @@ class WeekStrip extends StatelessWidget {
   final int selectedWeekday;
   final ValueChanged<int> onSelect;
 
-  static const _names = ['إث', 'ث', 'أر', 'خ', 'ج', 'س', 'أح'];
+  static const _names = ['س', 'أح', 'إث', 'ث', 'أر', 'خ', 'ج'];
   static const _fullNames = [
     'الإثنين',
     'الثلاثاء',
@@ -48,8 +48,15 @@ class WeekStrip extends StatelessWidget {
       ),
       child: Row(
         children: List.generate(7, (i) {
-          final day = days[i];
-          final wd = i + 1;
+          const displayWeekdays = [6, 7, 1, 2, 3, 4, 5];
+          final wd = displayWeekdays[i];
+          final storedDay = days.firstWhere(
+            (d) => d.weekday == wd,
+            orElse: () => PlanDay(weekday: wd, isRest: true),
+          );
+          final day = wd == DateTime.friday
+              ? PlanDay(weekday: wd, isRest: true, name: storedDay.name)
+              : storedDay;
           final isSelected = wd == selectedWeekday;
           final isToday = wd == DateTime.now().weekday;
 
@@ -64,8 +71,8 @@ class WeekStrip extends StatelessWidget {
                   color: isSelected
                       ? AppColors.accent
                       : day.isRest
-                          ? context.colors.bgElevated
-                          : AppColors.accentDim,
+                      ? context.colors.bgElevated
+                      : AppColors.accentDim,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: isToday && !isSelected
                       ? Border.all(color: AppColors.accent, width: 1)
@@ -81,7 +88,7 @@ class WeekStrip extends StatelessWidget {
                             ? AppColors.textOnAccent
                             : context.colors.textMuted,
                         fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w400,
+                        isSelected ? FontWeight.w700 : FontWeight.w400,
                       ),
                     ),
                     const SizedBox(height: 2),

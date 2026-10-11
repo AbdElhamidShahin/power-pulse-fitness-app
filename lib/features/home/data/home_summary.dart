@@ -25,11 +25,11 @@ final class HomeSummary {
     return 'مساء النور';
   }
 
-  double get calorieProgress => dailyNutrition.calorieProgress;
-  double get caloriesConsumed => dailyNutrition.totalCalories;
-  double get caloriesGoal => dailyNutrition.calorieGoal;
-  double get caloriesRemaining => dailyNutrition.caloriesLeft;
-  bool get hasWorkedOutToday => todayWorkouts.isNotEmpty;
-  int get todayWorkoutMinutes =>
+  double get calorieProgress    => dailyNutrition.calorieProgress;
+  double get caloriesConsumed   => dailyNutrition.totalCalories;
+  double get caloriesGoal       => dailyNutrition.calorieGoal;
+  double get caloriesRemaining  => dailyNutrition.caloriesLeft;
+  bool   get hasWorkedOutToday  => todayWorkouts.isNotEmpty;
+  int    get todayWorkoutMinutes =>
       todayWorkouts.fold(0, (s, w) => s + w.durationMinutes);
 }

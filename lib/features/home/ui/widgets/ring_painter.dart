@@ -36,6 +36,5 @@ class RingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(RingPainter oldDelegate) =>
-      oldDelegate.progress != progress;
+  bool shouldRepaint(RingPainter oldDelegate) => oldDelegate.progress != progress;
 }

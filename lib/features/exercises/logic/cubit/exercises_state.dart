@@ -32,10 +32,10 @@ final class ExercisesLoaded extends ExercisesState {
     bool? hasMore,
   }) =>
       ExercisesLoaded(
-        exercises: exercises ?? this.exercises,
-        bodyParts: bodyParts ?? this.bodyParts,
+        exercises:        exercises        ?? this.exercises,
+        bodyParts:        bodyParts        ?? this.bodyParts,
         selectedBodyPart: selectedBodyPart ?? this.selectedBodyPart,
-        hasMore: hasMore ?? this.hasMore,
+        hasMore:          hasMore          ?? this.hasMore,
       );
 }
 

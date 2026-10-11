@@ -41,20 +41,20 @@ import 'route_observers.dart';
 abstract class AppRouter {
   AppRouter._();
 
-  static const String entry = '/entry';
-  static const String login = '/login';
-  static const String signUp = '/sign-up';
+  static const String entry      = '/entry';
+  static const String login      = '/login';
+  static const String signUp     = '/sign-up';
   static const String resetPassword = '/reset-password';
   static const String onboarding = '/onboarding';
-  static const String home = '/home';
-  static const String exercises = '/exercises';
-  static const String nutrition = '/nutrition';
+  static const String home       = '/home';
+  static const String exercises  = '/exercises';
+  static const String nutrition  = '/nutrition';
   static const String nutritionSearch = '/nutrition/search';
-  static const String progress = '/progress';
-  static const String profile = '/profile';
+  static const String progress   = '/progress';
+  static const String profile    = '/profile';
   static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
-  static const String workoutPlan = '/workout-plan';
+  static const String workoutPlan   = '/workout-plan';
 
   // ─── Startup routing ─────────────────────────────────────────────────────
   //
@@ -230,27 +230,21 @@ abstract class AppRouter {
               BlocProvider(create: (_) => sl<AddMealCubit>()),
               BlocProvider(create: (_) => sl<NutritionCubit>()),
             ],
-            child: FoodSearchScreen(
-                mealType: mealType, selectedDate: selectedDate),
+            child: FoodSearchScreen(mealType: mealType, selectedDate: selectedDate),
           );
         },
       ),
-
       GoRoute(
         path: workoutLogger,
         builder: (_, __) => MultiBlocProvider(
           providers: [
-            BlocProvider(
-              create: (_) => sl<WorkoutLoggerCubit>(),
-            ),
-            BlocProvider.value(
-              value: sl<WorkoutPlanCubit>()..ensureLoaded(),
-            ),
+            BlocProvider(create: (_) => sl<WorkoutLoggerCubit>()),
+            // WorkoutLoggerScreen reads the same plan Cubit used by Home/Plan.
+            BlocProvider.value(value: sl<WorkoutPlanCubit>()..ensureLoaded()),
           ],
           child: const WorkoutLoggerScreen(),
         ),
       ),
-
       GoRoute(
         path: workoutPlan,
         builder: (_, __) => MultiBlocProvider(
@@ -284,3 +278,4 @@ abstract class AppRouter {
     ),
   );
 }
+
