@@ -58,9 +58,53 @@ abstract class AppTheme {
         elevation: 0,
       ),
     ),
+    // ─── Input Decoration Theme (Light) ───────────────────────────────
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.bgElevated,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spaceL,
+        vertical: AppConstants.spaceM,
+      ),
+      hintStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.textMuted,
+      ),
+      // Suffix/Prefix text style
+      suffixStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.textMuted,
+      ),
+      prefixStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.textMuted,
+      ),
+      // Borders
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.borderSubtle, width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.borderSubtle, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.danger, width: 1),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.borderSubtle, width: 1),
+      ),
+    ),
   );
 
-  // ─── Dark Theme الحقيقي ──────────────────────────────────────────
+  // ─── Dark Theme ───────────────────────────────────────────────────
   static ThemeData get dark => ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -113,11 +157,53 @@ abstract class AppTheme {
         elevation: 0,
       ),
     ),
+    // ─── Input Decoration Theme (Dark) ───────────────────────────────
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColorsDark.bgElevated,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spaceL,
+        vertical: AppConstants.spaceM,
+      ),
+      hintStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColorsDark.textMuted,
+      ),
+      suffixStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColorsDark.textMuted,
+      ),
+      prefixStyle: AppTextStyles.bodyMedium.copyWith(
+        color: AppColorsDark.textMuted,
+      ),
+      // Borders
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColorsDark.borderSubtle, width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColorsDark.borderSubtle, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.danger, width: 1),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        borderSide: const BorderSide(color: AppColorsDark.borderSubtle, width: 1),
+      ),
+    ),
   );
 }
 
 // ─── Dark Mode Colors ──────────────────────────────────────────────
-// ألوان منفصلة للـ dark mode — الـ widgets تستخدم Theme.of(context) للتبديل
 abstract class AppColorsDark {
   AppColorsDark._();
 
