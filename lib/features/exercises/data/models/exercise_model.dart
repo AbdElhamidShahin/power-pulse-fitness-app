@@ -37,7 +37,7 @@ final class ExerciseModel {
   factory ExerciseModel.fromJson(Map<String, dynamic> json) {
     final rawGif = json['gif_url']?.toString() ?? '';
     final gifUrl = rawGif.isNotEmpty
-        ? '${ApiEndpoints.mediaCdnBase}/$rawGif'
+        ? '${ApiEndpoints.media_cdn_base}/$rawGif'
         : '';
 
     List<String> _parseSteps(dynamic raw) {

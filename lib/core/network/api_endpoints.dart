@@ -1,12 +1,12 @@
 abstract class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String exerciseDbBaseUrl =
+  static const String exercise_db_base_url =
       'https://cdn.jsdelivr.net/gh/AbdElhamidShahin/power-pulse-exercises@main';
 
   static const String exercisesJson = '/data/exercises_ar.json';
 
-  static const String mediaCdnBase =
+  static const String media_cdn_base =
       'https://cdn.jsdelivr.net/gh/hasaneyldrm/exercises-dataset@main';
 
   static const String foodBaseUrl       = 'https://world.openfoodfacts.org';

@@ -81,6 +81,9 @@ jobs:
       # Step 9: بناء الـ Release APK
       # ─────────────────────────────────────────
       - name: 🏗️ Build Release APK
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL  }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY  }}
         run: |
           flutter build apk --release \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
