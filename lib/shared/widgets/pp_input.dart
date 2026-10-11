@@ -43,22 +43,22 @@ class PPSearchBar extends StatelessWidget {
               child: readOnly
                   ? Text(hint, style: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted))
                   : TextField(
-                      controller: controller,
-                      onChanged: onChanged,
-                      autofocus: autofocus,
-                      style: AppTextStyles.bodyMedium,
-                      textDirection: TextDirection.rtl,
-                      decoration: InputDecoration(
-                        hintText: hint,
-                        hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                        isDense: true,
-                        filled: false,
-                      ),
-                    ),
+                controller: controller,
+                onChanged: onChanged,
+                autofocus: autofocus,
+                style: Theme.of(context).textTheme.bodyMedium!,
+                textDirection: TextDirection.rtl,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                  isDense: true,
+                  filled: false,
+                ),
+              ),
             ),
             const SizedBox(width: AppConstants.spaceL),
           ],
@@ -104,7 +104,7 @@ class PPTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (label != null) ...[
-          Text(label!, style: AppTextStyles.labelMedium),
+          Text(label!, style: Theme.of(context).textTheme.labelMedium!),
           const SizedBox(height: AppConstants.spaceS),
         ],
         TextFormField(

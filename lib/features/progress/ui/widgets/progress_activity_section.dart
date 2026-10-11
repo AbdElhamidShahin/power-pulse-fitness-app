@@ -24,7 +24,7 @@ class ProgressActivitySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final days = summary.dailyActivity;
     final hasAny = days.any((d) =>
-        d.steps > 0 || d.caloriesIn > 0 || d.waterLiters > 0);
+    d.steps > 0 || d.caloriesIn > 0 || d.waterLiters > 0);
 
     return Container(
       width: double.infinity,
@@ -123,7 +123,7 @@ class ProgressActivitySection extends StatelessWidget {
                 minHeight: 7.h,
                 backgroundColor: context.colors.bgElevated,
                 valueColor:
-                    const AlwaysStoppedAnimation<Color>(AppColors.success),
+                const AlwaysStoppedAnimation<Color>(AppColors.success),
               ),
             ),
           ],
@@ -229,7 +229,7 @@ class _WeekBars extends StatelessWidget {
     final maxSteps = days.fold<int>(0, (m, d) => d.steps > m ? d.steps : m);
     final maxCal = days.fold<double>(
       (goal ?? 0),
-      (m, d) => d.caloriesIn > m ? d.caloriesIn : m,
+          (m, d) => d.caloriesIn > m ? d.caloriesIn : m,
     );
     final barMax = 70.h;
 
@@ -296,11 +296,11 @@ class _Bar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: 8.w,
-        height: height < 3 ? 3 : height,
-        decoration: BoxDecoration(
-          color: height < 3 ? color.withOpacity(0.25) : color,
-          borderRadius: BorderRadius.circular(4.r),
-        ),
-      );
+    width: 8.w,
+    height: height < 3 ? 3 : height,
+    decoration: BoxDecoration(
+      color: height < 3 ? color.withOpacity(0.25) : color,
+      borderRadius: BorderRadius.circular(4.r),
+    ),
+  );
 }

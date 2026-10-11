@@ -39,9 +39,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<LoginCubit>().loginUser(
-          email: _emailCtrl.text.trim(),
-          password: _passCtrl.text,
-        );
+      email: _emailCtrl.text.trim(),
+      password: _passCtrl.text,
+    );
   }
 
   Future<void> _showForgotPasswordDialog(BuildContext context) async {
@@ -78,8 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
               if (!formKey.currentState!.validate()) return;
               Navigator.of(dialogContext).pop();
               context.read<LoginCubit>().sendPasswordResetEmail(
-                    email: controller.text.trim(),
-                  );
+                email: controller.text.trim(),
+              );
             },
             child: Text(context.l10n.sendLink),
           ),
@@ -109,8 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
               recordSaysComplete = profile['profileCompleted'] == true;
               hasValidMeasurements =
                   (profile['age'] as num? ?? 0) > 0 &&
-                  (profile['heightCm'] as num? ?? 0) > 0 &&
-                  (profile['weightKg'] as num? ?? 0) > 0;
+                      (profile['heightCm'] as num? ?? 0) > 0 &&
+                      (profile['weightKg'] as num? ?? 0) > 0;
             } catch (_) {
               recordSaysComplete = false;
               hasValidMeasurements = false;
@@ -406,9 +406,9 @@ class _AuthField extends StatelessWidget {
             color: context.colors.textMuted, size: AppConstants.iconM),
         suffixIcon: suffix != null
             ? Padding(
-                padding: const EdgeInsets.only(left: AppConstants.spaceM),
-                child: suffix,
-              )
+          padding: const EdgeInsets.only(left: AppConstants.spaceM),
+          child: suffix,
+        )
             : null,
         filled: true,
         fillColor: context.colors.bgSurface,
@@ -454,7 +454,7 @@ class _OrDivider extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text(
             'أو',
-            style: AppTextStyles.bodySmall
+            style: Theme.of(context).textTheme.bodySmall!
                 .copyWith(color: context.colors.textMuted),
           ),
         ),

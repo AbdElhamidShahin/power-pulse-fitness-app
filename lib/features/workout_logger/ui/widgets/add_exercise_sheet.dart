@@ -138,40 +138,40 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
             child: _loading
                 ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
                 : _results.isEmpty
-                    ? Center(
-                        child: Text('لا يوجد نتائج',
-                            style: AppTextStyles.bodyMedium
-                                .copyWith(color: context.colors.textMuted)),
-                      )
-                    : ListView.builder(
-                        controller: scroll,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.screenPaddingH,
-                          vertical: AppConstants.spaceS,
-                        ),
-                        itemCount: _results.length,
-                        itemBuilder: (_, i) {
-                          final ex = _results[i];
-                          return ListTile(
-                            title: Text(
-                              ex.nameAr.isNotEmpty ? ex.nameAr : ex.name,
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                color: context.colors.textPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            subtitle: Text(
-                              ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
-                              style: AppTextStyles.bodySmall
-                                  .copyWith(color: context.colors.textMuted),
-                            ),
-                            trailing: Icon(Icons.add_circle_outline_rounded,
-                                color: AppColors.accent),
-                            onTap: () => _pick(ex),
-                          );
-                        },
-                      ),
+                ? Center(
+              child: Text('لا يوجد نتائج',
+                  style: Theme.of(context).textTheme.bodyMedium!
+                      .copyWith(color: context.colors.textMuted)),
+            )
+                : ListView.builder(
+              controller: scroll,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.screenPaddingH,
+                vertical: AppConstants.spaceS,
+              ),
+              itemCount: _results.length,
+              itemBuilder: (_, i) {
+                final ex = _results[i];
+                return ListTile(
+                  title: Text(
+                    ex.nameAr.isNotEmpty ? ex.nameAr : ex.name,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      color: context.colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  subtitle: Text(
+                    ex.bodyPartAr.isNotEmpty ? ex.bodyPartAr : ex.bodyPart,
+                    style: Theme.of(context).textTheme.bodySmall!
+                        .copyWith(color: context.colors.textMuted),
+                  ),
+                  trailing: Icon(Icons.add_circle_outline_rounded,
+                      color: AppColors.accent),
+                  onTap: () => _pick(ex),
+                );
+              },
+            ),
           ),
         ],
       ),

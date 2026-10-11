@@ -122,10 +122,10 @@ class CalorieRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => NutritionCalorieRing(
-        consumed: consumed,
-        goal: goal,
-        size: size,
-      );
+    consumed: consumed,
+    goal: goal,
+    size: size,
+  );
 }
 
 class MacroBar extends StatelessWidget {

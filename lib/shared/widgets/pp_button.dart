@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
@@ -29,10 +30,10 @@ class PPButton extends StatelessWidget {
   final double? width;
 
   double get _height => switch (size) {
-        PPButtonSize.large  => AppConstants.buttonHeightLarge,
-        PPButtonSize.medium => AppConstants.buttonHeightMedium,
-        PPButtonSize.small  => AppConstants.buttonHeightSmall,
-      };
+    PPButtonSize.large  => AppConstants.buttonHeightLarge,
+    PPButtonSize.medium => AppConstants.buttonHeightMedium,
+    PPButtonSize.small  => AppConstants.buttonHeightSmall,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +44,17 @@ class PPButton extends StatelessWidget {
       width: width ?? double.infinity,
       child: switch (variant) {
         PPButtonVariant.primary => _PrimaryButton(
-            label: label, onPressed: disabled ? null : onPressed,
-            icon: icon, isLoading: isLoading, size: size,
-          ),
+          label: label, onPressed: disabled ? null : onPressed,
+          icon: icon, isLoading: isLoading, size: size,
+        ),
         PPButtonVariant.outline => _OutlineButton(
-            label: label, onPressed: disabled ? null : onPressed,
-            icon: icon, isLoading: isLoading, size: size,
-          ),
+          label: label, onPressed: disabled ? null : onPressed,
+          icon: icon, isLoading: isLoading, size: size,
+        ),
         PPButtonVariant.ghost => _GhostButton(
-            label: label, onPressed: disabled ? null : onPressed,
-            icon: icon, size: size,
-          ),
+          label: label, onPressed: disabled ? null : onPressed,
+          icon: icon, size: size,
+        ),
       },
     );
   }
@@ -75,8 +76,8 @@ class _PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: onPressed == null ? AppColors.bgElevated : AppColors.accent,
-        foregroundColor: onPressed == null ? AppColors.textMuted : AppColors.textOnAccent,
+        backgroundColor: onPressed == null ? context.colors.bgElevated : AppColors.accent,
+        foregroundColor: onPressed == null ? context.colors.textMuted : AppColors.textOnAccent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
         ),
@@ -85,22 +86,22 @@ class _PrimaryButton extends StatelessWidget {
       ),
       child: isLoading
           ? const SizedBox(
-              width: 20, height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnAccent),
-            )
+        width: 20, height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnAccent),
+      )
           : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, size: AppConstants.iconS),
-                  const SizedBox(width: AppConstants.spaceS),
-                ],
-                Text(label, style: AppTextStyles.labelLarge.copyWith(
-                  color: onPressed == null ? AppColors.textMuted : AppColors.textOnAccent,
-                )),
-              ],
-            ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: AppConstants.iconS),
+            const SizedBox(width: AppConstants.spaceS),
+          ],
+          Text(label, style: AppTextStyles.labelLarge.copyWith(
+            color: onPressed == null ? context.colors.textMuted : AppColors.textOnAccent,
+          )),
+        ],
+      ),
     );
   }
 }
@@ -123,7 +124,7 @@ class _OutlineButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.accent,
         side: BorderSide(
-          color: onPressed == null ? AppColors.borderSubtle : AppColors.accent,
+          color: onPressed == null ? context.colors.borderSubtle : AppColors.accent,
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
@@ -133,20 +134,20 @@ class _OutlineButton extends StatelessWidget {
       ),
       child: isLoading
           ? const SizedBox(
-              width: 20, height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
-            )
+        width: 20, height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
+      )
           : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, size: AppConstants.iconS),
-                  const SizedBox(width: AppConstants.spaceS),
-                ],
-                Text(label, style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
-              ],
-            ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: AppConstants.iconS),
+            const SizedBox(width: AppConstants.spaceS),
+          ],
+          Text(label, style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
+        ],
+      ),
     );
   }
 }

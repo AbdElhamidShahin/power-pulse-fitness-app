@@ -80,7 +80,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
                 AppConstants.spaceM),
             child: Row(
               children: [
-                Text('اختر تمريناً', style: AppTextStyles.headlineMedium),
+                Text('اختر تمريناً', style: Theme.of(context).textTheme.headlineMedium!),
                 const Spacer(),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
@@ -96,7 +96,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
             child: TextField(
               controller: _ctrl,
               onChanged: _load,
-              style: AppTextStyles.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium!,
               decoration: InputDecoration(
                 hintText: 'ابحث...',
                 prefixIcon: Icon(Icons.search_rounded,
@@ -118,7 +118,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
                 : _results.isEmpty
                 ? Center(
                 child: Text('لا توجد نتائج',
-                    style: AppTextStyles.bodyMedium))
+                    style: Theme.of(context).textTheme.bodyMedium!))
                 : ListView.builder(
               controller: scroll,
               padding: const EdgeInsets.fromLTRB(
@@ -157,7 +157,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
                             CrossAxisAlignment.start,
                             children: [
                               Text(name,
-                                  style: AppTextStyles.labelMedium,
+                                  style: Theme.of(context).textTheme.labelMedium!,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis),
                               const SizedBox(height: 2),
@@ -171,7 +171,7 @@ class _ExercisePickerSheetState extends State<ExercisePickerSheet> {
                                       AppConstants.radiusPill),
                                 ),
                                 child: Text(part,
-                                    style: AppTextStyles.labelSmall
+                                    style: Theme.of(context).textTheme.labelSmall!
                                         .copyWith(
                                         color: AppColors.accent)),
                               ),

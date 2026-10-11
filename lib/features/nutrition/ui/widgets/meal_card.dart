@@ -63,7 +63,7 @@ class _MealCardState extends State<MealCard>
     final isDone = widget.entries.isNotEmpty;
     final totalKcal = widget.entries.fold<double>(0, (s, e) => s + e.calories);
     final names =
-        widget.entries.map((e) => e.food.displayName).take(3).join('، ');
+    widget.entries.map((e) => e.food.displayName).take(3).join('، ');
     final preview = isDone ? names : context.l10n.tapToAddMeal;
 
     return Column(
@@ -83,7 +83,7 @@ class _MealCardState extends State<MealCard>
                   height: 42.r,
                   decoration: BoxDecoration(
                     color:
-                        isDone ? AppColors.accent.withOpacity(0.15) : meta.bg,
+                    isDone ? AppColors.accent.withOpacity(0.15) : meta.bg,
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   alignment: Alignment.center,
@@ -136,15 +136,15 @@ class _MealCardState extends State<MealCard>
                 SizedBox(width: 10.w),
                 isDone
                     ? RotationTransition(
-                        turns: _rotate,
-                        child: Icon(Icons.keyboard_arrow_down_rounded,
-                            color: context.colors.textMuted, size: 20.r),
-                      )
+                  turns: _rotate,
+                  child: Icon(Icons.keyboard_arrow_down_rounded,
+                      color: context.colors.textMuted, size: 20.r),
+                )
                     : GestureDetector(
-                        onTap: widget.onAddTap,
-                        child: Icon(Icons.add_circle_outline_rounded,
-                            color: AppColors.accent, size: 20.r),
-                      ),
+                  onTap: widget.onAddTap,
+                  child: Icon(Icons.add_circle_outline_rounded,
+                      color: AppColors.accent, size: 20.r),
+                ),
               ],
             ),
           ),
@@ -164,16 +164,16 @@ class _MealCardState extends State<MealCard>
             child: Column(
               children: [
                 ...widget.entries.map((entry) => _EntryRow(
-                      entry: entry,
-                      onDelete: () =>
-                          context.read<NutritionCubit>().deleteEntry(entry.id),
-                    )),
+                  entry: entry,
+                  onDelete: () =>
+                      context.read<NutritionCubit>().deleteEntry(entry.id),
+                )),
                 InkWell(
                   onTap: widget.onAddTap,
                   borderRadius: BorderRadius.circular(16.r),
                   child: Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -239,42 +239,42 @@ class _EntryRow extends StatelessWidget {
       ),
       confirmDismiss: (_) async {
         return await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                backgroundColor: context.colors.bgSurface,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.r)),
-                title: Text(context.l10n.deleteItemQ,
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: context.colors.bgSurface,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r)),
+            title: Text(context.l10n.deleteItemQ,
+                style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15.sp)),
+            content: Text(
+              'هل تريد حذف "${entry.food.displayName}"؟',
+              style: TextStyle(fontFamily: 'Cairo', fontSize: 13.sp),
+            ),
+            actionsAlignment: MainAxisAlignment.end,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text('إلغاء',
                     style: TextStyle(
                         fontFamily: 'Cairo',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15.sp)),
-                content: Text(
-                  'هل تريد حذف "${entry.food.displayName}"؟',
-                  style: TextStyle(fontFamily: 'Cairo', fontSize: 13.sp),
-                ),
-                actionsAlignment: MainAxisAlignment.end,
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: Text('إلغاء',
-                        style: TextStyle(
-                            fontFamily: 'Cairo',
-                            color: context.colors.textMuted,
-                            fontSize: 12.sp)),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: Text(context.l10n.delete,
-                        style: TextStyle(
-                            fontFamily: 'Cairo',
-                            color: AppColors.danger,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12.sp)),
-                  ),
-                ],
+                        color: context.colors.textMuted,
+                        fontSize: 12.sp)),
               ),
-            ) ??
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(context.l10n.delete,
+                    style: TextStyle(
+                        fontFamily: 'Cairo',
+                        color: AppColors.danger,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.sp)),
+              ),
+            ],
+          ),
+        ) ??
             false;
       },
       onDismissed: (_) => onDelete(),
@@ -361,8 +361,8 @@ class MealSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MealCard(
-        mealType: mealType,
-        entries: entries,
-        onAddTap: onAddTap,
-      );
+    mealType: mealType,
+    entries: entries,
+    onAddTap: onAddTap,
+  );
 }

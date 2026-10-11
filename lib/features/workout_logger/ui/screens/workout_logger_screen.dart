@@ -155,10 +155,10 @@ class _ActiveView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('التمارين',
-                          style: AppTextStyles.labelSmall
+                          style: Theme.of(context).textTheme.labelSmall!
                               .copyWith(color: context.colors.textMuted)),
                       Text('$done / $total',
-                          style: AppTextStyles.labelSmall
+                          style: Theme.of(context).textTheme.labelSmall!
                               .copyWith(color: AppColors.accent)),
                     ],
                   ),
@@ -438,13 +438,13 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                     borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                   ),
                   child: Text(_ex.bodyPart,
-                      style: AppTextStyles.labelSmall
+                      style: Theme.of(context).textTheme.labelSmall!
                           .copyWith(color: AppColors.accent)),
                 ),
                 const SizedBox(height: AppConstants.spaceXL),
                 // Sets
                 Text('المجموعات',
-                    style: AppTextStyles.labelMedium
+                    style: Theme.of(context).textTheme.labelMedium!
                         .copyWith(color: context.colors.textMuted)),
                 const SizedBox(height: AppConstants.spaceS),
                 ..._ex.sets.asMap().entries.map((entry) {
@@ -516,7 +516,7 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                             color: context.colors.textMuted, size: 16),
                         const SizedBox(width: 4),
                         Text('+ مجموعة',
-                            style: AppTextStyles.labelSmall
+                            style: Theme.of(context).textTheme.labelSmall!
                                 .copyWith(color: context.colors.textMuted)),
                       ],
                     ),
@@ -539,7 +539,7 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                     ),
                   ),
                   child: Text('✓ خلصت هذا التمرين',
-                      style: AppTextStyles.labelLarge
+                      style: Theme.of(context).textTheme.labelLarge!
                           .copyWith(color: AppColors.textOnAccent)),
                 ),
               ],
@@ -573,7 +573,7 @@ class _ErrorView extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: context.colors.bgDeep,
     body: Center(
-      child: Text(message, style: AppTextStyles.bodyMedium),
+      child: Text(message, style: Theme.of(context).textTheme.bodyMedium!),
     ),
   );
 }
@@ -596,7 +596,7 @@ class _EmptyExercises extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: AppConstants.spaceS),
           Text('اضغط "إضافة تمرين" للبدء',
-              style: AppTextStyles.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium!),
           const SizedBox(height: AppConstants.spaceXXL),
           PPButton(
             label: '+ إضافة أول تمرين',

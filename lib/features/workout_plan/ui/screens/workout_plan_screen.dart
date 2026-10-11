@@ -70,7 +70,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         }
         final draft = state.draft;
         final selectedDay = draft.days.firstWhere(
-          (d) => d.weekday == _selectedWeekday,
+              (d) => d.weekday == _selectedWeekday,
           orElse: () => draft.days.first,
         );
 
@@ -79,13 +79,13 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           appBar: AppBar(
             backgroundColor: context.colors.bgDeep,
             elevation: 0,
-            title: Text('خطة الأسبوع', style: AppTextStyles.headlineMedium),
+            title: Text('خطة الأسبوع', style: Theme.of(context).textTheme.headlineMedium!),
             centerTitle: true,
             actions: [
               TextButton(
                 onPressed: () => context.read<WorkoutPlanCubit>().saveDraft(),
                 child: Text('حفظ',
-                    style: AppTextStyles.labelMedium
+                    style: Theme.of(context).textTheme.labelMedium!
                         .copyWith(color: AppColors.accent)),
               ),
             ],
@@ -157,7 +157,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
+        BorderRadius.vertical(top: Radius.circular(AppConstants.radiusXXL)),
       ),
       builder: (_) => _ExercisePickerSheet(
         exercisesCubit: exCubit,
@@ -211,7 +211,7 @@ class _WeekStrip extends StatelessWidget {
           const displayWeekdays = [6, 7, 1, 2, 3, 4, 5];
           final wd = displayWeekdays[i];
           final storedDay = days.firstWhere(
-            (d) => d.weekday == wd,
+                (d) => d.weekday == wd,
             orElse: () => PlanDay(weekday: wd, isRest: true),
           );
           final day = wd == DateTime.friday
@@ -231,8 +231,8 @@ class _WeekStrip extends StatelessWidget {
                   color: isSelected
                       ? AppColors.accent
                       : day.isRest
-                          ? context.colors.bgElevated
-                          : AppColors.accentDim,
+                      ? context.colors.bgElevated
+                      : AppColors.accentDim,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: isToday && !isSelected
                       ? Border.all(color: AppColors.accent, width: 1)
@@ -248,7 +248,7 @@ class _WeekStrip extends StatelessWidget {
                             ? AppColors.textOnAccent
                             : context.colors.textMuted,
                         fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w400,
+                        isSelected ? FontWeight.w700 : FontWeight.w400,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -346,7 +346,7 @@ class _DayDetailState extends State<_DayDetail> {
               children: [
                 Row(
                   children: [
-                    Text(dayName, style: AppTextStyles.headlineMedium),
+                    Text(dayName, style: Theme.of(context).textTheme.headlineMedium!),
                     if (isToday) ...[
                       const SizedBox(width: AppConstants.spaceS),
                       Container(
@@ -355,10 +355,10 @@ class _DayDetailState extends State<_DayDetail> {
                         decoration: BoxDecoration(
                           color: AppColors.accentDim,
                           borderRadius:
-                              BorderRadius.circular(AppConstants.radiusPill),
+                          BorderRadius.circular(AppConstants.radiusPill),
                         ),
                         child: Text('اليوم',
-                            style: AppTextStyles.labelSmall
+                            style: Theme.of(context).textTheme.labelSmall!
                                 .copyWith(color: AppColors.accent)),
                       ),
                     ],
@@ -366,7 +366,7 @@ class _DayDetailState extends State<_DayDetail> {
                 ),
                 Text(
                   day.isRest ? context.l10n.restDay : '${day.exercises.length} تمارين',
-                  style: AppTextStyles.bodySmall
+                  style: Theme.of(context).textTheme.bodySmall!
                       .copyWith(color: context.colors.textMuted),
                 ),
               ],
@@ -384,7 +384,7 @@ class _DayDetailState extends State<_DayDetail> {
                   borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                   border: Border.all(
                     color:
-                        day.isRest ? AppColors.accent : context.colors.borderMedium,
+                    day.isRest ? AppColors.accent : context.colors.borderMedium,
                   ),
                 ),
                 child: Row(
@@ -425,13 +425,13 @@ class _DayDetailState extends State<_DayDetail> {
               children: [
                 const Text('😴', style: TextStyle(fontSize: 40)),
                 const SizedBox(height: AppConstants.spaceM),
-                Text(context.l10n.restDay, style: AppTextStyles.labelLarge),
+                Text(context.l10n.restDay, style: Theme.of(context).textTheme.labelLarge!),
                 const SizedBox(height: AppConstants.spaceS),
                 Text(
                   isFriday
                       ? 'يوم الجمعة مخصص للراحة'
                       : 'اضغط على "راحة" أعلاه لتحويله ليوم تمرين',
-                  style: AppTextStyles.bodySmall
+                  style: Theme.of(context).textTheme.bodySmall!
                       .copyWith(color: context.colors.textMuted),
                   textAlign: TextAlign.center,
                 ),
@@ -443,11 +443,11 @@ class _DayDetailState extends State<_DayDetail> {
           TextField(
             controller: _nameCtrl,
             onChanged: widget.onNameChanged,
-            style: AppTextStyles.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium!,
             decoration: InputDecoration(
               hintText: 'اسم اليوم — مثلاً: تمرين الصدر',
               hintStyle:
-                  AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
+              AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
               filled: true,
               fillColor: context.colors.bgSurface,
               contentPadding: const EdgeInsets.symmetric(
@@ -476,11 +476,11 @@ class _DayDetailState extends State<_DayDetail> {
                       color: context.colors.textMuted, size: 32),
                   const SizedBox(height: AppConstants.spaceM),
                   Text('لا توجد تمارين بعد',
-                      style: AppTextStyles.labelMedium
+                      style: Theme.of(context).textTheme.labelMedium!
                           .copyWith(color: context.colors.textMuted)),
                   const SizedBox(height: AppConstants.spaceS),
                   Text('اضغط + لإضافة تمارين ليوم $dayName',
-                      style: AppTextStyles.bodySmall
+                      style: Theme.of(context).textTheme.bodySmall!
                           .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ],
@@ -512,7 +512,7 @@ class _DayDetailState extends State<_DayDetail> {
                       ),
                       alignment: Alignment.center,
                       child: Text('${i + 1}',
-                          style: AppTextStyles.labelSmall
+                          style: Theme.of(context).textTheme.labelSmall!
                               .copyWith(color: AppColors.accent)),
                     ),
                     const SizedBox(width: AppConstants.spaceM),
@@ -521,12 +521,12 @@ class _DayDetailState extends State<_DayDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(ex.exerciseName,
-                              style: AppTextStyles.labelMedium,
+                              style: Theme.of(context).textTheme.labelMedium!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis),
                           Text(
                             '${ex.defaultSets} سيتات × ${ex.defaultReps} رابس  •  ${ex.bodyPart}',
-                            style: AppTextStyles.bodySmall
+                            style: Theme.of(context).textTheme.bodySmall!
                                 .copyWith(color: context.colors.textMuted),
                           ),
                         ],
@@ -553,7 +553,7 @@ class _DayDetailState extends State<_DayDetail> {
             child: Container(
               width: double.infinity,
               padding:
-                  const EdgeInsets.symmetric(vertical: AppConstants.spaceL),
+              const EdgeInsets.symmetric(vertical: AppConstants.spaceL),
               decoration: BoxDecoration(
                 color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -567,7 +567,7 @@ class _DayDetailState extends State<_DayDetail> {
                       color: AppColors.accent, size: 20),
                   const SizedBox(width: AppConstants.spaceS),
                   Text(context.l10n.addExercise,
-                      style: AppTextStyles.labelMedium
+                      style: Theme.of(context).textTheme.labelMedium!
                           .copyWith(color: AppColors.accent)),
                 ],
               ),
@@ -647,7 +647,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                 AppConstants.spaceM),
             child: Row(
               children: [
-                Text('اختر تمريناً', style: AppTextStyles.headlineMedium),
+                Text('اختر تمريناً', style: Theme.of(context).textTheme.headlineMedium!),
                 const Spacer(),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
@@ -663,7 +663,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
             child: TextField(
               controller: _ctrl,
               onChanged: _load,
-              style: AppTextStyles.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium!,
               decoration: InputDecoration(
                 hintText: 'ابحث...',
                 prefixIcon: Icon(Icons.search_rounded,
@@ -681,96 +681,96 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
           Expanded(
             child: _loading
                 ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.accent))
+                child: CircularProgressIndicator(color: AppColors.accent))
                 : _results.isEmpty
-                    ? Center(
-                        child: Text('لا توجد نتائج',
-                            style: AppTextStyles.bodyMedium))
-                    : ListView.builder(
-                        controller: scroll,
-                        padding: const EdgeInsets.fromLTRB(
-                          AppConstants.screenPaddingH,
-                          0,
-                          AppConstants.screenPaddingH,
-                          AppConstants.space5XL,
+                ? Center(
+                child: Text('لا توجد نتائج',
+                    style: Theme.of(context).textTheme.bodyMedium!))
+                : ListView.builder(
+              controller: scroll,
+              padding: const EdgeInsets.fromLTRB(
+                AppConstants.screenPaddingH,
+                0,
+                AppConstants.screenPaddingH,
+                AppConstants.space5XL,
+              ),
+              itemCount: _results.length,
+              itemBuilder: (_, i) {
+                final ex = _results[i];
+                final name =
+                ex.nameAr.isNotEmpty ? ex.nameAr : ex.name;
+                final part = ex.bodyPartAr.isNotEmpty
+                    ? ex.bodyPartAr
+                    : ex.bodyPart;
+                return GestureDetector(
+                  onTap: () => widget.onPick(ex),
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                        bottom: AppConstants.spaceS),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppConstants.spaceM,
+                      vertical: AppConstants.spaceM,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.colors.bgElevated,
+                      borderRadius:
+                      BorderRadius.circular(AppConstants.radiusL),
+                    ),
+                    child: Row(
+                      children: [
+                        // ── صورة التمرين ──────────────────────
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              AppConstants.radiusM),
+                          child: ex.gifUrl.isNotEmpty
+                              ? Image.network(
+                            ex.gifUrl,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                                _ExercisePlaceholder(
+                                    bodyPart: ex.bodyPart),
+                          )
+                              : _ExercisePlaceholder(
+                              bodyPart: ex.bodyPart),
                         ),
-                        itemCount: _results.length,
-                        itemBuilder: (_, i) {
-                          final ex = _results[i];
-                          final name =
-                              ex.nameAr.isNotEmpty ? ex.nameAr : ex.name;
-                          final part = ex.bodyPartAr.isNotEmpty
-                              ? ex.bodyPartAr
-                              : ex.bodyPart;
-                          return GestureDetector(
-                            onTap: () => widget.onPick(ex),
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  bottom: AppConstants.spaceS),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppConstants.spaceM,
-                                vertical: AppConstants.spaceM,
+                        const SizedBox(width: AppConstants.spaceM),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Text(name,
+                                  style: Theme.of(context).textTheme.labelMedium!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppConstants.spaceS,
+                                    vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accentDim,
+                                  borderRadius: BorderRadius.circular(
+                                      AppConstants.radiusPill),
+                                ),
+                                child: Text(part,
+                                    style: Theme.of(context).textTheme.labelSmall!
+                                        .copyWith(
+                                        color: AppColors.accent)),
                               ),
-                              decoration: BoxDecoration(
-                                color: context.colors.bgElevated,
-                                borderRadius:
-                                    BorderRadius.circular(AppConstants.radiusL),
-                              ),
-                              child: Row(
-                                children: [
-                                  // ── صورة التمرين ──────────────────────
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        AppConstants.radiusM),
-                                    child: ex.gifUrl.isNotEmpty
-                                        ? Image.network(
-                                            ex.gifUrl,
-                                            width: 60,
-                                            height: 60,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) =>
-                                                _ExercisePlaceholder(
-                                                    bodyPart: ex.bodyPart),
-                                          )
-                                        : _ExercisePlaceholder(
-                                            bodyPart: ex.bodyPart),
-                                  ),
-                                  const SizedBox(width: AppConstants.spaceM),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(name,
-                                            style: AppTextStyles.labelMedium,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis),
-                                        const SizedBox(height: 4),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: AppConstants.spaceS,
-                                              vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.accentDim,
-                                            borderRadius: BorderRadius.circular(
-                                                AppConstants.radiusPill),
-                                          ),
-                                          child: Text(part,
-                                              style: AppTextStyles.labelSmall
-                                                  .copyWith(
-                                                      color: AppColors.accent)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(Icons.add_circle_outline_rounded,
-                                      color: AppColors.accent, size: 22),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.add_circle_outline_rounded,
+                            color: AppColors.accent, size: 22),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

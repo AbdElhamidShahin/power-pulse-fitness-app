@@ -73,7 +73,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                 title: Text(context.l10n.cancelWorkoutQ,
                     style: Theme.of(context).textTheme.headlineSmall),
                 content: Text(context.l10n.cancelWorkoutConfirm,
-                    style: AppTextStyles.bodyMedium),
+                    style: Theme.of(context).textTheme.bodyMedium!),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
@@ -85,7 +85,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                       widget.onCancel();
                     },
                     child: Text(context.l10n.yes,
-                        style: AppTextStyles.labelMedium
+                        style: Theme.of(context).textTheme.labelMedium!
                             .copyWith(color: AppColors.danger)),
                   ),
                 ],
@@ -100,7 +100,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
               child: Text(context.l10n.cancel,
-                  style: AppTextStyles.labelSmall
+                  style: Theme.of(context).textTheme.labelSmall!
                       .copyWith(color: AppColors.danger)),
             ),
           ),
@@ -154,7 +154,7 @@ class WorkoutBottomBar extends StatelessWidget {
                         color: context.colors.textMuted, size: 20),
                     const SizedBox(width: AppConstants.spaceS),
                     Text(context.l10n.addExercise,
-                        style: AppTextStyles.labelMedium
+                        style: Theme.of(context).textTheme.labelMedium!
                             .copyWith(color: context.colors.textMuted)),
                   ],
                 ),
@@ -173,7 +173,7 @@ class WorkoutBottomBar extends StatelessWidget {
                 ),
               ),
               child: Text(context.l10n.finishWorkout,
-                  style: AppTextStyles.labelMedium
+                  style: Theme.of(context).textTheme.labelMedium!
                       .copyWith(color: AppColors.textOnAccent)),
             ),
           ),

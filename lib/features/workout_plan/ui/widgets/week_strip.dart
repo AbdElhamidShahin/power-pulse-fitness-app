@@ -51,7 +51,7 @@ class WeekStrip extends StatelessWidget {
           const displayWeekdays = [6, 7, 1, 2, 3, 4, 5];
           final wd = displayWeekdays[i];
           final storedDay = days.firstWhere(
-            (d) => d.weekday == wd,
+                (d) => d.weekday == wd,
             orElse: () => PlanDay(weekday: wd, isRest: true),
           );
           final day = wd == DateTime.friday

@@ -88,10 +88,10 @@ class PPHeroCard extends StatelessWidget {
               // Background
               imageUrl != null
                   ? Image.network(
-                      imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _placeholder(context),
-                    )
+                imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _placeholder(context),
+              )
                   : imageWidget ?? _placeholder(context),
 
               // Gradient overlay
@@ -180,9 +180,9 @@ class PPHeroCard extends StatelessWidget {
   }
 
   Widget _placeholder(context) => Container(
-        color: context.colors.bgElevated,
-        child: Icon(Icons.fitness_center, color: context.colors.bgHighest, size: 48),
-      );
+    color: context.colors.bgElevated,
+    child: Icon(Icons.fitness_center, color: context.colors.bgHighest, size: 48),
+  );
 }
 
 /// كارد إحصائية صغيرة

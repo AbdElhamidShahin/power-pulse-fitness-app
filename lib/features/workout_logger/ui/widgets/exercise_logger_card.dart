@@ -79,7 +79,7 @@ class ExerciseLoggerCard extends StatelessWidget {
                         ),
                         child: Text(
                           exercise.bodyPart,
-                          style: AppTextStyles.labelSmall
+                          style: Theme.of(context).textTheme.labelSmall!
                               .copyWith(color: AppColors.accent),
                         ),
                       ),
@@ -127,14 +127,14 @@ class ExerciseLoggerCard extends StatelessWidget {
                 const SizedBox(width: 30),
                 Expanded(
                   child: Text('وزن (كجم)',
-                      style: AppTextStyles.labelSmall
+                      style: Theme.of(context).textTheme.labelSmall!
                           .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text('رابس',
-                      style: AppTextStyles.labelSmall
+                      style: Theme.of(context).textTheme.labelSmall!
                           .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ),
@@ -183,7 +183,7 @@ class ExerciseLoggerCard extends StatelessWidget {
                         color: context.colors.textMuted, size: 16),
                     const SizedBox(width: 4),
                     Text('إضافة مجموعة',
-                        style: AppTextStyles.labelSmall
+                        style: Theme.of(context).textTheme.labelSmall!
                             .copyWith(color: context.colors.textMuted)),
                   ],
                 ),

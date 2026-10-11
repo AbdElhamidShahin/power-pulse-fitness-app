@@ -134,8 +134,8 @@ class _WeekStrip extends StatelessWidget {
                 color: isSelected
                     ? AppColors.accent
                     : day.isRest
-                        ? context.colors.bgElevated
-                        : AppColors.accentDim,
+                    ? context.colors.bgElevated
+                    : AppColors.accentDim,
                 borderRadius: BorderRadius.circular(10.r),
                 border: isToday && !isSelected
                     ? Border.all(color: AppColors.accent, width: 1.2)
@@ -150,7 +150,7 @@ class _WeekStrip extends StatelessWidget {
                       fontFamily: 'Cairo',
                       fontSize: 10.sp,
                       fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w400,
+                      isSelected ? FontWeight.w700 : FontWeight.w400,
                       color: isSelected
                           ? AppColors.textOnAccent
                           : context.colors.textMuted,
@@ -422,7 +422,7 @@ class _WorkoutDayCard extends StatelessWidget {
                 color: isToday ? AppColors.accent : context.colors.bgElevated,
                 borderRadius: BorderRadius.circular(14.r),
                 border:
-                    isToday ? null : Border.all(color: context.colors.borderMedium),
+                isToday ? null : Border.all(color: context.colors.borderMedium),
               ),
               alignment: Alignment.center,
               child: Text(
@@ -471,7 +471,7 @@ class _CompletedTodayCard extends StatelessWidget {
         color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
         border:
-            Border.all(color: AppColors.success.withOpacity(0.4), width: 1.5),
+        Border.all(color: AppColors.success.withOpacity(0.4), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -559,7 +559,7 @@ class _CompletedTodayCard extends StatelessWidget {
                     color: AppColors.successDim,
                     borderRadius: BorderRadius.circular(12.r),
                     border:
-                        Border.all(color: AppColors.success.withOpacity(0.4)),
+                    Border.all(color: AppColors.success.withOpacity(0.4)),
                   ),
                   alignment: Alignment.center,
                   child: Text('أعد تاني 🔥',

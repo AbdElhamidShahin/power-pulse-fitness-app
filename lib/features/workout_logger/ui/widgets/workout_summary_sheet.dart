@@ -28,7 +28,7 @@ class WorkoutSummarySheet extends StatelessWidget {
               style: Theme.of(context).textTheme.displayMedium),
           const SizedBox(height: AppConstants.spaceS),
           Text('انتهى تمرين "${session.name}"',
-              style: AppTextStyles.bodyMedium, textAlign: TextAlign.center),
+              style: Theme.of(context).textTheme.bodyMedium!, textAlign: TextAlign.center),
           const SizedBox(height: AppConstants.spaceXXL),
 
           // ─── Stats ───────────────────────────────────────
@@ -89,7 +89,7 @@ class WorkoutSummarySheet extends StatelessWidget {
                   ),
                   Text(
                     '${ex.completedSets}/${ex.sets.length} سيت',
-                    style: AppTextStyles.bodySmall
+                    style: Theme.of(context).textTheme.bodySmall!
                         .copyWith(color: context.colors.textMuted),
                   ),
                 ],
@@ -142,7 +142,7 @@ class _SummaryItem extends StatelessWidget {
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: context.colors.textPrimary)),
-        Text(unit, style: AppTextStyles.bodySmall),
+        Text(unit, style: Theme.of(context).textTheme.bodySmall!),
       ],
     );
   }

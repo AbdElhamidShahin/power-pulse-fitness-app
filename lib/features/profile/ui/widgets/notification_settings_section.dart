@@ -130,7 +130,7 @@ class _NotificationSettingsSectionState
           child: TextButton.icon(
             onPressed: () async {
               final granted =
-                  await NotificationService.instance.requestPermissions();
+              await NotificationService.instance.requestPermissions();
               await NotificationService.instance.showTest();
               if (!mounted || granted) return;
               ScaffoldMessenger.of(context).showSnackBar(

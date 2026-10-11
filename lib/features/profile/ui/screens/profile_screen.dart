@@ -38,16 +38,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: context.colors.bgDeep,
-        body: BlocBuilder<ProfileCubit, ProfileState>(
-          builder: (context, state) => switch (state) {
-            ProfileInitial() || ProfileLoading() => const Center(
-              child: CircularProgressIndicator(color: AppColors.accent),
-            ),
-            ProfileError(:final message) => Center(child: Text(message)),
-            ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
-          },
-        ),
+      backgroundColor: context.colors.bgDeep,
+      body: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) => switch (state) {
+          ProfileInitial() || ProfileLoading() => const Center(
+            child: CircularProgressIndicator(color: AppColors.accent),
+          ),
+          ProfileError(:final message) => Center(child: Text(message)),
+          ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
+        },
+      ),
     );
   }
 }
@@ -329,7 +329,7 @@ class _ProfileContentState extends State<_ProfileContent> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              Text(context.l10n.privacyAndData,
+            Text(context.l10n.privacyAndData,
                 style: TextStyle(
                     fontFamily: 'Cairo', fontSize: 18,
                     fontWeight: FontWeight.w900, color: context.colors.textPrimary)),

@@ -92,6 +92,6 @@ class _Loader extends StatelessWidget {
   const _Loader();
   @override
   Widget build(BuildContext context) => const Center(
-        child: CircularProgressIndicator(color: AppColors.accent),
-      );
+    child: CircularProgressIndicator(color: AppColors.accent),
+  );
 }

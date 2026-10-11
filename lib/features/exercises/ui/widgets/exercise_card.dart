@@ -20,7 +20,7 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayName =
-        exercise.nameAr.isNotEmpty ? exercise.nameAr : exercise.name;
+    exercise.nameAr.isNotEmpty ? exercise.nameAr : exercise.name;
     final displayEquipment = exercise.equipmentAr.isNotEmpty
         ? exercise.equipmentAr
         : exercise.equipment;
@@ -28,7 +28,7 @@ class ExerciseCard extends StatelessWidget {
         ? exercise.bodyPartAr
         : exercise.bodyPart;
     final displayTarget =
-        exercise.targetAr.isNotEmpty ? exercise.targetAr : exercise.target;
+    exercise.targetAr.isNotEmpty ? exercise.targetAr : exercise.target;
 
     return GestureDetector(
       onTap: onTap,
@@ -47,14 +47,14 @@ class ExerciseCard extends StatelessWidget {
                 children: [
                   Text(
                     displayName,
-                    style: AppTextStyles.titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: AppConstants.spaceXS),
                   Text(
                     displayEquipment,
-                    style: AppTextStyles.bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

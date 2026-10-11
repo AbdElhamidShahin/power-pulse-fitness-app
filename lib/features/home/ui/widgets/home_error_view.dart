@@ -27,7 +27,7 @@ class HomeErrorView extends StatelessWidget {
             SizedBox(height: 12.h),
             Text(
               message,
-              style: AppTextStyles.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium!,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),

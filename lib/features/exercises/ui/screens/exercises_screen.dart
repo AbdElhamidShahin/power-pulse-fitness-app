@@ -62,7 +62,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                        Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(context.l10n.exerciseLibrary,
@@ -302,11 +302,11 @@ class _SearchResults extends StatelessWidget {
         ExerciseSearchLoading() => const _Shimmer(),
         ExerciseSearchError() => const SizedBox(),
         ExerciseSearchLoaded(:final results) when results.isEmpty =>
-        Center(
-            child: Text(
-                context.l10n.noResults,
-                style: TextStyle(
-                    color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+            Center(
+                child: Text(
+                    context.l10n.noResults,
+                    style: TextStyle(
+                        color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
         ExerciseSearchLoaded(:final results) => ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: results.length,
@@ -349,7 +349,7 @@ class _ErrorView extends StatelessWidget {
       Icon(Icons.error_outline_rounded,
           color: AppColors.danger, size: 48),
       const SizedBox(height: 16),
-      Text(message, style: AppTextStyles.bodyMedium),
+      Text(message, style: Theme.of(context).textTheme.bodyMedium!),
       const SizedBox(height: 16),
       GestureDetector(
         onTap: () => context.read<ExercisesCubit>().loadInitial(),

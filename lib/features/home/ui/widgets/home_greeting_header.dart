@@ -78,20 +78,20 @@ class _HomeAvatar extends StatelessWidget {
   }
 
   Widget _initials(BuildContext context) => Container(
-        width: 44.r, height: 44.r,
-        decoration: BoxDecoration(
-          color: context.colors.bgDark,
-          shape: BoxShape.circle,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          name.isNotEmpty ? name[0].toUpperCase() : 'A',
-          style: TextStyle(
-            fontFamily: 'Cairo',
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w900,
-            color: AppColors.textOnDark,
-          ),
-        ),
-      );
+    width: 44.r, height: 44.r,
+    decoration: BoxDecoration(
+      color: context.colors.bgDark,
+      shape: BoxShape.circle,
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      name.isNotEmpty ? name[0].toUpperCase() : 'A',
+      style: TextStyle(
+        fontFamily: 'Cairo',
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w900,
+        color: AppColors.textOnDark,
+      ),
+    ),
+  );
 }

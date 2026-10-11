@@ -105,17 +105,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         onPressed: state is ResetPasswordLoading
                             ? null
                             : () {
-                                if (!_formKey.currentState!.validate()) return;
-                                context.read<ResetPasswordCubit>().updatePassword(
-                                      password: _passwordController.text,
-                                    );
-                              },
+                          if (!_formKey.currentState!.validate()) return;
+                          context.read<ResetPasswordCubit>().updatePassword(
+                            password: _passwordController.text,
+                          );
+                        },
                         child: state is ResetPasswordLoading
                             ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                             : Text(context.l10n.savePassword),
                       ),
                     ),

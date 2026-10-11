@@ -14,8 +14,8 @@ class DividerWithText extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
-            'أو',
-            style: AppTextStyles.bodySmall
+              'أو',
+              style: Theme.of(context).textTheme.bodySmall!
           ),
         ),
         Expanded(child: Divider(color: cs.outline, thickness: 1)),

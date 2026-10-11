@@ -207,7 +207,7 @@ class _DetailContent extends StatelessWidget {
                         Expanded(
                           child: Text(
                             e.value,
-                            style: AppTextStyles.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium!,
                             textDirection: TextDirection.rtl,
                           ),
                         ),
@@ -257,7 +257,7 @@ class _DetailError extends StatelessWidget {
           Icon(Icons.error_outline_rounded,
               color: AppColors.danger, size: 48),
           const SizedBox(height: AppConstants.spaceM),
-          Text(message, style: AppTextStyles.bodyMedium),
+          Text(message, style: Theme.of(context).textTheme.bodyMedium!),
         ],
       ),
     );
@@ -433,7 +433,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                             Icon(Icons.check_circle_rounded,
                                 color: AppColors.accent, size: 20),
                           if (day.isRest)
-                              Text(context.l10n.restLabel,
+                            Text(context.l10n.restLabel,
                                 style: TextStyle(
                                   fontFamily: 'Cairo', fontSize: 11,
                                   color: context.colors.textMuted,
@@ -508,7 +508,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
         children: [
           const Text('💪', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
-            Text(
+          Text(
             context.l10n.noWorkoutPlan,
             style: TextStyle(
               fontFamily: 'Cairo', fontSize: 16,
@@ -516,7 +516,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
             ),
           ),
           const SizedBox(height: 8),
-            Text(
+          Text(
             context.l10n.setupPlanFirst,
             style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
                 color: context.colors.textMuted),
@@ -565,7 +565,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 color: AppColors.success, size: 40),
           ),
           const SizedBox(height: 16),
-            Text(
+          Text(
             context.l10n.exerciseAdded,
             style: TextStyle(
               fontFamily: 'Cairo', fontSize: 18,

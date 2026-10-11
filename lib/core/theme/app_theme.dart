@@ -49,8 +49,7 @@ abstract class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.bgDark,
         foregroundColor: AppColors.textOnDark,
-        minimumSize:
-        const Size(double.infinity, AppConstants.buttonHeightLarge),
+        minimumSize: const Size(double.infinity, AppConstants.buttonHeightLarge),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
         ),
@@ -58,7 +57,29 @@ abstract class AppTheme {
         elevation: 0,
       ),
     ),
-    // ─── Input Decoration Theme (Light) ───────────────────────────────
+    // ─── TextTheme (Light) ────────────────────────────────────────
+    // الألوان هنا هي المصدر الوحيد — AppTextStyles مفيش فيها ألوان
+    textTheme: const TextTheme(
+      displayLarge:   AppTextStyles.displayLarge,
+      displayMedium:  AppTextStyles.displayMedium,
+      headlineLarge:  AppTextStyles.headlineLarge,
+      headlineMedium: AppTextStyles.headlineMedium,
+      headlineSmall:  AppTextStyles.headlineSmall,
+      titleLarge:     AppTextStyles.titleLarge,
+      titleMedium:    AppTextStyles.titleMedium,
+      titleSmall:     AppTextStyles.titleSmall,
+      bodyLarge:      AppTextStyles.bodyLarge,
+      bodyMedium:     AppTextStyles.bodyMedium,
+      bodySmall:      AppTextStyles.bodySmall,
+      labelLarge:     AppTextStyles.labelLarge,
+      labelMedium:    AppTextStyles.labelMedium,
+      labelSmall:     AppTextStyles.labelSmall,
+    ).apply(
+      // كل النصوص بياخدوا اللون من هنا — مكان واحد
+      bodyColor:    AppColors.textSecondary,   // body* + label*
+      displayColor: AppColors.textPrimary,     // display* + headline* + title*
+    ),
+    // ─── InputDecoration (Light) ──────────────────────────────────
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.bgElevated,
@@ -66,17 +87,9 @@ abstract class AppTheme {
         horizontal: AppConstants.spaceL,
         vertical: AppConstants.spaceM,
       ),
-      hintStyle: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textMuted,
-      ),
-      // Suffix/Prefix text style
-      suffixStyle: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textMuted,
-      ),
-      prefixStyle: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textMuted,
-      ),
-      // Borders
+      hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+      suffixStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+      prefixStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         borderSide: const BorderSide(color: AppColors.borderSubtle, width: 1),
@@ -148,8 +161,7 @@ abstract class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.accent,
         foregroundColor: AppColors.textOnAccent,
-        minimumSize:
-        const Size(double.infinity, AppConstants.buttonHeightLarge),
+        minimumSize: const Size(double.infinity, AppConstants.buttonHeightLarge),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
         ),
@@ -157,7 +169,27 @@ abstract class AppTheme {
         elevation: 0,
       ),
     ),
-    // ─── Input Decoration Theme (Dark) ───────────────────────────────
+    // ─── TextTheme (Dark) ─────────────────────────────────────────
+    textTheme: const TextTheme(
+      displayLarge:   AppTextStyles.displayLarge,
+      displayMedium:  AppTextStyles.displayMedium,
+      headlineLarge:  AppTextStyles.headlineLarge,
+      headlineMedium: AppTextStyles.headlineMedium,
+      headlineSmall:  AppTextStyles.headlineSmall,
+      titleLarge:     AppTextStyles.titleLarge,
+      titleMedium:    AppTextStyles.titleMedium,
+      titleSmall:     AppTextStyles.titleSmall,
+      bodyLarge:      AppTextStyles.bodyLarge,
+      bodyMedium:     AppTextStyles.bodyMedium,
+      bodySmall:      AppTextStyles.bodySmall,
+      labelLarge:     AppTextStyles.labelLarge,
+      labelMedium:    AppTextStyles.labelMedium,
+      labelSmall:     AppTextStyles.labelSmall,
+    ).apply(
+      bodyColor:    AppColorsDark.textSecondary,
+      displayColor: AppColorsDark.textPrimary,
+    ),
+    // ─── InputDecoration (Dark) ───────────────────────────────────
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColorsDark.bgElevated,
@@ -165,16 +197,9 @@ abstract class AppTheme {
         horizontal: AppConstants.spaceL,
         vertical: AppConstants.spaceM,
       ),
-      hintStyle: AppTextStyles.bodyMedium.copyWith(
-        color: AppColorsDark.textMuted,
-      ),
-      suffixStyle: AppTextStyles.bodyMedium.copyWith(
-        color: AppColorsDark.textMuted,
-      ),
-      prefixStyle: AppTextStyles.bodyMedium.copyWith(
-        color: AppColorsDark.textMuted,
-      ),
-      // Borders
+      hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColorsDark.textMuted),
+      suffixStyle: AppTextStyles.bodyMedium.copyWith(color: AppColorsDark.textMuted),
+      prefixStyle: AppTextStyles.bodyMedium.copyWith(color: AppColorsDark.textMuted),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         borderSide: const BorderSide(color: AppColorsDark.borderSubtle, width: 1),

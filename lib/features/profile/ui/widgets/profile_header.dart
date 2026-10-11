@@ -128,7 +128,7 @@ class _ProfileAvatar extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => _Initials(name: profile.name),
           loadingBuilder: (_, child, progress) =>
-              progress == null ? child : _Initials(name: profile.name),
+          progress == null ? child : _Initials(name: profile.name),
         ),
       );
     }

@@ -45,7 +45,7 @@ class EntryChoiceScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.accentDim,
                   borderRadius:
-                      BorderRadius.circular(AppConstants.radiusPill),
+                  BorderRadius.circular(AppConstants.radiusPill),
                 ),
                 child: Text(
                   'Power Pulse',
@@ -84,7 +84,7 @@ class EntryChoiceScreen extends StatelessWidget {
                 iconBg: AppColors.accentDim,
                 title: context.l10n.createAccountLogin,
                 description:
-                    'أنشئ حسابًا أو سجّل دخولك لحفظ بياناتك (الملف الشخصي، التقدم، التمارين، التغذية) بأمان على السحابة واستعادتها متى أعدت تثبيت التطبيق.',
+                'أنشئ حسابًا أو سجّل دخولك لحفظ بياناتك (الملف الشخصي، التقدم، التمارين، التغذية) بأمان على السحابة واستعادتها متى أعدت تثبيت التطبيق.',
                 actionLabel: context.l10n.continueWithAccount,
                 onTap: () => context.go(AppRouter.login),
                 isPrimary: true,
@@ -99,7 +99,7 @@ class EntryChoiceScreen extends StatelessWidget {
                 iconBg: context.colors.bgSurface,
                 title: context.l10n.continueAsGuest,
                 description:
-                    'ستُحفظ بياناتك على هذا الجهاز فقط. يمكنك إنشاء حساب لاحقًا لحفظها على السحابة واستعادتها.',
+                'ستُحفظ بياناتك على هذا الجهاز فقط. يمكنك إنشاء حساب لاحقًا لحفظها على السحابة واستعادتها.',
                 actionLabel: context.l10n.continueAsGuestAction,
                 onTap: () => _continueAsGuest(context),
                 isPrimary: false,
@@ -186,21 +186,21 @@ class _OptionCard extends StatelessWidget {
             child: isPrimary
                 ? PPButton(label: actionLabel, onPressed: onTap)
                 : OutlinedButton(
-                    onPressed: onTap,
-                    style: OutlinedButton.styleFrom(
-                      side:   BorderSide(color: context.colors.borderMedium),
-                      foregroundColor: context.colors.textMuted,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: AppConstants.spaceM),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppConstants.radiusM),
-                      ),
-                    ),
-                    child: Text(actionLabel,
-                        style: AppTextStyles.labelLarge
-                            .copyWith(color: context.colors.textMuted)),
-                  ),
+              onPressed: onTap,
+              style: OutlinedButton.styleFrom(
+                side:   BorderSide(color: context.colors.borderMedium),
+                foregroundColor: context.colors.textMuted,
+                padding: const EdgeInsets.symmetric(
+                    vertical: AppConstants.spaceM),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.circular(AppConstants.radiusM),
+                ),
+              ),
+              child: Text(actionLabel,
+                  style: Theme.of(context).textTheme.labelLarge!
+                      .copyWith(color: context.colors.textMuted)),
+            ),
           ),
         ],
       ),

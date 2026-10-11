@@ -148,7 +148,7 @@ class _Header extends StatelessWidget {
               children: [
                 Text(
                   'إضافة وجبة',
-                  style: AppTextStyles.headlineMedium
+                  style: Theme.of(context).textTheme.headlineMedium!
                       .copyWith(color: context.colors.textPrimary),
                 ),
                 SizedBox(height: 2.h),
@@ -158,7 +158,7 @@ class _Header extends StatelessWidget {
                     SizedBox(width: 4.w),
                     Text(
                       mealType.labelAr,
-                      style: AppTextStyles.bodySmall
+                      style: Theme.of(context).textTheme.bodySmall!
                           .copyWith(color: AppColors.accent),
                     ),
                   ],
@@ -276,7 +276,7 @@ class _ResultsList extends StatelessWidget {
           ),
           child: Text(
             '${results.length} نتيجة',
-            style: AppTextStyles.labelSmall
+            style: Theme.of(context).textTheme.labelSmall!
                 .copyWith(color: context.colors.textMuted),
           ),
         ),
@@ -337,7 +337,7 @@ class _CategoryChip extends StatelessWidget {
           SizedBox(width: 6.w),
           Text(
             label,
-            style: AppTextStyles.labelSmall
+            style: Theme.of(context).textTheme.labelSmall!
                 .copyWith(color: context.colors.textSecondary),
           ),
         ],
@@ -364,14 +364,14 @@ class _EmptyView extends StatelessWidget {
             Text(
               'مش لاقي "$query"',
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyLarge
+              style: Theme.of(context).textTheme.bodyLarge!
                   .copyWith(color: context.colors.textPrimary),
             ),
             SizedBox(height: AppConstants.spaceS.h),
             Text(
               'جرّب كلمة تانية أو ابحث بالإنجليزي',
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodySmall
+              style: Theme.of(context).textTheme.bodySmall!
                   .copyWith(color: context.colors.textMuted),
             ),
           ],
@@ -399,13 +399,13 @@ class _ErrorView extends StatelessWidget {
             SizedBox(height: AppConstants.spaceL.h),
             Text(
               'خطأ في الاتصال',
-              style: AppTextStyles.bodyLarge
+              style: Theme.of(context).textTheme.bodyLarge!
                   .copyWith(color: context.colors.textPrimary),
             ),
             SizedBox(height: AppConstants.spaceS.h),
             Text(
               'بيعرض الأطعمة المحلية فقط',
-              style: AppTextStyles.bodySmall
+              style: Theme.of(context).textTheme.bodySmall!
                   .copyWith(color: context.colors.textMuted),
             ),
           ],
@@ -467,14 +467,14 @@ void _showAddDialog(
                 // Food Name
                 Text(
                   item.displayName,
-                  style: AppTextStyles.headlineSmall
+                  style: Theme.of(context).textTheme.headlineSmall!
                       .copyWith(color: context.colors.textPrimary),
                 ),
                 if (item.brand != null) ...[
                   SizedBox(height: 2.h),
                   Text(
                     item.brand!,
-                    style: AppTextStyles.bodySmall
+                    style: Theme.of(context).textTheme.bodySmall!
                         .copyWith(color: context.colors.textMuted),
                   ),
                 ],
@@ -511,7 +511,7 @@ void _showAddDialog(
                   children: [
                     Text(
                       'الكمية (${item.servingUnit}):',
-                      style: AppTextStyles.bodySmall
+                      style: Theme.of(context).textTheme.bodySmall!
                           .copyWith(color: context.colors.textSecondary),
                     ),
                     SizedBox(width: 12.w),
@@ -581,7 +581,7 @@ void _showAddDialog(
                     },
                     child: Text(
                       'إضافة ${mealType.icon} ${mealType.labelAr}',
-                      style: AppTextStyles.labelMedium,
+                      style: Theme.of(context).textTheme.labelMedium!,
                     ),
                   ),
                 ),

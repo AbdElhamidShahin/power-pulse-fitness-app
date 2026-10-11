@@ -236,13 +236,13 @@ class _Field extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.labelMedium),
+        Text(label, style: Theme.of(context).textTheme.labelMedium!),
         const SizedBox(height: AppConstants.spaceS),
         TextField(
           controller: controller,
           keyboardType: type,
           textDirection: Localizations.localeOf(context).languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
-          style: AppTextStyles.bodyMedium
+          style: Theme.of(context).textTheme.bodyMedium!
               .copyWith(color: context.colors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,

@@ -62,16 +62,16 @@ class AppTextFormFeild extends StatelessWidget {
               ),
           errorBorder: OutlineInputBorder(
             borderSide:
-                BorderSide(color: context.colors.textPrimary, width: 1.3),
+            BorderSide(color: context.colors.textPrimary, width: 1.3),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderSide:
-                BorderSide(color: context.colors.textPrimary, width: 1.3),
+            BorderSide(color: context.colors.textPrimary, width: 1.3),
             borderRadius: BorderRadius.circular(10),
           ),
           // Callers can still override hintStyle; fall back to the themed version.
-          hintStyle: hintStyle ?? AppTextStyles.bodySmall,
+          hintStyle: hintStyle ?? Theme.of(context).textTheme.bodySmall!,
           hintText: hintText,
           suffixIcon: suffixIcon,
           suffixIconColor: AppColors.info,

@@ -209,7 +209,7 @@ class _ErrorView extends StatelessWidget {
           size: 48.r,
         ),
         SizedBox(height: 16.h),
-        Text(message, style: AppTextStyles.bodyMedium),
+        Text(message, style: Theme.of(context).textTheme.bodyMedium!),
         SizedBox(height: 16.h),
         GestureDetector(
           onTap: () => context.read<ProgressCubit>().load(),

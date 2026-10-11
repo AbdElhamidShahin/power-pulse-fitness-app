@@ -42,11 +42,11 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
   void _onSubmit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<SignUpCubit>().signUpUser(
-          name: _nameController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-          confirmPassword: _confirmPasswordController.text.trim(),
-        );
+      name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+      confirmPassword: _confirmPasswordController.text.trim(),
+    );
   }
 
   @override
@@ -103,8 +103,8 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
               return null;
             },
             suffixIcon: _buildPasswordIcon(
-              _isPasswordHidden,
-              () => setState(() => _isPasswordHidden = !_isPasswordHidden),context
+                _isPasswordHidden,
+                    () => setState(() => _isPasswordHidden = !_isPasswordHidden),context
             ),
           ),
           SizedBox(height: 16.h),
@@ -123,10 +123,10 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
               return null;
             },
             suffixIcon: _buildPasswordIcon(
-              _isConfirmPasswordHidden,
-              () => setState(
-                () => _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
-              ),context
+                _isConfirmPasswordHidden,
+                    () => setState(
+                      () => _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
+                ),context
             ),
           ),
           SizedBox(height: 20.h),
@@ -138,7 +138,7 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
                 if (state is SignUpLoading) {
                   return   Center(
                     child:
-                        CircularProgressIndicator(color: context.colors.textPrimary),
+                    CircularProgressIndicator(color: context.colors.textPrimary),
                   );
                 }
                 return ElevatedButton(
