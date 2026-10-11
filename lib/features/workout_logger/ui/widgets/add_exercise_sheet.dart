@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
@@ -32,6 +33,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
   final _searchCtrl = TextEditingController();
   List<Exercise> _results = [];
   bool _loading = true;
+  Timer? _searchDebounce;
 
   @override
   void initState() {
@@ -41,11 +43,24 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchCtrl.dispose();
     super.dispose();
   }
 
+  /// Debounces search calls to avoid firing a use-case on every keystroke.
+  /// Empty query executes immediately (showing browse results without delay).
+  void _scheduleLoad(String query) {
+    _searchDebounce?.cancel();
+    if (query.isEmpty) {
+      _load('');
+      return;
+    }
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () => _load(query));
+  }
+
   Future<void> _load(String query) async {
+    if (!mounted) return;
     setState(() => _loading = true);
 
     final list = await (query.isEmpty
@@ -115,7 +130,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
                   borderSide: BorderSide.none,
                 ),
               ),
-              onChanged: (q) => _load(q),
+              onChanged: _scheduleLoad,
             ),
           ),
           // Results

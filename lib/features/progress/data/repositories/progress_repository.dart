@@ -36,12 +36,15 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<ProgressSummary>> getSummary(ProgressPeriod period) async {
     try {
       final days = period.days;
-      final weights  = await localService.getWeightEntries(limitDays: days);
-      final workouts = await localService.getWorkoutLogs(limitDays: days);
-
-      // نحسب الـ streak من كل السجلات (مش مقيدة بالفترة)
+      // نقرأ كل السجلات مرة واحدة لحساب الـ streak، ثم نصفّيها للفترة المطلوبة
+      // بدل قراءتين من SharedPreferences (تحسين P7: قراءة واحدة).
+      final weights     = await localService.getWeightEntries(limitDays: days);
       final allWorkouts = await localService.getWorkoutLogs(limitDays: 3650);
-      final streak = _calcStreak(allWorkouts);
+      final streak      = _calcStreak(allWorkouts);
+      final cutoff      = DateTime.now().subtract(Duration(days: days));
+      final workouts    = allWorkouts
+          .where((w) => w.date.isAfter(cutoff))
+          .toList();
 
       // ─── ربط بباقي التطبيق: ملف شخصي + خطوات + أكل + مياه + خطة ───
       final profile = await _safe(() => profileService?.getProfile());

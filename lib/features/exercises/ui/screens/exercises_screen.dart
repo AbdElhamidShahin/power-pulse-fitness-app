@@ -126,7 +126,17 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             if (!_isSearching) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
+                // buildWhen guards prevent rebuilding this stats card on
+                // intermediate states (HomeLoading, WorkoutPlanEditing, etc.)
+                // that carry no data relevant to these three stat values (P7 fix).
                 child: BlocBuilder<HomeCubit, HomeState>(
+                  buildWhen: (prev, curr) {
+                    // Only rebuild when the loaded summary values actually change.
+                    if (curr is! HomeLoaded) return prev is! HomeLoaded;
+                    if (prev is! HomeLoaded) return true;
+                    return prev.summary.weeklyWorkouts != curr.summary.weeklyWorkouts ||
+                        prev.summary.todayWorkoutMinutes != curr.summary.todayWorkoutMinutes;
+                  },
                   builder: (context, homeState) {
                     final thisWeek = homeState is HomeLoaded
                         ? homeState.summary.weeklyWorkouts
@@ -135,6 +145,21 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         ? homeState.summary.todayWorkoutMinutes
                         : 0;
                     return BlocBuilder<WorkoutPlanCubit, WorkoutPlanState>(
+                      buildWhen: (prev, curr) {
+                        // Rebuild only when the loaded plan changes — not on
+                        // transient Loading/Error states or unrelated edits.
+                        final prevCount = () {
+                          if (prev is WorkoutPlanLoaded) return prev.plan.dayFor(DateTime.now())?.exercises.length ?? 0;
+                          if (prev is WorkoutPlanEditing) return prev.draft.dayFor(DateTime.now())?.exercises.length ?? 0;
+                          return -1;
+                        }();
+                        final currCount = () {
+                          if (curr is WorkoutPlanLoaded) return curr.plan.dayFor(DateTime.now())?.exercises.length ?? 0;
+                          if (curr is WorkoutPlanEditing) return curr.draft.dayFor(DateTime.now())?.exercises.length ?? 0;
+                          return -1;
+                        }();
+                        return prevCount != currCount;
+                      },
                       builder: (context, planState) {
                         final todayEx = () {
                           if (planState is WorkoutPlanLoaded) {

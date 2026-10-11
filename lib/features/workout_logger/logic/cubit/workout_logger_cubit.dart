@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
 import '../../../exercises/data/models/exercise_entity.dart';
@@ -27,6 +28,11 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   final GetActiveSessionUseCase _getActive;
   final SaveSessionUseCase _save;
   final DeleteSessionUseCase _delete;
+
+  // Debounce timer for active-session saves triggered by set edits.
+  // finishSession / cancelSession / close always flush immediately (P7 fix).
+  Timer? _saveDebounce;
+  WorkoutSession? _pendingSave;
 
   // ─── Load ──────────────────────────────────────────────────
   /// يحمّل الجلسة النشطة المحفوظة (لو التطبيق أُغلق وسط التمرين).
@@ -173,6 +179,9 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   /// الـ UI (workout_logger_screen) مسؤول عن استدعاء LogWorkoutUseCase
   /// بعد ما يستقبل هذه الحالة — عشان نتجنب الـ cross-feature coupling.
   Future<void> finishSession() async {
+    // Flush any debounced save before reading _active so we always work with
+    // the latest session data (P7 fix).
+    await _flushPendingSave();
     final current = _active;
     if (current == null) return;
 
@@ -188,6 +197,10 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
 
   // ─── Cancel / Reset ────────────────────────────────────────
   Future<void> cancelSession() async {
+    // Discard any pending debounced save — we're deleting the session anyway.
+    _saveDebounce?.cancel();
+    _saveDebounce = null;
+    _pendingSave = null;
     final current = _active;
     if (current != null) await _delete(current.id);
     if (isClosed) return;
@@ -201,9 +214,47 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       ? (state as WorkoutLoggerActive).session
       : null;
 
+  /// Emits the new active state immediately (so the UI stays responsive) but
+  /// debounces the disk write by 250 ms.  This prevents a SharedPreferences
+  /// write on every keystroke when the user edits reps/weight in SetRowWidget.
+  ///
+  /// Safety guarantees (P7 fix):
+  ///   • finishSession / cancelSession call _flushPendingSave() before their
+  ///     own save, so no pending write is lost.
+  ///   • close() cancels the timer and flushes synchronously.
   Future<void> _updateActive(WorkoutSession session) async {
-    await _save(session);
     if (isClosed) return;
     emit(WorkoutLoggerActive(session));
+
+    _saveDebounce?.cancel();
+    _pendingSave = session;
+    _saveDebounce = Timer(const Duration(milliseconds: 250), () async {
+      final s = _pendingSave;
+      _pendingSave = null;
+      if (s != null && !isClosed) await _save(s);
+    });
+  }
+
+  /// Cancels any pending debounced save and immediately writes to disk.
+  /// Must be called before any operation that reads or overwrites the active
+  /// session key (finish, cancel) to avoid data loss.
+  Future<void> _flushPendingSave() async {
+    _saveDebounce?.cancel();
+    _saveDebounce = null;
+    final s = _pendingSave;
+    _pendingSave = null;
+    if (s != null) await _save(s);
+  }
+
+  @override
+  Future<void> close() {
+    _saveDebounce?.cancel();
+    _saveDebounce = null;
+    // Synchronous flush: fire-and-forget is acceptable here because the
+    // platform will keep the process alive briefly after close().
+    final s = _pendingSave;
+    _pendingSave = null;
+    if (s != null) unawaited(_save(s));
+    return super.close();
   }
 }

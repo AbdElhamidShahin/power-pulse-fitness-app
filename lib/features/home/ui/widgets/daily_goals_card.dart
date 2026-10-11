@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/theme/app_theme_colors.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../core/theme/app_colors.dart';
-import '../../logic/cubit/home_cubit.dart';
-import '../../logic/cubit/home_state.dart';
 import 'ring_painter.dart';
 
 class DailyGoalsCard extends StatelessWidget {
@@ -25,12 +22,10 @@ class DailyGoalsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final workoutMins = () {
-      final state = context.watch<HomeCubit>().state;
-      if (state is HomeLoaded)
-        return state.summary.todayWorkoutMinutes.toDouble();
-      return minutes;
-    }();
+    // Use the minutes value already passed by the parent BlocBuilder.
+    // Removed context.watch<HomeCubit>() to avoid a second subscription that
+    // was rebuilding this widget on every HomeCubit state change (P7 fix).
+    final workoutMins = minutes;
 
     final movePct = (calories / caloriesGoal.clamp(1, 9999)).clamp(0.0, 1.0);
     final exPct = (workoutMins / 60).clamp(0.0, 1.0);
