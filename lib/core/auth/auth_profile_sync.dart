@@ -43,14 +43,18 @@ abstract class AuthProfileSync {
     final json = {
       'name': name.isNotEmpty ? name : 'مستخدم',
       'email': email,
-      'age': 25,
-      'heightCm': 175.0,
-      'weightKg': 75.0,
+      // Zero values explicitly mean "not completed yet"; never fabricate
+      // measurements for a new user.
+      'age': 0,
+      'heightCm': 0.0,
+      'weightKg': 0.0,
       'gender': 'male',
       'goal': 'maintain',
       'activityLevel': 'moderate',
       'avatarPath': avatarUrl,
+      'profileCompleted': false,
     };
     await prefs.setString(_key, jsonEncode(json));
+    await prefs.setBool('profile_completed', false);
   }
 }

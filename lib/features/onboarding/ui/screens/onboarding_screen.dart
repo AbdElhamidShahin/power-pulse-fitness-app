@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/localization/app_localizations.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_button.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_button.dart';
 import '../../../profile/data/models/user_profile_entity.dart';
 import '../../../profile/logic/cubit/profile_cubit.dart';
 import '../../../profile/logic/cubit/profile_state.dart';
@@ -248,18 +249,22 @@ class _SetupFormState extends State<_SetupForm> {
 
   bool get _isValid =>
       _nameCtrl.text.trim().isNotEmpty &&
-      int.tryParse(_ageCtrl.text) != null &&
-      double.tryParse(_heightCtrl.text) != null &&
-      double.tryParse(_weightCtrl.text) != null;
+      (int.tryParse(_ageCtrl.text) ?? 0) >= 13 &&
+      (int.tryParse(_ageCtrl.text) ?? 0) <= 110 &&
+      (double.tryParse(_heightCtrl.text) ?? 0) >= 80 &&
+      (double.tryParse(_heightCtrl.text) ?? 0) <= 250 &&
+      (double.tryParse(_weightCtrl.text) ?? 0) >= 20 &&
+      (double.tryParse(_weightCtrl.text) ?? 0) <= 400;
 
   UserProfile get _profile => UserProfile(
         name:          _nameCtrl.text.trim(),
-        age:           int.tryParse(_ageCtrl.text) ?? 25,
-        heightCm:      double.tryParse(_heightCtrl.text) ?? 175,
-        weightKg:      double.tryParse(_weightCtrl.text) ?? 75,
+        age:           int.tryParse(_ageCtrl.text) ?? 0,
+        heightCm:      double.tryParse(_heightCtrl.text) ?? 0,
+        weightKg:      double.tryParse(_weightCtrl.text) ?? 0,
         gender:        _gender,
         goal:          _goal,
-        activityLevel: _activity, email: '',
+        activityLevel: _activity,
+        email: Supabase.instance.client.auth.currentUser?.email ?? '',
       );
 
   @override
@@ -268,6 +273,10 @@ class _SetupFormState extends State<_SetupForm> {
       listener: (context, state) {
         if (state is ProfileSaveSuccess) {
           context.go('/home');
+        } else if (state is ProfileSaveError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
         }
       },
       child: CustomScrollView(
@@ -304,7 +313,7 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceS),
                 TextField(
                   controller: _nameCtrl,
-                  textDirection: TextDirection.rtl,
+                  textDirection: Localizations.localeOf(context).languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(hintText: context.l10n.yourNameHint),
                 ),
@@ -331,15 +340,15 @@ class _SetupFormState extends State<_SetupForm> {
                   Expanded(child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _Label('الطول'),
+                      _Label(context.l10n.height),
                       const SizedBox(height: AppConstants.spaceS),
                       TextField(
                         controller: _heightCtrl,
                         keyboardType: TextInputType.number,
                         textDirection: TextDirection.ltr,
                         onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(
-                            hintText: '175', suffixText: 'سم'),
+                        decoration: InputDecoration(
+                            hintText: '175', suffixText: context.l10n.translate('cmUnit')),
                       ),
                     ],
                   )),
@@ -347,36 +356,36 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceL),
 
                 // Weight
-                _Label('الوزن'),
+                _Label(context.l10n.weight),
                 const SizedBox(height: AppConstants.spaceS),
                 TextField(
                   controller: _weightCtrl,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   textDirection: TextDirection.ltr,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
-                      hintText: '75.0', suffixText: 'كج'),
+                  decoration: InputDecoration(
+                      hintText: '75.0', suffixText: context.l10n.translate('kgUnit')),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Gender
-                _Label('الجنس'),
+                _Label(context.l10n.gender),
                 const SizedBox(height: AppConstants.spaceM),
                 _SegmentRow<Gender>(
                   values: Gender.values,
                   selected: _gender,
-                  label: (g) => g.labelAr,
+                  label: (g) => context.l10n.translate(g.name),
                   onSelect: (g) => setState(() => _gender = g),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Goal
-                _Label('هدفك'),
+                _Label(context.l10n.goal),
                 const SizedBox(height: AppConstants.spaceM),
                 ...FitnessGoal.values.map((g) => Padding(
                   padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
                   child: _OptionTile(
-                    label: g.labelAr,
+                    label: context.l10n.translate(g.name),
                     selected: _goal == g,
                     onTap: () => setState(() => _goal = g),
                   ),
@@ -384,12 +393,12 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceL),
 
                 // Activity
-                _Label('مستوى النشاط'),
+                _Label(context.l10n.activityLevel),
                 const SizedBox(height: AppConstants.spaceM),
                 ...ActivityLevel.values.map((a) => Padding(
                   padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
                   child: _OptionTile(
-                    label: a.labelAr,
+                    label: context.l10n.translate(a.name),
                     selected: _activity == a,
                     onTap: () => setState(() => _activity = a),
                   ),
@@ -398,7 +407,7 @@ class _SetupFormState extends State<_SetupForm> {
 
                 BlocBuilder<ProfileSaveCubit, ProfileSaveState>(
                   builder: (context, state) => PPButton(
-                    label: 'ابدأ رحلتك 🚀',
+                    label: '${context.l10n.translate('startJourney')} 🚀',
                     isLoading: state is ProfileSaveLoading,
                     isDisabled: !_isValid,
                     onPressed: _isValid

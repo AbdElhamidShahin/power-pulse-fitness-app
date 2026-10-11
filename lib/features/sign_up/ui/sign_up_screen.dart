@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../../core/localization/app_localizations.dart';
-import '../../../../core/theme/app_theme.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme.dart';
 import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/pp_button.dart';
-import '../../../../core/utils/app_regex.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/router/app_router.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_button.dart';
+import 'package:power_pulse/core/utils/app_regex.dart';
 import '../logic/cubit/sign_up_cubit.dart';
 import '../logic/cubit/sign_up_state.dart';
 
@@ -56,12 +56,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state is SignUpSuccess) {
-          _showBanner(
-            context,
-            message: 'مرحباً بك، ${state.name}! حسابك جاهز 🎉',
-            isError: false,
-          );
-          // الأفضل جمع بيانات المستخدم بعد إنشاء الحساب
+          // Navigate first; a banner attached to the route being removed
+          // cannot be dismissed reliably by the user.
           context.go(AppRouter.onboarding);
         } else if (state is SignUpVerificationRequired) {
           _showVerificationSheet(context, email: state.email);

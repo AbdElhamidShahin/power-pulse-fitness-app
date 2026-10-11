@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/localization/app_localizations.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';

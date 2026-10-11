@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/localization/app_localizations.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/notifications/notification_service.dart';

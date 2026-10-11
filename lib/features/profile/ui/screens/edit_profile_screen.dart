@@ -4,11 +4,11 @@ import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/router/app_router.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_button.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/router/app_router.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_button.dart';
 import '../../data/models/user_profile_entity.dart';
 import '../../logic/cubit/profile_cubit.dart';
 import '../../logic/cubit/profile_state.dart';
@@ -155,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _SegmentedPicker<Gender>(
                       values: Gender.values,
                       selected: _gender,
-                      label: (g) => g.labelAr,
+                      label: (g) => context.l10n.translate(g.name),
                       onSelect: (g) => setState(() => _gender = g),
                     ),
                     const SizedBox(height: AppConstants.spaceXXL),
@@ -166,7 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ...FitnessGoal.values.map((g) => Padding(
                       padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
                       child: _OptionTile(
-                        label: g.labelAr,
+                        label: context.l10n.translate(g.name),
                         selected: _goal == g,
                         onTap: () => setState(() => _goal = g),
                       ),
@@ -179,7 +179,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ...ActivityLevel.values.map((a) => Padding(
                       padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
                       child: _OptionTile(
-                        label: a.labelAr,
+                        label: context.l10n.translate(a.name),
                         selected: _activity == a,
                         onTap: () => setState(() => _activity = a),
                       ),
@@ -241,7 +241,7 @@ class _Field extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: type,
-          textDirection: TextDirection.rtl,
+          textDirection: Localizations.localeOf(context).languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
           style: AppTextStyles.bodyMedium
               .copyWith(color: context.colors.textPrimary),
           decoration: InputDecoration(

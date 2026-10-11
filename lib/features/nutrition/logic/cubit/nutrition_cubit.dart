@@ -14,8 +14,10 @@ final class NutritionCubit extends Cubit<NutritionState> {
   DateTime get selectedDate => _today;
 
   Future<void> loadToday() async {
-    _today = DateTime.now();
-    emit(const NutritionLoading());
+    await loadDate(DateTime.now());
+  }
+
+  Future<void> reloadSelectedDate() async {
     await _silentReload(showLoading: false);
   }
 
@@ -182,10 +184,11 @@ final class AddMealCubit extends Cubit<AddMealState> {
 
   final NutritionRepository _repository;
 
-  Future<void> addMeal({
+  Future<bool> addMeal({
     required FoodItem food,
     required MealType mealType,
     required double quantity,
+    DateTime? loggedAt,
   }) async {
     emit(const AddMealLoading());
 
@@ -194,15 +197,17 @@ final class AddMealCubit extends Cubit<AddMealState> {
       food: food,
       mealType: mealType,
       quantity: quantity,
-      loggedAt: DateTime.now(),
+      loggedAt: loggedAt ?? DateTime.now(),
     );
 
     final result = await _repository.addMealEntry(entry);
     switch (result) {
       case Success():
         emit(const AddMealSuccess());
+        return true;
       case Failure(:final failure):
         emit(AddMealError(failure.userMessage));
+        return false;
     }
   }
 

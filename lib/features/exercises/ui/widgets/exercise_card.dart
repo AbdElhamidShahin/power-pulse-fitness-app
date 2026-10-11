@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_badge.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_badge.dart';
 import '../../data/models/exercise_entity.dart';
 
 class ExerciseCard extends StatelessWidget {

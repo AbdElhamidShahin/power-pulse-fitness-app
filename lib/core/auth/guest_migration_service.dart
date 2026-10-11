@@ -178,6 +178,7 @@ abstract class GuestMigrationService {
     final keys = <String>{
       ..._listKeys.keys,
       ..._singleKeys.keys,
+      'profile_completed',
       for (final k in prefs.getKeys())
         if (_isNutritionKey(k)) k,
     };

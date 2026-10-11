@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../../../core/localization/app_localizations.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
 import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -93,20 +94,39 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) async {
         if (state is LoginSuccess) {
-          _showBanner(
-            context,
-            message: 'مرحباً بعودتك، ${state.name} 👋',
-            isError: false,
-          );
-          // تحقق لو المستخدم سبق ومليء بياناته - لو لأ، وجّهه للـ onboarding
+          // Authentication creates only an identity record. A profile is
+          // complete only when real measurements have been saved.
           final prefs = await SharedPreferences.getInstance();
-          final hasProfile = prefs.getString('user_profile') != null;
-          if (!context.mounted) return;
-          if (hasProfile) {
-            context.go(AppRouter.home);
-          } else {
-            context.go(AppRouter.onboarding);
+          final raw = prefs.getString('user_profile');
+          final savedCompletionFlag = prefs.getBool('profile_completed');
+          var recordSaysComplete = false;
+          var recordHasCompletionFlag = false;
+          var hasValidMeasurements = false;
+          if (raw != null && raw.isNotEmpty) {
+            try {
+              final profile = jsonDecode(raw) as Map<String, dynamic>;
+              recordHasCompletionFlag = profile.containsKey('profileCompleted');
+              recordSaysComplete = profile['profileCompleted'] == true;
+              hasValidMeasurements =
+                  (profile['age'] as num? ?? 0) > 0 &&
+                  (profile['heightCm'] as num? ?? 0) > 0 &&
+                  (profile['weightKg'] as num? ?? 0) > 0;
+            } catch (_) {
+              recordSaysComplete = false;
+              hasValidMeasurements = false;
+            }
           }
+          // The completion flag is stored in the profile record too, so it can
+          // be restored from Supabase on a fresh install. Older records fall
+          // back to validating real measurements.
+          final hasCompleteProfile = recordHasCompletionFlag
+              ? recordSaysComplete
+              : (savedCompletionFlag == true || hasValidMeasurements);
+          if (hasCompleteProfile && savedCompletionFlag != true) {
+            await prefs.setBool('profile_completed', true);
+          }
+          if (!context.mounted) return;
+          context.go(hasCompleteProfile ? AppRouter.home : AppRouter.onboarding);
         } else if (state is LoginPasswordResetSent) {
           _showBanner(
             context,

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
+import '../../../../core/startup.dart';
 
 import '../../../../core/domain/app_failure.dart';
 import '../../data/models/user_profile_entity.dart';
@@ -50,6 +51,7 @@ final class ProfileSaveCubit extends Cubit<ProfileSaveState> {
 
     result.fold(
       onSuccess: (_) {
+        AppStartup.markProfileCompleted();
         emit(const ProfileSaveSuccess());
       },
       onFailure: (failure) {

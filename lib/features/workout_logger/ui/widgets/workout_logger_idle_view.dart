@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class WorkoutLoggerIdleView extends StatelessWidget {

@@ -68,12 +68,21 @@ abstract class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppStartup.passwordRecoveryPending
         ? resetPassword
-        : (AppStartup.needsEntry ? entry : home),
+        : (AppStartup.needsEntry
+            ? entry
+            : (AppStartup.needsProfileSetup ? onboarding : home)),
     redirect: (context, state) {
       final path = state.uri.path;
       final authRoutes = {login, signUp, resetPassword, entry};
       final needsEntry = AppStartup.needsEntry;
       final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
+
+      if (isLoggedIn &&
+          AppStartup.needsProfileSetup &&
+          path != onboarding &&
+          path != resetPassword) {
+        return onboarding;
+      }
 
       // لسه ماختارش (لا حساب ولا ضيف): وجّهه لشاشة الاختيار
       if (needsEntry && !authRoutes.contains(path)) {
@@ -208,14 +217,20 @@ abstract class AppRouter {
       GoRoute(
         path: nutritionSearch,
         builder: (context, state) {
-          final mealType = state.extra as MealType? ?? MealType.lunch;
+          final extra = state.extra;
+          final mealType = extra is Map
+              ? (extra['mealType'] as MealType? ?? MealType.lunch)
+              : (extra as MealType? ?? MealType.lunch);
+          final selectedDate = extra is Map && extra['date'] is DateTime
+              ? extra['date'] as DateTime
+              : DateTime.now();
           return MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => sl<FoodSearchCubit>()),
               BlocProvider(create: (_) => sl<AddMealCubit>()),
               BlocProvider(create: (_) => sl<NutritionCubit>()),
             ],
-            child: FoodSearchScreen(mealType: mealType),
+            child: FoodSearchScreen(mealType: mealType, selectedDate: selectedDate),
           );
         },
       ),

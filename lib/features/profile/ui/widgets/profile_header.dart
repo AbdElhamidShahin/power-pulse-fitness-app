@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -49,7 +50,10 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           Text(
-            'ahmed@email.com',
+            Supabase.instance.client.auth.currentUser?.email ??
+                profile.email,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11.sp,
@@ -61,12 +65,14 @@ class ProfileHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _StatItem(value: '47', label: context.l10n.exerciseUnit),
-              _StatItem(value: '14', label: context.l10n.currentStreak),
-              _StatItem(
-                value: context.l10n.valueKg.replaceFirst('{value}', '${profile.weightKg.toInt()}'),
-                label: context.l10n.weight,
-              ),
+              if (profile.weightKg > 0)
+                _StatItem(
+                  value: context.l10n.valueKg.replaceFirst(
+                    '{value}',
+                    '${profile.weightKg.toInt()}',
+                  ),
+                  label: context.l10n.weight,
+                ),
             ],
           ),
         ],

@@ -138,6 +138,17 @@ final class LoginCubit extends Cubit<LoginState> {
   }) async {
     final supabase = Supabase.instance.client;
     final currentMode = await UserModeService.getMode(_prefs);
+    final previousUid = _prefs.getString('last_authenticated_uid');
+
+    // SharedPreferences is device-wide, not account-scoped. If a different
+    // account signs in after an expired session, clear the previous account's
+    // cache before restoring the new account to prevent cross-account mixing.
+    // Guest data remains eligible for the explicit guest-to-account migration.
+    if (currentMode != UserMode.guest &&
+        previousUid != null &&
+        previousUid != uid) {
+      await GuestMigrationService.clearLocalUserData(_prefs);
+    }
 
     // BUGFIX: النسخة القديمة كانت بترفع بيانات الضيف فوق بيانات حساب موجود
     // (فبيانات الحساب بتضيع). دلوقتي: نستعيد بيانات الحساب الأول (دمج)،
@@ -170,6 +181,7 @@ final class LoginCubit extends Cubit<LoginState> {
 
     // Mark as authenticated
     await UserModeService.setAuthenticated(_prefs);
+    await _prefs.setString('last_authenticated_uid', uid);
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────

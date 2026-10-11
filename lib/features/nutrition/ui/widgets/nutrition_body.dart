@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/localization/app_localizations.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../data/models/food_entity.dart';
+import '../../logic/cubit/nutrition_cubit.dart';
 import 'calorie_summary_card.dart';
 import 'meal_card.dart';
 import 'meal_type_picker_sheet.dart';
@@ -17,7 +18,14 @@ class NutritionBody extends StatelessWidget {
   final DailyNutrition daily;
 
   void _goSearch(BuildContext context, MealType type) {
-    context.push('/nutrition/search', extra: type);
+    final selectedDate = context.read<NutritionCubit>().selectedDate;
+    context.push(
+      '/nutrition/search',
+      extra: <String, Object>{
+        'mealType': type,
+        'date': selectedDate,
+      },
+    );
   }
 
   void _showPicker(BuildContext context) {

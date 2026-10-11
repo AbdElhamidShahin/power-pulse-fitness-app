@@ -111,6 +111,7 @@ final class SignUpCubit extends Cubit<SignUpState> {
     );
 
     await UserModeService.setAuthenticated(_prefs);
+    await _prefs.setString('last_authenticated_uid', uid);
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────

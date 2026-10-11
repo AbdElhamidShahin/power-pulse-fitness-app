@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
 
 class NutritionDateNavigator extends StatelessWidget {
   const NutritionDateNavigator({super.key});
 
-  String _formatLabel(DateTime d) {
+  String _formatLabel(BuildContext context, DateTime d) {
     final now = DateTime.now();
-    final diff = now.difference(d).inDays;
-    if (diff == 0) return 'اليوم';
-    if (diff == 1) return 'امبارح';
+    final selectedDay = DateTime(d.year, d.month, d.day);
+    final today = DateTime(now.year, now.month, now.day);
+    final difference = today.difference(selectedDay).inDays;
+    if (difference == 0) return context.l10n.translate('today');
+    if (difference == 1) return context.l10n.translate('yesterday');
     return '${d.day}/${d.month}/${d.year}';
   }
 
@@ -43,7 +46,7 @@ class NutritionDateNavigator extends StatelessWidget {
         ),
         SizedBox(width: 12.w),
         Text(
-          _formatLabel(date),
+          _formatLabel(context, date),
           style: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 14.sp,

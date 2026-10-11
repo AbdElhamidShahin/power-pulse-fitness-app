@@ -62,27 +62,25 @@ class AppSettingsCubit extends Cubit<AppSettings> {
 
     // نرفع آخر نسخة للسحابة الأول؛ ولو نجح بس نمسح البيانات المحلية
     // (عشان الحساب الجاي ميتخلطش بيها). لو فشل (أوفلاين) منمسحش حاجة.
-    var pushed = uid == null;
+    // Do not sign out and then silently discard local changes if the final
+    // cloud sync failed. The UI can report the failure and allow a retry.
     if (uid != null) {
-      try {
-        await GuestMigrationService.pushLocalToCloud(
-          prefs: _prefs,
-          supabase: client,
-          uid: uid,
-        );
-        pushed = true;
-      } catch (_) {}
+      await GuestMigrationService.pushLocalToCloud(
+        prefs: _prefs,
+        supabase: client,
+        uid: uid,
+      );
+      await client.auth.signOut();
+      await UserModeService.setGuestAfterLogout(_prefs);
+      await GuestMigrationService.clearLocalUserData(_prefs);
+    } else {
+      await UserModeService.setGuestAfterLogout(_prefs);
     }
 
-    try {
-      await client.auth.signOut();
-    } catch (_) {}
-    await UserModeService.setGuestAfterLogout(_prefs);
-    if (pushed) {
-      await GuestMigrationService.clearLocalUserData(_prefs);
-    }
     emit(AppSettings(
       isDarkMode: state.isDarkMode,
+      isMetricUnits: state.isMetricUnits,
+      notificationsEnabled: state.notificationsEnabled,
       locale: state.locale,
     ));
   }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,13 +15,19 @@ abstract class AppStartup {
 
   /// أقصى وقت ننتظره لاستعادة بيانات الـ cloud وقت التشغيل.
   /// لو الشبكة بطيئة نكمل بالـ cache المحلي بدل ما الشاشة تفضل فاضية.
-  static const Duration _restoreTimeout = Duration(seconds: 10);
+  static const Duration _restoreTimeout = Duration(seconds: 2);
 
   static bool _done = false;
   static bool _passwordRecoveryPending = false;
+  static bool _needsProfileSetup = false;
 
   static bool get isDone => _done;
   static bool get passwordRecoveryPending => _passwordRecoveryPending;
+  static bool get needsProfileSetup => _needsProfileSetup;
+
+  static void markProfileCompleted() {
+    _needsProfileSetup = false;
+  }
 
   static void markPasswordRecoveryPending() {
     _passwordRecoveryPending = true;
@@ -51,7 +58,33 @@ abstract class AppStartup {
       } catch (_) {
         // فشل الشبكة مقبول — الـ cache المحلي هو الـ fallback
       }
+
+      // A valid authentication session does not imply that onboarding is done.
+      final rawProfile = prefs.getString('user_profile');
+      final completionFlag = prefs.getBool('profile_completed');
+      var recordComplete = false;
+      var recordHasFlag = false;
+      var hasMeasurements = false;
+      if (rawProfile != null && rawProfile.isNotEmpty) {
+        try {
+          final profile = jsonDecode(rawProfile) as Map<String, dynamic>;
+          recordHasFlag = profile.containsKey('profileCompleted');
+          recordComplete = profile['profileCompleted'] == true;
+          hasMeasurements =
+              (profile['age'] as num? ?? 0) > 0 &&
+              (profile['heightCm'] as num? ?? 0) > 0 &&
+              (profile['weightKg'] as num? ?? 0) > 0;
+        } catch (_) {
+          recordComplete = false;
+          hasMeasurements = false;
+        }
+      }
+      _needsProfileSetup = recordHasFlag
+          ? !recordComplete
+          : !(completionFlag == true || hasMeasurements);
+      await prefs.setBool('profile_completed', !_needsProfileSetup);
     } else {
+      _needsProfileSetup = false;
       final mode = await UserModeService.getMode(prefs);
       if (mode == UserMode.authenticated) {
         // كان مسجّل دخول لكن الـ session انتهت
@@ -76,7 +109,20 @@ abstract class AppStartup {
   /// يُستخدم بعد login/signup للتحقق إذا كانت بيانات الـ profile موجودة.
   static Future<bool> needsOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
-    final profile = prefs.getString('user_profile');
-    return profile == null || profile.isEmpty;
+    final completed = prefs.getBool('profile_completed');
+    if (completed != null) return !completed;
+    final raw = prefs.getString('user_profile');
+    if (raw == null || raw.isEmpty) return true;
+    try {
+      final profile = jsonDecode(raw) as Map<String, dynamic>;
+      if (profile['profileCompleted'] is bool) {
+        return profile['profileCompleted'] != true;
+      }
+      return (profile['age'] as num? ?? 0) <= 0 ||
+          (profile['heightCm'] as num? ?? 0) <= 0 ||
+          (profile['weightKg'] as num? ?? 0) <= 0;
+    } catch (_) {
+      return true;
+    }
   }
 }

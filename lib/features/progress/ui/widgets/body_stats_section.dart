@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/localization/app_localizations.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:power_pulse/features/profile/data/models/user_profile_entity.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../../profile/logic/cubit/profile_cubit.dart';
 import '../../../profile/logic/cubit/profile_state.dart';
 import '../../data/models/progress_entity.dart';

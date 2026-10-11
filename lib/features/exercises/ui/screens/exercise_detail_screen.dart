@@ -1,24 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/localization/app_localizations.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/router/app_router.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_badge.dart';
-import '../../../../../shared/widgets/pp_button.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/router/app_router.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_badge.dart';
+import 'package:power_pulse/shared/widgets/pp_button.dart';
 import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_state.dart';
 import '../../data/models/exercise_entity.dart';
 import '../../logic/cubit/exercises_cubit.dart';
 import '../../logic/cubit/exercises_state.dart';
-import '../../../../../core/di/injection.dart';
+import 'package:power_pulse/core/di/injection.dart';
 
 class ExerciseDetailScreen extends StatefulWidget {
   const ExerciseDetailScreen({super.key, required this.exerciseId});

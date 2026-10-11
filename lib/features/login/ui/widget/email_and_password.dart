@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_theme.dart';
+import 'package:power_pulse/core/theme/app_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../../core/utils/app_regex.dart';
+import 'package:power_pulse/core/utils/app_regex.dart';
 import '../../custom_text_feild.dart';
 import '../../logic/cubit/login_cubit.dart';
 import '../../logic/cubit/login_state.dart';

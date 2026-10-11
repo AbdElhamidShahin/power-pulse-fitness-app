@@ -125,7 +125,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.track_changes_rounded,
                         iconColor: AppColors.profileIconPink,
                         label: context.l10n.goal,
-                        value: profile.goal.labelAr,
+                        value: context.l10n.translate(profile.goal.name),
                         onTap: () => context.push('/profile/edit'),
                       ),
                     ],
@@ -375,10 +375,21 @@ class _ProfileContentState extends State<_ProfileContent> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              await context.read<AppSettingsCubit>().logout();
-              // After logout → switch to guest mode → go to home
-              // (user can still use the app as a guest; can sign in again from profile)
-              if (context.mounted) context.go(AppRouter.home);
+              try {
+                await context.read<AppSettingsCubit>().logout();
+                // Return to the guest home only after logout has completed.
+                if (context.mounted) context.go(AppRouter.home);
+              } catch (_) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(context.l10n.translate('logoutSyncError')),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+              }
             },
             child: Text(context.l10n.logout,
                 style: const TextStyle(

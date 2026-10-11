@@ -51,8 +51,6 @@ import '../../features/workout_plan/logic/cubit/workout_plan_cubit.dart';
 import '../../features/pedometer/data/pedometer_service.dart';
 import '../../features/pedometer/logic/cubit/pedometer_cubit.dart';
 
-import '../notifications/notification_service.dart';
-
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 
@@ -94,7 +92,8 @@ Future<void> initDependencies() async {
   _initSettings();
 
   await _initPedometer();
-  await _initNotifications();
+  // Notification plugin initialization is deferred until after the first
+  // Flutter frame in main.dart; it must not delay the first visible screen.
 }
 
 void _initAuth() {
@@ -417,6 +416,3 @@ Future<void> _initPedometer() async {
   );
 }
 
-Future<void> _initNotifications() async {
-  await NotificationService.instance.init();
-}

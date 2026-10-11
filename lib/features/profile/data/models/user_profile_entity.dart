@@ -81,21 +81,28 @@ final class UserProfile {
   final String? avatarPath;
 
   double get bmi {
+    if (heightCm <= 0 || weightKg <= 0) return 0;
     final heightM = heightCm / 100;
     return weightKg / (heightM * heightM);
   }
 
-  String get bmiCategory => switch (bmi) {
-        < 18.5 => 'نقص في الوزن',
-        < 25.0 => 'وزن طبيعي',
-        < 30.0 => 'زيادة في الوزن',
-        _ => 'سمنة',
-      };
+  String get bmiCategory {
+    if (bmi <= 0) return 'غير متاح';
+    return switch (bmi) {
+      < 18.5 => 'نقص في الوزن',
+      < 25.0 => 'وزن طبيعي',
+      < 30.0 => 'زيادة في الوزن',
+      _ => 'سمنة',
+    };
+  }
 
-  double get bmr => switch (gender) {
-        Gender.male => (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5,
-        Gender.female => (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161,
-      };
+  double get bmr {
+    if (age <= 0 || heightCm <= 0 || weightKg <= 0) return 0;
+    return switch (gender) {
+      Gender.male => (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5,
+      Gender.female => (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161,
+    };
+  }
 
   double get tdee => bmr * activityLevel.multiplier;
 
@@ -139,11 +146,11 @@ final class UserProfile {
 
 /// Default profile للمستخدم الجديد
 const kDefaultProfile = UserProfile(
-  name: 'المستخدم',
+  name: '',
   email: '',
-  age: 25,
-  heightCm: 175,
-  weightKg: 75,
+  age: 0,
+  heightCm: 0,
+  weightKg: 0,
   gender: Gender.male,
   goal: FitnessGoal.maintain,
   activityLevel: ActivityLevel.moderate,

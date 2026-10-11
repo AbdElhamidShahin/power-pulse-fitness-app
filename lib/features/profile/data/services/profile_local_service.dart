@@ -53,6 +53,11 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
         _key,
         jsonEncode(json),
       );
+      final complete = profile.name.trim().isNotEmpty &&
+          profile.age > 0 &&
+          profile.heightCm > 0 &&
+          profile.weightKg > 0;
+      await _prefs.setBool('profile_completed', complete);
       AppDataBus.notify();
     } catch (_) {
       throw const CacheException(
@@ -81,6 +86,10 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
       'goal': profile.goal.name,
       'activityLevel': profile.activityLevel.name,
       'avatarPath': profile.avatarPath,
+      'profileCompleted': profile.name.trim().isNotEmpty &&
+          profile.age > 0 &&
+          profile.heightCm > 0 &&
+          profile.weightKg > 0,
     };
   }
 
@@ -91,14 +100,17 @@ final class ProfileLocalServiceImpl implements ProfileLocalService {
       age: (json['age'] as num?)?.toInt() ?? 0,
       heightCm: (json['heightCm'] as num?)?.toDouble() ?? 0,
       weightKg: (json['weightKg'] as num?)?.toDouble() ?? 0,
-      gender: Gender.values.byName(
-        json['gender'] as String,
+      gender: Gender.values.firstWhere(
+        (value) => value.name == json['gender'],
+        orElse: () => Gender.male,
       ),
-      goal: FitnessGoal.values.byName(
-        json['goal'] as String,
+      goal: FitnessGoal.values.firstWhere(
+        (value) => value.name == json['goal'],
+        orElse: () => FitnessGoal.maintain,
       ),
-      activityLevel: ActivityLevel.values.byName(
-        json['activityLevel'] as String,
+      activityLevel: ActivityLevel.values.firstWhere(
+        (value) => value.name == json['activityLevel'],
+        orElse: () => ActivityLevel.moderate,
       ),
       avatarPath: json['avatarPath'] as String?,
     );

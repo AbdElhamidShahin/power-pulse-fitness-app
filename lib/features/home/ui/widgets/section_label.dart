@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 
 class SectionLabel extends StatelessWidget {
   const SectionLabel({super.key, required this.label});

@@ -3,11 +3,11 @@ import '../../../../core/localization/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../core/theme/app_theme_colors.dart';
-import '../../../../../shared/widgets/pp_input.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
+import 'package:power_pulse/shared/widgets/pp_input.dart';
 import '../../data/models/food_entity.dart';
 import '../../data/services/arabic_food_database.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
@@ -15,8 +15,13 @@ import '../../logic/cubit/nutrition_state.dart';
 import '../widgets/food_search_card.dart';
 
 class FoodSearchScreen extends StatefulWidget {
-  const FoodSearchScreen({super.key, required this.mealType});
+  const FoodSearchScreen({
+    super.key,
+    required this.mealType,
+    required this.selectedDate,
+  });
   final MealType mealType;
+  final DateTime selectedDate;
 
   @override
   State<FoodSearchScreen> createState() => _FoodSearchScreenState();
@@ -553,13 +558,24 @@ void _showAddDialog(
                         BorderRadius.circular(AppConstants.radiusM.r),
                       ),
                     ),
-                    onPressed: () {
-                      // FIX 2: addMeal(entry) → addMeal(food:, mealType:, quantity:)
-                      context.read<AddMealCubit>().addMeal(
-                        food:     item,
+                    onPressed: () async {
+                      final saved = await context.read<AddMealCubit>().addMeal(
+                        food: item,
                         mealType: mealType,
                         quantity: quantity,
+                        loggedAt: selectedDate,
                       );
+                      if (!context.mounted) return;
+                      if (!saved) {
+                        final state = context.read<AddMealCubit>().state;
+                        final message = state is AddMealError
+                            ? state.message
+                            : context.l10n.translate('errorOccurred');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(message)),
+                        );
+                        return;
+                      }
                       Navigator.of(ctx).pop();
                       Navigator.of(context).pop();
                     },

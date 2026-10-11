@@ -92,6 +92,8 @@ class _PowerPulseAppState extends State<PowerPulseApp>
     with WidgetsBindingObserver {
   StreamSubscription<void>? _busSub;
   Timer? _pushDebounce;
+  bool _cloudPushInFlight = false;
+  bool _cloudPushAgain = false;
 
   @override
   void initState() {
@@ -100,7 +102,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
     // أي تعديل في البيانات → نرفعه للسحابة (لو المستخدم مسجّل) بعد ثواني
     _busSub = AppDataBus.stream.listen((_) {
       _pushDebounce?.cancel();
-      _pushDebounce = Timer(const Duration(seconds: 8), _pushToCloud);
+      _pushDebounce = Timer(const Duration(seconds: 2), _pushToCloud);
     });
   }
 
@@ -131,9 +133,16 @@ class _PowerPulseAppState extends State<PowerPulseApp>
   }
 
   Future<void> _pushToCloud() async {
+    if (_cloudPushInFlight) {
+      _cloudPushAgain = true;
+      return;
+    }
+
     final client = Supabase.instance.client;
     final uid = client.auth.currentUser?.id;
     if (uid == null) return;
+
+    _cloudPushInFlight = true;
     try {
       await GuestMigrationService.pushLocalToCloud(
         prefs: sl<SharedPreferences>(),
@@ -141,7 +150,14 @@ class _PowerPulseAppState extends State<PowerPulseApp>
         uid: uid,
       );
     } catch (_) {
-      // أوفلاين — هيتعاد في المرة الجاية
+      // Offline or backend failure: retain local data and retry on a later
+      // change or lifecycle event.
+    } finally {
+      _cloudPushInFlight = false;
+      if (_cloudPushAgain) {
+        _cloudPushAgain = false;
+        unawaited(_pushToCloud());
+      }
     }
   }
 
