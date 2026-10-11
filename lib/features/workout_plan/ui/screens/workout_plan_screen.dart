@@ -36,7 +36,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   @override
   void dispose() {
     // الكيوبت مشترك مع الرئيسية — لو خرج من غير حفظ نرجّع آخر نسخة محفوظة
-    WidgetsBinding.instance.addPostFrameCallback((_) => _planCubit.discardDraft());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _planCubit.discardDraft());
     super.dispose();
   }
 
@@ -44,7 +45,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<WorkoutPlanCubit, WorkoutPlanState>(
       listener: (context, state) {
-        if (state is WorkoutPlanLoaded && context.read<WorkoutPlanCubit>().isSaving == false) {
+        if (state is WorkoutPlanLoaded &&
+            context.read<WorkoutPlanCubit>().isSaving == false) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('✓ تم حفظ الخطة'),
@@ -62,7 +64,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       },
       builder: (context, state) {
         if (state is! WorkoutPlanEditing) {
-          return   Scaffold(
+          return Scaffold(
             backgroundColor: context.colors.bgDeep,
             body: Center(
                 child: CircularProgressIndicator(color: AppColors.accent)),
@@ -356,7 +358,9 @@ class _DayDetailState extends State<_DayDetail> {
                   ],
                 ),
                 Text(
-                  day.isRest ? context.l10n.restDay : '${day.exercises.length} تمارين',
+                  day.isRest
+                      ? context.l10n.restDay
+                      : '${day.exercises.length} تمارين',
                   style: AppTextStyles.bodySmall
                       .copyWith(color: context.colors.textMuted),
                 ),
@@ -371,11 +375,13 @@ class _DayDetailState extends State<_DayDetail> {
                     horizontal: AppConstants.spaceL,
                     vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
-                  color: day.isRest ? AppColors.accent : context.colors.bgElevated,
+                  color:
+                      day.isRest ? AppColors.accent : context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                   border: Border.all(
-                    color:
-                        day.isRest ? AppColors.accent : context.colors.borderMedium,
+                    color: day.isRest
+                        ? AppColors.accent
+                        : context.colors.borderMedium,
                   ),
                 ),
                 child: Row(
@@ -433,8 +439,8 @@ class _DayDetailState extends State<_DayDetail> {
             style: AppTextStyles.bodyMedium,
             decoration: InputDecoration(
               hintText: 'اسم اليوم — مثلاً: تمرين الصدر',
-              hintStyle:
-                  AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
+              hintStyle: AppTextStyles.bodySmall
+                  .copyWith(color: context.colors.textMuted),
               filled: true,
               fillColor: context.colors.bgSurface,
               contentPadding: const EdgeInsets.symmetric(
@@ -455,7 +461,8 @@ class _DayDetailState extends State<_DayDetail> {
               decoration: BoxDecoration(
                 color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
-                border: Border.all(color: context.colors.borderSubtle, width: 0.5),
+                border:
+                    Border.all(color: context.colors.borderSubtle, width: 0.5),
               ),
               child: Column(
                 children: [
@@ -485,7 +492,8 @@ class _DayDetailState extends State<_DayDetail> {
                 decoration: BoxDecoration(
                   color: context.colors.bgSurface,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                  border: Border.all(color: context.colors.borderSubtle, width: 0.5),
+                  border: Border.all(
+                      color: context.colors.borderSubtle, width: 0.5),
                 ),
                 child: Row(
                   children: [
@@ -522,7 +530,7 @@ class _DayDetailState extends State<_DayDetail> {
                     // حذف
                     GestureDetector(
                       onTap: () => widget.onRemoveExercise(ex.exerciseId),
-                      child:   Padding(
+                      child: Padding(
                         padding: EdgeInsets.all(4),
                         child: Icon(Icons.close_rounded,
                             size: 18, color: context.colors.textMuted),
@@ -550,8 +558,7 @@ class _DayDetailState extends State<_DayDetail> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_rounded,
-                      color: AppColors.accent, size: 20),
+                  Icon(Icons.add_rounded, color: AppColors.accent, size: 20),
                   const SizedBox(width: AppConstants.spaceS),
                   Text(context.l10n.addExercise,
                       style: AppTextStyles.labelMedium
@@ -792,8 +799,7 @@ class _StartTodayWorkoutButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.play_arrow_rounded,
-                color: AppColors.accent, size: 22),
+            Icon(Icons.play_arrow_rounded, color: AppColors.accent, size: 22),
             const SizedBox(width: 8),
             Text(
               'ابدأ تمرين اليوم',

@@ -31,16 +31,6 @@ Future<void> main() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
-  // Fail fast if build was produced without --dart-define credentials.
-  // In debug mode this is an assertion error; in release mode the
-  // Supabase.initialize call below will throw with a clear message.
-  assert(
-    AppConstants.isSupabaseConfigured,
-    'Missing --dart-define=SUPABASE_URL and --dart-define=SUPABASE_ANON_KEY. '
-    'Copy dart_defines.example.json → dart_defines.json and pass the values '
-    'via --dart-define-from-file=dart_defines.json',
-  );
-
   await Supabase.initialize(
     url: AppConstants.supabaseUrl,
     anonKey: AppConstants.supabaseAnonKey,
@@ -52,7 +42,7 @@ Future<void> main() async {
   // Register immediately after Supabase initialization so a password-reset
   // deep-link event is not missed before runApp().
   final authSubscription =
-      Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+  Supabase.instance.client.auth.onAuthStateChange.listen((data) {
     if (data.event == AuthChangeEvent.passwordRecovery) {
       AppStartup.markPasswordRecoveryPending();
     }
@@ -92,8 +82,6 @@ class _PowerPulseAppState extends State<PowerPulseApp>
     with WidgetsBindingObserver {
   StreamSubscription<void>? _busSub;
   Timer? _pushDebounce;
-  bool _cloudPushInFlight = false;
-  bool _cloudPushAgain = false;
 
   @override
   void initState() {
@@ -102,7 +90,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
     // أي تعديل في البيانات → نرفعه للسحابة (لو المستخدم مسجّل) بعد ثواني
     _busSub = AppDataBus.stream.listen((_) {
       _pushDebounce?.cancel();
-      _pushDebounce = Timer(const Duration(seconds: 2), _pushToCloud);
+      _pushDebounce = Timer(const Duration(seconds: 8), _pushToCloud);
     });
   }
 
@@ -123,7 +111,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
         _pushDebounce?.cancel();
         _pushToCloud();
       case AppLifecycleState.resumed:
-        // المستخدم ممكن يكون منح الصلاحية من إعدادات الموبايل
+      // المستخدم ممكن يكون منح الصلاحية من إعدادات الموبايل
         unawaited(sl<PedometerCubit>().retryIfUnavailable());
         unawaited(NotificationService.instance
             .syncFromPrefs(sl<SharedPreferences>()));
@@ -133,16 +121,9 @@ class _PowerPulseAppState extends State<PowerPulseApp>
   }
 
   Future<void> _pushToCloud() async {
-    if (_cloudPushInFlight) {
-      _cloudPushAgain = true;
-      return;
-    }
-
     final client = Supabase.instance.client;
     final uid = client.auth.currentUser?.id;
     if (uid == null) return;
-
-    _cloudPushInFlight = true;
     try {
       await GuestMigrationService.pushLocalToCloud(
         prefs: sl<SharedPreferences>(),
@@ -150,14 +131,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
         uid: uid,
       );
     } catch (_) {
-      // Offline or backend failure: retain local data and retry on a later
-      // change or lifecycle event.
-    } finally {
-      _cloudPushInFlight = false;
-      if (_cloudPushAgain) {
-        _cloudPushAgain = false;
-        unawaited(_pushToCloud());
-      }
+      // أوفلاين — هيتعاد في المرة الجاية
     }
   }
 
@@ -167,7 +141,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
       value: sl<AppSettingsCubit>(),
       child: BlocBuilder<AppSettingsCubit, AppSettings>(
         buildWhen: (prev, curr) =>
-            prev.isDarkMode != curr.isDarkMode || prev.locale != curr.locale,
+        prev.isDarkMode != curr.isDarkMode || prev.locale != curr.locale,
         builder: (context, settings) => ScreenUtilInit(
           designSize: const Size(375, 812),
           minTextAdapt: true,

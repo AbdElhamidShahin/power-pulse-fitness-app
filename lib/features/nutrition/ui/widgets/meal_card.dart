@@ -51,11 +51,17 @@ class _MealCardState extends State<MealCard>
   }
 
   Map<MealType, _M> _meta(BuildContext context) => {
-    MealType.breakfast: _M(icon: '🌅', name: context.l10n.breakfastLabel, bg: Color(0xFFFFF9E6)),
-    MealType.lunch: _M(icon: '☀️', name: context.l10n.lunchLabel, bg: Color(0xFFFFF3CD)),
-    MealType.snack: _M(icon: '🍎', name: context.l10n.snackLabel, bg: Color(0xFFFFE5E5)),
-    MealType.dinner: _M(icon: '🌙', name: context.l10n.dinnerLabel, bg: Color(0xFFE8F5FF)),
-  };
+        MealType.breakfast: _M(
+            icon: '🌅',
+            name: context.l10n.breakfastLabel,
+            bg: Color(0xFFFFF9E6)),
+        MealType.lunch: _M(
+            icon: '☀️', name: context.l10n.lunchLabel, bg: Color(0xFFFFF3CD)),
+        MealType.snack: _M(
+            icon: '🍎', name: context.l10n.snackLabel, bg: Color(0xFFFFE5E5)),
+        MealType.dinner: _M(
+            icon: '🌙', name: context.l10n.dinnerLabel, bg: Color(0xFFE8F5FF)),
+      };
 
   @override
   Widget build(BuildContext context) {

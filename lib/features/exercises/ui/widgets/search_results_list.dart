@@ -16,36 +16,36 @@ class SearchResultsList extends StatelessWidget {
     return BlocBuilder<ExerciseSearchCubit, ExerciseSearchState>(
       builder: (context, state) => switch (state) {
         ExerciseSearchIdle() => Center(
-          child: Text(
-            'ابحث عن تمرين...',
-            style: TextStyle(
-              color: const Color(0xFF8A8A8A),
-              fontFamily: 'Cairo',
-              fontSize: 14.sp,
+            child: Text(
+              'ابحث عن تمرين...',
+              style: TextStyle(
+                color: const Color(0xFF8A8A8A),
+                fontFamily: 'Cairo',
+                fontSize: 14.sp,
+              ),
             ),
           ),
-        ),
         ExerciseSearchLoading() => const ExercisesShimmer(),
         ExerciseSearchError() => const SizedBox.shrink(),
         ExerciseSearchLoaded(:final results) when results.isEmpty => Center(
-          child: Text(
-            'لا توجد نتائج',
-            style: TextStyle(
-              color: const Color(0xFF8A8A8A),
-              fontFamily: 'Cairo',
-              fontSize: 14.sp,
+            child: Text(
+              'لا توجد نتائج',
+              style: TextStyle(
+                color: const Color(0xFF8A8A8A),
+                fontFamily: 'Cairo',
+                fontSize: 14.sp,
+              ),
             ),
           ),
-        ),
         ExerciseSearchLoaded(:final results) => ListView.separated(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          itemCount: results.length,
-          separatorBuilder: (_, __) => SizedBox(height: 10.h),
-          itemBuilder: (context, i) => ExerciseCard(
-            exercise: results[i],
-            onTap: () => context.push('/exercises/${results[i].id}'),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            itemCount: results.length,
+            separatorBuilder: (_, __) => SizedBox(height: 10.h),
+            itemBuilder: (context, i) => ExerciseCard(
+              exercise: results[i],
+              onTap: () => context.push('/exercises/${results[i].id}'),
+            ),
           ),
-        ),
       },
     );
   }

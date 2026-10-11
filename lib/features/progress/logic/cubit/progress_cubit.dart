@@ -73,10 +73,10 @@ final class WeightLogCubit extends Cubit<WeightLogState> {
   Future<void> addEntry(double weight, {String? note}) async {
     emit(const WeightLogLoading());
     final entry = WeightEntry(
-      id:     'w_${DateTime.now().millisecondsSinceEpoch}',
+      id: 'w_${DateTime.now().millisecondsSinceEpoch}',
       weight: weight,
-      date:   DateTime.now(),
-      note:   note,
+      date: DateTime.now(),
+      note: note,
     );
     final result = await _addWeight(entry);
     result.fold(

@@ -15,8 +15,8 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
   WorkoutLoggerServiceImpl(this._prefs);
   final SharedPreferences _prefs;
 
-  static const _activeKey   = 'active_workout_session';
-  static const _historyKey  = 'workout_sessions_history';
+  static const _activeKey = 'active_workout_session';
+  static const _historyKey = 'workout_sessions_history';
 
   @override
   Future<WorkoutSession?> getActiveSession() async {
@@ -70,9 +70,7 @@ final class WorkoutLoggerServiceImpl implements WorkoutLoggerService {
     try {
       final all = await _allSessions();
       final cutoff = DateTime.now().subtract(Duration(days: limitDays));
-      return all
-          .where((s) => s.startTime.isAfter(cutoff))
-          .toList()
+      return all.where((s) => s.startTime.isAfter(cutoff)).toList()
         ..sort((a, b) => b.startTime.compareTo(a.startTime));
     } catch (_) {
       return [];

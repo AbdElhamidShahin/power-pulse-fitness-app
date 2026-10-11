@@ -32,9 +32,9 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
   void _onSubmit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<LoginCubit>().loginUser(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
   }
 
   @override
@@ -51,7 +51,8 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
             // Migrated from frozen font16RegularMuted global.
             child: Text(
               'البريد الإلكتروني',
-              style: AppTextStyles.bodySmall.copyWith(color: isDark ? Colors.white : colorScheme.primary),
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: isDark ? Colors.white : colorScheme.primary),
             ),
           ),
           AppTextFormFeild(

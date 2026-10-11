@@ -14,17 +14,17 @@ class AppSettingsCubit extends Cubit<AppSettings> {
 
   final SharedPreferences _prefs;
 
-  static const _kDark          = 'settings_dark_mode';
-  static const _kMetric        = 'settings_metric_units';
+  static const _kDark = 'settings_dark_mode';
+  static const _kMetric = 'settings_metric_units';
   static const _kNotifications = 'settings_notifications';
-  static const _kLocale        = 'settings_locale';
+  static const _kLocale = 'settings_locale';
 
   void _load() {
     emit(AppSettings(
-      isDarkMode:           _prefs.getBool(_kDark)          ?? false,
-      isMetricUnits:        _prefs.getBool(_kMetric)        ?? true,
+      isDarkMode: _prefs.getBool(_kDark) ?? false,
+      isMetricUnits: _prefs.getBool(_kMetric) ?? true,
       notificationsEnabled: _prefs.getBool(_kNotifications) ?? true,
-      locale:               _prefs.getString(_kLocale)      ?? 'ar',
+      locale: _prefs.getString(_kLocale) ?? 'ar',
     ));
   }
 
@@ -93,6 +93,7 @@ class AppSettingsCubit extends Cubit<AppSettings> {
   String weightUnit(double kg) =>
       state.isMetricUnits ? '${kg.toInt()} كجم' : '${(kg * 2.205).toInt()} رطل';
 
-  String heightUnit(double cm) =>
-      state.isMetricUnits ? '${cm.toInt()} سم' : '${(cm / 2.54).toStringAsFixed(1)} بوصة';
+  String heightUnit(double cm) => state.isMetricUnits
+      ? '${cm.toInt()} سم'
+      : '${(cm / 2.54).toStringAsFixed(1)} بوصة';
 }

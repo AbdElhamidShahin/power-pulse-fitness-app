@@ -17,4 +17,3 @@ abstract interface class NutritionRepository {
   Future<ApiResult<double>> getWaterLiters(DateTime date);
   Future<ApiResult<void>> saveWaterLiters(double liters, DateTime date);
 }
-

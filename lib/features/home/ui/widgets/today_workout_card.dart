@@ -367,7 +367,8 @@ class _WorkoutDayCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: isToday ? AppColors.accentDim : context.colors.bgElevated,
+                  color:
+                      isToday ? AppColors.accentDim : context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
@@ -376,7 +377,8 @@ class _WorkoutDayCard extends StatelessWidget {
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
-                    color: isToday ? AppColors.accent : context.colors.textMuted,
+                    color:
+                        isToday ? AppColors.accent : context.colors.textMuted,
                   ),
                 ),
               ),
@@ -415,8 +417,9 @@ class _WorkoutDayCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isToday ? AppColors.accent : context.colors.bgElevated,
                 borderRadius: BorderRadius.circular(14.r),
-                border:
-                    isToday ? null : Border.all(color: context.colors.borderMedium),
+                border: isToday
+                    ? null
+                    : Border.all(color: context.colors.borderMedium),
               ),
               alignment: Alignment.center,
               child: Text(

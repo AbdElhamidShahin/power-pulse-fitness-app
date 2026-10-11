@@ -29,31 +29,36 @@ class BodyStatsSection extends StatelessWidget {
     final profile = profileState is ProfileLoaded ? profileState.profile : null;
 
     // الطول من الـ profile — لو مش موجود نستخدم 175 كافتراضي
-    final heightCm  = profile?.heightCm ?? 175.0;
-    final heightM   = heightCm / 100;
+    final heightCm = profile?.heightCm ?? 175.0;
+    final heightM = heightCm / 100;
 
     // الوزن الحالي: من الـ progress logs أو من الـ profile
     final currentWeight = summary.currentWeight ?? profile?.weightKg;
 
     // BMI حقيقي
-    final bmi = currentWeight != null
-        ? currentWeight / (heightM * heightM)
-        : null;
+    final bmi =
+        currentWeight != null ? currentWeight / (heightM * heightM) : null;
 
     // تصنيف الوزن
     final bmiCategory = bmi == null
         ? '--'
-        : bmi < 18.5 ? context.l10n.underweight
-        : bmi < 25.0 ? context.l10n.normalWeight
-        : bmi < 30.0 ? context.l10n.overweight
-        : context.l10n.obese;
+        : bmi < 18.5
+            ? context.l10n.underweight
+            : bmi < 25.0
+                ? context.l10n.normalWeight
+                : bmi < 30.0
+                    ? context.l10n.overweight
+                    : context.l10n.obese;
 
     final bmiColor = bmi == null
         ? context.colors.textMuted
-        : bmi < 18.5 ? AppColors.info
-        : bmi < 25.0 ? AppColors.success
-        : bmi < 30.0 ? AppColors.warning
-        : AppColors.danger;
+        : bmi < 18.5
+            ? AppColors.info
+            : bmi < 25.0
+                ? AppColors.success
+                : bmi < 30.0
+                    ? AppColors.warning
+                    : AppColors.danger;
 
     return Column(
       children: [
@@ -96,9 +101,8 @@ class BodyStatsSection extends StatelessWidget {
           change: weightChange != null
               ? '${weightChange! < 0 ? '' : '+'}${weightChange!.toStringAsFixed(1)} كجم'
               : null,
-          changeColor: (weightChange ?? 0) < 0
-              ? AppColors.accent
-              : AppColors.danger,
+          changeColor:
+              (weightChange ?? 0) < 0 ? AppColors.accent : AppColors.danger,
         ),
         SizedBox(height: 8.h),
 
@@ -106,9 +110,7 @@ class BodyStatsSection extends StatelessWidget {
         BodyStatRow(
           emoji: '📏',
           label: context.l10n.height,
-          value: profile != null
-              ? '${profile.heightCm.toInt()} سم'
-              : '-- سم',
+          value: profile != null ? '${profile.heightCm.toInt()} سم' : '-- سم',
         ),
         SizedBox(height: 8.h),
 

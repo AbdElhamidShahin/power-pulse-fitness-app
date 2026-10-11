@@ -66,17 +66,17 @@ Future<void> initDependencies() async {
   );
 
   sl.registerLazySingleton<Dio>(
-        () => DioClient.exerciseDb,
+    () => DioClient.exerciseDb,
     instanceName: 'exerciseDb',
   );
 
   sl.registerLazySingleton<Dio>(
-        () => DioClient.foodFacts,
+    () => DioClient.foodFacts,
     instanceName: 'foodFacts',
   );
 
   sl.registerLazySingleton<NetworkInfo>(
-        () => NetworkInfoImpl(
+    () => NetworkInfoImpl(
       sl<Connectivity>(),
     ),
   );
@@ -100,22 +100,22 @@ void _initAuth() {
   final supabase = Supabase.instance.client;
 
   sl.registerLazySingleton<LoginRepository>(
-        () => LoginRepositoryImpl(supabase),
+    () => LoginRepositoryImpl(supabase),
   );
 
   sl.registerFactory<LoginCubit>(
-        () => LoginCubit(
+    () => LoginCubit(
       sl<LoginRepository>(),
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<SignUpRepository>(
-        () => SignUpRepositoryImpl(supabase),
+    () => SignUpRepositoryImpl(supabase),
   );
 
   sl.registerFactory<SignUpCubit>(
-        () => SignUpCubit(
+    () => SignUpCubit(
       sl<SignUpRepository>(),
       sl<SharedPreferences>(),
     ),
@@ -124,19 +124,19 @@ void _initAuth() {
 
 void _initExercises() {
   sl.registerLazySingleton<ExerciseService>(
-        () => ExerciseServiceImpl(
+    () => ExerciseServiceImpl(
       sl<Dio>(instanceName: 'exerciseDb'),
     ),
   );
 
   sl.registerLazySingleton<ExerciseLocalService>(
-        () => ExerciseLocalServiceImpl(
+    () => ExerciseLocalServiceImpl(
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<ExerciseRepository>(
-        () => ExerciseRepositoryImpl(
+    () => ExerciseRepositoryImpl(
       remoteService: sl(),
       localService: sl(),
       networkInfo: sl(),
@@ -144,29 +144,29 @@ void _initExercises() {
   );
 
   sl.registerLazySingleton(
-        () => GetExercisesUseCase(sl()),
+    () => GetExercisesUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => GetExercisesByBodyPartUseCase(sl()),
+    () => GetExercisesByBodyPartUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => SearchExercisesUseCase(sl()),
+    () => SearchExercisesUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => GetExerciseByIdUseCase(sl()),
+    () => GetExerciseByIdUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => GetBodyPartListUseCase(sl()),
+    () => GetBodyPartListUseCase(sl()),
   );
 
   // RefreshExercisesUseCase أُزيلت من DI — غير مستخدمة (P2)
 
   sl.registerFactory(
-        () => ExercisesCubit(
+    () => ExercisesCubit(
       getExercises: sl(),
       getByBodyPart: sl(),
       getBodyParts: sl(),
@@ -175,29 +175,29 @@ void _initExercises() {
   );
 
   sl.registerFactory(
-        () => ExerciseSearchCubit(sl()),
+    () => ExerciseSearchCubit(sl()),
   );
 
   sl.registerFactory(
-        () => ExerciseDetailCubit(sl()),
+    () => ExerciseDetailCubit(sl()),
   );
 }
 
 void _initNutrition() {
   sl.registerLazySingleton<NutritionService>(
-        () => NutritionServiceImpl(
+    () => NutritionServiceImpl(
       sl<Dio>(instanceName: 'foodFacts'),
     ),
   );
 
   sl.registerLazySingleton<NutritionLocalService>(
-        () => NutritionLocalServiceImpl(
+    () => NutritionLocalServiceImpl(
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<NutritionRepository>(
-        () => NutritionRepositoryImpl(
+    () => NutritionRepositoryImpl(
       remoteService: sl(),
       localService: sl(),
       networkInfo: sl(),
@@ -205,23 +205,23 @@ void _initNutrition() {
   );
 
   sl.registerLazySingleton(
-        () => GetDailyNutritionUseCase(sl<NutritionRepository>()),
+    () => GetDailyNutritionUseCase(sl<NutritionRepository>()),
   );
 
   sl.registerFactory(
-        () => NutritionCubit(
+    () => NutritionCubit(
       sl<NutritionRepository>(),
     ),
   );
 
   sl.registerFactory(
-        () => FoodSearchCubit(
+    () => FoodSearchCubit(
       sl<NutritionRepository>(),
     ),
   );
 
   sl.registerFactory(
-        () => AddMealCubit(
+    () => AddMealCubit(
       sl<NutritionRepository>(),
     ),
   );
@@ -229,13 +229,13 @@ void _initNutrition() {
 
 void _initProgress() {
   sl.registerLazySingleton<ProgressLocalService>(
-        () => ProgressLocalServiceImpl(
+    () => ProgressLocalServiceImpl(
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<ProgressRepository>(
-        () => ProgressRepositoryImpl(
+    () => ProgressRepositoryImpl(
       localService: sl(),
       nutritionService: sl<NutritionLocalService>(),
       pedometerService: sl<PedometerService>(),
@@ -245,29 +245,29 @@ void _initProgress() {
   );
 
   sl.registerLazySingleton(
-        () => GetProgressSummaryUseCase(sl()),
+    () => GetProgressSummaryUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => AddWeightEntryUseCase(sl()),
+    () => AddWeightEntryUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => DeleteWeightEntryUseCase(sl()),
+    () => DeleteWeightEntryUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => LogWorkoutUseCase(sl()),
+    () => LogWorkoutUseCase(sl()),
   );
 
   sl.registerFactory(
-        () => ProgressCubit(
+    () => ProgressCubit(
       getSummary: sl(),
     ),
   );
 
   sl.registerFactory(
-        () => WeightLogCubit(
+    () => WeightLogCubit(
       addWeight: sl(),
       deleteWeight: sl(),
     ),
@@ -276,35 +276,35 @@ void _initProgress() {
 
 void _initProfile() {
   sl.registerLazySingleton<ProfileLocalService>(
-        () => ProfileLocalServiceImpl(
+    () => ProfileLocalServiceImpl(
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<ProfileRepository>(
-        () => ProfileRepositoryImpl(
+    () => ProfileRepositoryImpl(
       localService: sl(),
     ),
   );
 
   sl.registerLazySingleton(
-        () => GetProfileUseCase(sl()),
+    () => GetProfileUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => SaveProfileUseCase(sl()),
+    () => SaveProfileUseCase(sl()),
   );
 
   // HasProfileUseCase أُزيلت من DI — غير مستخدمة في أي Cubit (P2)
 
   sl.registerFactory(
-        () => ProfileCubit(
+    () => ProfileCubit(
       getProfile: sl<GetProfileUseCase>(),
     ),
   );
 
   sl.registerFactory(
-        () => ProfileSaveCubit(
+    () => ProfileSaveCubit(
       saveProfile: sl<SaveProfileUseCase>(),
     ),
   );
@@ -312,9 +312,9 @@ void _initProfile() {
 
 void _initHome() {
   sl.registerFactory(
-        () => HomeCubit(
+    () => HomeCubit(
       getProfile: sl(),
-      getDailyNutrition: sl(),      // GetDailyNutritionUseCase (P1 fix)
+      getDailyNutrition: sl(), // GetDailyNutritionUseCase (P1 fix)
       getProgressSummary: sl(),
     ),
   );
@@ -322,7 +322,7 @@ void _initHome() {
 
 void _initSettings() {
   sl.registerLazySingleton(
-        () => AppSettingsCubit(
+    () => AppSettingsCubit(
       sl<SharedPreferences>(),
     ),
   );
@@ -330,33 +330,33 @@ void _initSettings() {
 
 void _initWorkoutPlan() {
   sl.registerLazySingleton<WorkoutPlanService>(
-        () => WorkoutPlanServiceImpl(
+    () => WorkoutPlanServiceImpl(
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<WorkoutPlanRepository>(
-        () => WorkoutPlanRepositoryImpl(
+    () => WorkoutPlanRepositoryImpl(
       sl<WorkoutPlanService>(),
     ),
   );
 
   sl.registerLazySingleton(
-        () => GetWorkoutPlanUseCase(sl()),
+    () => GetWorkoutPlanUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => SaveWorkoutPlanUseCase(sl()),
+    () => SaveWorkoutPlanUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => DeleteWorkoutPlanUseCase(sl()),
+    () => DeleteWorkoutPlanUseCase(sl()),
   );
 
   // Singleton مشترك: الرئيسية + شاشة الخطة + إضافة تمرين للخطة كلهم
   // بيشوفوا نفس الحالة، فأي حفظ بيظهر في كل مكان فوراً.
   sl.registerLazySingleton(
-        () => WorkoutPlanCubit(
+    () => WorkoutPlanCubit(
       getPlan: sl(),
       savePlan: sl(),
       deletePlan: sl(),
@@ -366,33 +366,33 @@ void _initWorkoutPlan() {
 
 void _initWorkoutLogger() {
   sl.registerLazySingleton<WorkoutLoggerService>(
-        () => WorkoutLoggerServiceImpl(
+    () => WorkoutLoggerServiceImpl(
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<WorkoutLoggerRepository>(
-        () => WorkoutLoggerRepositoryImpl(
+    () => WorkoutLoggerRepositoryImpl(
       sl<WorkoutLoggerService>(),
     ),
   );
 
   sl.registerLazySingleton(
-        () => GetActiveSessionUseCase(sl()),
+    () => GetActiveSessionUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => SaveSessionUseCase(sl()),
+    () => SaveSessionUseCase(sl()),
   );
 
   sl.registerLazySingleton(
-        () => DeleteSessionUseCase(sl()),
+    () => DeleteSessionUseCase(sl()),
   );
 
   // GetAllSessionsUseCase أُزيلت من DI — WorkoutLoggerCubit لا يأخذها (P2)
 
   sl.registerFactory(
-        () => WorkoutLoggerCubit(
+    () => WorkoutLoggerCubit(
       getActiveSession: sl(),
       saveSession: sl(),
       deleteSession: sl(),
@@ -404,15 +404,14 @@ void _initWorkoutLogger() {
 
 Future<void> _initPedometer() async {
   sl.registerLazySingleton<PedometerService>(
-        () => PedometerService(
+    () => PedometerService(
       sl<SharedPreferences>(),
     ),
   );
 
   sl.registerLazySingleton<PedometerCubit>(
-        () => PedometerCubit(
+    () => PedometerCubit(
       service: sl<PedometerService>(),
     ),
   );
 }
-

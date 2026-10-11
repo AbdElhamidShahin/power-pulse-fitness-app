@@ -41,9 +41,6 @@ final class WorkoutPlanRepositoryImpl implements WorkoutPlanRepository {
   @override
   Future<ApiResult<void>> deletePlan() async {
     try {
-
-
-
       await _service.deletePlan();
       return const Success(null);
     } on CacheException catch (e) {

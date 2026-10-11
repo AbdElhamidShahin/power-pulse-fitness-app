@@ -23,8 +23,8 @@ class ProgressActivitySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final days = summary.dailyActivity;
-    final hasAny = days.any((d) =>
-        d.steps > 0 || d.caloriesIn > 0 || d.waterLiters > 0);
+    final hasAny =
+        days.any((d) => d.steps > 0 || d.caloriesIn > 0 || d.waterLiters > 0);
 
     return Container(
       width: double.infinity,
@@ -249,16 +249,14 @@ class _WeekBars extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _Bar(
-                        height: maxSteps == 0
-                            ? 0
-                            : barMax * (d.steps / maxSteps),
+                        height:
+                            maxSteps == 0 ? 0 : barMax * (d.steps / maxSteps),
                         color: AppColors.accent,
                       ),
                       SizedBox(width: 3.w),
                       _Bar(
-                        height: maxCal <= 0
-                            ? 0
-                            : barMax * (d.caloriesIn / maxCal),
+                        height:
+                            maxCal <= 0 ? 0 : barMax * (d.caloriesIn / maxCal),
                         color: AppColors.warning,
                       ),
                     ],

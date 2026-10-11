@@ -61,12 +61,15 @@ class NutritionDateNavigator extends StatelessWidget {
             width: 32.r,
             height: 32.r,
             decoration: BoxDecoration(
-              color: isToday ? context.colors.bgDeep : context.colors.bgElevated,
+              color:
+                  isToday ? context.colors.bgDeep : context.colors.bgElevated,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
               Icons.chevron_left_rounded,
-              color: isToday ? context.colors.borderMedium : context.colors.textMuted,
+              color: isToday
+                  ? context.colors.borderMedium
+                  : context.colors.textMuted,
               size: 20,
             ),
           ),

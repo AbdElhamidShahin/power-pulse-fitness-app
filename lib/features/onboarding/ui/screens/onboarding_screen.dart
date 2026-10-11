@@ -29,25 +29,25 @@ class _PageData {
 const _pageCount = 3;
 
 List<_PageData> _buildPages(BuildContext context) => [
-  _PageData(
-    icon: Icons.fitness_center_rounded,
-    title: context.l10n.onboardingTitle1,
-    subtitle: context.l10n.onboardingSubtitle1,
-    color: AppColors.accent,
-  ),
-  _PageData(
-    icon: Icons.restaurant_rounded,
-    title: context.l10n.onboardingTitle2,
-    subtitle: context.l10n.onboardingSubtitle2,
-    color: AppColors.info,
-  ),
-  _PageData(
-    icon: Icons.bar_chart_rounded,
-    title: context.l10n.onboardingTitle3,
-    subtitle: context.l10n.onboardingSubtitle3,
-    color: AppColors.warning,
-  ),
-];
+      _PageData(
+        icon: Icons.fitness_center_rounded,
+        title: context.l10n.onboardingTitle1,
+        subtitle: context.l10n.onboardingSubtitle1,
+        color: AppColors.accent,
+      ),
+      _PageData(
+        icon: Icons.restaurant_rounded,
+        title: context.l10n.onboardingTitle2,
+        subtitle: context.l10n.onboardingSubtitle2,
+        color: AppColors.info,
+      ),
+      _PageData(
+        icon: Icons.bar_chart_rounded,
+        title: context.l10n.onboardingTitle3,
+        subtitle: context.l10n.onboardingSubtitle3,
+        color: AppColors.warning,
+      ),
+    ];
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -82,13 +82,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _showSetup ? const _SetupForm() : _IntroPages(
-          pageCtrl: _pageCtrl,
-          current: _current,
-          onPageChanged: (i) => setState(() => _current = i),
-          onNext: _next,
-          onSkip: () => setState(() => _showSetup = true),
-        ),
+        child: _showSetup
+            ? const _SetupForm()
+            : _IntroPages(
+                pageCtrl: _pageCtrl,
+                current: _current,
+                onPageChanged: (i) => setState(() => _current = i),
+                onNext: _next,
+                onSkip: () => setState(() => _showSetup = true),
+              ),
       ),
     );
   }
@@ -131,7 +133,8 @@ class _IntroPages extends StatelessWidget {
             controller: pageCtrl,
             onPageChanged: onPageChanged,
             itemCount: _pageCount,
-            itemBuilder: (_, i) => _OnboardingPage(page: _buildPages(context)[i]),
+            itemBuilder: (_, i) =>
+                _OnboardingPage(page: _buildPages(context)[i]),
           ),
         ),
 
@@ -229,13 +232,13 @@ class _SetupForm extends StatefulWidget {
 }
 
 class _SetupFormState extends State<_SetupForm> {
-  final _nameCtrl   = TextEditingController();
-  final _ageCtrl    = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _ageCtrl = TextEditingController();
   final _heightCtrl = TextEditingController();
   final _weightCtrl = TextEditingController();
 
-  Gender        _gender   = Gender.male;
-  FitnessGoal   _goal     = FitnessGoal.maintain;
+  Gender _gender = Gender.male;
+  FitnessGoal _goal = FitnessGoal.maintain;
   ActivityLevel _activity = ActivityLevel.moderate;
 
   @override
@@ -257,12 +260,12 @@ class _SetupFormState extends State<_SetupForm> {
       (double.tryParse(_weightCtrl.text) ?? 0) <= 400;
 
   UserProfile get _profile => UserProfile(
-        name:          _nameCtrl.text.trim(),
-        age:           int.tryParse(_ageCtrl.text) ?? 0,
-        heightCm:      double.tryParse(_heightCtrl.text) ?? 0,
-        weightKg:      double.tryParse(_weightCtrl.text) ?? 0,
-        gender:        _gender,
-        goal:          _goal,
+        name: _nameCtrl.text.trim(),
+        age: int.tryParse(_ageCtrl.text) ?? 0,
+        heightCm: double.tryParse(_heightCtrl.text) ?? 0,
+        weightKg: double.tryParse(_weightCtrl.text) ?? 0,
+        gender: _gender,
+        goal: _goal,
         activityLevel: _activity,
         email: Supabase.instance.client.auth.currentUser?.email ?? '',
       );
@@ -302,7 +305,6 @@ class _SetupFormState extends State<_SetupForm> {
               ),
             ),
           ),
-
           SliverPadding(
             padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.screenPaddingH),
@@ -313,15 +315,20 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceS),
                 TextField(
                   controller: _nameCtrl,
-                  textDirection: Localizations.localeOf(context).languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+                  textDirection:
+                      Localizations.localeOf(context).languageCode == 'ar'
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                   onChanged: (_) => setState(() {}),
-                  decoration: InputDecoration(hintText: context.l10n.yourNameHint),
+                  decoration:
+                      InputDecoration(hintText: context.l10n.yourNameHint),
                 ),
                 const SizedBox(height: AppConstants.spaceL),
 
                 // Age + Height
                 Row(children: [
-                  Expanded(child: Column(
+                  Expanded(
+                      child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _Label(context.l10n.ageLabel),
@@ -337,7 +344,8 @@ class _SetupFormState extends State<_SetupForm> {
                     ],
                   )),
                   const SizedBox(width: AppConstants.spaceM),
-                  Expanded(child: Column(
+                  Expanded(
+                      child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _Label(context.l10n.height),
@@ -348,7 +356,8 @@ class _SetupFormState extends State<_SetupForm> {
                         textDirection: TextDirection.ltr,
                         onChanged: (_) => setState(() {}),
                         decoration: InputDecoration(
-                            hintText: '175', suffixText: context.l10n.translate('cmUnit')),
+                            hintText: '175',
+                            suffixText: context.l10n.translate('cmUnit')),
                       ),
                     ],
                   )),
@@ -360,11 +369,13 @@ class _SetupFormState extends State<_SetupForm> {
                 const SizedBox(height: AppConstants.spaceS),
                 TextField(
                   controller: _weightCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   textDirection: TextDirection.ltr,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
-                      hintText: '75.0', suffixText: context.l10n.translate('kgUnit')),
+                      hintText: '75.0',
+                      suffixText: context.l10n.translate('kgUnit')),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
@@ -383,26 +394,28 @@ class _SetupFormState extends State<_SetupForm> {
                 _Label(context.l10n.goal),
                 const SizedBox(height: AppConstants.spaceM),
                 ...FitnessGoal.values.map((g) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                  child: _OptionTile(
-                    label: context.l10n.translate(g.name),
-                    selected: _goal == g,
-                    onTap: () => setState(() => _goal = g),
-                  ),
-                )),
+                      padding:
+                          const EdgeInsets.only(bottom: AppConstants.spaceS),
+                      child: _OptionTile(
+                        label: context.l10n.translate(g.name),
+                        selected: _goal == g,
+                        onTap: () => setState(() => _goal = g),
+                      ),
+                    )),
                 const SizedBox(height: AppConstants.spaceL),
 
                 // Activity
                 _Label(context.l10n.activityLevel),
                 const SizedBox(height: AppConstants.spaceM),
                 ...ActivityLevel.values.map((a) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                  child: _OptionTile(
-                    label: context.l10n.translate(a.name),
-                    selected: _activity == a,
-                    onTap: () => setState(() => _activity = a),
-                  ),
-                )),
+                      padding:
+                          const EdgeInsets.only(bottom: AppConstants.spaceS),
+                      child: _OptionTile(
+                        label: context.l10n.translate(a.name),
+                        selected: _activity == a,
+                        onTap: () => setState(() => _activity = a),
+                      ),
+                    )),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 BlocBuilder<ProfileSaveCubit, ProfileSaveState>(
@@ -462,8 +475,8 @@ class _SegmentRow<T> extends StatelessWidget {
               onTap: () => onSelect(v),
               child: AnimatedContainer(
                 duration: AppConstants.durationFast,
-                padding: const EdgeInsets.symmetric(
-                    vertical: AppConstants.spaceS),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
                   color: active ? AppColors.accent : Colors.transparent,
                   borderRadius: BorderRadius.circular(AppConstants.radiusS),

@@ -17,7 +17,6 @@ import '../widgets/progress_period_selector.dart';
 import '../widgets/progress_stat_card.dart';
 import '../widgets/progress_weekly_chart_card.dart';
 
-
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
 
@@ -61,7 +60,7 @@ class _ProgressScreenState extends State<ProgressScreen> with RouteAware {
             ProgressInitial() || ProgressLoading() => const _LoadingView(),
             ProgressError(:final message) => _ErrorView(message: message),
             ProgressLoaded(:final summary, :final period) =>
-                _LoadedView(summary: summary, period: period),
+              _LoadedView(summary: summary, period: period),
           },
         ),
       ),
@@ -200,22 +199,22 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.error_outline_rounded,
-          color: AppColors.danger,
-          size: 48.r,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              color: AppColors.danger,
+              size: 48.r,
+            ),
+            SizedBox(height: 16.h),
+            Text(message, style: AppTextStyles.bodyMedium),
+            SizedBox(height: 16.h),
+            GestureDetector(
+              onTap: () => context.read<ProgressCubit>().load(),
+              child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
+            ),
+          ],
         ),
-        SizedBox(height: 16.h),
-        Text(message, style: AppTextStyles.bodyMedium),
-        SizedBox(height: 16.h),
-        GestureDetector(
-          onTap: () => context.read<ProgressCubit>().load(),
-          child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
-        ),
-      ],
-    ),
-  );
+      );
 }

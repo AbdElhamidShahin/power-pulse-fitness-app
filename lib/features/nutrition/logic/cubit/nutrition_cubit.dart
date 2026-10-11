@@ -28,7 +28,7 @@ final class NutritionCubit extends Cubit<NutritionState> {
   }
 
   void goToPreviousDay() => loadDate(_today.subtract(const Duration(days: 1)));
-  void goToNextDay()     => loadDate(_today.add(const Duration(days: 1)));
+  void goToNextDay() => loadDate(_today.add(const Duration(days: 1)));
   bool get isToday {
     final now = DateTime.now();
     return _today.year == now.year &&
@@ -158,7 +158,7 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
 
     _isLoadingMore = true;
     final result =
-    await _repository.searchFood(current.query, page: current.page + 1);
+        await _repository.searchFood(current.query, page: current.page + 1);
     switch (result) {
       case Success(:final data):
         emit(current.copyWith(

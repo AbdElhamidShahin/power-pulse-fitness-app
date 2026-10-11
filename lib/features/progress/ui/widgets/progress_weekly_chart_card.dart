@@ -55,12 +55,12 @@ class _WeeklyBarChart extends StatelessWidget {
     final data = points.isNotEmpty
         ? points
         : List.generate(
-      7,
-          (i) => ChartPoint(
-        x: i.toDouble(),
-        y: [1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.5][i],
-      ),
-    );
+            7,
+            (i) => ChartPoint(
+              x: i.toDouble(),
+              y: [1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.5][i],
+            ),
+          );
 
     final maxY = data.fold(0.0, (m, p) => p.y > m ? p.y : m);
 
@@ -69,7 +69,7 @@ class _WeeklyBarChart extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: List.generate(7, (i) {
         final point =
-        i < data.length ? data[i] : ChartPoint(x: i.toDouble(), y: 0);
+            i < data.length ? data[i] : ChartPoint(x: i.toDouble(), y: 0);
         final hasWorkout = point.y > 0;
         final heightFraction = maxY > 0 ? (point.y / maxY) : 0.0;
 
@@ -80,7 +80,7 @@ class _WeeklyBarChart extends StatelessWidget {
               duration: Duration(milliseconds: 300 + (i * 50)),
               width: 28.w,
               height:
-              hasWorkout ? (60.h * heightFraction).clamp(20.h, 60.h) : 4.h,
+                  hasWorkout ? (60.h * heightFraction).clamp(20.h, 60.h) : 4.h,
               decoration: BoxDecoration(
                 color: hasWorkout ? AppColors.accent : Color(0xFFE0E0E0),
                 borderRadius: BorderRadius.circular(8.r),

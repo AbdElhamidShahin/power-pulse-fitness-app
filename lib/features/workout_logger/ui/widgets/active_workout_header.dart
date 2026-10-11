@@ -27,7 +27,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
     super.initState();
     _ticker = Stream.periodic(
       const Duration(seconds: 1),
-          (_) => DateTime.now().difference(widget.session.startTime).inSeconds,
+      (_) => DateTime.now().difference(widget.session.startTime).inSeconds,
     );
   }
 
@@ -77,7 +77,8 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(context.l10n.no, style: AppTextStyles.accentLabel),
+                    child:
+                        Text(context.l10n.no, style: AppTextStyles.accentLabel),
                   ),
                   TextButton(
                     onPressed: () {
@@ -167,7 +168,8 @@ class WorkoutBottomBar extends StatelessWidget {
               onPressed: onFinish,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accent,
-                minimumSize: Size(double.infinity, AppConstants.buttonHeightMedium),
+                minimumSize:
+                    Size(double.infinity, AppConstants.buttonHeightMedium),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
                 ),

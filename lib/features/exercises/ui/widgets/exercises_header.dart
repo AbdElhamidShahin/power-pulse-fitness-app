@@ -48,12 +48,15 @@ class ExercisesHeader extends StatelessWidget {
             width: 42.w,
             height: 42.h,
             decoration: BoxDecoration(
-              color: isSearching ? context.colors.bgDark : context.colors.bgElevated,
+              color: isSearching
+                  ? context.colors.bgDark
+                  : context.colors.bgElevated,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               isSearching ? Icons.close_rounded : Icons.search_rounded,
-              color: isSearching ? AppColors.textOnDark : context.colors.textMuted,
+              color:
+                  isSearching ? AppColors.textOnDark : context.colors.textMuted,
               size: 24.r,
             ),
           ),

@@ -87,7 +87,7 @@ class DayDetailState extends State<DayDetail> {
                         decoration: BoxDecoration(
                           color: AppColors.accentDim,
                           borderRadius:
-                          BorderRadius.circular(AppConstants.radiusPill),
+                              BorderRadius.circular(AppConstants.radiusPill),
                         ),
                         child: Text('اليوم',
                             style: AppTextStyles.labelSmall
@@ -97,7 +97,9 @@ class DayDetailState extends State<DayDetail> {
                   ],
                 ),
                 Text(
-                  day.isRest ? context.l10n.restDay : '${day.exercises.length} تمارين',
+                  day.isRest
+                      ? context.l10n.restDay
+                      : '${day.exercises.length} تمارين',
                   style: AppTextStyles.bodySmall
                       .copyWith(color: context.colors.textMuted),
                 ),
@@ -112,11 +114,13 @@ class DayDetailState extends State<DayDetail> {
                     horizontal: AppConstants.spaceL,
                     vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
-                  color: day.isRest ? AppColors.accent : context.colors.bgElevated,
+                  color:
+                      day.isRest ? AppColors.accent : context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                   border: Border.all(
-                    color:
-                    day.isRest ? AppColors.accent : context.colors.borderMedium,
+                    color: day.isRest
+                        ? AppColors.accent
+                        : context.colors.borderMedium,
                   ),
                 ),
                 child: Row(
@@ -174,8 +178,8 @@ class DayDetailState extends State<DayDetail> {
             style: AppTextStyles.bodyMedium,
             decoration: InputDecoration(
               hintText: 'اسم اليوم — مثلاً: تمرين الصدر',
-              hintStyle:
-              AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
+              hintStyle: AppTextStyles.bodySmall
+                  .copyWith(color: context.colors.textMuted),
               filled: true,
               fillColor: context.colors.bgSurface,
               contentPadding: const EdgeInsets.symmetric(
@@ -196,7 +200,8 @@ class DayDetailState extends State<DayDetail> {
               decoration: BoxDecoration(
                 color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
-                border: Border.all(color: context.colors.borderSubtle, width: 0.5),
+                border:
+                    Border.all(color: context.colors.borderSubtle, width: 0.5),
               ),
               child: Column(
                 children: [
@@ -226,7 +231,8 @@ class DayDetailState extends State<DayDetail> {
                 decoration: BoxDecoration(
                   color: context.colors.bgSurface,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                  border: Border.all(color: context.colors.borderSubtle, width: 0.5),
+                  border: Border.all(
+                      color: context.colors.borderSubtle, width: 0.5),
                 ),
                 child: Row(
                   children: [
@@ -263,7 +269,7 @@ class DayDetailState extends State<DayDetail> {
                     // حذف
                     GestureDetector(
                       onTap: () => widget.onRemoveExercise(ex.exerciseId),
-                      child:   Padding(
+                      child: Padding(
                         padding: EdgeInsets.all(4),
                         child: Icon(Icons.close_rounded,
                             size: 18, color: context.colors.textMuted),
@@ -281,7 +287,7 @@ class DayDetailState extends State<DayDetail> {
             child: Container(
               width: double.infinity,
               padding:
-              const EdgeInsets.symmetric(vertical: AppConstants.spaceL),
+                  const EdgeInsets.symmetric(vertical: AppConstants.spaceL),
               decoration: BoxDecoration(
                 color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -291,8 +297,7 @@ class DayDetailState extends State<DayDetail> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_rounded,
-                      color: AppColors.accent, size: 20),
+                  Icon(Icons.add_rounded, color: AppColors.accent, size: 20),
                   const SizedBox(width: AppConstants.spaceS),
                   Text(context.l10n.addExercise,
                       style: AppTextStyles.labelMedium

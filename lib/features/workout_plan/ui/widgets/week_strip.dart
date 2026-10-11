@@ -64,8 +64,8 @@ class WeekStrip extends StatelessWidget {
                   color: isSelected
                       ? AppColors.accent
                       : day.isRest
-                      ? context.colors.bgElevated
-                      : AppColors.accentDim,
+                          ? context.colors.bgElevated
+                          : AppColors.accentDim,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: isToday && !isSelected
                       ? Border.all(color: AppColors.accent, width: 1)
@@ -81,7 +81,7 @@ class WeekStrip extends StatelessWidget {
                             ? AppColors.textOnAccent
                             : context.colors.textMuted,
                         fontWeight:
-                        isSelected ? FontWeight.w700 : FontWeight.w400,
+                            isSelected ? FontWeight.w700 : FontWeight.w400,
                       ),
                     ),
                     const SizedBox(height: 2),

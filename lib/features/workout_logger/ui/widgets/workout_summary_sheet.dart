@@ -21,8 +21,7 @@ class WorkoutSummarySheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.emoji_events_rounded,
-              color: AppColors.accent, size: 56),
+          Icon(Icons.emoji_events_rounded, color: AppColors.accent, size: 56),
           const SizedBox(height: AppConstants.spaceL),
           Text(context.l10n.greatJob,
               style: Theme.of(context).textTheme.displayMedium),
@@ -67,15 +66,19 @@ class WorkoutSummarySheet extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    width: 28, height: 28,
+                    width: 28,
+                    height: 28,
                     decoration: BoxDecoration(
-                      color: done ? AppColors.successDim : context.colors.bgElevated,
+                      color: done
+                          ? AppColors.successDim
+                          : context.colors.bgElevated,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       done ? Icons.check_rounded : Icons.remove_rounded,
                       size: 16,
-                      color: done ? AppColors.success : context.colors.textMuted,
+                      color:
+                          done ? AppColors.success : context.colors.textMuted,
                     ),
                   ),
                   const SizedBox(width: AppConstants.spaceM),

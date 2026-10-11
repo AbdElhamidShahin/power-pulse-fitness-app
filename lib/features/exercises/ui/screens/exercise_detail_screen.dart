@@ -42,10 +42,10 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
         builder: (context, state) => switch (state) {
           ExerciseDetailInitial() ||
           ExerciseDetailLoading() =>
-          const _DetailLoading(),
+            const _DetailLoading(),
           ExerciseDetailError(:final message) => _DetailError(message: message),
           ExerciseDetailLoaded(:final exercise) =>
-              _DetailContent(exercise: exercise),
+            _DetailContent(exercise: exercise),
         },
       ),
     );
@@ -71,12 +71,12 @@ class _DetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayName =
-    exercise.nameAr.isNotEmpty ? exercise.nameAr : exercise.name;
+        exercise.nameAr.isNotEmpty ? exercise.nameAr : exercise.name;
     final displayBodyPart = exercise.bodyPartAr.isNotEmpty
         ? exercise.bodyPartAr
         : exercise.bodyPart;
     final displayTarget =
-    exercise.targetAr.isNotEmpty ? exercise.targetAr : exercise.target;
+        exercise.targetAr.isNotEmpty ? exercise.targetAr : exercise.target;
     final displayEquipment = exercise.equipmentAr.isNotEmpty
         ? exercise.equipmentAr
         : exercise.equipment;
@@ -146,7 +146,8 @@ class _DetailContent extends StatelessWidget {
                 children: [
                   MuscleGroupBadge(muscle: displayBodyPart),
                   PPBadge(label: displayTarget, color: AppColors.info),
-                  PPBadge(label: displayEquipment, color: context.colors.textMuted),
+                  PPBadge(
+                      label: displayEquipment, color: context.colors.textMuted),
                 ],
               ),
               const SizedBox(height: AppConstants.spaceXXL),
@@ -160,10 +161,10 @@ class _DetailContent extends StatelessWidget {
                   runSpacing: AppConstants.spaceS,
                   children: muscles
                       .map((m) => PPBadge(
-                    label: m,
-                    color: context.colors.textMuted,
-                    size: PPBadgeSize.small,
-                  ))
+                            label: m,
+                            color: context.colors.textMuted,
+                            size: PPBadgeSize.small,
+                          ))
                       .toList(),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
@@ -176,45 +177,45 @@ class _DetailContent extends StatelessWidget {
                 const SizedBox(height: AppConstants.spaceL),
                 ...steps.asMap().entries.map(
                       (e) => Padding(
-                    padding:
-                    const EdgeInsets.only(bottom: AppConstants.spaceM),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      textDirection: TextDirection.rtl,
-                      children: [
-                        Container(
-                          width: 26,
-                          height: 26,
-                          margin: const EdgeInsets.only(
-                              left: AppConstants.spaceM),
-                          decoration: BoxDecoration(
-                            color: AppColors.accentDim,
-                            borderRadius: BorderRadius.circular(
-                                AppConstants.radiusPill),
-                            border:
-                            Border.all(color: AppColors.borderAccent),
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${e.key + 1}',
-                              style: AppTextStyles.labelSmall.copyWith(
-                                color: AppColors.accent,
-                                fontSize: 11,
+                        padding:
+                            const EdgeInsets.only(bottom: AppConstants.spaceM),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          textDirection: TextDirection.rtl,
+                          children: [
+                            Container(
+                              width: 26,
+                              height: 26,
+                              margin: const EdgeInsets.only(
+                                  left: AppConstants.spaceM),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentDim,
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.radiusPill),
+                                border:
+                                    Border.all(color: AppColors.borderAccent),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${e.key + 1}',
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    color: AppColors.accent,
+                                    fontSize: 11,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            Expanded(
+                              child: Text(
+                                e.value,
+                                style: AppTextStyles.bodyMedium,
+                                textDirection: TextDirection.rtl,
+                              ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: Text(
-                            e.value,
-                            style: AppTextStyles.bodyMedium,
-                            textDirection: TextDirection.rtl,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
               ],
 
               const SizedBox(height: AppConstants.space3XL),
@@ -254,8 +255,7 @@ class _DetailError extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline_rounded,
-              color: AppColors.danger, size: 48),
+          Icon(Icons.error_outline_rounded, color: AppColors.danger, size: 48),
           const SizedBox(height: AppConstants.spaceM),
           Text(message, style: AppTextStyles.bodyMedium),
         ],
@@ -279,9 +279,14 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
   bool _added = false;
 
   List<String> get _dayNames => [
-    context.l10n.monday, context.l10n.tuesday, context.l10n.wednesday, context.l10n.thursday,
-    context.l10n.friday, context.l10n.saturday, context.l10n.sunday,
-  ];
+        context.l10n.monday,
+        context.l10n.tuesday,
+        context.l10n.wednesday,
+        context.l10n.thursday,
+        context.l10n.friday,
+        context.l10n.saturday,
+        context.l10n.sunday,
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -297,8 +302,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
           final plan = state is WorkoutPlanLoaded
               ? state.plan
               : state is WorkoutPlanEditing
-              ? state.draft
-              : null;
+                  ? state.draft
+                  : null;
 
           if (plan == null) {
             return const Center(
@@ -317,10 +322,12 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 // Handle
                 Center(
                   child: Container(
-                    width: 40, height: 4,
+                    width: 40,
+                    height: 4,
                     decoration: BoxDecoration(
                       color: context.colors.borderMedium,
-                      borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.radiusPill),
                     ),
                   ),
                 ),
@@ -328,8 +335,10 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 Text(
                   context.l10n.addToWhichDay,
                   style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 18,
-                    fontWeight: FontWeight.w900, color: context.colors.textPrimary,
+                    fontFamily: 'Cairo',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -338,8 +347,10 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                       ? widget.exercise.nameAr
                       : widget.exercise.name,
                   style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 14,
-                    color: AppColors.accent, fontWeight: FontWeight.w600,
+                    fontFamily: 'Cairo',
+                    fontSize: 14,
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -347,7 +358,7 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                 ...List.generate(7, (i) {
                   final wd = i + 1;
                   final day = plan.days.firstWhere(
-                        (d) => d.weekday == wd,
+                    (d) => d.weekday == wd,
                     orElse: () => PlanDay(weekday: wd, isRest: true),
                   );
                   final isSelected = _selectedWeekday == wd;
@@ -356,9 +367,11 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                       .any((e) => e.exerciseId == widget.exercise.id);
 
                   return GestureDetector(
-                    onTap: day.isRest ? null : () {
-                      setState(() => _selectedWeekday = wd);
-                    },
+                    onTap: day.isRest
+                        ? null
+                        : () {
+                            setState(() => _selectedWeekday = wd);
+                          },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
                       margin: const EdgeInsets.only(bottom: 8),
@@ -368,9 +381,12 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                         color: isSelected
                             ? AppColors.accentDim
                             : context.colors.bgElevated,
-                        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                        borderRadius:
+                            BorderRadius.circular(AppConstants.radiusM),
                         border: Border.all(
-                          color: isSelected ? AppColors.accent : Colors.transparent,
+                          color: isSelected
+                              ? AppColors.accent
+                              : Colors.transparent,
                           width: 1.5,
                         ),
                       ),
@@ -389,7 +405,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                   Text(
                                     _dayNames[i],
                                     style: TextStyle(
-                                      fontFamily: 'Cairo', fontSize: 14,
+                                      fontFamily: 'Cairo',
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w700,
                                       color: day.isRest
                                           ? context.colors.textMuted
@@ -407,7 +424,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                       ),
                                       child: Text(context.l10n.today,
                                           style: TextStyle(
-                                            fontFamily: 'Cairo', fontSize: 10,
+                                            fontFamily: 'Cairo',
+                                            fontSize: 10,
                                             color: AppColors.accent,
                                             fontWeight: FontWeight.w700,
                                           )),
@@ -420,7 +438,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                                         ? context.l10n.alreadyAdded
                                         : '${day.exercises.length} ${context.l10n.exerciseUnit}',
                                     style: TextStyle(
-                                      fontFamily: 'Cairo', fontSize: 11,
+                                      fontFamily: 'Cairo',
+                                      fontSize: 11,
                                       color: alreadyHas
                                           ? AppColors.success
                                           : context.colors.textMuted,
@@ -433,9 +452,10 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                             Icon(Icons.check_circle_rounded,
                                 color: AppColors.accent, size: 20),
                           if (day.isRest)
-                              Text(context.l10n.restLabel,
+                            Text(context.l10n.restLabel,
                                 style: TextStyle(
-                                  fontFamily: 'Cairo', fontSize: 11,
+                                  fontFamily: 'Cairo',
+                                  fontSize: 11,
                                   color: context.colors.textMuted,
                                 )),
                         ],
@@ -450,22 +470,22 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                   onTap: _selectedWeekday == null
                       ? null
                       : () {
-                    final planCubit = context.read<WorkoutPlanCubit>();
-                    planCubit.addExerciseAndSave(
-                      _selectedWeekday!,
-                      PlanExercise(
-                        exerciseId: widget.exercise.id,
-                        exerciseName: widget.exercise.nameAr.isNotEmpty
-                            ? widget.exercise.nameAr
-                            : widget.exercise.name,
-                        bodyPart: widget.exercise.bodyPartAr.isNotEmpty
-                            ? widget.exercise.bodyPartAr
-                            : widget.exercise.bodyPart,
-                        gifUrl: widget.exercise.gifUrl,
-                      ),
-                    );
-                    setState(() => _added = true);
-                  },
+                          final planCubit = context.read<WorkoutPlanCubit>();
+                          planCubit.addExerciseAndSave(
+                            _selectedWeekday!,
+                            PlanExercise(
+                              exerciseId: widget.exercise.id,
+                              exerciseName: widget.exercise.nameAr.isNotEmpty
+                                  ? widget.exercise.nameAr
+                                  : widget.exercise.name,
+                              bodyPart: widget.exercise.bodyPartAr.isNotEmpty
+                                  ? widget.exercise.bodyPartAr
+                                  : widget.exercise.bodyPart,
+                              gifUrl: widget.exercise.gifUrl,
+                            ),
+                          );
+                          setState(() => _added = true);
+                        },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: double.infinity,
@@ -479,7 +499,8 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                     alignment: Alignment.center,
                     child: Text(
                       _selectedWeekday != null
-                          ? context.l10n.addToDay.replaceFirst('{day}', _dayNames[_selectedWeekday! - 1])
+                          ? context.l10n.addToDay.replaceFirst(
+                              '{day}', _dayNames[_selectedWeekday! - 1])
                           : context.l10n.chooseFirstDay,
                       style: TextStyle(
                         fontFamily: 'Cairo',
@@ -508,17 +529,21 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
         children: [
           const Text('💪', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
-            Text(
+          Text(
             context.l10n.noWorkoutPlan,
             style: TextStyle(
-              fontFamily: 'Cairo', fontSize: 16,
-              fontWeight: FontWeight.w900, color: context.colors.textPrimary,
+              fontFamily: 'Cairo',
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
-            Text(
+          Text(
             context.l10n.setupPlanFirst,
-            style: TextStyle(fontFamily: 'Cairo', fontSize: 13,
+            style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 13,
                 color: context.colors.textMuted),
             textAlign: TextAlign.center,
           ),
@@ -539,8 +564,10 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
               child: Text(
                 context.l10n.setupWeeklyPlan,
                 style: const TextStyle(
-                  fontFamily: 'Cairo', fontSize: 14,
-                  fontWeight: FontWeight.w700, color: AppColors.textOnAccent,
+                  fontFamily: 'Cairo',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textOnAccent,
                 ),
               ),
             ),
@@ -557,25 +584,32 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 72, height: 72,
+            width: 72,
+            height: 72,
             decoration: BoxDecoration(
-              color: AppColors.successDim, shape: BoxShape.circle,
+              color: AppColors.successDim,
+              shape: BoxShape.circle,
             ),
-            child: Icon(Icons.check_rounded,
-                color: AppColors.success, size: 40),
+            child:
+                Icon(Icons.check_rounded, color: AppColors.success, size: 40),
           ),
           const SizedBox(height: 16),
-            Text(
+          Text(
             context.l10n.exerciseAdded,
             style: TextStyle(
-              fontFamily: 'Cairo', fontSize: 18,
-              fontWeight: FontWeight.w900, color: context.colors.textPrimary,
+              fontFamily: 'Cairo',
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            context.l10n.addedToDay.replaceFirst('{day}', _dayNames[(_selectedWeekday ?? 1) - 1]),
-            style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
+            context.l10n.addedToDay
+                .replaceFirst('{day}', _dayNames[(_selectedWeekday ?? 1) - 1]),
+            style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 14,
                 color: context.colors.textMuted),
           ),
           const SizedBox(height: 24),
@@ -591,7 +625,9 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                   ),
                   alignment: Alignment.center,
                   child: Text(context.l10n.ok,
-                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14,
+                      style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: context.colors.textPrimary)),
                 ),
@@ -613,7 +649,9 @@ class _AddToPlanSheetState extends State<_AddToPlanSheet> {
                   ),
                   alignment: Alignment.center,
                   child: Text(context.l10n.viewPlan,
-                      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14,
+                      style: const TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: AppColors.accent)),
                 ),

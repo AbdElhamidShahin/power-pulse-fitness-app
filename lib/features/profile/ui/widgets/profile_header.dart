@@ -50,8 +50,7 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           Text(
-            Supabase.instance.client.auth.currentUser?.email ??
-                profile.email,
+            Supabase.instance.client.auth.currentUser?.email ?? profile.email,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(

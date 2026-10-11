@@ -44,8 +44,7 @@ class EntryChoiceScreen extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.accentDim,
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.radiusPill),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                 ),
                 child: Text(
                   'Power Pulse',
@@ -143,7 +142,9 @@ class _OptionCard extends StatelessWidget {
         color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
         border: Border.all(
-          color: isPrimary ? AppColors.accent.withOpacity(0.4) : context.colors.borderSubtle,
+          color: isPrimary
+              ? AppColors.accent.withOpacity(0.4)
+              : context.colors.borderSubtle,
           width: isPrimary ? 1.5 : 1,
         ),
       ),
@@ -188,7 +189,7 @@ class _OptionCard extends StatelessWidget {
                 : OutlinedButton(
                     onPressed: onTap,
                     style: OutlinedButton.styleFrom(
-                      side:   BorderSide(color: context.colors.borderMedium),
+                      side: BorderSide(color: context.colors.borderMedium),
                       foregroundColor: context.colors.textMuted,
                       padding: const EdgeInsets.symmetric(
                           vertical: AppConstants.spaceM),

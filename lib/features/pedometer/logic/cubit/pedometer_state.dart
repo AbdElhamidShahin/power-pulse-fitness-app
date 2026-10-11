@@ -28,10 +28,10 @@ final class PedometerCounting extends PedometerState {
   final int goal;
 
   double get progress => (steps / goal.clamp(1, 99999)).clamp(0.0, 1.0);
-  bool   get goalReached => steps >= goal;
+  bool get goalReached => steps >= goal;
 
   PedometerCounting copyWith({int? steps, int? goal}) => PedometerCounting(
         steps: steps ?? this.steps,
-        goal:  goal  ?? this.goal,
+        goal: goal ?? this.goal,
       );
 }

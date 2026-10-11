@@ -62,8 +62,10 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: 'example@gmail.com',
             ),
             validator: (value) {
-              if (value == null || value.trim().isEmpty) return context.l10n.enterEmail;
-              if (!AppRegex.isEmailValid(value.trim())) return context.l10n.invalidEmail;
+              if (value == null || value.trim().isEmpty)
+                return context.l10n.enterEmail;
+              if (!AppRegex.isEmailValid(value.trim()))
+                return context.l10n.invalidEmail;
               return null;
             },
           ),
@@ -107,8 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
               final profile = jsonDecode(raw) as Map<String, dynamic>;
               recordHasCompletionFlag = profile.containsKey('profileCompleted');
               recordSaysComplete = profile['profileCompleted'] == true;
-              hasValidMeasurements =
-                  (profile['age'] as num? ?? 0) > 0 &&
+              hasValidMeasurements = (profile['age'] as num? ?? 0) > 0 &&
                   (profile['heightCm'] as num? ?? 0) > 0 &&
                   (profile['weightKg'] as num? ?? 0) > 0;
             } catch (_) {
@@ -126,7 +127,8 @@ class _LoginScreenState extends State<LoginScreen> {
             await prefs.setBool('profile_completed', true);
           }
           if (!context.mounted) return;
-          context.go(hasCompleteProfile ? AppRouter.home : AppRouter.onboarding);
+          context
+              .go(hasCompleteProfile ? AppRouter.home : AppRouter.onboarding);
         } else if (state is LoginPasswordResetSent) {
           _showBanner(
             context,
@@ -196,7 +198,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return context.l10n.enterPassword;
+                          if (v == null || v.isEmpty)
+                            return context.l10n.enterPassword;
                           if (!AppRegex.hasMinLength(v))
                             return context.l10n.passwordTooShort;
                           return null;
@@ -449,7 +452,8 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
+        Expanded(
+            child: Divider(color: context.colors.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text(
@@ -458,7 +462,8 @@ class _OrDivider extends StatelessWidget {
                 .copyWith(color: context.colors.textMuted),
           ),
         ),
-        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
+        Expanded(
+            child: Divider(color: context.colors.borderSubtle, thickness: 1)),
       ],
     );
   }

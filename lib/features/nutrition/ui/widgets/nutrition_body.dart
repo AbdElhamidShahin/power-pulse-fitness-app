@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/localization/app_localizations.dart';
 import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -162,7 +163,7 @@ class NutritionBody extends StatelessWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               ...MealType.values.map(
-                    (type) => Padding(
+                (type) => Padding(
                   padding: EdgeInsets.only(bottom: 10.h),
                   child: MealCard(
                     mealType: type,

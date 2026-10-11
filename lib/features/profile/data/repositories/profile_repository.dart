@@ -40,8 +40,8 @@ final class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<ApiResult<void>> saveProfile(
-      UserProfile profile,
-      ) async {
+    UserProfile profile,
+  ) async {
     try {
       await localService.saveProfile(profile);
 
