@@ -27,6 +27,17 @@ dart_defines.json
 dart_defines.*.json
 !dart_defines.example.json
 
+# Firebase / Google Services — مايتعملهاش commit أبداً
+# نزّلهم من Firebase Console وحطّهم محلياً بس
+google-services.json
+GoogleService-Info.plist
+
+# Android signing / upload certificate — مايتعملهاش commit أبداً
+android/app/upload_certificate.pem
+android/app/*.jks
+android/app/*.p12
+android/key.properties
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id

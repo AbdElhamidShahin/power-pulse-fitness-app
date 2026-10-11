@@ -80,9 +80,12 @@ abstract class AppRouter {
         return entry;
       }
 
-      // Password recovery is a valid authenticated route. The recovery
-      // session is created from the deep link, so never redirect it to home.
+      // /reset-password is only valid when the app was opened via a password-
+      // recovery deep link (AppStartup.passwordRecoveryPending == true).
+      // Without this guard a logged-in user can navigate directly to this route
+      // and change their own password without the recovery email step.
       if (path == resetPassword) {
+        if (!AppStartup.passwordRecoveryPending) return home;
         return null;
       }
 

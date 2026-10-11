@@ -2,16 +2,12 @@ abstract class AppConstants {
   AppConstants._();
 
   // ─── Supabase ───────────────────────────────────────────────
-  // BUGFIX: String.fromEnvironment يأخذ اسم المتغير مش القيمة مباشرة.
-  // نستخدم defaultValue عشان التطبيق يشتغل بدون dart-define.
-  static const String supabaseUrl = String.fromEnvironment(
-    'SUPABASE_URL',
-    defaultValue: 'https://vzxqyiddmtdfertbtmil.supabase.co',
-  );
-  static const String supabaseAnonKey = String.fromEnvironment(
-    'SUPABASE_ANON_KEY',
-    defaultValue: 'sb_publishable_NMFyzGbAFH0J39U888BdsQ_sMGZcuXj',
-  );
+  // القيم تيجي دايماً عبر --dart-define=SUPABASE_URL=... عند البناء.
+  // لو مفيش dart-define، القيمة هتبقى فاضية والـ assert في main()
+  // هيوقف البناء بدل ما يشتغل بـ credentials أو environment غلط.
+  // (P8 fix: أُزيلت الـ defaultValues الحقيقية من الـ source code)
+  static const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static const String supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
   static bool get isSupabaseConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;

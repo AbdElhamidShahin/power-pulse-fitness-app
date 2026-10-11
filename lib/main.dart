@@ -31,6 +31,16 @@ Future<void> main() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
+  // Fail fast if build was produced without --dart-define credentials.
+  // In debug mode this is an assertion error; in release mode the
+  // Supabase.initialize call below will throw with a clear message.
+  assert(
+    AppConstants.isSupabaseConfigured,
+    'Missing --dart-define=SUPABASE_URL and --dart-define=SUPABASE_ANON_KEY. '
+    'Copy dart_defines.example.json → dart_defines.json and pass the values '
+    'via --dart-define-from-file=dart_defines.json',
+  );
+
   await Supabase.initialize(
     url: AppConstants.supabaseUrl,
     anonKey: AppConstants.supabaseAnonKey,
