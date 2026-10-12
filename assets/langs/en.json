@@ -320,5 +320,12 @@
   "endurance": "Improve endurance",
   "light": "Light (1–3 days/week)",
   "moderate": "Moderate (3–5 days/week)",
-  "active": "Active (6–7 days/week)"
+  "active": "Active (6–7 days/week)",
+  "streakEmptyTitle": "Start Your Streak Today",
+  "streakEmptySubtitle": "Complete a workout to begin your streak",
+  "streakGoal": "30-day goal",
+  "addToWeeklyPlan": "Add to Weekly Plan",
+  "of": "of",
+  "chartEmptyMessage": "Log your first workout to see progress here",
+  "todayActivity": "Today's Activity"
 }

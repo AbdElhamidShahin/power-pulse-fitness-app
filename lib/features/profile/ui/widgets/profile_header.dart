@@ -13,7 +13,7 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF1E1E1E),
+      color: context.colors.bgSurface,
       padding: EdgeInsets.fromLTRB(16.w, 48.h, 16.w, 20.h),
       child: Column(
         children: [
@@ -21,18 +21,22 @@ class ProfileHeader extends StatelessWidget {
           Container(
             width: 72.r,
             height: 72.r,
-            decoration: const BoxDecoration(
-              color: Color(0xFFA3E635),
+            decoration: BoxDecoration(
+              color: AppColors.accentDim,
               shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.accent.withOpacity(0.4),
+                width: 2,
+              ),
             ),
             child: Center(
               child: Text(
-                profile.name.isNotEmpty ? profile.name[0] : 'أ',
+                profile.name.isNotEmpty ? profile.name[0].toUpperCase() : 'أ',
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 26.sp,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1E1E1E),
+                  color: AppColors.accentText,
                 ),
               ),
             ),
@@ -46,7 +50,7 @@ class ProfileHeader extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: context.colors.textPrimary,
             ),
           ),
           Text(
@@ -57,7 +61,7 @@ class ProfileHeader extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11.sp,
-              color: const Color(0xFF9CA3AF),
+              color: context.colors.textMuted,
             ),
           ),
           SizedBox(height: 16.h),
@@ -96,7 +100,7 @@ class _StatItem extends StatelessWidget {
             fontFamily: 'Cairo',
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFFA3E635),
+            color: AppColors.accentText,
           ),
         ),
         Text(
@@ -104,7 +108,7 @@ class _StatItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 11.sp,
-            color: const Color(0xFF9CA3AF),
+            color: context.colors.textMuted,
           ),
         ),
       ],

@@ -13,7 +13,7 @@ class AppLocalizations {
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  _AppLocalizationsDelegate();
 
   Map<String, String> _strings = {};
 
@@ -181,8 +181,16 @@ class AppLocalizations {
   String get sets            => translate('sets');
   String get reps            => translate('reps');
 
+  // ─── Streak ───────────────────────────────────────────────
+  String get streakEmptyTitle   => translate('streakEmptyTitle');
+  String get streakEmptySubtitle => translate('streakEmptySubtitle');
+  String get streakGoal          => translate('streakGoal');
+  String get addToWeeklyPlan     => translate('addToWeeklyPlan');
+  String get of                  => translate('of');
+
   // ─── Progress ─────────────────────────────────────────────
-  String get consecutiveDay  => translate('consecutiveDay');
+  String get consecutiveDay     => translate('consecutiveDay');
+  String get chartEmptyMessage  => translate('chartEmptyMessage');
   String get totalCalories   => translate('totalCalories');
   String get sportsJourney   => translate('sportsJourney');
   String get progressTitle   => translate('progressTitle');
@@ -311,6 +319,7 @@ class AppLocalizations {
   // ─── Exercises — stat bar ─────────────────────────────────
   String get thisWeekWorkouts => translate('thisWeekWorkouts');
   String get todayMinutes    => translate('todayMinutes');
+  String get todayActivity   => translate('todayActivity');
 
   // ─── Add to Plan Sheet ────────────────────────────────────
   String get exerciseAdded   => translate('exerciseAdded');

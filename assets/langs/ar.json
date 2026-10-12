@@ -320,5 +320,12 @@
   "endurance": "تحسين اللياقة",
   "light": "خفيف (1–3 أيام أسبوعيًا)",
   "moderate": "معتدل (3–5 أيام أسبوعيًا)",
-  "active": "نشيط (6–7 أيام أسبوعيًا)"
+  "active": "نشيط (6–7 أيام أسبوعيًا)",
+  "streakEmptyTitle": "ابدأ سلسلتك اليوم",
+  "streakEmptySubtitle": "أكمل تمريناً لتبدأ سلسلتك",
+  "streakGoal": "هدف 30 يوم",
+  "addToWeeklyPlan": "أضف للخطة الأسبوعية",
+  "of": "من",
+  "chartEmptyMessage": "سجّل أول تمرين لترى تقدمك هنا",
+  "todayActivity": "نشاط اليوم"
 }

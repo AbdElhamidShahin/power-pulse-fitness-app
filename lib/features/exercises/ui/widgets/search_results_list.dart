@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 
 import '../../logic/cubit/exercises_cubit.dart';
 import '../../logic/cubit/exercises_state.dart';
@@ -19,7 +20,7 @@ class SearchResultsList extends StatelessWidget {
           child: Text(
             'ابحث عن تمرين...',
             style: TextStyle(
-              color: const Color(0xFF8A8A8A),
+              color: context.colors.textMuted,
               fontFamily: 'Cairo',
               fontSize: 14.sp,
             ),
@@ -31,7 +32,7 @@ class SearchResultsList extends StatelessWidget {
           child: Text(
             'لا توجد نتائج',
             style: TextStyle(
-              color: const Color(0xFF8A8A8A),
+              color: context.colors.textMuted,
               fontFamily: 'Cairo',
               fontSize: 14.sp,
             ),

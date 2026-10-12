@@ -26,7 +26,7 @@ class CaloriesCard extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 11.sp,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF888888),
+              color: context.colors.textMuted,
             ),
           ),
           SizedBox(height: 4.h),

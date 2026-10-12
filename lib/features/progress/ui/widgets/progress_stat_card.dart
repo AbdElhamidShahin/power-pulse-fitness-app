@@ -52,7 +52,7 @@ class ProgressStatCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11.sp,
-              color: Color(0xFF8A8A8A),
+              color: context.colors.textMuted,
             ),
           ),
         ],

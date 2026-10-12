@@ -68,7 +68,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           Text(context.l10n.exerciseLibrary,
                               style: TextStyle(
                                   fontSize: 11,
-                                  color: Color(0xFF8A8A8A),
+                                  color: context.colors.textMuted,
                                   fontFamily: 'Cairo')),
                           Text(context.l10n.qaExercises,
                               style: TextStyle(
@@ -125,10 +125,22 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             const SizedBox(height: 14),
             if (!_isSearching) ...[
               Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  context.l10n.todayActivity,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.textMuted,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                // buildWhen guards prevent rebuilding this stats card on
-                // intermediate states (HomeLoading, WorkoutPlanEditing, etc.)
-                // that carry no data relevant to these three stat values (P7 fix).
                 child: BlocBuilder<HomeCubit, HomeState>(
                   buildWhen: (prev, curr) {
                     // Only rebuild when the loaded summary values actually change.
@@ -218,10 +230,12 @@ class _StatItem extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
-                color: AppColors.accent)),
+                color: AppColors.textOnDark)),
         Text(label,
             style: TextStyle(
-                fontFamily: 'Cairo', fontSize: 10, color: Color(0xFF888888))),
+                fontFamily: 'Cairo',
+                fontSize: 10,
+                color: context.colors.textMuted)),
       ],
     );
   }
@@ -298,7 +312,7 @@ class _SearchResults extends StatelessWidget {
         ExerciseSearchIdle() => Center(
             child: Text(context.l10n.searchExercise,
                 style:
-                TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+                TextStyle(color: context.colors.textMuted, fontFamily: 'Cairo'))),
         ExerciseSearchLoading() => const _Shimmer(),
         ExerciseSearchError() => const SizedBox(),
         ExerciseSearchLoaded(:final results) when results.isEmpty =>
@@ -306,7 +320,7 @@ class _SearchResults extends StatelessWidget {
                 child: Text(
                     context.l10n.noResults,
                     style: TextStyle(
-                        color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+                        color: context.colors.textMuted, fontFamily: 'Cairo'))),
         ExerciseSearchLoaded(:final results) => ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: results.length,

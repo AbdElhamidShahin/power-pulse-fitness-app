@@ -119,7 +119,7 @@ class _LoadedList extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.sp,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF8A8A8A),
+              color: context.colors.textMuted,
               fontFamily: 'Cairo',
             ),
           ),

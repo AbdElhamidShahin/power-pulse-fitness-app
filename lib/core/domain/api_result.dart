@@ -20,14 +20,14 @@ extension ApiResultX<T> on ApiResult<T> {
   bool get isFailure => this is Failure<T>;
 
   T? get dataOrNull => switch (this) {
-        Success<T>(:final data) => data,
-        Failure<T>()            => null,
-      };
+    Success<T>(:final data) => data,
+    Failure<T>()            => null,
+  };
 
   AppFailure? get failureOrNull => switch (this) {
-        Failure<T>(:final failure) => failure,
-        Success<T>()               => null,
-      };
+    Failure<T>(:final failure) => failure,
+    Success<T>()               => null,
+  };
 
   R fold<R>({
     required R Function(T data) onSuccess,

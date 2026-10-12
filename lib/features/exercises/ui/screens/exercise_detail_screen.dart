@@ -220,9 +220,9 @@ class _DetailContent extends StatelessWidget {
               const SizedBox(height: AppConstants.space3XL),
 
               PPButton(
-                label: context.l10n.addToPlan,
+                label: context.l10n.addToWeeklyPlan,
                 onPressed: () => _showAddToPlanSheet(context, exercise),
-                icon: Icons.add_rounded,
+                icon: Icons.calendar_month_rounded,
               ),
               const SizedBox(height: AppConstants.spaceXL),
             ]),

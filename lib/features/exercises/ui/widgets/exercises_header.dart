@@ -27,7 +27,7 @@ class ExercisesHeader extends StatelessWidget {
               context.l10n.exerciseLibrary,
               style: TextStyle(
                 fontSize: 11.sp,
-                color: Color(0xFF8A8A8A),
+                color: context.colors.textMuted,
                 fontFamily: 'Cairo',
               ),
             ),

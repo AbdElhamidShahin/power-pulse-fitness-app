@@ -96,31 +96,55 @@ class WaterCard extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            children: List.generate(_totalBars, (i) {
-              final isFilled = i < _filledBars;
-              return GestureDetector(
-                onTap: () {
-                  final targetLiters =
-                      ((i + 1) / _totalBars * goal * 4).round() / 4.0;
-                  context
-                      .read<NutritionCubit>()
-                      .setWater(targetLiters.clamp(0.0, goal));
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: EdgeInsets.only(right: 6.w),
-                  width: 16.w,
-                  height: 38.h,
-                  decoration: BoxDecoration(
-                    color: isFilled
-                        ? AppColors.info
-                        : AppColors.info.withOpacity(0.18),
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$_filledBars / $_totalBars 🥤',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 10.sp,
+                  color: context.colors.textMuted,
                 ),
-              );
-            }),
+              ),
+              SizedBox(height: 4.h),
+              Row(
+                children: List.generate(_totalBars, (i) {
+                  final isFilled = i < _filledBars;
+                  return GestureDetector(
+                    onTap: () {
+                      final targetLiters =
+                          ((i + 1) / _totalBars * goal * 4).round() / 4.0;
+                      context
+                          .read<NutritionCubit>()
+                          .setWater(targetLiters.clamp(0.0, goal));
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: EdgeInsets.only(right: 6.w),
+                      width: 16.w,
+                      height: 38.h,
+                      decoration: BoxDecoration(
+                        color: isFilled
+                            ? AppColors.info
+                            : AppColors.info.withOpacity(0.18),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8.r),
+                          topRight: Radius.circular(8.r),
+                          bottomLeft: Radius.circular(4.r),
+                          bottomRight: Radius.circular(4.r),
+                        ),
+                        border: Border.all(
+                          color: AppColors.info.withOpacity(
+                              isFilled ? 0.0 : 0.35),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
           ),
         ],
       ),

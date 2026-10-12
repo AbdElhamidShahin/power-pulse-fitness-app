@@ -35,11 +35,11 @@ abstract class AuthProfileSync {
   }
 
   static Future<void> _writeDefault(
-    SharedPreferences prefs, {
-    required String name,
-    required String email,
-    String? avatarUrl,
-  }) async {
+      SharedPreferences prefs, {
+        required String name,
+        required String email,
+        String? avatarUrl,
+      }) async {
     final json = {
       'name': name.isNotEmpty ? name : 'مستخدم',
       'email': email,

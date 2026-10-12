@@ -10,11 +10,12 @@ class QuickAccessGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final cardColor = context.colors.bgSurface;
     final items = [
-      _QAItem('📈', l10n.qaMyProgress,    l10n.qaViewStats,     const Color(0xFFE3F2FD), '/progress'),
-      _QAItem('🥗', l10n.qaNutrition,     l10n.qaTrackMeals,    const Color(0xFFE8F5E9), '/nutrition'),
-      _QAItem('🏋️', l10n.qaExercises,    l10n.qaBrowseLibrary,  const Color(0xFFFCE4EC), '/exercises'),
-      _QAItem('👤', l10n.qaMyAccount,     l10n.qaPersonalData,   const Color(0xFFFFF3E0), '/profile'),
+      _QAItem('📈', l10n.qaMyProgress,    l10n.qaViewStats,     cardColor, '/progress'),
+      _QAItem('🥗', l10n.qaNutrition,     l10n.qaTrackMeals,    cardColor, '/nutrition'),
+      _QAItem('🏋️', l10n.qaExercises,    l10n.qaBrowseLibrary,  cardColor, '/exercises'),
+      _QAItem('👤', l10n.qaMyAccount,     l10n.qaPersonalData,   cardColor, '/profile'),
     ];
 
     return GridView.count(
@@ -29,10 +30,11 @@ class QuickAccessGrid extends StatelessWidget {
             (item) => GestureDetector(
           onTap: () => context.push(item.route),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
               color: item.color,
               borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: context.colors.borderSubtle, width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

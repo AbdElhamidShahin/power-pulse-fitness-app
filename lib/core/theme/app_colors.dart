@@ -14,16 +14,21 @@ abstract class AppColors {
   static const Color bgDarkAlt  = Color(0xFF2A2A2A); // card داكنة ثانوية
 
   // ─── Accent ────────────────────────────────────────────────
+  // accentFill — للأزرار، الإطارات، والأيقونات (لا يُستخدم كنص على خلفية فاتحة)
   static const Color accent        = Color(0xFFA8E063); // أخضر التصميم الجديد
   static const Color accentDim     = Color(0x26A8E063);
   static const Color accentPressed = Color(0xFF8CC844);
+  // accentText — للنصوص والروابط التفاعلية على خلفية فاتحة (4.6:1 على #F5F5F0)
+  static const Color accentText    = Color(0xFF4A7A10);
 
   // ─── Text ──────────────────────────────────────────────────
   static const Color textPrimary   = Color(0xFF1A1A1A);
   static const Color textSecondary = Color(0xFF4B5563);
   static const Color textMuted     = Color(0xFF8A8A8A);
-  static const Color textOnAccent  = Color(0xFF1A1A1A);
-  static const Color textOnDark    = Color(0xFFFFFFFF);
+  static const Color textOnAccent   = Color(0xFF1A1A1A);
+  static const Color textOnDark     = Color(0xFFFFFFFF);
+  // مُعتم على خلفية داكنة — للعناوين الثانوية داخل cards سوداء
+  static const Color textOnDarkMuted = Color(0xFF888888);
 
   // ─── Semantic ──────────────────────────────────────────────
   static const Color success    = Color(0xFF16A34A);

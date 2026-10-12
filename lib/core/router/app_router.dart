@@ -69,8 +69,8 @@ abstract class AppRouter {
     initialLocation: AppStartup.passwordRecoveryPending
         ? resetPassword
         : (AppStartup.needsEntry
-            ? entry
-            : (AppStartup.needsProfileSetup ? onboarding : home)),
+        ? entry
+        : (AppStartup.needsProfileSetup ? onboarding : home)),
     redirect: (context, state) {
       final path = state.uri.path;
       final authRoutes = {login, signUp, resetPassword, entry};

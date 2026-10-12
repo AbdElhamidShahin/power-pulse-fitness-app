@@ -144,12 +144,12 @@ abstract class AppTextStyles {
     height: 1.0,
   );
 
-  /// accent text — أخضر دايماً (semantic color مش theme-dependent)
+  /// accent text — أخضر داكن للنصوص التفاعلية على خلفية فاتحة (يحقق WCAG AA)
   static const TextStyle accentLabel = TextStyle(
     fontFamily: _font,
     fontSize: 13,
     fontWeight: FontWeight.w700,
-    color: AppColors.accent,
+    color: AppColors.accentText,
     height: 1.2,
   );
 }

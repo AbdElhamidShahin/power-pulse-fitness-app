@@ -12,8 +12,8 @@ class GreetingHeader extends StatelessWidget {
     this.avatarUrl,
   });
 
-  final String greeting;
-  final String name;
+  final String  greeting;
+  final String  name;
   final String? avatarUrl;
 
   @override
@@ -21,8 +21,12 @@ class GreetingHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        GestureDetector(
+          onTap: () => context.go('/profile'),
+          child: _HomeAvatar(name: name, avatarUrl: avatarUrl),
+        ),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               greeting,
@@ -34,7 +38,7 @@ class GreetingHeader extends StatelessWidget {
               ),
             ),
             Text(
-              '$name 💪 ',
+              '💪 $name',
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style: TextStyle(
@@ -47,10 +51,6 @@ class GreetingHeader extends StatelessWidget {
             ),
           ],
         ),
-        GestureDetector(
-          onTap: () => context.go('/profile'),
-          child: _HomeAvatar(name: name, avatarUrl: avatarUrl),
-        ),
       ],
     );
   }
@@ -59,7 +59,7 @@ class GreetingHeader extends StatelessWidget {
 // ─── Home Avatar ────────────────────────────────────────────
 class _HomeAvatar extends StatelessWidget {
   const _HomeAvatar({required this.name, this.avatarUrl});
-  final String name;
+  final String  name;
   final String? avatarUrl;
 
   @override
@@ -68,8 +68,7 @@ class _HomeAvatar extends StatelessWidget {
       return ClipOval(
         child: Image.network(
           avatarUrl!,
-          width: 44.r,
-          height: 44.r,
+          width: 44.r, height: 44.r,
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => _initials(context),
         ),
@@ -79,21 +78,20 @@ class _HomeAvatar extends StatelessWidget {
   }
 
   Widget _initials(BuildContext context) => Container(
-        width: 44.r,
-        height: 44.r,
-        decoration: BoxDecoration(
-          color: context.colors.bgDark,
-          shape: BoxShape.circle,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          name.isNotEmpty ? name[0].toUpperCase() : 'A',
-          style: TextStyle(
-            fontFamily: 'Cairo',
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w900,
-            color: AppColors.textOnDark,
-          ),
-        ),
-      );
+    width: 44.r, height: 44.r,
+    decoration: BoxDecoration(
+      color: context.colors.bgDark,
+      shape: BoxShape.circle,
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      name.isNotEmpty ? name[0].toUpperCase() : 'A',
+      style: TextStyle(
+        fontFamily: 'Cairo',
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w900,
+        color: AppColors.textOnDark,
+      ),
+    ),
+  );
 }

@@ -284,7 +284,7 @@ class _ProfileContentState extends State<_ProfileContent> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.style_rounded,
+                    Icon(Icons.logout_rounded,
                         color: AppColors.danger, size: 18.r),
                     SizedBox(width: 6.w),
                     Text(

@@ -143,7 +143,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       _AuthField(
                         controller: _passCtrl,
                         hint: '••••••••',
-                        icon: Icons.lock_outline_rounded,
                         obscureText: _passHidden,
                         suffix: GestureDetector(
                           onTap: () => setState(() => _passHidden = !_passHidden),
@@ -167,7 +166,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       _AuthField(
                         controller: _confirmPassCtrl,
                         hint: '••••••••',
-                        icon: Icons.lock_outline_rounded,
                         obscureText: _confirmPassHidden,
                         suffix: GestureDetector(
                           onTap: () => setState(() => _confirmPassHidden = !_confirmPassHidden),
@@ -320,7 +318,7 @@ class _AuthField extends StatelessWidget {
   const _AuthField({
     required this.controller,
     required this.hint,
-    required this.icon,
+    this.icon,
     this.obscureText = false,
     this.keyboardType,
     this.textDirection = TextDirection.ltr,
@@ -330,7 +328,7 @@ class _AuthField extends StatelessWidget {
 
   final TextEditingController controller;
   final String hint;
-  final IconData icon;
+  final IconData? icon;
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextDirection textDirection;
@@ -352,7 +350,9 @@ class _AuthField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.borderMedium),
-        prefixIcon: Icon(icon, color: context.colors.textMuted, size: AppConstants.iconM),
+        prefixIcon: icon != null
+            ? Icon(icon, color: context.colors.textMuted, size: AppConstants.iconM)
+            : null,
         suffixIcon: suffix != null
             ? Padding(
           padding: const EdgeInsets.only(left: AppConstants.spaceM),

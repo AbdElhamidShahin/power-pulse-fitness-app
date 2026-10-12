@@ -186,23 +186,30 @@ class _OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppConstants.spaceXXL),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spaceXXL,
+        vertical: AppConstants.spaceL,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icon circle
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: page.color.withValues(alpha: 0.12),
-              border: Border.all(
-                  color: page.color.withValues(alpha: 0.3), width: 2),
-            ),
-            child: Icon(page.icon, color: page.color, size: 64),
-          ),
-          const SizedBox(height: AppConstants.space3XL),
+          // Icon circle — sized relative to screen height for all devices
+          LayoutBuilder(builder: (context, constraints) {
+            final circleSize = MediaQuery.of(context).size.height * 0.22;
+            return Container(
+              width: circleSize,
+              height: circleSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: page.color.withValues(alpha: 0.12),
+                border: Border.all(
+                    color: page.color.withValues(alpha: 0.3), width: 2),
+              ),
+              child: Icon(page.icon, color: page.color,
+                  size: circleSize * 0.44),
+            );
+          }),
+          const SizedBox(height: AppConstants.spaceXXL),
           Text(
             page.title,
             style: Theme.of(context)
@@ -211,7 +218,7 @@ class _OnboardingPage extends StatelessWidget {
                 .copyWith(color: context.colors.textPrimary),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: AppConstants.spaceL),
+          const SizedBox(height: AppConstants.spaceM),
           Text(
             page.subtitle,
             style: Theme.of(context).textTheme.bodyLarge!
@@ -260,6 +267,19 @@ class _SetupFormState extends State<_SetupForm> {
           (double.tryParse(_weightCtrl.text) ?? 0) >= 20 &&
           (double.tryParse(_weightCtrl.text) ?? 0) <= 400;
 
+  /// 0.0–1.0 progress based on how many of the 4 required fields are valid.
+  double get _setupProgress {
+    int filled = 0;
+    if (_nameCtrl.text.trim().isNotEmpty) filled++;
+    final age = int.tryParse(_ageCtrl.text) ?? 0;
+    if (age >= 13 && age <= 110) filled++;
+    final height = double.tryParse(_heightCtrl.text) ?? 0;
+    if (height >= 80 && height <= 250) filled++;
+    final weight = double.tryParse(_weightCtrl.text) ?? 0;
+    if (weight >= 20 && weight <= 400) filled++;
+    return filled / 4.0;
+  }
+
   UserProfile get _profile => UserProfile(
     name:          _nameCtrl.text.trim(),
     age:           int.tryParse(_ageCtrl.text) ?? 0,
@@ -299,6 +319,34 @@ class _SetupFormState extends State<_SetupForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Setup progress indicator
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: _setupProgress,
+                            backgroundColor:
+                                context.colors.borderSubtle,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.accent),
+                            minHeight: 4,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${(_setupProgress * 100).toInt()}%',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 11,
+                          color: context.colors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppConstants.spaceL),
                   Text(
                     context.l10n.tellUsAboutYourself,
                     style: Theme.of(context)

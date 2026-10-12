@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId = "com.powerteam.powerpulse"
-        minSdk = 21 // أو flutter.minSdkVersion لو معرفه
+        minSdkVersion = flutter.minSdkVersion // أو flutter.minSdkVersion لو معرفه
         targetSdk = 36
         versionCode = 22
         versionName = flutter.versionName

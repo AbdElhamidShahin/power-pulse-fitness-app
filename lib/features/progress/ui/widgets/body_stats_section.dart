@@ -66,7 +66,7 @@ class BodyStatsSection extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF8A8A8A),
+                color: context.colors.textMuted,
                 letterSpacing: 0.8,
               ),
             ),

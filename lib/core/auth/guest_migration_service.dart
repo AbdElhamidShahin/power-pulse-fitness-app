@@ -45,9 +45,9 @@ abstract class GuestMigrationService {
 
   static bool _isNutritionKey(String k) =>
       k.startsWith('meals_') ||
-      k.startsWith('water_') ||
-      k.startsWith('steps_') ||
-      k == 'calorie_goal';
+          k.startsWith('water_') ||
+          k.startsWith('steps_') ||
+          k == 'calorie_goal';
 
   // ═══════════════════════════════════════════════════════════════
   // Push
@@ -106,7 +106,7 @@ abstract class GuestMigrationService {
     bool preferCloud = false,
   }) async {
     final rows =
-        await supabase.from('user_data').select().eq('uid', uid).limit(1);
+    await supabase.from('user_data').select().eq('uid', uid).limit(1);
     if (rows.isEmpty) return;
     final row = Map<String, dynamic>.from(rows.first as Map);
 

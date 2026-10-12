@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,7 +17,7 @@ class ProfileSectionTitle extends StatelessWidget {
           fontFamily: 'Cairo',
           fontSize: 13.sp,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF888888),
+          color: context.colors.textMuted,
         ),
       ),
     );
@@ -70,9 +71,9 @@ class ProfileInfoRow extends StatelessWidget {
             ),
             SizedBox(width: 8.w),
             Icon(
-              Icons.chevron_right_rounded,
+              Icons.arrow_forward_ios_rounded,
               color: context.colors.textMuted,
-              size: 20.r,
+              size: 14.r,
             ),
           ],
         ),
@@ -119,8 +120,12 @@ class ProfileToggleRow extends StatelessWidget {
             scale: 0.85,
             child: Switch.adaptive(
               value: value,
-              activeColor: const Color(0xFFA3E635),
-              activeTrackColor: const Color(0xFFA3E635).withOpacity(0.3),
+              activeColor: AppColors.accent,
+              activeTrackColor: AppColors.accentDim,
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) return Colors.white;
+                return null;
+              }),
               onChanged: onChanged,
             ),
           ),

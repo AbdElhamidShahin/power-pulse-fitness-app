@@ -10,7 +10,7 @@ class NotificationService {
   static final NotificationService instance = NotificationService._();
 
   final FlutterLocalNotificationsPlugin _plugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
   bool _initialized = false;
 
@@ -74,7 +74,7 @@ class NotificationService {
       settings,
       onDidReceiveNotificationResponse: _onNotificationResponse,
       onDidReceiveBackgroundNotificationResponse:
-          _onBackgroundNotificationResponse,
+      _onBackgroundNotificationResponse,
     );
 
     await _createChannels();
@@ -177,16 +177,16 @@ class NotificationService {
 
   @pragma('vm:entry-point')
   static void _onBackgroundNotificationResponse(
-    NotificationResponse response,
-  ) {
+      NotificationResponse response,
+      ) {
     // Add navigation/background logic here if needed.
   }
 
   // ─── Foreground Notification Callback ────────────────────
 
   void _onNotificationResponse(
-    NotificationResponse response,
-  ) {
+      NotificationResponse response,
+      ) {
     // Add navigation logic here if needed.
   }
 
@@ -194,8 +194,8 @@ class NotificationService {
 
   Future<void> _createChannels() async {
     final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
-        _plugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
 
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
@@ -240,8 +240,8 @@ class NotificationService {
 
   Future<bool> requestPermission() async {
     final AndroidFlutterLocalNotificationsPlugin? android =
-        _plugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
 
     final bool? granted = await android?.requestNotificationsPermission();
 
@@ -347,22 +347,22 @@ class NotificationService {
   // ─── Internal Schedule Helper ─────────────────────────────
 
   NotificationDetails _details(String channel) => NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel,
-          _channelName(channel),
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
-        ),
-        iOS: const DarwinNotificationDetails(),
-      );
+    android: AndroidNotificationDetails(
+      channel,
+      _channelName(channel),
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/launcher_icon',
+    ),
+    iOS: const DarwinNotificationDetails(),
+  );
 
   String _channelName(String id) => switch (id) {
-        _chWorkout => 'تذكير التمرين',
-        _chSteps => 'تذكير الخطوات',
-        _chWater => 'تذكير الماء',
-        _ => 'الإنجازات',
-      };
+    _chWorkout => 'تذكير التمرين',
+    _chSteps => 'تذكير الخطوات',
+    _chWater => 'تذكير الماء',
+    _ => 'الإنجازات',
+  };
 
   /// أندرويد 12+ ممكن يرفض الجدولة الدقيقة لو الإذن مش ممنوح →
   /// بنرجع للجدولة التقريبية بدل ما الإشعار ميتجدولش خالص.
@@ -413,7 +413,7 @@ class NotificationService {
         _details(channel),
         androidScheduleMode: await _scheduleMode(),
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time,
       );
     } catch (e) {

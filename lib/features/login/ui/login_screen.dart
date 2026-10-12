@@ -183,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passCtrl,
                         hint: '••••••••',
                         obscureText: _passHidden,
-                        icon: Icons.lock_outline_rounded,
                         suffix: GestureDetector(
                           onTap: () =>
                               setState(() => _passHidden = !_passHidden),
@@ -212,6 +211,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: TextButton(
                     onPressed: () => _showForgotPasswordDialog(context),
+                    style: TextButton.styleFrom(
+                      foregroundColor: context.colors.textMuted,
+                    ),
                     child: Text(context.l10n.forgotPassword),
                   ),
                 ),
@@ -261,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           'إنشاء حساب',
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.accent,
+                            color: AppColors.accentText,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -370,7 +372,7 @@ class _AuthField extends StatelessWidget {
   const _AuthField({
     required this.controller,
     required this.hint,
-    required this.icon,
+    this.icon,
     this.obscureText = false,
     this.keyboardType,
     this.suffix,
@@ -379,7 +381,7 @@ class _AuthField extends StatelessWidget {
 
   final TextEditingController controller;
   final String hint;
-  final IconData icon;
+  final IconData? icon;
   final bool obscureText;
   final TextInputType? keyboardType;
   final Widget? suffix;
@@ -402,8 +404,9 @@ class _AuthField extends StatelessWidget {
         hintStyle: AppTextStyles.bodyMedium.copyWith(
           color: context.colors.borderMedium,
         ),
-        prefixIcon: Icon(icon,
-            color: context.colors.textMuted, size: AppConstants.iconM),
+        prefixIcon: icon != null
+            ? Icon(icon, color: context.colors.textMuted, size: AppConstants.iconM)
+            : null,
         suffixIcon: suffix != null
             ? Padding(
           padding: const EdgeInsets.only(left: AppConstants.spaceM),

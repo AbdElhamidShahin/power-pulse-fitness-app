@@ -219,14 +219,26 @@ class _SuggestionsView extends StatelessWidget {
         SizedBox(height: AppConstants.spaceS.h),
         SizedBox(
           height: 44.h,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _categories.length,
-            separatorBuilder: (_, __) => SizedBox(width: 8.w),
-            itemBuilder: (context, i) {
-              final cat = _categories[i];
-              return _CategoryChip(emoji: cat.$1, label: cat.$2);
-            },
+          child: ShaderMask(
+            shaderCallback: (bounds) => LinearGradient(
+              begin: AlignmentDirectional.centerEnd,
+              end: AlignmentDirectional.centerStart,
+              colors: [
+                context.colors.bgDeep,
+                Colors.transparent,
+              ],
+              stops: const [0.0, 0.12],
+            ).createShader(bounds),
+            blendMode: BlendMode.dstIn,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _categories.length,
+              separatorBuilder: (_, __) => SizedBox(width: 8.w),
+              itemBuilder: (context, i) {
+                final cat = _categories[i];
+                return _CategoryChip(emoji: cat.$1, label: cat.$2);
+              },
+            ),
           ),
         ),
         SizedBox(height: AppConstants.spaceL.h),
