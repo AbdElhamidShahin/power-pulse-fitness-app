@@ -51,6 +51,7 @@ dependencies:
 
   # Localization
   intl: ^0.20.2
+  flutter_launcher_icons: ^0.14.4
 
   # Misc
 
