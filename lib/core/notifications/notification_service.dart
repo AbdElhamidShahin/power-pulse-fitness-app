@@ -94,8 +94,14 @@ class NotificationService {
       if (!_initialized) await init();
 
       if (!(prefs.getBool(_kPermissionAsked) ?? false)) {
-        await prefs.setBool(_kPermissionAsked, true);
-        await requestPermissions();
+        // Mark the prompt as handled only after the platform request completes.
+        // A request failure must not abort scheduling the user's reminders.
+        try {
+          await requestPermissions();
+          await prefs.setBool(_kPermissionAsked, true);
+        } catch (e) {
+          debugPrint('Notification permission request failed: $e');
+        }
       }
 
       final master = prefs.getBool(kMaster) ?? true;
@@ -147,12 +153,10 @@ class NotificationService {
     final android = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     if (android != null) {
+      // These are routine reminders, not time-critical alarms. Do not request
+      // the restricted exact-alarm access; scheduling falls back to inexact
+      // delivery when exact alarms are unavailable.
       final granted = await android.requestNotificationsPermission();
-      // أندرويد 12+: الجدولة الدقيقة محتاجة إذن "المنبهات والتذكيرات"
-      try {
-        final canExact = await android.canScheduleExactNotifications() ?? false;
-        if (!canExact) await android.requestExactAlarmsPermission();
-      } catch (_) {}
       return granted ?? false;
     }
 

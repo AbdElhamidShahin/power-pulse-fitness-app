@@ -20,7 +20,7 @@ android {
         applicationId = "com.powerteam.powerpulse"
         minSdkVersion = flutter.minSdkVersion // أو flutter.minSdkVersion لو معرفه
         targetSdk = 36
-        versionCode = 22
+        versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
