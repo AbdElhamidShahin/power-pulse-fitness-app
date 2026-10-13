@@ -39,3 +39,12 @@
 
 # Google Play Services (if used)
 -keep class com.google.android.gms.** { *; }
+# Google Play Core - Feature Delivery (required by Flutter)
+-keep class com.google.android.play.core.splitcompat.** { *; }
+-keep class com.google.android.play.core.splitinstall.** { *; }
+-keep class com.google.android.play.core.tasks.** { *; }
+-dontwarn com.google.android.play.core.**
+
+# Flutter Play Store Split Application
+-keep class io.flutter.embedding.android.FlutterPlayStoreSplitApplication { *; }
+-keep class io.flutter.embedding.engine.deferredcomponents.** { *; }
