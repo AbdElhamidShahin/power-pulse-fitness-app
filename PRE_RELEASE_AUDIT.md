@@ -11,7 +11,7 @@
 
 ## Must be confirmed in Play Console before upload
 
-1. Confirm the old published app's package name is exactly `com.powerteam.powerpulse`. The old Play Store URL/package name was not supplied during this pass, so this comparison cannot be verified from the project archive alone.
+1. Confirm the old published app's package name is exactly `com.yourcompanyname.yourappname`. The old Play Store URL/package name was not supplied during this pass, so this comparison cannot be verified from the project archive alone.
 2. Confirm the latest published `versionCode`. This project is set to 23; increase `pubspec.yaml`'s build number (`+N`) if Play Console already has 23 or higher.
 3. Confirm the configured upload keystore matches the upload certificate accepted by Play App Signing. Keystore/password files are intentionally not included in source control.
 4. Confirm GitHub Actions secrets exist for signing and Supabase. Firebase distribution secrets are optional in this workflow.

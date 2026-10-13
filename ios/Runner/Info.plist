@@ -52,10 +52,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.powerteam.powerpulse.oauth</string>
+			<string>com.yourcompanyname.yourappname.oauth</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.powerteam.powerpulse</string>
+				<string>com.yourcompanyname.yourappname</string>
 			</array>
 		</dict>
 	</array>

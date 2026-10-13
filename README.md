@@ -50,9 +50,9 @@ Configure these GitHub Actions secrets for release builds:
 
 ## Supabase OAuth redirects
 
-The Android redirect scheme is `com.powerteam.powerpulse`. Ensure the following are identical in the app, Android manifest, and Supabase Auth URL Configuration:
+The Android redirect scheme is `com.yourcompanyname.yourappname`. Ensure the following are identical in the app, Android manifest, and Supabase Auth URL Configuration:
 
-- `com.powerteam.powerpulse://login-callback`
-- `com.powerteam.powerpulse://reset-password`
+- `com.yourcompanyname.yourappname://login-callback`
+- `com.yourcompanyname.yourappname://reset-password`
 
 Configure Google OAuth credentials and production email delivery in Supabase before release. Never include service-role keys or SMTP credentials in a client app.

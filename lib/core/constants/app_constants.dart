@@ -6,18 +6,16 @@ abstract class AppConstants {
   // نستخدم defaultValue عشان التطبيق يشتغل بدون dart-define.
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
-    defaultValue: 'https://vzxqyiddmtdfertbtmil.supabase.co',
   );
   static const String supabaseAnonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
-    defaultValue: 'sb_publishable_NMFyzGbAFH0J39U888BdsQ_sMGZcuXj',
   );
 
   static bool get isSupabaseConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 
   // ─── OAuth deep link ───────────────────────────────────────
-  static const String oauthScheme = 'com.powerteam.powerpulse';
+  static const String oauthScheme = 'com.yourcompanyname.yourappname';
   static const String oauthRedirectUrl = '$oauthScheme://login-callback';
   static const String passwordResetRedirectUrl =
       '$oauthScheme://reset-password';

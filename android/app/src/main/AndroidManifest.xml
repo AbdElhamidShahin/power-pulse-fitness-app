@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.powerteam.powerpulse">
+    package="com.yourcompanyname.yourappname">
 
     <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -43,9 +43,9 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="com.powerteam.powerpulse"
+                <data android:scheme="com.yourcompanyname.yourappname"
                       android:host="login-callback"/>
-                <data android:scheme="com.powerteam.powerpulse"
+                <data android:scheme="com.yourcompanyname.yourappname"
                       android:host="reset-password"/>
             </intent-filter>
 
