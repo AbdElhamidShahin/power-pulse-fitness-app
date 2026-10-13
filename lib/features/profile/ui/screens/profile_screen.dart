@@ -361,7 +361,7 @@ class _ProfileContentState extends State<_ProfileContent> {
   void _confirmLogout(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(context.l10n.logout,
             style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
         content: Text(context.l10n.logoutConfirmContent,
@@ -374,11 +374,14 @@ class _ProfileContentState extends State<_ProfileContent> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
+              // Close the confirmation dialog using its own BuildContext.
+              // Using the page context here can pop the last GoRouter page,
+              // leaving the app with an empty route stack (black screen).
+              Navigator.of(dialogContext).pop();
               try {
                 await context.read<AppSettingsCubit>().logout();
-                // Return to the guest home only after logout has completed.
-                if (context.mounted) context.go(AppRouter.home);
+                // Always return to account selection after a successful logout.
+                if (context.mounted) context.go(AppRouter.entry);
               } catch (_) {
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context)

@@ -19,9 +19,11 @@ class FoodSearchScreen extends StatefulWidget {
     super.key,
     required this.mealType,
     required this.selectedDate,
+    this.nutritionCubit,
   });
   final MealType mealType;
   final DateTime selectedDate;
+  final NutritionCubit? nutritionCubit;
 
   @override
   State<FoodSearchScreen> createState() => _FoodSearchScreenState();
@@ -94,6 +96,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     return _SuggestionsView(
                       foods: _popularFoods,
                       mealType: widget.mealType,
+                      selectedDate: widget.selectedDate,
+                      nutritionCubit: widget.nutritionCubit,
                     );
                   }
                   if (state is FoodSearchLoading) {
@@ -113,6 +117,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       hasMore: state.hasMore,
                       mealType: widget.mealType,
                       scroll: _scroll,
+                      selectedDate: widget.selectedDate,
+                      nutritionCubit: widget.nutritionCubit,
                     );
                   }
                   return const SizedBox();
@@ -191,9 +197,16 @@ class _Header extends StatelessWidget {
 
 // ─── Suggestions View ─────────────────────────────────────────────────────────
 class _SuggestionsView extends StatelessWidget {
-  const _SuggestionsView({required this.foods, required this.mealType});
+  const _SuggestionsView({
+    required this.foods,
+    required this.mealType,
+    required this.selectedDate,
+    required this.nutritionCubit,
+  });
   final List<FoodItem> foods;
   final MealType mealType;
+  final DateTime selectedDate;
+  final NutritionCubit? nutritionCubit;
 
   static const _categories = [
     ('🥘', 'أكلات مصرية'),
@@ -254,7 +267,7 @@ class _SuggestionsView extends StatelessWidget {
           padding: EdgeInsets.only(bottom: AppConstants.spaceS.h),
           child: FoodSearchCard(
             item: f,
-            onAdd: () => _showAddDialog(context, f, mealType),
+            onAdd: () => _showAddDialog(context, f, mealType, selectedDate, nutritionCubit),
           ),
         )),
         SizedBox(height: 80.h),
@@ -270,11 +283,15 @@ class _ResultsList extends StatelessWidget {
     required this.hasMore,
     required this.mealType,
     required this.scroll,
+    required this.selectedDate,
+    required this.nutritionCubit,
   });
   final List<FoodItem> results;
   final bool hasMore;
   final MealType mealType;
   final ScrollController scroll;
+  final DateTime selectedDate;
+  final NutritionCubit? nutritionCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -317,7 +334,7 @@ class _ResultsList extends StatelessWidget {
               final item = results[i];
               return FoodSearchCard(
                 item: item,
-                onAdd: () => _showAddDialog(context, item, mealType),
+                onAdd: () => _showAddDialog(context, item, mealType, selectedDate, nutritionCubit),
               );
             },
           ),
@@ -429,10 +446,12 @@ class _ErrorView extends StatelessWidget {
 
 // ─── Add Food Dialog ──────────────────────────────────────────────────────────
 void _showAddDialog(
-    BuildContext context,
-    FoodItem item,
-    MealType mealType,
-    ) {
+  BuildContext context,
+  FoodItem item,
+  MealType mealType,
+  DateTime selectedDate,
+  NutritionCubit? nutritionCubit,
+) {
   double quantity = item.servingSize;
   final controller = TextEditingController(
     text: item.servingSize.toInt().toString(),
@@ -575,7 +594,7 @@ void _showAddDialog(
                         food: item,
                         mealType: mealType,
                         quantity: quantity,
-                        // loggedAt: selectedDate,
+                        loggedAt: DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
                       );
                       if (!context.mounted) return;
                       if (!saved) {
@@ -588,6 +607,10 @@ void _showAddDialog(
                         );
                         return;
                       }
+                      // Refresh the actual nutrition screen's Cubit before
+                      // leaving search. This route uses a different navigator.
+                      await nutritionCubit?.reloadSelectedDate();
+                      if (!context.mounted) return;
                       Navigator.of(ctx).pop();
                       Navigator.of(context).pop();
                     },

@@ -4,8 +4,10 @@ import '../../../../core/localization/app_localizations.dart';
 import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:power_pulse/core/constants/app_constants.dart';
+import '../../../../core/startup.dart';
 import 'package:power_pulse/core/theme/app_colors.dart';
 import 'package:power_pulse/core/theme/app_text_styles.dart';
 import 'package:power_pulse/shared/widgets/pp_button.dart';
@@ -50,7 +52,11 @@ List<_PageData> _buildPages(BuildContext context) => [
 ];
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, this.introOnly = false});
+
+  /// When true, this route shows only the three first-run introduction pages.
+  /// Profile setup lives on the separate /onboarding route.
+  final bool introOnly;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -60,6 +66,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pageCtrl = PageController();
   int _current = 0;
   bool _showSetup = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _showSetup = !widget.introOnly;
+  }
+
+  Future<void> _completeIntro() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('intro_completed', true);
+    AppStartup.markIntroCompleted();
+    if (!mounted) return;
+    final nextRoute = AppStartup.needsEntry
+        ? '/entry'
+        : (AppStartup.needsProfileSetup ? '/onboarding' : '/home');
+    context.go(nextRoute);
+  }
 
   @override
   void dispose() {
@@ -73,6 +96,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         duration: AppConstants.durationPage,
         curve: Curves.easeInOut,
       );
+    } else if (widget.introOnly) {
+      _completeIntro();
     } else {
       setState(() => _showSetup = true);
     }
@@ -90,7 +115,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           current: _current,
           onPageChanged: (i) => setState(() => _current = i),
           onNext: _next,
-          onSkip: () => setState(() => _showSetup = true),
+          onSkip: widget.introOnly
+              ? _completeIntro
+              : () => setState(() => _showSetup = true),
         ),
       ),
     );

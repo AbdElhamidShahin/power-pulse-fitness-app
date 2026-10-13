@@ -14,9 +14,10 @@ class NutritionDateNavigator extends StatelessWidget {
     final selectedDay = DateTime(d.year, d.month, d.day);
     final today = DateTime(now.year, now.month, now.day);
     final difference = today.difference(selectedDay).inDays;
-    if (difference == 0) return context.l10n.translate('today');
-    if (difference == 1) return context.l10n.translate('yesterday');
-    return '${d.day}/${d.month}/${d.year}';
+    final dateLabel = '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+    if (difference == 0) return '${context.l10n.translate('today')} • $dateLabel';
+    if (difference == 1) return '${context.l10n.translate('yesterday')} • $dateLabel';
+    return dateLabel;
   }
 
   @override

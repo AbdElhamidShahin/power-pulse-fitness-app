@@ -20,10 +20,14 @@ abstract class AppStartup {
   static bool _done = false;
   static bool _passwordRecoveryPending = false;
   static bool _needsProfileSetup = false;
+  static bool _needsIntro = false;
 
   static bool get isDone => _done;
   static bool get passwordRecoveryPending => _passwordRecoveryPending;
   static bool get needsProfileSetup => _needsProfileSetup;
+  static bool get needsIntro => _needsIntro;
+
+  static void markIntroCompleted() => _needsIntro = false;
 
   static void markProfileCompleted() {
     _needsProfileSetup = false;
@@ -43,6 +47,15 @@ abstract class AppStartup {
   ///  3. مفيش session + none/authenticated (session انتهت) → entry
   static Future<void> determine() async {
     final prefs = await SharedPreferences.getInstance();
+    final introCompleted = prefs.getBool('intro_completed');
+    final hasExistingAppData = prefs.containsKey('user_mode') ||
+        prefs.containsKey('profile_completed') ||
+        prefs.containsKey('user_profile');
+    // Existing installs should not be forced through onboarding after upgrade.
+    _needsIntro = introCompleted ?? !hasExistingAppData;
+    if (!_needsIntro && introCompleted == null) {
+      await prefs.setBool('intro_completed', true);
+    }
     final supabase = Supabase.instance.client;
     final currentUser = supabase.auth.currentUser;
 

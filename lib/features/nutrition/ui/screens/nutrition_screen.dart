@@ -69,16 +69,17 @@ class _NutritionScreenState extends State<NutritionScreen> with RouteAware {
                     ),
                     margin: EdgeInsets.all(16.r),
                   ));
-                Future.delayed(const Duration(seconds: 2), () {
-                  if (context.mounted) {
-                    context.read<NutritionCubit>().loadToday();
-                  }
-                });
+                // Keep the selected date when a read fails. Automatically
+                // calling loadToday() here made previous-day navigation appear
+                // broken by silently jumping back to today.
               }
             },
             builder: (context, state) => switch (state) {
               NutritionInitial() || NutritionLoading() => const _Loader(),
-              NutritionError() => const _Loader(),
+              NutritionError(:final message) => _NutritionErrorView(
+                  message: message,
+                  onRetry: () => context.read<NutritionCubit>().reloadSelectedDate(),
+                ),
               NutritionLoaded(:final daily) => NutritionBody(daily: daily),
             },
           ),
@@ -94,4 +95,35 @@ class _Loader extends StatelessWidget {
   Widget build(BuildContext context) => const Center(
     child: CircularProgressIndicator(color: AppColors.accent),
   );
+}
+
+
+class _NutritionErrorView extends StatelessWidget {
+  const _NutritionErrorView({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.cloud_off_rounded, size: 38, color: AppColors.danger),
+              const SizedBox(height: 12),
+              Text(message, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              TextButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'إعادة المحاولة'
+                    : 'Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
 }

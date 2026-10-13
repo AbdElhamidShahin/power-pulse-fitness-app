@@ -22,13 +22,17 @@ final class NutritionCubit extends Cubit<NutritionState> {
   }
 
   Future<void> loadDate(DateTime date) async {
-    _today = date;
+    // Normalize to a calendar day; adding 24 hours can drift across DST.
+    _today = DateTime(date.year, date.month, date.day);
     emit(const NutritionLoading());
     await _silentReload(showLoading: false);
   }
 
-  void goToPreviousDay() => loadDate(_today.subtract(const Duration(days: 1)));
-  void goToNextDay()     => loadDate(_today.add(const Duration(days: 1)));
+  void goToPreviousDay() => loadDate(DateTime(_today.year, _today.month, _today.day - 1));
+  void goToNextDay() {
+    if (isToday) return;
+    loadDate(DateTime(_today.year, _today.month, _today.day + 1));
+  }
   bool get isToday {
     final now = DateTime.now();
     return _today.year == now.year &&
@@ -37,7 +41,10 @@ final class NutritionCubit extends Cubit<NutritionState> {
   }
 
   Future<void> _silentReload({bool showLoading = false}) async {
-    final result = await _repository.getDailyNutrition(_today);
+    final requestedDate = _today;
+    final result = await _repository.getDailyNutrition(requestedDate);
+    // Ignore stale responses if the user quickly navigated to another day.
+    if (isClosed || requestedDate != _today) return;
     switch (result) {
       case Success(:final data):
         emit(NutritionLoaded(daily: data));

@@ -43,7 +43,37 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     if (isClosed) return;
     switch (result) {
       case Success(:final data) when data != null:
-        emit(WorkoutLoggerActive(data));
+        // Migrate sessions persisted by versions that accidentally generated
+        // the same literal exercise ID for every planned exercise.
+        final seenIds = <String>{};
+        var changedIds = false;
+        final normalizedExercises = data.exercises.asMap().entries.map((entry) {
+          final ex = entry.value;
+          var id = ex.exerciseId;
+          if (!seenIds.add(id)) {
+            changedIds = true;
+            id = '${ex.exerciseId}_migrated_${entry.key}';
+            while (!seenIds.add(id)) {
+              id = '${id}_x';
+            }
+          }
+          if (id == ex.exerciseId) return ex;
+          return SessionExercise(
+            exerciseId: id,
+            exerciseName: ex.exerciseName,
+            bodyPart: ex.bodyPart,
+            gifPath: ex.gifPath,
+            notes: ex.notes,
+            sets: ex.sets,
+            isDone: ex.isDone,
+          );
+        }).toList();
+        final session = changedIds
+            ? data.copyWith(exercises: normalizedExercises)
+            : data;
+        if (changedIds) await _save(session);
+        if (isClosed) return;
+        emit(WorkoutLoggerActive(session));
       default:
         emit(const WorkoutLoggerIdle());
     }
@@ -51,20 +81,24 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
 
   // ─── Start ─────────────────────────────────────────────────
   Future<void> startSession(String name, {PlanDay? planDay}) async {
+    // Each planned occurrence needs its own stable identity, even when the
+    // same exercise appears more than once in a plan.
+    final sessionSeed = DateTime.now().microsecondsSinceEpoch;
     final exercises = planDay != null
-        ? planDay.exercises
-            .map((pe) => SessionExercise(
-                  exerciseId:
-                      '\${pe.exerciseId}_\${DateTime.now().millisecondsSinceEpoch}',
-                  exerciseName: pe.exerciseName,
-                  bodyPart: pe.bodyPart,
-                  gifPath: pe.gifUrl,
-                  sets: List.generate(
-                    pe.defaultSets,
-                    (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
-                  ),
-                ))
-            .toList()
+        ? planDay.exercises.asMap().entries.map((entry) {
+            final index = entry.key;
+            final pe = entry.value;
+            return SessionExercise(
+              exerciseId: '${pe.exerciseId}_${sessionSeed}_$index',
+              exerciseName: pe.exerciseName,
+              bodyPart: pe.bodyPart,
+              gifPath: pe.gifUrl,
+              sets: List.generate(
+                pe.defaultSets,
+                (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
+              ),
+            );
+          }).toList()
         : <SessionExercise>[];
 
     final session = WorkoutSession(
@@ -159,19 +193,18 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   Future<void> markExerciseDone(String exerciseId) async {
     final current = _active;
     if (current == null) return;
+    var marked = false;
     final exercises = current.exercises.map((ex) {
-      if (ex.exerciseId != exerciseId) return ex;
+      // Be defensive with sessions saved by older versions that may contain
+      // duplicate IDs: only the first matching exercise is marked complete.
+      if (ex.exerciseId != exerciseId || marked) return ex;
+      marked = true;
       final doneSets = ex.sets
-          .map((s) => ExerciseSet(
-                setNumber: s.setNumber,
-                reps: s.reps,
-                weight: s.weight,
-                isCompleted: true,
-              ))
+          .map((s) => s.copyWith(isCompleted: true))
           .toList();
       return ex.copyWith(sets: doneSets, isDone: true);
     }).toList();
-    await _updateActive(current.copyWith(exercises: exercises));
+    if (marked) await _updateActive(current.copyWith(exercises: exercises));
   }
 
   // ─── Finish ────────────────────────────────────────────────

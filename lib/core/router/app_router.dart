@@ -45,6 +45,7 @@ abstract class AppRouter {
   static const String login      = '/login';
   static const String signUp     = '/sign-up';
   static const String resetPassword = '/reset-password';
+  static const String intro      = '/intro';
   static const String onboarding = '/onboarding';
   static const String home       = '/home';
   static const String exercises  = '/exercises';
@@ -68,16 +69,29 @@ abstract class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppStartup.passwordRecoveryPending
         ? resetPassword
-        : (AppStartup.needsEntry
-        ? entry
-        : (AppStartup.needsProfileSetup ? onboarding : home)),
+        : (AppStartup.needsIntro
+            ? intro
+            : (AppStartup.needsEntry
+                ? entry
+                : (AppStartup.needsProfileSetup ? onboarding : home))),
     redirect: (context, state) {
       final path = state.uri.path;
-      final authRoutes = {login, signUp, resetPassword, entry};
+      final authRoutes = {login, signUp, resetPassword, entry, intro};
       final needsEntry = AppStartup.needsEntry;
       final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
+      // Intro slides are shown once, before account/guest selection.
+      if (AppStartup.needsIntro && path != intro && path != resetPassword) {
+        return intro;
+      }
+      if (!AppStartup.needsIntro && path == intro) {
+        return needsEntry
+            ? entry
+            : (AppStartup.needsProfileSetup ? onboarding : home);
+      }
+
       if (isLoggedIn &&
+          !AppStartup.needsIntro &&
           AppStartup.needsProfileSetup &&
           path != onboarding &&
           path != resetPassword) {
@@ -138,6 +152,10 @@ abstract class AppRouter {
       GoRoute(
         path: resetPassword,
         builder: (_, __) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
+        path: intro,
+        builder: (_, __) => const OnboardingScreen(introOnly: true),
       ),
       GoRoute(
         path: onboarding,
@@ -224,13 +242,21 @@ abstract class AppRouter {
           final selectedDate = extra is Map && extra['date'] is DateTime
               ? extra['date'] as DateTime
               : DateTime.now();
+          final parentNutritionCubit = extra is Map &&
+                  extra['nutritionCubit'] is NutritionCubit
+              ? extra['nutritionCubit'] as NutritionCubit
+              : null;
           return MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => sl<FoodSearchCubit>()),
               BlocProvider(create: (_) => sl<AddMealCubit>()),
               BlocProvider(create: (_) => sl<NutritionCubit>()),
             ],
-            child: FoodSearchScreen(mealType: mealType, selectedDate: selectedDate),
+            child: FoodSearchScreen(
+              mealType: mealType,
+              selectedDate: selectedDate,
+              nutritionCubit: parentNutritionCubit,
+            ),
           );
         },
       ),

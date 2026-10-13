@@ -25,6 +25,9 @@ class NutritionBody extends StatelessWidget {
       extra: <String, Object>{
         'mealType': type,
         'date': selectedDate,
+        // Search is pushed on the root navigator; pass the underlying Cubit
+        // explicitly so it can refresh immediately after saving a meal.
+        'nutritionCubit': context.read<NutritionCubit>(),
       },
     );
   }

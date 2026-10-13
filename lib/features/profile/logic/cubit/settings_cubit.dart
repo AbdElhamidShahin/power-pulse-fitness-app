@@ -60,10 +60,9 @@ class AppSettingsCubit extends Cubit<AppSettings> {
     final client = Supabase.instance.client;
     final uid = client.auth.currentUser?.id;
 
-    // نرفع آخر نسخة للسحابة الأول؛ ولو نجح بس نمسح البيانات المحلية
-    // (عشان الحساب الجاي ميتخلطش بيها). لو فشل (أوفلاين) منمسحش حاجة.
-    // Do not sign out and then silently discard local changes if the final
-    // cloud sync failed. The UI can report the failure and allow a retry.
+    // Sync before sign-out; if sync fails, preserve local data and let the UI
+    // report the error. A successful logout must return to account selection,
+    // not silently enter a guest session using a partially cleared profile.
     if (uid != null) {
       await GuestMigrationService.pushLocalToCloud(
         prefs: _prefs,
@@ -71,11 +70,9 @@ class AppSettingsCubit extends Cubit<AppSettings> {
         uid: uid,
       );
       await client.auth.signOut();
-      await UserModeService.setGuestAfterLogout(_prefs);
       await GuestMigrationService.clearLocalUserData(_prefs);
-    } else {
-      await UserModeService.setGuestAfterLogout(_prefs);
     }
+    await UserModeService.clearMode(_prefs);
 
     emit(AppSettings(
       isDarkMode: state.isDarkMode,

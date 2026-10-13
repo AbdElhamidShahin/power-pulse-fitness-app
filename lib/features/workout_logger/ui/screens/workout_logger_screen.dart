@@ -229,7 +229,22 @@ class _ActiveView extends StatelessWidget {
 
   void _showExerciseDetail(
       BuildContext context, WorkoutLoggerCubit cubit, SessionExercise ex) {
-    showModalBottomSheet(
+    final state = cubit.state;
+    SessionExercise? nextExercise;
+    if (state is WorkoutLoggerActive) {
+      final exercises = state.session.exercises;
+      final currentIndex = exercises.indexWhere((item) => item.exerciseId == ex.exerciseId);
+      if (currentIndex >= 0) {
+        for (var i = currentIndex + 1; i < exercises.length; i++) {
+          if (!exercises[i].isFullyDone) {
+            nextExercise = exercises[i];
+            break;
+          }
+        }
+      }
+    }
+
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.colors.bgSurface,
@@ -237,7 +252,21 @@ class _ActiveView extends StatelessWidget {
         borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppConstants.radiusXXL)),
       ),
-      builder: (_) => _ExerciseDetailSheet(cubit: cubit, exercise: ex),
+      builder: (_) => _ExerciseDetailSheet(
+        cubit: cubit,
+        exercise: ex,
+        nextExerciseName: nextExercise?.exerciseName,
+        onNext: () {
+          Navigator.of(context).pop();
+          if (nextExercise != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                _showExerciseDetail(context, cubit, nextExercise!);
+              }
+            });
+          }
+        },
+      ),
     );
   }
 }
@@ -352,9 +381,13 @@ class _ExerciseDetailSheet extends StatefulWidget {
   const _ExerciseDetailSheet({
     required this.cubit,
     required this.exercise,
+    required this.onNext,
+    required this.nextExerciseName,
   });
   final WorkoutLoggerCubit cubit;
   final SessionExercise exercise;
+  final VoidCallback onNext;
+  final String? nextExerciseName;
 
   @override
   State<_ExerciseDetailSheet> createState() => _ExerciseDetailSheetState();
@@ -541,6 +574,28 @@ class _ExerciseDetailSheetState extends State<_ExerciseDetailSheet> {
                   child: Text('✓ خلصت هذا التمرين',
                       style: Theme.of(context).textTheme.labelLarge!
                           .copyWith(color: AppColors.textOnAccent)),
+                ),
+                const SizedBox(height: AppConstants.spaceS),
+                OutlinedButton.icon(
+                  onPressed: widget.onNext,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: context.colors.textPrimary,
+                    minimumSize: const Size(double.infinity,
+                        AppConstants.buttonHeightLarge),
+                    side: BorderSide(color: context.colors.borderMedium),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                    ),
+                  ),
+                  icon: const Icon(Icons.skip_next_rounded),
+                  label: Text(
+                    widget.nextExerciseName == null
+                        ? 'العودة لقائمة التمارين'
+                        : 'التمرين القادم: ${widget.nextExerciseName}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
                 ),
               ],
             ),
