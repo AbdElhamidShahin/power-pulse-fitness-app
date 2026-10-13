@@ -149,7 +149,7 @@ class _ActiveStreakCard extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  '${(pct * 100).toInt()}% ${l10n.of} ${l10n.streakGoal}',
+                  '${(pct * 100).toInt()}% ${l10n.ofWord} ${l10n.streakGoal}',
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 10.sp,

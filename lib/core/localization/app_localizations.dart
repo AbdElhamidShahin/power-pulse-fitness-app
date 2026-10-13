@@ -186,7 +186,7 @@ class AppLocalizations {
   String get streakEmptySubtitle => translate('streakEmptySubtitle');
   String get streakGoal          => translate('streakGoal');
   String get addToWeeklyPlan     => translate('addToWeeklyPlan');
-  String get of                  => translate('of');
+  String get ofWord              => translate('of');
 
   // ─── Progress ─────────────────────────────────────────────
   String get consecutiveDay     => translate('consecutiveDay');
