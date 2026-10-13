@@ -69,11 +69,9 @@ abstract class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppStartup.passwordRecoveryPending
         ? resetPassword
-        : (AppStartup.needsIntro
-            ? intro
-            : (AppStartup.needsEntry
-                ? entry
-                : (AppStartup.needsProfileSetup ? onboarding : home))),
+        : (AppStartup.needsEntry
+            ? entry
+            : (AppStartup.needsProfileSetup ? onboarding : home)),
 
       redirect: (context, state) {
   final path = state.uri.path;
@@ -87,7 +85,6 @@ abstract class AppRouter {
   };
 
   final needsEntry = AppStartup.needsEntry;
-  final needsIntro = AppStartup.needsIntro;
   final needsProfileSetup = AppStartup.needsProfileSetup;
   final isLoggedIn =
       Supabase.instance.client.auth.currentUser != null;
@@ -101,19 +98,14 @@ abstract class AppRouter {
   return path == resetPassword ? null : resetPassword;
   }
 
-  // 2. المقدمة تظهر فقط لو مطلوبة.
-  if (needsIntro) {
-  return path == intro ? null : intro;
-  }
-
-  // 3. لو المقدمة خلصت، امنع الرجوع إليها.
+  // المقدمة التعريفية متوقفة نهائيًا؛ أي رابط قديم لها يتجاوزها.
   if (path == intro) {
   if (needsEntry) return entry;
   if (isLoggedIn && needsProfileSetup) return onboarding;
   return home;
   }
 
-  // 4. المستخدم الذي لم يختر حسابًا أو ضيفًا.
+  // 3. المستخدم الذي لم يختر حسابًا أو ضيفًا.
   if (needsEntry) {
   return path == entry || path == login || path == signUp
   ? null

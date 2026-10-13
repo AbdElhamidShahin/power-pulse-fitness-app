@@ -47,13 +47,11 @@ abstract class AppStartup {
   ///  3. مفيش session + none/authenticated (session انتهت) → entry
   static Future<void> determine() async {
     final prefs = await SharedPreferences.getInstance();
-    final introCompleted = prefs.getBool('intro_completed');
-    final hasExistingAppData = prefs.containsKey('user_mode') ||
-        prefs.containsKey('profile_completed') ||
-        prefs.containsKey('user_profile');
-    // Existing installs should not be forced through onboarding after upgrade.
-    _needsIntro = introCompleted ?? !hasExistingAppData;
-    if (!_needsIntro && introCompleted == null) {
+    // The introductory carousel is disabled: open the app directly to the
+    // appropriate entry/home route on every launch. Profile setup remains
+    // separate and is still enforced when required.
+    _needsIntro = false;
+    if (prefs.getBool('intro_completed') != true) {
       await prefs.setBool('intro_completed', true);
     }
     final supabase = Supabase.instance.client;
