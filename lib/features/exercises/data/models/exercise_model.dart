@@ -36,9 +36,8 @@ final class ExerciseModel {
 
   factory ExerciseModel.fromJson(Map<String, dynamic> json) {
     final rawGif = json['gif_url']?.toString() ?? '';
-    final gifUrl = rawGif.isNotEmpty
-        ? '${ApiEndpoints.media_cdn_base}/$rawGif'
-        : '';
+    final gifUrl =
+        rawGif.isNotEmpty ? '${ApiEndpoints.media_cdn_base}/$rawGif' : '';
 
     List<String> _parseSteps(dynamic raw) {
       if (raw == null) return [];
@@ -58,41 +57,50 @@ final class ExerciseModel {
     );
 
     return ExerciseModel(
-      id:                  json['id']?.toString()            ?? '',
-      name:                json['name_en']?.toString()       ??
-          json['name']?.toString()          ?? '',
-      nameAr:              json['name_ar']?.toString()       ?? '',
-      bodyPart:            json['category']?.toString()      ?? json['body_part']?.toString() ?? '',
-      bodyPartAr:          json['category_ar']?.toString()   ?? json['body_part_ar']?.toString() ?? '',
-      target:              json['target']?.toString()        ?? '',
-      targetAr:            json['target_ar']?.toString()     ?? '',
-      equipment:           json['equipment']?.toString()     ?? '',
-      equipmentAr:         json['equipment_ar']?.toString()  ?? '',
-      gifUrl:              gifUrl,
-      secondaryMuscles:    (json['secondary_muscles']    as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-      secondaryMusclesAr:  (json['secondary_muscles_ar'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-      instructions:        stepsEn,
-      instructionsAr:      stepsAr,
+      id: json['id']?.toString() ?? '',
+      name: json['name_en']?.toString() ?? json['name']?.toString() ?? '',
+      nameAr: json['name_ar']?.toString() ?? '',
+      bodyPart:
+          json['category']?.toString() ?? json['body_part']?.toString() ?? '',
+      bodyPartAr: json['category_ar']?.toString() ??
+          json['body_part_ar']?.toString() ??
+          '',
+      target: json['target']?.toString() ?? '',
+      targetAr: json['target_ar']?.toString() ?? '',
+      equipment: json['equipment']?.toString() ?? '',
+      equipmentAr: json['equipment_ar']?.toString() ?? '',
+      gifUrl: gifUrl,
+      secondaryMuscles: (json['secondary_muscles'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      secondaryMusclesAr: (json['secondary_muscles_ar'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      instructions: stepsEn,
+      instructionsAr: stepsAr,
     );
   }
 
   Exercise toEntity() => Exercise(
-    id:                  id,
-    name:                name,
-    nameAr:              nameAr,
-    bodyPart:            bodyPart,
-    bodyPartAr:          bodyPartAr,
-    target:              target,
-    targetAr:            targetAr,
-    equipment:           equipment,
-    equipmentAr:         equipmentAr,
-    gifUrl:              gifUrl,
-    secondaryMuscles:    secondaryMuscles,
-    secondaryMusclesAr:  secondaryMusclesAr,
-    instructions:        instructions,
-    instructionsAr:      instructionsAr,
-  );
+        id: id,
+        name: name,
+        nameAr: nameAr,
+        bodyPart: bodyPart,
+        bodyPartAr: bodyPartAr,
+        target: target,
+        targetAr: targetAr,
+        equipment: equipment,
+        equipmentAr: equipmentAr,
+        gifUrl: gifUrl,
+        secondaryMuscles: secondaryMuscles,
+        secondaryMusclesAr: secondaryMusclesAr,
+        instructions: instructions,
+        instructionsAr: instructionsAr,
+      );
 
-  static List<Exercise> toEntityList(List<dynamic> json) =>
-      json.map((e) => ExerciseModel.fromJson(e as Map<String, dynamic>).toEntity()).toList();
+  static List<Exercise> toEntityList(List<dynamic> json) => json
+      .map((e) => ExerciseModel.fromJson(e as Map<String, dynamic>).toEntity())
+      .toList();
 }

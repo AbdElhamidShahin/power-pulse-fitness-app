@@ -17,11 +17,11 @@ class SetRowWidget extends StatefulWidget {
   final ExerciseSet exerciseSet;
   final String exerciseId;
   final void Function({
-  required String exerciseId,
-  required int setIndex,
-  int? reps,
-  double? weight,
-  bool? isCompleted,
+    required String exerciseId,
+    required int setIndex,
+    int? reps,
+    double? weight,
+    bool? isCompleted,
   }) onUpdate;
   final VoidCallback onRemove;
 
@@ -42,8 +42,8 @@ class _SetRowWidgetState extends State<SetRowWidget> {
         text: widget.exerciseSet.weight == null
             ? ''
             : widget.exerciseSet.weight! % 1 == 0
-            ? widget.exerciseSet.weight!.toInt().toString()
-            : widget.exerciseSet.weight!.toStringAsFixed(1));
+                ? widget.exerciseSet.weight!.toInt().toString()
+                : widget.exerciseSet.weight!.toStringAsFixed(1));
   }
 
   @override
@@ -74,8 +74,9 @@ class _SetRowWidgetState extends State<SetRowWidget> {
         color: done ? AppColors.accentDim : context.colors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         border: Border.all(
-          color:
-          done ? AppColors.accent.withOpacity(0.4) : context.colors.borderSubtle,
+          color: done
+              ? AppColors.accent.withOpacity(0.4)
+              : context.colors.borderSubtle,
           width: 0.5,
         ),
       ),
@@ -137,12 +138,12 @@ class _SetRowWidgetState extends State<SetRowWidget> {
                 shape: BoxShape.circle,
                 boxShadow: done
                     ? [
-                  BoxShadow(
-                    color: AppColors.accent.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  )
-                ]
+                        BoxShadow(
+                          color: AppColors.accent.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        )
+                      ]
                     : null,
               ),
               child: Icon(
@@ -200,10 +201,11 @@ class _NumField extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
+        hintStyle:
+            AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
         suffixText: label,
         suffixStyle:
-        AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
+            AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted),
         filled: true,
         fillColor: context.colors.bgDeep,
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),

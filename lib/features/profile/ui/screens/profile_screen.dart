@@ -20,7 +20,6 @@ import '../../logic/cubit/settings_state.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_items.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -42,8 +41,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) => switch (state) {
           ProfileInitial() || ProfileLoading() => const Center(
-            child: CircularProgressIndicator(color: AppColors.accent),
-          ),
+              child: CircularProgressIndicator(color: AppColors.accent),
+            ),
           ProfileError(:final message) => Center(child: Text(message)),
           ProfileLoaded(:final profile) => _ProfileContent(profile: profile),
         },
@@ -101,7 +100,8 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.cake_rounded,
                         iconColor: AppColors.profileIconOrange,
                         label: context.l10n.ageLabel,
-                        value: context.l10n.valueYears.replaceFirst('{value}', '${profile.age}'),
+                        value: context.l10n.valueYears
+                            .replaceFirst('{value}', '${profile.age}'),
                         onTap: () => context.push('/profile/edit'),
                       ),
                       const ProfileDivider(),
@@ -109,7 +109,8 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.edit_rounded,
                         iconColor: context.colors.textMuted,
                         label: context.l10n.height,
-                        value: context.l10n.valueCm.replaceFirst('{value}', '${profile.heightCm.toInt()}'),
+                        value: context.l10n.valueCm.replaceFirst(
+                            '{value}', '${profile.heightCm.toInt()}'),
                         onTap: () => context.push('/profile/edit'),
                       ),
                       const ProfileDivider(),
@@ -117,7 +118,8 @@ class _ProfileContentState extends State<_ProfileContent> {
                         icon: Icons.balance_rounded,
                         iconColor: AppColors.warning,
                         label: context.l10n.weight,
-                        value: context.l10n.valueKg.replaceFirst('{value}', '${profile.weightKg.toInt()}'),
+                        value: context.l10n.valueKg.replaceFirst(
+                            '{value}', '${profile.weightKg.toInt()}'),
                         onTap: () => context.push('/profile/edit'),
                       ),
                       const ProfileDivider(),
@@ -157,8 +159,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: AppColors.warning,
                         label: context.l10n.notificationsLabel,
                         value: settings.notificationsEnabled,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleNotifications(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleNotifications(val),
                       ),
                       const ProfileDivider(),
                       ProfileToggleRow(
@@ -166,8 +169,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: AppColors.profileIconIndigo,
                         label: context.l10n.darkModeLabel,
                         value: settings.isDarkMode,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleDarkMode(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleDarkMode(val),
                       ),
                       const ProfileDivider(),
                       _LanguagePickerRow(settings: settings),
@@ -177,8 +181,9 @@ class _ProfileContentState extends State<_ProfileContent> {
                         iconColor: AppColors.profileIconTeal,
                         label: context.l10n.unitsLabel,
                         value: settings.isMetricUnits,
-                        onChanged: (val) =>
-                            context.read<AppSettingsCubit>().toggleMetricUnits(val),
+                        onChanged: (val) => context
+                            .read<AppSettingsCubit>()
+                            .toggleMetricUnits(val),
                       ),
                       const ProfileDivider(),
                       ProfileInfoRow(
@@ -212,7 +217,8 @@ class _ProfileContentState extends State<_ProfileContent> {
         FutureBuilder<bool>(
           future: _isGuest(),
           builder: (context, snap) {
-            if (snap.data != true) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            if (snap.data != true)
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
             return SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               sliver: SliverToBoxAdapter(
@@ -222,7 +228,8 @@ class _ProfileContentState extends State<_ProfileContent> {
                   decoration: BoxDecoration(
                     color: AppColors.accentDim,
                     borderRadius: BorderRadius.circular(14.r),
-                    border: Border.all(color: AppColors.accent.withOpacity(0.4)),
+                    border:
+                        Border.all(color: AppColors.accent.withOpacity(0.4)),
                   ),
                   child: Row(
                     children: [
@@ -331,8 +338,10 @@ class _ProfileContentState extends State<_ProfileContent> {
           children: [
             Text(context.l10n.privacyAndData,
                 style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 18,
-                    fontWeight: FontWeight.w900, color: context.colors.textPrimary)),
+                    fontFamily: 'Cairo',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: context.colors.textPrimary)),
             const SizedBox(height: 16),
             _PrivacyItem(
               icon: Icons.phone_android_rounded,
@@ -370,7 +379,8 @@ class _ProfileContentState extends State<_ProfileContent> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(context.l10n.cancel,
-                style: const TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
+                style:
+                    const TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
           ),
           TextButton(
             onPressed: () async {
@@ -396,7 +406,8 @@ class _ProfileContentState extends State<_ProfileContent> {
             },
             child: Text(context.l10n.logout,
                 style: const TextStyle(
-                    fontFamily: 'Cairo', color: AppColors.danger,
+                    fontFamily: 'Cairo',
+                    color: AppColors.danger,
                     fontWeight: FontWeight.bold)),
           ),
         ],
@@ -404,6 +415,7 @@ class _ProfileContentState extends State<_ProfileContent> {
     );
   }
 }
+
 class _PrivacyItem extends StatelessWidget {
   const _PrivacyItem({
     required this.icon,
@@ -420,7 +432,8 @@ class _PrivacyItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 36, height: 36,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             color: AppColors.accentDim,
             borderRadius: BorderRadius.circular(10),
@@ -434,14 +447,16 @@ class _PrivacyItem extends StatelessWidget {
             children: [
               Text(title,
                   style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 13,
+                    fontFamily: 'Cairo',
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: context.colors.textPrimary,
                   )),
               const SizedBox(height: 2),
               Text(desc,
                   style: TextStyle(
-                    fontFamily: 'Cairo', fontSize: 12,
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
                     color: context.colors.textMuted,
                   )),
             ],
@@ -451,7 +466,6 @@ class _PrivacyItem extends StatelessWidget {
     );
   }
 }
-
 
 // ─── Language Picker Row ─────────────────────────────────────────────────
 class _LanguagePickerRow extends StatelessWidget {
@@ -507,7 +521,6 @@ class _LanguagePickerRow extends StatelessWidget {
     );
   }
 }
-
 
 // ─── Guest Profile View ──────────────────────────────────────
 class _GuestProfileView extends StatelessWidget {

@@ -68,9 +68,8 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
             isDone: ex.isDone,
           );
         }).toList();
-        final session = changedIds
-            ? data.copyWith(exercises: normalizedExercises)
-            : data;
+        final session =
+            changedIds ? data.copyWith(exercises: normalizedExercises) : data;
         if (changedIds) await _save(session);
         if (isClosed) return;
         emit(WorkoutLoggerActive(session));
@@ -199,9 +198,8 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       // duplicate IDs: only the first matching exercise is marked complete.
       if (ex.exerciseId != exerciseId || marked) return ex;
       marked = true;
-      final doneSets = ex.sets
-          .map((s) => s.copyWith(isCompleted: true))
-          .toList();
+      final doneSets =
+          ex.sets.map((s) => s.copyWith(isCompleted: true)).toList();
       return ex.copyWith(sets: doneSets, isDone: true);
     }).toList();
     if (marked) await _updateActive(current.copyWith(exercises: exercises));

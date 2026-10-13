@@ -88,44 +88,45 @@ final class LoginCubit extends Cubit<LoginState> {
     } on AuthException catch (e) {
       emit(LoginError(_mapError(e.message)));
     } catch (_) {
-      emit(const LoginError('تعذر إرسال رسالة استعادة كلمة المرور، حاول مرة أخرى 📧'));
+      emit(const LoginError(
+          'تعذر إرسال رسالة استعادة كلمة المرور، حاول مرة أخرى 📧'));
     }
   }
 
   void _listenToAuthChanges() {
     _authSubscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
-          if (!_googleSignInInitiated) return;
-          if (data.event != AuthChangeEvent.signedIn) return;
+      if (!_googleSignInInitiated) return;
+      if (data.event != AuthChangeEvent.signedIn) return;
 
-          final user = data.session?.user;
-          if (user == null || isClosed) return;
+      final user = data.session?.user;
+      if (user == null || isClosed) return;
 
-          final name = user.userMetadata?['full_name'] as String? ??
-              user.userMetadata?['name'] as String? ??
-              user.userMetadata?['display_name'] as String? ??
-              'مستخدم';
-          final avatarUrl = user.userMetadata?['avatar_url'] as String? ??
-              user.userMetadata?['picture'] as String?;
+      final name = user.userMetadata?['full_name'] as String? ??
+          user.userMetadata?['name'] as String? ??
+          user.userMetadata?['display_name'] as String? ??
+          'مستخدم';
+      final avatarUrl = user.userMetadata?['avatar_url'] as String? ??
+          user.userMetadata?['picture'] as String?;
 
-          _googleSignInInitiated = false;
+      _googleSignInInitiated = false;
 
-          await _postLoginSync(
-            uid: user.id,
-            name: name,
-            email: user.email ?? '',
-            avatarUrl: avatarUrl,
-          );
+      await _postLoginSync(
+        uid: user.id,
+        name: name,
+        email: user.email ?? '',
+        avatarUrl: avatarUrl,
+      );
 
-          if (!isClosed) {
-            emit(LoginSuccess(
-              userId: user.id,
-              name: name,
-              email: user.email ?? '',
-              avatarUrl: avatarUrl,
-            ));
-          }
-        });
+      if (!isClosed) {
+        emit(LoginSuccess(
+          userId: user.id,
+          name: name,
+          email: user.email ?? '',
+          avatarUrl: avatarUrl,
+        ));
+      }
+    });
   }
 
   // ─── Post-login: migrate guest data OR restore cloud data ────────────────
@@ -194,7 +195,9 @@ final class LoginCubit extends Cubit<LoginState> {
       return 'يرجى تأكيد بريدك الإلكتروني أولاً 📧';
     }
     final lower = message.toLowerCase();
-    if (lower.contains('rate limit') || lower.contains('too many requests') || lower.contains('over_email_send_rate_limit')) {
+    if (lower.contains('rate limit') ||
+        lower.contains('too many requests') ||
+        lower.contains('over_email_send_rate_limit')) {
       return 'تم تجاوز حد إرسال الرسائل مؤقتاً. حاول بعد قليل 📧';
     }
     if (lower.contains('invalid email')) {

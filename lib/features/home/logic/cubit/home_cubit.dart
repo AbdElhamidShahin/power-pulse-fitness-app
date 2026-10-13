@@ -52,19 +52,19 @@ final class HomeCubit extends Cubit<HomeState> {
     final UserProfile profile = profileResult.dataOrNull!;
 
     final nutritionResult = await _getDailyNutrition(DateTime.now());
-    final progressResult  = await _getProgressSummary(ProgressPeriod.week);
+    final progressResult = await _getProgressSummary(ProgressPeriod.week);
 
     final nutrition = nutritionResult.dataOrNull;
-    final progress  = progressResult.dataOrNull;
+    final progress = progressResult.dataOrNull;
 
     final today = DateTime.now();
 
     // ─── Today's workouts ──────────────────────────────────────
     final todayLogs = progress?.workoutLogs
             .where((l) =>
-                l.date.year  == today.year  &&
+                l.date.year == today.year &&
                 l.date.month == today.month &&
-                l.date.day   == today.day)
+                l.date.day == today.day)
             .toList() ??
         [];
 

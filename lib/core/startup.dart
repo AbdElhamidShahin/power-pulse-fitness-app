@@ -81,10 +81,9 @@ abstract class AppStartup {
           final profile = jsonDecode(rawProfile) as Map<String, dynamic>;
           recordHasFlag = profile.containsKey('profileCompleted');
           recordComplete = profile['profileCompleted'] == true;
-          hasMeasurements =
-              (profile['age'] as num? ?? 0) > 0 &&
-                  (profile['heightCm'] as num? ?? 0) > 0 &&
-                  (profile['weightKg'] as num? ?? 0) > 0;
+          hasMeasurements = (profile['age'] as num? ?? 0) > 0 &&
+              (profile['heightCm'] as num? ?? 0) > 0 &&
+              (profile['weightKg'] as num? ?? 0) > 0;
         } catch (_) {
           recordComplete = false;
           hasMeasurements = false;

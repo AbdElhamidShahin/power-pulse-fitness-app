@@ -9,8 +9,7 @@ abstract class ApiEndpoints {
   static const String media_cdn_base =
       'https://cdn.jsdelivr.net/gh/hasaneyldrm/exercises-dataset@main';
 
-  static const String foodBaseUrl       = 'https://world.openfoodfacts.org';
-  static const String foodSearch        = '/cgi/search.pl';
-  static const String foodByBarcode     = '/api/v0/product'; // + /{barcode}.json
-
+  static const String foodBaseUrl = 'https://world.openfoodfacts.org';
+  static const String foodSearch = '/cgi/search.pl';
+  static const String foodByBarcode = '/api/v0/product'; // + /{barcode}.json
 }

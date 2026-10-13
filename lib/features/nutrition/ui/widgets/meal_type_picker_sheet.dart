@@ -10,11 +10,11 @@ class MealTypePickerSheet extends StatelessWidget {
   final ValueChanged<MealType> onTypeSelected;
 
   String _mealEmoji(MealType type) => switch (type) {
-    MealType.breakfast => '🌅',
-    MealType.lunch => '☀️',
-    MealType.dinner => '🌙',
-    MealType.snack => '🍎',
-  };
+        MealType.breakfast => '🌅',
+        MealType.lunch => '☀️',
+        MealType.dinner => '🌙',
+        MealType.snack => '🍎',
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class MealTypePickerSheet extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           ...MealType.values.map(
-                (type) => GestureDetector(
+            (type) => GestureDetector(
               onTap: () {
                 Navigator.pop(context);
                 onTypeSelected(type);

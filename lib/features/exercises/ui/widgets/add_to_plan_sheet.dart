@@ -41,8 +41,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           final plan = state is WorkoutPlanLoaded
               ? state.plan
               : state is WorkoutPlanEditing
-              ? state.draft
-              : null;
+                  ? state.draft
+                  : null;
 
           if (plan == null) {
             return const Center(
@@ -66,7 +66,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     decoration: BoxDecoration(
                       color: context.colors.borderMedium,
                       borderRadius:
-                      BorderRadius.circular(AppConstants.radiusPill),
+                          BorderRadius.circular(AppConstants.radiusPill),
                     ),
                   ),
                 ),
@@ -97,7 +97,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                 ...List.generate(7, (i) {
                   final wd = i + 1;
                   final day = plan.days.firstWhere(
-                        (d) => d.weekday == wd,
+                    (d) => d.weekday == wd,
                     orElse: () => PlanDay(weekday: wd, isRest: true),
                   );
                   final isSelected = _selectedWeekday == wd;
@@ -109,8 +109,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     onTap: day.isRest
                         ? null
                         : () {
-                      setState(() => _selectedWeekday = wd);
-                    },
+                            setState(() => _selectedWeekday = wd);
+                          },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
                       margin: const EdgeInsets.only(bottom: 8),
@@ -121,7 +121,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                             ? AppColors.accentDim
                             : context.colors.bgElevated,
                         borderRadius:
-                        BorderRadius.circular(AppConstants.radiusM),
+                            BorderRadius.circular(AppConstants.radiusM),
                         border: Border.all(
                           color: isSelected
                               ? AppColors.accent
@@ -209,22 +209,22 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                   onTap: _selectedWeekday == null
                       ? null
                       : () {
-                    final planCubit = context.read<WorkoutPlanCubit>();
-                    planCubit.addExerciseAndSave(
-                      _selectedWeekday!,
-                      PlanExercise(
-                        exerciseId: widget.exercise.id,
-                        exerciseName: widget.exercise.nameAr.isNotEmpty
-                            ? widget.exercise.nameAr
-                            : widget.exercise.name,
-                        bodyPart: widget.exercise.bodyPartAr.isNotEmpty
-                            ? widget.exercise.bodyPartAr
-                            : widget.exercise.bodyPart,
-                        gifUrl: widget.exercise.gifUrl,
-                      ),
-                    );
-                    setState(() => _added = true);
-                  },
+                          final planCubit = context.read<WorkoutPlanCubit>();
+                          planCubit.addExerciseAndSave(
+                            _selectedWeekday!,
+                            PlanExercise(
+                              exerciseId: widget.exercise.id,
+                              exerciseName: widget.exercise.nameAr.isNotEmpty
+                                  ? widget.exercise.nameAr
+                                  : widget.exercise.name,
+                              bodyPart: widget.exercise.bodyPartAr.isNotEmpty
+                                  ? widget.exercise.bodyPartAr
+                                  : widget.exercise.bodyPart,
+                              gifUrl: widget.exercise.gifUrl,
+                            ),
+                          );
+                          setState(() => _added = true);
+                        },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: double.infinity,
@@ -238,7 +238,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     alignment: Alignment.center,
                     child: Text(
                       _selectedWeekday != null
-                          ? context.l10n.addToDay.replaceFirst('{day}', _dayNamesFor(context)[_selectedWeekday! - 1])
+                          ? context.l10n.addToDay.replaceFirst('{day}',
+                              _dayNamesFor(context)[_selectedWeekday! - 1])
                           : context.l10n.chooseFirstDay,
                       style: TextStyle(
                         fontFamily: 'Cairo',
@@ -280,7 +281,9 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           Text(
             context.l10n.setupPlanFirst,
             style: TextStyle(
-                fontFamily: 'Cairo', fontSize: 13, color: context.colors.textMuted),
+                fontFamily: 'Cairo',
+                fontSize: 13,
+                color: context.colors.textMuted),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -326,8 +329,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
               color: AppColors.successDim,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.check_rounded,
-                color: AppColors.success, size: 40),
+            child:
+                Icon(Icons.check_rounded, color: AppColors.success, size: 40),
           ),
           const SizedBox(height: 16),
           Text(
@@ -341,9 +344,12 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           ),
           const SizedBox(height: 8),
           Text(
-            context.l10n.addedToDay.replaceFirst('{day}', _dayNamesFor(context)[(_selectedWeekday ?? 1) - 1]),
+            context.l10n.addedToDay.replaceFirst(
+                '{day}', _dayNamesFor(context)[(_selectedWeekday ?? 1) - 1]),
             style: TextStyle(
-                fontFamily: 'Cairo', fontSize: 14, color: context.colors.textMuted),
+                fontFamily: 'Cairo',
+                fontSize: 14,
+                color: context.colors.textMuted),
           ),
           const SizedBox(height: 24),
           Row(children: [

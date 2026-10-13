@@ -88,10 +88,10 @@ class PPHeroCard extends StatelessWidget {
               // Background
               imageUrl != null
                   ? Image.network(
-                imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _placeholder(context),
-              )
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _placeholder(context),
+                    )
                   : imageWidget ?? _placeholder(context),
 
               // Gradient overlay
@@ -122,14 +122,16 @@ class PPHeroCard extends StatelessWidget {
                     children: [
                       if (tag != null)
                         Container(
-                          margin: const EdgeInsets.only(bottom: AppConstants.spaceS),
+                          margin: const EdgeInsets.only(
+                              bottom: AppConstants.spaceS),
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppConstants.spaceM,
                             vertical: AppConstants.spaceXXS + 2,
                           ),
                           decoration: BoxDecoration(
                             color: tagColor ?? AppColors.accent,
-                            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusPill),
                           ),
                           child: Text(
                             tag!,
@@ -180,9 +182,10 @@ class PPHeroCard extends StatelessWidget {
   }
 
   Widget _placeholder(context) => Container(
-    color: context.colors.bgElevated,
-    child: Icon(Icons.fitness_center, color: context.colors.bgHighest, size: 48),
-  );
+        color: context.colors.bgElevated,
+        child: Icon(Icons.fitness_center,
+            color: context.colors.bgHighest, size: 48),
+      );
 }
 
 /// كارد إحصائية صغيرة

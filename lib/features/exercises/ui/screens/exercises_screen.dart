@@ -11,7 +11,8 @@ import 'package:power_pulse/shared/widgets/pp_input.dart';
 import '../../../home/logic/cubit/home_cubit.dart';
 import '../../../home/logic/cubit/home_state.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
-import '../../../workout_plan/logic/cubit/workout_plan_state.dart' show WorkoutPlanState, WorkoutPlanLoaded, WorkoutPlanEditing;
+import '../../../workout_plan/logic/cubit/workout_plan_state.dart'
+    show WorkoutPlanState, WorkoutPlanLoaded, WorkoutPlanEditing;
 import '../../logic/cubit/exercises_cubit.dart';
 import '../../logic/cubit/exercises_state.dart';
 import '../widgets/body_part_filter_tabs.dart';
@@ -78,7 +79,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                   fontFamily: 'Cairo')),
                         ],
                       ),
-
                       GestureDetector(
                         onTap: () {
                           setState(() => _isSearching = !_isSearching);
@@ -125,8 +125,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             const SizedBox(height: 14),
             if (!_isSearching) ...[
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   context.l10n.todayActivity,
                   style: TextStyle(
@@ -146,8 +145,10 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                     // Only rebuild when the loaded summary values actually change.
                     if (curr is! HomeLoaded) return prev is! HomeLoaded;
                     if (prev is! HomeLoaded) return true;
-                    return prev.summary.weeklyWorkouts != curr.summary.weeklyWorkouts ||
-                        prev.summary.todayWorkoutMinutes != curr.summary.todayWorkoutMinutes;
+                    return prev.summary.weeklyWorkouts !=
+                            curr.summary.weeklyWorkouts ||
+                        prev.summary.todayWorkoutMinutes !=
+                            curr.summary.todayWorkoutMinutes;
                   },
                   builder: (context, homeState) {
                     final thisWeek = homeState is HomeLoaded
@@ -161,13 +162,33 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         // Rebuild only when the loaded plan changes — not on
                         // transient Loading/Error states or unrelated edits.
                         final prevCount = () {
-                          if (prev is WorkoutPlanLoaded) return prev.plan.dayFor(DateTime.now())?.exercises.length ?? 0;
-                          if (prev is WorkoutPlanEditing) return prev.draft.dayFor(DateTime.now())?.exercises.length ?? 0;
+                          if (prev is WorkoutPlanLoaded)
+                            return prev.plan
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
+                          if (prev is WorkoutPlanEditing)
+                            return prev.draft
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
                           return -1;
                         }();
                         final currCount = () {
-                          if (curr is WorkoutPlanLoaded) return curr.plan.dayFor(DateTime.now())?.exercises.length ?? 0;
-                          if (curr is WorkoutPlanEditing) return curr.draft.dayFor(DateTime.now())?.exercises.length ?? 0;
+                          if (curr is WorkoutPlanLoaded)
+                            return curr.plan
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
+                          if (curr is WorkoutPlanEditing)
+                            return curr.draft
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
                           return -1;
                         }();
                         return prevCount != currCount;
@@ -175,10 +196,18 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                       builder: (context, planState) {
                         final todayEx = () {
                           if (planState is WorkoutPlanLoaded) {
-                            return planState.plan.dayFor(DateTime.now())?.exercises.length ?? 0;
+                            return planState.plan
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
                           }
                           if (planState is WorkoutPlanEditing) {
-                            return planState.draft.dayFor(DateTime.now())?.exercises.length ?? 0;
+                            return planState.draft
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
                           }
                           return 0;
                         }();
@@ -191,9 +220,15 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              _StatItem(value: '$thisWeek', label: context.l10n.thisWeekWorkouts),
-                              _StatItem(value: '$todayEx', label: context.l10n.todayExercises),
-                              _StatItem(value: '$totalMins', label: context.l10n.todayMinutes),
+                              _StatItem(
+                                  value: '$thisWeek',
+                                  label: context.l10n.thisWeekWorkouts),
+                              _StatItem(
+                                  value: '$todayEx',
+                                  label: context.l10n.todayExercises),
+                              _StatItem(
+                                  value: '$totalMins',
+                                  label: context.l10n.todayMinutes),
                             ],
                           ),
                         );
@@ -252,7 +287,7 @@ class _ExercisesList extends StatelessWidget {
         ExercisesInitial() || ExercisesLoading() => const _Shimmer(),
         ExercisesError(:final message) => _ErrorView(message: message),
         ExercisesLoaded() =>
-            _LoadedList(state: state, scrollController: scrollController),
+          _LoadedList(state: state, scrollController: scrollController),
       },
     );
   }
@@ -275,7 +310,6 @@ class _LoadedList extends StatelessWidget {
             onSelect: (p) => context.read<ExercisesCubit>().filterByBodyPart(p),
           ),
         const SizedBox(height: 16),
-
         Expanded(
           child: ListView.separated(
             controller: scrollController,
@@ -288,7 +322,7 @@ class _LoadedList extends StatelessWidget {
                   padding: EdgeInsets.all(20),
                   child: Center(
                       child:
-                      CircularProgressIndicator(color: AppColors.accent)),
+                          CircularProgressIndicator(color: AppColors.accent)),
                 );
               }
               final ex = state.exercises[i];
@@ -311,25 +345,23 @@ class _SearchResults extends StatelessWidget {
       builder: (context, state) => switch (state) {
         ExerciseSearchIdle() => Center(
             child: Text(context.l10n.searchExercise,
-                style:
-                TextStyle(color: context.colors.textMuted, fontFamily: 'Cairo'))),
+                style: TextStyle(
+                    color: context.colors.textMuted, fontFamily: 'Cairo'))),
         ExerciseSearchLoading() => const _Shimmer(),
         ExerciseSearchError() => const SizedBox(),
-        ExerciseSearchLoaded(:final results) when results.isEmpty =>
-            Center(
-                child: Text(
-                    context.l10n.noResults,
-                    style: TextStyle(
-                        color: context.colors.textMuted, fontFamily: 'Cairo'))),
+        ExerciseSearchLoaded(:final results) when results.isEmpty => Center(
+            child: Text(context.l10n.noResults,
+                style: TextStyle(
+                    color: context.colors.textMuted, fontFamily: 'Cairo'))),
         ExerciseSearchLoaded(:final results) => ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: results.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
-          itemBuilder: (context, i) => ExerciseCard(
-            exercise: results[i],
-            onTap: () => context.push('/exercises/${results[i].id}'),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: results.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, i) => ExerciseCard(
+              exercise: results[i],
+              onTap: () => context.push('/exercises/${results[i].id}'),
+            ),
           ),
-        ),
       },
     );
   }
@@ -359,16 +391,15 @@ class _ErrorView extends StatelessWidget {
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.error_outline_rounded,
-          color: AppColors.danger, size: 48),
-      const SizedBox(height: 16),
-      Text(message, style: Theme.of(context).textTheme.bodyMedium!),
-      const SizedBox(height: 16),
-      GestureDetector(
-        onTap: () => context.read<ExercisesCubit>().loadInitial(),
-        child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
-      ),
-    ]),
-  );
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.error_outline_rounded, color: AppColors.danger, size: 48),
+          const SizedBox(height: 16),
+          Text(message, style: Theme.of(context).textTheme.bodyMedium!),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => context.read<ExercisesCubit>().loadInitial(),
+            child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
+          ),
+        ]),
+      );
 }

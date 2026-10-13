@@ -7,7 +7,7 @@ abstract class AppDataBus {
   AppDataBus._();
 
   static final StreamController<void> _controller =
-  StreamController<void>.broadcast();
+      StreamController<void>.broadcast();
 
   static Stream<void> get stream => _controller.stream;
 

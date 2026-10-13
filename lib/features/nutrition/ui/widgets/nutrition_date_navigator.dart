@@ -14,9 +14,12 @@ class NutritionDateNavigator extends StatelessWidget {
     final selectedDay = DateTime(d.year, d.month, d.day);
     final today = DateTime(now.year, now.month, now.day);
     final difference = today.difference(selectedDay).inDays;
-    final dateLabel = '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
-    if (difference == 0) return '${context.l10n.translate('today')} • $dateLabel';
-    if (difference == 1) return '${context.l10n.translate('yesterday')} • $dateLabel';
+    final dateLabel =
+        '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+    if (difference == 0)
+      return '${context.l10n.translate('today')} • $dateLabel';
+    if (difference == 1)
+      return '${context.l10n.translate('yesterday')} • $dateLabel';
     return dateLabel;
   }
 
@@ -62,12 +65,15 @@ class NutritionDateNavigator extends StatelessWidget {
             width: 32.r,
             height: 32.r,
             decoration: BoxDecoration(
-              color: isToday ? context.colors.bgDeep : context.colors.bgElevated,
+              color:
+                  isToday ? context.colors.bgDeep : context.colors.bgElevated,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
               Icons.chevron_left_rounded,
-              color: isToday ? context.colors.borderMedium : context.colors.textMuted,
+              color: isToday
+                  ? context.colors.borderMedium
+                  : context.colors.textMuted,
               size: 20,
             ),
           ),

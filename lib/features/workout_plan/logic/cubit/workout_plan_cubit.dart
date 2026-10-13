@@ -10,13 +10,13 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     required GetWorkoutPlanUseCase getPlan,
     required SaveWorkoutPlanUseCase savePlan,
     required DeleteWorkoutPlanUseCase deletePlan,
-  })  : _getPlan    = getPlan,
-        _savePlan   = savePlan,
+  })  : _getPlan = getPlan,
+        _savePlan = savePlan,
         _deletePlan = deletePlan,
         super(const WorkoutPlanInitial());
 
-  final GetWorkoutPlanUseCase    _getPlan;
-  final SaveWorkoutPlanUseCase   _savePlan;
+  final GetWorkoutPlanUseCase _getPlan;
+  final SaveWorkoutPlanUseCase _savePlan;
   final DeleteWorkoutPlanUseCase _deletePlan;
 
   // ─── BUGFIX: track whether save was explicitly triggered ──
@@ -135,7 +135,8 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     if (draft == null) return;
     final days = draft.days.map((d) {
       if (d.weekday != weekday) return d;
-      return d.copyWith(isRest: !d.isRest, exercises: d.isRest ? [] : d.exercises);
+      return d.copyWith(
+          isRest: !d.isRest, exercises: d.isRest ? [] : d.exercises);
     }).toList();
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
@@ -167,13 +168,15 @@ final class WorkoutPlanCubit extends Cubit<WorkoutPlanState> {
     final days = draft.days.map((d) {
       if (d.weekday != weekday) return d;
       return d.copyWith(
-        exercises: d.exercises.where((e) => e.exerciseId != exerciseId).toList(),
+        exercises:
+            d.exercises.where((e) => e.exerciseId != exerciseId).toList(),
       );
     }).toList();
     emit(WorkoutPlanEditing(draft.copyWith(days: days)));
   }
 
-  void updateExerciseDefaults(int weekday, String exerciseId, {int? sets, int? reps}) {
+  void updateExerciseDefaults(int weekday, String exerciseId,
+      {int? sets, int? reps}) {
     final draft = _draft;
     if (draft == null) return;
     final days = draft.days.map((d) {

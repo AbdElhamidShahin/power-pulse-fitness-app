@@ -51,7 +51,7 @@ class WeekStrip extends StatelessWidget {
           const displayWeekdays = [6, 7, 1, 2, 3, 4, 5];
           final wd = displayWeekdays[i];
           final storedDay = days.firstWhere(
-                (d) => d.weekday == wd,
+            (d) => d.weekday == wd,
             orElse: () => PlanDay(weekday: wd, isRest: true),
           );
           final day = wd == DateTime.friday
@@ -71,8 +71,8 @@ class WeekStrip extends StatelessWidget {
                   color: isSelected
                       ? AppColors.accent
                       : day.isRest
-                      ? context.colors.bgElevated
-                      : AppColors.accentDim,
+                          ? context.colors.bgElevated
+                          : AppColors.accentDim,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: isToday && !isSelected
                       ? Border.all(color: AppColors.accent, width: 1)
@@ -88,7 +88,7 @@ class WeekStrip extends StatelessWidget {
                             ? AppColors.textOnAccent
                             : context.colors.textMuted,
                         fontWeight:
-                        isSelected ? FontWeight.w700 : FontWeight.w400,
+                            isSelected ? FontWeight.w700 : FontWeight.w400,
                       ),
                     ),
                     const SizedBox(height: 2),

@@ -16,14 +16,17 @@ final class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     } on AuthException catch (e) {
       if (!isClosed) emit(ResetPasswordError(_mapError(e.message)));
     } catch (_) {
-      if (!isClosed) emit(const ResetPasswordError('تعذر تغيير كلمة المرور، حاول مرة أخرى'));
+      if (!isClosed)
+        emit(const ResetPasswordError('تعذر تغيير كلمة المرور، حاول مرة أخرى'));
     }
   }
 
   String _mapError(String message) {
     final lower = message.toLowerCase();
-    if (lower.contains('same password')) return 'استخدم كلمة مرور مختلفة عن القديمة';
-    if (lower.contains('password')) return 'كلمة المرور غير صالحة، استخدم 8 أحرف على الأقل';
+    if (lower.contains('same password'))
+      return 'استخدم كلمة مرور مختلفة عن القديمة';
+    if (lower.contains('password'))
+      return 'كلمة المرور غير صالحة، استخدم 8 أحرف على الأقل';
     return 'تعذر تغيير كلمة المرور، حاول مرة أخرى';
   }
 }

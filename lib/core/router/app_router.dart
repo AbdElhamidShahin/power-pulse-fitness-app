@@ -41,21 +41,21 @@ import 'route_observers.dart';
 abstract class AppRouter {
   AppRouter._();
 
-  static const String entry      = '/entry';
-  static const String login      = '/login';
-  static const String signUp     = '/sign-up';
+  static const String entry = '/entry';
+  static const String login = '/login';
+  static const String signUp = '/sign-up';
   static const String resetPassword = '/reset-password';
-  static const String intro      = '/intro';
+  static const String intro = '/intro';
   static const String onboarding = '/onboarding';
-  static const String home       = '/home';
-  static const String exercises  = '/exercises';
-  static const String nutrition  = '/nutrition';
+  static const String home = '/home';
+  static const String exercises = '/exercises';
+  static const String nutrition = '/nutrition';
   static const String nutritionSearch = '/nutrition/search';
-  static const String progress   = '/progress';
-  static const String profile    = '/profile';
+  static const String progress = '/progress';
+  static const String profile = '/profile';
   static const String profileEdit = '/profile/edit';
   static const String workoutLogger = '/workout-logger';
-  static const String workoutPlan   = '/workout-plan';
+  static const String workoutPlan = '/workout-plan';
 
   // ─── Startup routing ─────────────────────────────────────────────────────
   //
@@ -72,64 +72,60 @@ abstract class AppRouter {
         : (AppStartup.needsEntry
             ? entry
             : (AppStartup.needsProfileSetup ? onboarding : home)),
+    redirect: (context, state) {
+      final path = state.uri.path;
 
-      redirect: (context, state) {
-  final path = state.uri.path;
+      final authRoutes = {
+        login,
+        signUp,
+        resetPassword,
+        entry,
+        intro,
+      };
 
-  final authRoutes = {
-    login,
-    signUp,
-    resetPassword,
-    entry,
-    intro,
-  };
+      final needsEntry = AppStartup.needsEntry;
+      final needsProfileSetup = AppStartup.needsProfileSetup;
+      final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
-  final needsEntry = AppStartup.needsEntry;
-  final needsProfileSetup = AppStartup.needsProfileSetup;
-  final isLoggedIn =
-      Supabase.instance.client.auth.currentUser != null;
+      // 1. استعادة كلمة المرور لها الأولوية.
+      if (path == resetPassword) {
+        return AppStartup.passwordRecoveryPending ? null : home;
+      }
 
-  // 1. استعادة كلمة المرور لها الأولوية.
-  if (path == resetPassword) {
-  return AppStartup.passwordRecoveryPending ? null : home;
-  }
+      if (AppStartup.passwordRecoveryPending) {
+        return path == resetPassword ? null : resetPassword;
+      }
 
-  if (AppStartup.passwordRecoveryPending) {
-  return path == resetPassword ? null : resetPassword;
-  }
+      // المقدمة التعريفية متوقفة نهائيًا؛ أي رابط قديم لها يتجاوزها.
+      if (path == intro) {
+        if (needsEntry) return entry;
+        if (isLoggedIn && needsProfileSetup) return onboarding;
+        return home;
+      }
 
-  // المقدمة التعريفية متوقفة نهائيًا؛ أي رابط قديم لها يتجاوزها.
-  if (path == intro) {
-  if (needsEntry) return entry;
-  if (isLoggedIn && needsProfileSetup) return onboarding;
-  return home;
-  }
+      // 3. المستخدم الذي لم يختر حسابًا أو ضيفًا.
+      if (needsEntry) {
+        return path == entry || path == login || path == signUp ? null : entry;
+      }
 
-  // 3. المستخدم الذي لم يختر حسابًا أو ضيفًا.
-  if (needsEntry) {
-  return path == entry || path == login || path == signUp
-  ? null
-      : entry;
-  }
+      // 5. المستخدم المسجل الذي يحتاج لإكمال ملفه الشخصي.
+      if (isLoggedIn && needsProfileSetup) {
+        return path == onboarding ? null : onboarding;
+      }
 
-  // 5. المستخدم المسجل الذي يحتاج لإكمال ملفه الشخصي.
-  if (isLoggedIn && needsProfileSetup) {
-  return path == onboarding ? null : onboarding;
-  }
+      // 6. المستخدم المسجل لا يحتاج لشاشات الدخول.
+      if (isLoggedIn && authRoutes.contains(path)) {
+        return home;
+      }
 
-  // 6. المستخدم المسجل لا يحتاج لشاشات الدخول.
-  if (isLoggedIn && authRoutes.contains(path)) {
-  return home;
-  }
+      // 7. الضيف يستطيع فتح تسجيل الدخول أو إنشاء حساب.
+      // لكن لا يعود إلى شاشة اختيار الدخول بعد اختياره.
+      if (path == entry) {
+        return home;
+      }
 
-  // 7. الضيف يستطيع فتح تسجيل الدخول أو إنشاء حساب.
-  // لكن لا يعود إلى شاشة اختيار الدخول بعد اختياره.
-  if (path == entry) {
-  return home;
-  }
-
-  return null;
-},
+      return null;
+    },
     debugLogDiagnostics: kDebugMode,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [
@@ -246,10 +242,10 @@ abstract class AppRouter {
           final selectedDate = extra is Map && extra['date'] is DateTime
               ? extra['date'] as DateTime
               : DateTime.now();
-          final parentNutritionCubit = extra is Map &&
-                  extra['nutritionCubit'] is NutritionCubit
-              ? extra['nutritionCubit'] as NutritionCubit
-              : null;
+          final parentNutritionCubit =
+              extra is Map && extra['nutritionCubit'] is NutritionCubit
+                  ? extra['nutritionCubit'] as NutritionCubit
+                  : null;
           return MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => sl<FoodSearchCubit>()),
@@ -308,4 +304,3 @@ abstract class AppRouter {
     ),
   );
 }
-

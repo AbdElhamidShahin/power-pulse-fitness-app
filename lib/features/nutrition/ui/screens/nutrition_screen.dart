@@ -9,7 +9,6 @@ import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
 import '../widgets/nutrition_body.dart';
 
-
 class NutritionScreen extends StatefulWidget {
   const NutritionScreen({super.key});
 
@@ -78,7 +77,8 @@ class _NutritionScreenState extends State<NutritionScreen> with RouteAware {
               NutritionInitial() || NutritionLoading() => const _Loader(),
               NutritionError(:final message) => _NutritionErrorView(
                   message: message,
-                  onRetry: () => context.read<NutritionCubit>().reloadSelectedDate(),
+                  onRetry: () =>
+                      context.read<NutritionCubit>().reloadSelectedDate(),
                 ),
               NutritionLoaded(:final daily) => NutritionBody(daily: daily),
             },
@@ -93,10 +93,9 @@ class _Loader extends StatelessWidget {
   const _Loader();
   @override
   Widget build(BuildContext context) => const Center(
-    child: CircularProgressIndicator(color: AppColors.accent),
-  );
+        child: CircularProgressIndicator(color: AppColors.accent),
+      );
 }
-
 
 class _NutritionErrorView extends StatelessWidget {
   const _NutritionErrorView({required this.message, required this.onRetry});
@@ -111,7 +110,8 @@ class _NutritionErrorView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 38, color: AppColors.danger),
+              const Icon(Icons.cloud_off_rounded,
+                  size: 38, color: AppColors.danger),
               const SizedBox(height: 12),
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: 12),

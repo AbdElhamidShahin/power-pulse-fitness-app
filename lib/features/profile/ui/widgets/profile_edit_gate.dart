@@ -80,7 +80,7 @@ class _ProfileEditGateState extends State<ProfileEditGate> {
         }
 
         // ProfileLoading أو ProfileInitial
-        return   Scaffold(
+        return Scaffold(
           backgroundColor: context.colors.bgDark,
           body: Center(
             child: CircularProgressIndicator(color: AppColors.accent),

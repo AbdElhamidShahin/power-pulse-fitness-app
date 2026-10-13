@@ -15,9 +15,9 @@ class StepCounterCard extends StatelessWidget {
     return BlocBuilder<PedometerCubit, PedometerState>(
       builder: (context, state) {
         return switch (state) {
-          PedometerInitial()     => const _LoadingCard(),
+          PedometerInitial() => const _LoadingCard(),
           PedometerUnavailable() => _UnavailableCard(state: state),
-          PedometerCounting()    => _CountingCard(state: state),
+          PedometerCounting() => _CountingCard(state: state),
         };
       },
     );
@@ -229,9 +229,7 @@ class _UnavailableCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: permanent
-                    ? cubit.openSystemSettings
-                    : cubit.retry,
+                onPressed: permanent ? cubit.openSystemSettings : cubit.retry,
                 style: TextButton.styleFrom(
                   backgroundColor: AppColors.accent,
                   padding: EdgeInsets.symmetric(vertical: 8.h),

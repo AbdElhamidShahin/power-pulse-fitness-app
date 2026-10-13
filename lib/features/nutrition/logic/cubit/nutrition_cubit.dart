@@ -28,11 +28,13 @@ final class NutritionCubit extends Cubit<NutritionState> {
     await _silentReload(showLoading: false);
   }
 
-  void goToPreviousDay() => loadDate(DateTime(_today.year, _today.month, _today.day - 1));
+  void goToPreviousDay() =>
+      loadDate(DateTime(_today.year, _today.month, _today.day - 1));
   void goToNextDay() {
     if (isToday) return;
     loadDate(DateTime(_today.year, _today.month, _today.day + 1));
   }
+
   bool get isToday {
     final now = DateTime.now();
     return _today.year == now.year &&
@@ -165,7 +167,7 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
 
     _isLoadingMore = true;
     final result =
-    await _repository.searchFood(current.query, page: current.page + 1);
+        await _repository.searchFood(current.query, page: current.page + 1);
     switch (result) {
       case Success(:final data):
         emit(current.copyWith(

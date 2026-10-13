@@ -54,7 +54,8 @@ void main() {
     });
 
     test('NotFoundException → NotFoundFailure with message', () {
-      final f = mapExceptionToFailure(const NotFoundException(message: 'not found'));
+      final f =
+          mapExceptionToFailure(const NotFoundException(message: 'not found'));
       expect(f, isA<NotFoundFailure>());
       expect(f.message, 'not found');
     });
@@ -67,7 +68,8 @@ void main() {
     });
 
     test('CacheException → CacheFailure', () {
-      final f = mapExceptionToFailure(const CacheException(message: 'disk full'));
+      final f =
+          mapExceptionToFailure(const CacheException(message: 'disk full'));
       expect(f, isA<CacheFailure>());
     });
 

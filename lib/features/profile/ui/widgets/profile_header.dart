@@ -54,8 +54,7 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           Text(
-            Supabase.instance.client.auth.currentUser?.email ??
-                profile.email,
+            Supabase.instance.client.auth.currentUser?.email ?? profile.email,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -132,7 +131,7 @@ class _ProfileAvatar extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => _Initials(name: profile.name),
           loadingBuilder: (_, child, progress) =>
-          progress == null ? child : _Initials(name: profile.name),
+              progress == null ? child : _Initials(name: profile.name),
         ),
       );
     }

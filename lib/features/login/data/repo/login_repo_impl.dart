@@ -27,10 +27,9 @@ final class LoginRepositoryImpl implements LoginRepository {
 
     final metadata = user.userMetadata ?? const <String, dynamic>{};
 
-    final name =
-        metadata['full_name'] as String? ??
-            metadata['name'] as String? ??
-            'مستخدم';
+    final name = metadata['full_name'] as String? ??
+        metadata['name'] as String? ??
+        'مستخدم';
 
     final avatarUrl =
         metadata['avatar_url'] as String? ?? metadata['picture'] as String?;

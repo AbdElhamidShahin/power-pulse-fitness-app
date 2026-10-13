@@ -1,5 +1,3 @@
-
-
 final class Exercise {
   const Exercise({
     required this.id,

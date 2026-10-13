@@ -5,6 +5,7 @@ import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 
 enum PPButtonVariant { primary, outline, ghost }
+
 enum PPButtonSize { large, medium, small }
 
 class PPButton extends StatelessWidget {
@@ -30,10 +31,10 @@ class PPButton extends StatelessWidget {
   final double? width;
 
   double get _height => switch (size) {
-    PPButtonSize.large  => AppConstants.buttonHeightLarge,
-    PPButtonSize.medium => AppConstants.buttonHeightMedium,
-    PPButtonSize.small  => AppConstants.buttonHeightSmall,
-  };
+        PPButtonSize.large => AppConstants.buttonHeightLarge,
+        PPButtonSize.medium => AppConstants.buttonHeightMedium,
+        PPButtonSize.small => AppConstants.buttonHeightSmall,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +45,25 @@ class PPButton extends StatelessWidget {
       width: width ?? double.infinity,
       child: switch (variant) {
         PPButtonVariant.primary => _PrimaryButton(
-          label: label, onPressed: disabled ? null : onPressed,
-          icon: icon, isLoading: isLoading, size: size,
-        ),
+            label: label,
+            onPressed: disabled ? null : onPressed,
+            icon: icon,
+            isLoading: isLoading,
+            size: size,
+          ),
         PPButtonVariant.outline => _OutlineButton(
-          label: label, onPressed: disabled ? null : onPressed,
-          icon: icon, isLoading: isLoading, size: size,
-        ),
+            label: label,
+            onPressed: disabled ? null : onPressed,
+            icon: icon,
+            isLoading: isLoading,
+            size: size,
+          ),
         PPButtonVariant.ghost => _GhostButton(
-          label: label, onPressed: disabled ? null : onPressed,
-          icon: icon, size: size,
-        ),
+            label: label,
+            onPressed: disabled ? null : onPressed,
+            icon: icon,
+            size: size,
+          ),
       },
     );
   }
@@ -62,8 +71,11 @@ class PPButton extends StatelessWidget {
 
 class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({
-    required this.label, required this.onPressed,
-    required this.isLoading, required this.size, this.icon,
+    required this.label,
+    required this.onPressed,
+    required this.isLoading,
+    required this.size,
+    this.icon,
   });
   final String label;
   final VoidCallback? onPressed;
@@ -76,8 +88,11 @@ class _PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: onPressed == null ? context.colors.bgElevated : AppColors.accent,
-        foregroundColor: onPressed == null ? context.colors.textMuted : AppColors.textOnAccent,
+        backgroundColor:
+            onPressed == null ? context.colors.bgElevated : AppColors.accent,
+        foregroundColor: onPressed == null
+            ? context.colors.textMuted
+            : AppColors.textOnAccent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
         ),
@@ -86,30 +101,38 @@ class _PrimaryButton extends StatelessWidget {
       ),
       child: isLoading
           ? const SizedBox(
-        width: 20, height: 20,
-        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textOnAccent),
-      )
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, color: AppColors.textOnAccent),
+            )
           : Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: AppConstants.iconS),
-            const SizedBox(width: AppConstants.spaceS),
-          ],
-          Text(label, style: AppTextStyles.labelLarge.copyWith(
-            color: onPressed == null ? context.colors.textMuted : AppColors.textOnAccent,
-          )),
-        ],
-      ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: AppConstants.iconS),
+                  const SizedBox(width: AppConstants.spaceS),
+                ],
+                Text(label,
+                    style: AppTextStyles.labelLarge.copyWith(
+                      color: onPressed == null
+                          ? context.colors.textMuted
+                          : AppColors.textOnAccent,
+                    )),
+              ],
+            ),
     );
   }
 }
 
 class _OutlineButton extends StatelessWidget {
   const _OutlineButton({
-    required this.label, required this.onPressed,
-    required this.isLoading, required this.size, this.icon,
+    required this.label,
+    required this.onPressed,
+    required this.isLoading,
+    required this.size,
+    this.icon,
   });
   final String label;
   final VoidCallback? onPressed;
@@ -124,7 +147,9 @@ class _OutlineButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.accent,
         side: BorderSide(
-          color: onPressed == null ? context.colors.borderSubtle : AppColors.accent,
+          color: onPressed == null
+              ? context.colors.borderSubtle
+              : AppColors.accent,
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
@@ -134,28 +159,34 @@ class _OutlineButton extends StatelessWidget {
       ),
       child: isLoading
           ? const SizedBox(
-        width: 20, height: 20,
-        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
-      )
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, color: AppColors.accent),
+            )
           : Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: AppConstants.iconS),
-            const SizedBox(width: AppConstants.spaceS),
-          ],
-          Text(label, style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
-        ],
-      ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: AppConstants.iconS),
+                  const SizedBox(width: AppConstants.spaceS),
+                ],
+                Text(label,
+                    style: AppTextStyles.labelLarge
+                        .copyWith(color: AppColors.accent)),
+              ],
+            ),
     );
   }
 }
 
 class _GhostButton extends StatelessWidget {
   const _GhostButton({
-    required this.label, required this.onPressed,
-    required this.size, this.icon,
+    required this.label,
+    required this.onPressed,
+    required this.size,
+    this.icon,
   });
   final String label;
   final VoidCallback? onPressed;
@@ -181,7 +212,9 @@ class _GhostButton extends StatelessWidget {
             Icon(icon, size: AppConstants.iconS),
             const SizedBox(width: AppConstants.spaceS),
           ],
-          Text(label, style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
+          Text(label,
+              style:
+                  AppTextStyles.labelLarge.copyWith(color: AppColors.accent)),
         ],
       ),
     );

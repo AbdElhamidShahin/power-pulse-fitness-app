@@ -62,7 +62,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     const SizedBox(height: AppConstants.space3XL),
                     Text(
                       context.l10n.createNewPassword,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: AppConstants.spaceS),
                     Text(context.l10n.useStrongPassword),
@@ -74,12 +75,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         labelText: context.l10n.newPassword,
                         suffixIcon: IconButton(
                           onPressed: () => setState(() => _hidden = !_hidden),
-                          icon: Icon(_hidden ? Icons.visibility_off : Icons.visibility),
+                          icon: Icon(_hidden
+                              ? Icons.visibility_off
+                              : Icons.visibility),
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) return context.l10n.enterPassword;
-                        if (!AppRegex.hasMinLength(value)) return context.l10n.atLeast8Chars;
+                        if (value == null || value.isEmpty)
+                          return context.l10n.enterPassword;
+                        if (!AppRegex.hasMinLength(value))
+                          return context.l10n.atLeast8Chars;
                         return null;
                       },
                     ),
@@ -90,12 +95,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       decoration: InputDecoration(
                         labelText: context.l10n.confirmPassword,
                         suffixIcon: IconButton(
-                          onPressed: () => setState(() => _confirmHidden = !_confirmHidden),
-                          icon: Icon(_confirmHidden ? Icons.visibility_off : Icons.visibility),
+                          onPressed: () =>
+                              setState(() => _confirmHidden = !_confirmHidden),
+                          icon: Icon(_confirmHidden
+                              ? Icons.visibility_off
+                              : Icons.visibility),
                         ),
                       ),
                       validator: (value) {
-                        if (value != _passwordController.text) return context.l10n.passwordsMismatch;
+                        if (value != _passwordController.text)
+                          return context.l10n.passwordsMismatch;
                         return null;
                       },
                     ),
@@ -105,17 +114,20 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         onPressed: state is ResetPasswordLoading
                             ? null
                             : () {
-                          if (!_formKey.currentState!.validate()) return;
-                          context.read<ResetPasswordCubit>().updatePassword(
-                            password: _passwordController.text,
-                          );
-                        },
+                                if (!_formKey.currentState!.validate()) return;
+                                context
+                                    .read<ResetPasswordCubit>()
+                                    .updatePassword(
+                                      password: _passwordController.text,
+                                    );
+                              },
                         child: state is ResetPasswordLoading
                             ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                                height: 20,
+                                width: 20,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
                             : Text(context.l10n.savePassword),
                       ),
                     ),

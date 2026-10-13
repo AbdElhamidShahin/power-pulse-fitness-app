@@ -27,7 +27,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
     super.initState();
     _ticker = Stream.periodic(
       const Duration(seconds: 1),
-          (_) => DateTime.now().difference(widget.session.startTime).inSeconds,
+      (_) => DateTime.now().difference(widget.session.startTime).inSeconds,
     );
   }
 
@@ -77,7 +77,8 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(context.l10n.no, style: AppTextStyles.accentLabel),
+                    child:
+                        Text(context.l10n.no, style: AppTextStyles.accentLabel),
                   ),
                   TextButton(
                     onPressed: () {
@@ -85,7 +86,9 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                       widget.onCancel();
                     },
                     child: Text(context.l10n.yes,
-                        style: Theme.of(context).textTheme.labelMedium!
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium!
                             .copyWith(color: AppColors.danger)),
                   ),
                 ],
@@ -100,7 +103,9 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
               ),
               child: Text(context.l10n.cancel,
-                  style: Theme.of(context).textTheme.labelSmall!
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall!
                       .copyWith(color: AppColors.danger)),
             ),
           ),
@@ -154,7 +159,9 @@ class WorkoutBottomBar extends StatelessWidget {
                         color: context.colors.textMuted, size: 20),
                     const SizedBox(width: AppConstants.spaceS),
                     Text(context.l10n.addExercise,
-                        style: Theme.of(context).textTheme.labelMedium!
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium!
                             .copyWith(color: context.colors.textMuted)),
                   ],
                 ),
@@ -167,13 +174,16 @@ class WorkoutBottomBar extends StatelessWidget {
               onPressed: onFinish,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accent,
-                minimumSize: Size(double.infinity, AppConstants.buttonHeightMedium),
+                minimumSize:
+                    Size(double.infinity, AppConstants.buttonHeightMedium),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
                 ),
               ),
               child: Text(context.l10n.finishWorkout,
-                  style: Theme.of(context).textTheme.labelMedium!
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
                       .copyWith(color: AppColors.textOnAccent)),
             ),
           ),

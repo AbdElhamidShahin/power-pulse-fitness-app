@@ -20,5 +20,3 @@ final class DeleteSessionUseCase {
   final WorkoutLoggerRepository _repo;
   Future<ApiResult<void>> call(String id) => _repo.deleteSession(id);
 }
-
-

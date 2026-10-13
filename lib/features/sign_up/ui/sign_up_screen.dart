@@ -44,11 +44,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<SignUpCubit>().signUpUser(
-      name: _nameCtrl.text.trim(),
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-      confirmPassword: _confirmPassCtrl.text,
-    );
+          name: _nameCtrl.text.trim(),
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+          confirmPassword: _confirmPassCtrl.text,
+        );
   }
 
   @override
@@ -80,7 +80,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 // ── Back button ───────────────────────────────────
                 GestureDetector(
-                  onTap: () => context.canPop() ? context.pop() : context.go(AppRouter.login),
+                  onTap: () => context.canPop()
+                      ? context.pop()
+                      : context.go(AppRouter.login),
                   child: Container(
                     width: 40,
                     height: 40,
@@ -118,8 +120,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.person_outline_rounded,
                         textDirection: TextDirection.rtl,
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return context.l10n.enterFullName;
-                          if (v.trim().length < 2) return context.l10n.nameTooShort;
+                          if (v == null || v.trim().isEmpty)
+                            return context.l10n.enterFullName;
+                          if (v.trim().length < 2)
+                            return context.l10n.nameTooShort;
                           return null;
                         },
                       ),
@@ -132,8 +136,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) {
-                          if (v == null || v.isEmpty) return context.l10n.enterEmail;
-                          if (!AppRegex.isEmailValid(v)) return context.l10n.invalidEmail;
+                          if (v == null || v.isEmpty)
+                            return context.l10n.enterEmail;
+                          if (!AppRegex.isEmailValid(v))
+                            return context.l10n.invalidEmail;
                           return null;
                         },
                       ),
@@ -145,7 +151,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hint: '••••••••',
                         obscureText: _passHidden,
                         suffix: GestureDetector(
-                          onTap: () => setState(() => _passHidden = !_passHidden),
+                          onTap: () =>
+                              setState(() => _passHidden = !_passHidden),
                           child: Icon(
                             _passHidden
                                 ? Icons.visibility_off_outlined
@@ -155,8 +162,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return context.l10n.enterPassword;
-                          if (!AppRegex.hasMinLength(v)) return context.l10n.atLeast8Chars;
+                          if (v == null || v.isEmpty)
+                            return context.l10n.enterPassword;
+                          if (!AppRegex.hasMinLength(v))
+                            return context.l10n.atLeast8Chars;
                           return null;
                         },
                       ),
@@ -168,7 +177,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hint: '••••••••',
                         obscureText: _confirmPassHidden,
                         suffix: GestureDetector(
-                          onTap: () => setState(() => _confirmPassHidden = !_confirmPassHidden),
+                          onTap: () => setState(
+                              () => _confirmPassHidden = !_confirmPassHidden),
                           child: Icon(
                             _confirmPassHidden
                                 ? Icons.visibility_off_outlined
@@ -178,8 +188,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return context.l10n.confirmPasswordHint;
-                          if (v != _passCtrl.text) return context.l10n.passwordsMismatch;
+                          if (v == null || v.isEmpty)
+                            return context.l10n.confirmPasswordHint;
+                          if (v != _passCtrl.text)
+                            return context.l10n.passwordsMismatch;
                           return null;
                         },
                       ),
@@ -309,7 +321,8 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: AppTextStyles.titleSmall.copyWith(color: context.colors.textSecondary),
+      style: AppTextStyles.titleSmall
+          .copyWith(color: context.colors.textSecondary),
     );
   }
 }
@@ -349,15 +362,17 @@ class _AuthField extends StatelessWidget {
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.borderMedium),
+        hintStyle: AppTextStyles.bodyMedium
+            .copyWith(color: context.colors.borderMedium),
         prefixIcon: icon != null
-            ? Icon(icon, color: context.colors.textMuted, size: AppConstants.iconM)
+            ? Icon(icon,
+                color: context.colors.textMuted, size: AppConstants.iconM)
             : null,
         suffixIcon: suffix != null
             ? Padding(
-          padding: const EdgeInsets.only(left: AppConstants.spaceM),
-          child: suffix,
-        )
+                padding: const EdgeInsets.only(left: AppConstants.spaceM),
+                child: suffix,
+              )
             : null,
         filled: true,
         fillColor: context.colors.bgSurface,
@@ -396,13 +411,16 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
+        Expanded(
+            child: Divider(color: context.colors.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text('أو',
-              style: AppTextStyles.bodySmall.copyWith(color: context.colors.textMuted)),
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: context.colors.textMuted)),
         ),
-        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
+        Expanded(
+            child: Divider(color: context.colors.borderSubtle, thickness: 1)),
       ],
     );
   }
@@ -436,7 +454,8 @@ class _GoogleButton extends StatelessWidget {
               const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: AppColors.accent),
               )
             else ...[
               SizedBox(
@@ -447,7 +466,8 @@ class _GoogleButton extends StatelessWidget {
               const SizedBox(width: AppConstants.spaceM),
               Text(
                 label,
-                style: AppTextStyles.labelLarge.copyWith(color: context.colors.textSecondary),
+                style: AppTextStyles.labelLarge
+                    .copyWith(color: context.colors.textSecondary),
               ),
             ],
           ],
@@ -466,7 +486,9 @@ class _GooglePainter extends CustomPainter {
 
     canvas.drawArc(
       Rect.fromCircle(center: Offset(cx, cy), radius: r),
-      -0.5, 3.8, false,
+      -0.5,
+      3.8,
+      false,
       Paint()
         ..color = Color(0xFF4285F4)
         ..style = PaintingStyle.stroke
@@ -474,7 +496,9 @@ class _GooglePainter extends CustomPainter {
     );
     canvas.drawArc(
       Rect.fromCircle(center: Offset(cx, cy), radius: r),
-      3.3, 1.0, false,
+      3.3,
+      1.0,
+      false,
       Paint()
         ..color = Color(0xFFEA4335)
         ..style = PaintingStyle.stroke
@@ -496,10 +520,10 @@ class _GooglePainter extends CustomPainter {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 void _showBanner(
-    BuildContext context, {
-      required String message,
-      required bool isError,
-    }) {
+  BuildContext context, {
+  required String message,
+  required bool isError,
+}) {
   ScaffoldMessenger.of(context).showMaterialBanner(
     MaterialBanner(
       backgroundColor: isError ? AppColors.dangerDim : AppColors.accentDim,

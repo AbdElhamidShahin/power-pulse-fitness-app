@@ -31,13 +31,21 @@ class FoodSearchScreen extends StatefulWidget {
 
 class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _controller = TextEditingController();
-  final _scroll     = ScrollController();
+  final _scroll = ScrollController();
 
   static final _popularFoods = ArabicFoodDatabase.all
       .where((f) => [
-    'ar_001', 'ar_002', 'ar_003', 'ar_009', 'ar_010',
-    'ar_011', 'mt_001', 'dy_001', 'gr_001', 'cn_001',
-  ].contains(f.id))
+            'ar_001',
+            'ar_002',
+            'ar_003',
+            'ar_009',
+            'ar_010',
+            'ar_011',
+            'mt_001',
+            'dy_001',
+            'gr_001',
+            'cn_001',
+          ].contains(f.id))
       .toList();
 
   @override
@@ -154,7 +162,9 @@ class _Header extends StatelessWidget {
               children: [
                 Text(
                   'إضافة وجبة',
-                  style: Theme.of(context).textTheme.headlineMedium!
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
                       .copyWith(color: context.colors.textPrimary),
                 ),
                 SizedBox(height: 2.h),
@@ -164,7 +174,9 @@ class _Header extends StatelessWidget {
                     SizedBox(width: 4.w),
                     Text(
                       mealType.labelAr,
-                      style: Theme.of(context).textTheme.bodySmall!
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
                           .copyWith(color: AppColors.accent),
                     ),
                   ],
@@ -264,12 +276,13 @@ class _SuggestionsView extends StatelessWidget {
         ),
         SizedBox(height: AppConstants.spaceS.h),
         ...foods.map((f) => Padding(
-          padding: EdgeInsets.only(bottom: AppConstants.spaceS.h),
-          child: FoodSearchCard(
-            item: f,
-            onAdd: () => _showAddDialog(context, f, mealType, selectedDate, nutritionCubit),
-          ),
-        )),
+              padding: EdgeInsets.only(bottom: AppConstants.spaceS.h),
+              child: FoodSearchCard(
+                item: f,
+                onAdd: () => _showAddDialog(
+                    context, f, mealType, selectedDate, nutritionCubit),
+              ),
+            )),
         SizedBox(height: 80.h),
       ],
     );
@@ -305,7 +318,9 @@ class _ResultsList extends StatelessWidget {
           ),
           child: Text(
             '${results.length} نتيجة',
-            style: Theme.of(context).textTheme.labelSmall!
+            style: Theme.of(context)
+                .textTheme
+                .labelSmall!
                 .copyWith(color: context.colors.textMuted),
           ),
         ),
@@ -334,7 +349,8 @@ class _ResultsList extends StatelessWidget {
               final item = results[i];
               return FoodSearchCard(
                 item: item,
-                onAdd: () => _showAddDialog(context, item, mealType, selectedDate, nutritionCubit),
+                onAdd: () => _showAddDialog(
+                    context, item, mealType, selectedDate, nutritionCubit),
               );
             },
           ),
@@ -366,7 +382,9 @@ class _CategoryChip extends StatelessWidget {
           SizedBox(width: 6.w),
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall!
+            style: Theme.of(context)
+                .textTheme
+                .labelSmall!
                 .copyWith(color: context.colors.textSecondary),
           ),
         ],
@@ -393,14 +411,18 @@ class _EmptyView extends StatelessWidget {
             Text(
               'مش لاقي "$query"',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge!
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge!
                   .copyWith(color: context.colors.textPrimary),
             ),
             SizedBox(height: AppConstants.spaceS.h),
             Text(
               'جرّب كلمة تانية أو ابحث بالإنجليزي',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall!
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
                   .copyWith(color: context.colors.textMuted),
             ),
           ],
@@ -428,13 +450,17 @@ class _ErrorView extends StatelessWidget {
             SizedBox(height: AppConstants.spaceL.h),
             Text(
               'خطأ في الاتصال',
-              style: Theme.of(context).textTheme.bodyLarge!
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge!
                   .copyWith(color: context.colors.textPrimary),
             ),
             SizedBox(height: AppConstants.spaceS.h),
             Text(
               'بيعرض الأطعمة المحلية فقط',
-              style: Theme.of(context).textTheme.bodySmall!
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
                   .copyWith(color: context.colors.textMuted),
             ),
           ],
@@ -469,14 +495,16 @@ void _showAddDialog(
     builder: (ctx) {
       return StatefulBuilder(
         builder: (ctx, setModalState) {
-          final cal  = item.calories * quantity / item.servingSize;
-          final prot = item.protein  * quantity / item.servingSize;
-          final carb = item.carbs    * quantity / item.servingSize;
-          final fat  = item.fat      * quantity / item.servingSize;
+          final cal = item.calories * quantity / item.servingSize;
+          final prot = item.protein * quantity / item.servingSize;
+          final carb = item.carbs * quantity / item.servingSize;
+          final fat = item.fat * quantity / item.servingSize;
 
           return Padding(
             padding: EdgeInsets.fromLTRB(
-              20.w, 20.h, 20.w,
+              20.w,
+              20.h,
+              20.w,
               MediaQuery.of(ctx).viewInsets.bottom + 20.h,
             ),
             child: Column(
@@ -486,7 +514,8 @@ void _showAddDialog(
                 // Handle
                 Center(
                   child: Container(
-                    width: 40.w, height: 4.h,
+                    width: 40.w,
+                    height: 4.h,
                     decoration: BoxDecoration(
                       color: context.colors.borderSubtle,
                       borderRadius: BorderRadius.circular(2.r),
@@ -498,14 +527,18 @@ void _showAddDialog(
                 // Food Name
                 Text(
                   item.displayName,
-                  style: Theme.of(context).textTheme.headlineSmall!
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
                       .copyWith(color: context.colors.textPrimary),
                 ),
                 if (item.brand != null) ...[
                   SizedBox(height: 2.h),
                   Text(
                     item.brand!,
-                    style: Theme.of(context).textTheme.bodySmall!
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
                         .copyWith(color: context.colors.textMuted),
                   ),
                 ],
@@ -542,7 +575,9 @@ void _showAddDialog(
                   children: [
                     Text(
                       'الكمية (${item.servingUnit}):',
-                      style: Theme.of(context).textTheme.bodySmall!
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
                           .copyWith(color: context.colors.textSecondary),
                     ),
                     SizedBox(width: 12.w),
@@ -555,13 +590,14 @@ void _showAddDialog(
                         decoration: InputDecoration(
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(
-                            horizontal: 8.w, vertical: 8.h,
+                            horizontal: 8.w,
+                            vertical: 8.h,
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                AppConstants.radiusS.r),
-                            borderSide: BorderSide(
-                                color: context.colors.borderSubtle),
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusS.r),
+                            borderSide:
+                                BorderSide(color: context.colors.borderSubtle),
                           ),
                         ),
                         onChanged: (v) {
@@ -586,16 +622,17 @@ void _showAddDialog(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                        BorderRadius.circular(AppConstants.radiusM.r),
+                            BorderRadius.circular(AppConstants.radiusM.r),
                       ),
                     ),
                     onPressed: () async {
                       final saved = await context.read<AddMealCubit>().addMeal(
-                        food: item,
-                        mealType: mealType,
-                        quantity: quantity,
-                        loggedAt: DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
-                      );
+                            food: item,
+                            mealType: mealType,
+                            quantity: quantity,
+                            loggedAt: DateTime(selectedDate.year,
+                                selectedDate.month, selectedDate.day),
+                          );
                       if (!context.mounted) return;
                       if (!saved) {
                         final state = context.read<AddMealCubit>().state;

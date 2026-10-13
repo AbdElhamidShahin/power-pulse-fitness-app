@@ -37,28 +37,32 @@ class PPSearchBar extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: AppConstants.spaceL),
-            Icon(Icons.search_rounded, color: context.colors.textMuted, size: AppConstants.iconM),
+            Icon(Icons.search_rounded,
+                color: context.colors.textMuted, size: AppConstants.iconM),
             const SizedBox(width: AppConstants.spaceM),
             Expanded(
               child: readOnly
-                  ? Text(hint, style: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted))
+                  ? Text(hint,
+                      style: AppTextStyles.bodyMedium
+                          .copyWith(color: context.colors.textMuted))
                   : TextField(
-                controller: controller,
-                onChanged: onChanged,
-                autofocus: autofocus,
-                style: Theme.of(context).textTheme.bodyMedium!,
-                textDirection: TextDirection.rtl,
-                decoration: InputDecoration(
-                  hintText: hint,
-                  hintStyle: AppTextStyles.bodyMedium.copyWith(color: context.colors.textMuted),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                  isDense: true,
-                  filled: false,
-                ),
-              ),
+                      controller: controller,
+                      onChanged: onChanged,
+                      autofocus: autofocus,
+                      style: Theme.of(context).textTheme.bodyMedium!,
+                      textDirection: TextDirection.rtl,
+                      decoration: InputDecoration(
+                        hintText: hint,
+                        hintStyle: AppTextStyles.bodyMedium
+                            .copyWith(color: context.colors.textMuted),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        isDense: true,
+                        filled: false,
+                      ),
+                    ),
             ),
             const SizedBox(width: AppConstants.spaceL),
           ],
@@ -116,7 +120,8 @@ class PPTextField extends StatelessWidget {
           maxLines: maxLines,
           enabled: enabled,
           textDirection: TextDirection.rtl,
-          style: AppTextStyles.bodyMedium.copyWith(color: context.colors.textPrimary),
+          style: AppTextStyles.bodyMedium
+              .copyWith(color: context.colors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             suffixIcon: suffixIcon,

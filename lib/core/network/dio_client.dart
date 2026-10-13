@@ -74,11 +74,11 @@ Exception mapDioException(DioException e) {
     DioExceptionType.receiveTimeout ||
     DioExceptionType.sendTimeout ||
     DioExceptionType.connectionError =>
-    const NetworkException(),
+      const NetworkException(),
     DioExceptionType.badResponse => ServerException(
-      message: _extractMessage(e.response),
-      statusCode: e.response?.statusCode,
-    ),
+        message: _extractMessage(e.response),
+        statusCode: e.response?.statusCode,
+      ),
     _ => ServerException(message: e.message ?? 'Unexpected error'),
   };
 }

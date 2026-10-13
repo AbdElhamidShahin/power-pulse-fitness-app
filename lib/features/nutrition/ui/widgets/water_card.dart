@@ -135,8 +135,8 @@ class WaterCard extends StatelessWidget {
                           bottomRight: Radius.circular(4.r),
                         ),
                         border: Border.all(
-                          color: AppColors.info.withOpacity(
-                              isFilled ? 0.0 : 0.35),
+                          color:
+                              AppColors.info.withOpacity(isFilled ? 0.0 : 0.35),
                           width: 1,
                         ),
                       ),

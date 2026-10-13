@@ -42,7 +42,7 @@ Future<void> main() async {
   // Register immediately after Supabase initialization so a password-reset
   // deep-link event is not missed before runApp().
   final authSubscription =
-  Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      Supabase.instance.client.auth.onAuthStateChange.listen((data) {
     if (data.event == AuthChangeEvent.passwordRecovery) {
       AppStartup.markPasswordRecoveryPending();
     }
@@ -111,7 +111,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
         _pushDebounce?.cancel();
         _pushToCloud();
       case AppLifecycleState.resumed:
-      // المستخدم ممكن يكون منح الصلاحية من إعدادات الموبايل
+        // المستخدم ممكن يكون منح الصلاحية من إعدادات الموبايل
         unawaited(sl<PedometerCubit>().retryIfUnavailable());
         unawaited(NotificationService.instance
             .syncFromPrefs(sl<SharedPreferences>()));
@@ -141,7 +141,7 @@ class _PowerPulseAppState extends State<PowerPulseApp>
       value: sl<AppSettingsCubit>(),
       child: BlocBuilder<AppSettingsCubit, AppSettings>(
         buildWhen: (prev, curr) =>
-        prev.isDarkMode != curr.isDarkMode || prev.locale != curr.locale,
+            prev.isDarkMode != curr.isDarkMode || prev.locale != curr.locale,
         builder: (context, settings) => ScreenUtilInit(
           designSize: const Size(375, 812),
           minTextAdapt: true,

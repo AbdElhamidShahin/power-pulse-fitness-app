@@ -112,9 +112,8 @@ class _WeeklyBarChart extends StatelessWidget {
               height:
                   hasWorkout ? (60.h * heightFraction).clamp(20.h, 60.h) : 4.h,
               decoration: BoxDecoration(
-                color: hasWorkout
-                    ? AppColors.accent
-                    : context.colors.borderSubtle,
+                color:
+                    hasWorkout ? AppColors.accent : context.colors.borderSubtle,
                 borderRadius: BorderRadius.circular(8.r),
               ),
             ),

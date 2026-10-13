@@ -12,9 +12,9 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     required GetExercisesByBodyPartUseCase getByBodyPart,
     required GetBodyPartListUseCase getBodyParts,
     required SearchExercisesUseCase searchExercises,
-  })  : _getExercises    = getExercises,
-        _getByBodyPart   = getByBodyPart,
-        _getBodyParts    = getBodyParts,
+  })  : _getExercises = getExercises,
+        _getByBodyPart = getByBodyPart,
+        _getBodyParts = getBodyParts,
         _searchExercises = searchExercises,
         super(const ExercisesInitial());
 
@@ -118,7 +118,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     final result = await _searchExercises(query.trim());
     return result.fold(onFailure: (_) => [], onSuccess: (list) => list);
   }
-
 }
 
 final class ExerciseSearchCubit extends Cubit<ExerciseSearchState> {
@@ -155,7 +154,8 @@ final class ExerciseDetailCubit extends Cubit<ExerciseDetailState> {
     emit(const ExerciseDetailLoading());
     final result = await _getById(id);
     result.fold(
-      onFailure: (f) => emit(ExerciseDetailError(f.withOverrides({NotFoundFailure: 'التمرين غير موجود'}))),
+      onFailure: (f) => emit(ExerciseDetailError(
+          f.withOverrides({NotFoundFailure: 'التمرين غير موجود'}))),
       onSuccess: (exercise) => emit(ExerciseDetailLoaded(exercise)),
     );
   }

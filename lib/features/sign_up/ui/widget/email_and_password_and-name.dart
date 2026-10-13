@@ -42,11 +42,11 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
   void _onSubmit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<SignUpCubit>().signUpUser(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      confirmPassword: _confirmPasswordController.text.trim(),
-    );
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          confirmPassword: _confirmPasswordController.text.trim(),
+        );
   }
 
   @override
@@ -104,8 +104,8 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
             },
             suffixIcon: _buildPasswordIcon(
                 _isPasswordHidden,
-                    () => setState(() => _isPasswordHidden = !_isPasswordHidden),context
-            ),
+                () => setState(() => _isPasswordHidden = !_isPasswordHidden),
+                context),
           ),
           SizedBox(height: 16.h),
           _buildLabel(context, 'تأكيد كلمة المرور'),
@@ -124,10 +124,11 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
             },
             suffixIcon: _buildPasswordIcon(
                 _isConfirmPasswordHidden,
-                    () => setState(
-                      () => _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
-                ),context
-            ),
+                () => setState(
+                      () =>
+                          _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
+                    ),
+                context),
           ),
           SizedBox(height: 20.h),
           SizedBox(
@@ -136,9 +137,9 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
             child: BlocBuilder<SignUpCubit, SignUpState>(
               builder: (context, state) {
                 if (state is SignUpLoading) {
-                  return   Center(
-                    child:
-                    CircularProgressIndicator(color: context.colors.textPrimary),
+                  return Center(
+                    child: CircularProgressIndicator(
+                        color: context.colors.textPrimary),
                   );
                 }
                 return ElevatedButton(
@@ -193,7 +194,7 @@ Widget _buildSuffixIcon(IconData icon, context) {
   );
 }
 
-Widget _buildPasswordIcon(bool obscure, VoidCallback onTap,context) {
+Widget _buildPasswordIcon(bool obscure, VoidCallback onTap, context) {
   return GestureDetector(
     onTap: onTap,
     child: Padding(

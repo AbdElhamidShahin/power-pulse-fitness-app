@@ -18,11 +18,11 @@ class ExerciseLoggerCard extends StatelessWidget {
 
   final SessionExercise exercise;
   final void Function({
-  required String exerciseId,
-  required int setIndex,
-  int? reps,
-  double? weight,
-  bool? isCompleted,
+    required String exerciseId,
+    required int setIndex,
+    int? reps,
+    double? weight,
+    bool? isCompleted,
   }) onUpdateSet;
   final VoidCallback onAddSet;
   final void Function(int setIndex) onRemoveSet;
@@ -30,9 +30,9 @@ class ExerciseLoggerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final done      = exercise.isFullyDone;
+    final done = exercise.isFullyDone;
     final completed = exercise.completedSets;
-    final total     = exercise.sets.length;
+    final total = exercise.sets.length;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppConstants.spaceL),
@@ -75,11 +75,13 @@ class ExerciseLoggerCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: AppColors.accentDim,
                           borderRadius:
-                          BorderRadius.circular(AppConstants.radiusPill),
+                              BorderRadius.circular(AppConstants.radiusPill),
                         ),
                         child: Text(
                           exercise.bodyPart,
-                          style: Theme.of(context).textTheme.labelSmall!
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
                               .copyWith(color: AppColors.accent),
                         ),
                       ),
@@ -89,12 +91,12 @@ class ExerciseLoggerCard extends StatelessWidget {
                 // progress badge
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: done ? AppColors.accent : context.colors.bgElevated,
                     borderRadius:
-                    BorderRadius.circular(AppConstants.radiusPill),
+                        BorderRadius.circular(AppConstants.radiusPill),
                   ),
                   child: Text(
                     done ? '✓ مكتمل' : '$completed / $total',
@@ -127,14 +129,18 @@ class ExerciseLoggerCard extends StatelessWidget {
                 const SizedBox(width: 30),
                 Expanded(
                   child: Text('وزن (كجم)',
-                      style: Theme.of(context).textTheme.labelSmall!
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall!
                           .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text('رابس',
-                      style: Theme.of(context).textTheme.labelSmall!
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall!
                           .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ),
@@ -167,12 +173,10 @@ class ExerciseLoggerCard extends StatelessWidget {
               onTap: onAddSet,
               child: Container(
                 width: double.infinity,
-                padding:
-                const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   color: context.colors.bgElevated,
-                  borderRadius:
-                  BorderRadius.circular(AppConstants.radiusM),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: Border.all(
                       color: context.colors.borderMedium, width: 0.5),
                 ),
@@ -183,7 +187,9 @@ class ExerciseLoggerCard extends StatelessWidget {
                         color: context.colors.textMuted, size: 16),
                     const SizedBox(width: 4),
                     Text('إضافة مجموعة',
-                        style: Theme.of(context).textTheme.labelSmall!
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall!
                             .copyWith(color: context.colors.textMuted)),
                   ],
                 ),
