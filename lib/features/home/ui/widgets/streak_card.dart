@@ -31,22 +31,6 @@ class _EmptyStreakCard extends StatelessWidget {
       child: Row(
         children: [
           // Icon circle
-          Container(
-            width: 52.r,
-            height: 52.r,
-            decoration: BoxDecoration(
-              color: AppColors.accent.withOpacity(0.15),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.accent.withOpacity(0.3),
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: Text('🔥', style: TextStyle(fontSize: 22.sp)),
-            ),
-          ),
-          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,6 +54,23 @@ class _EmptyStreakCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+          SizedBox(width: 14.w),
+
+          Container(
+            width: 52.r,
+            height: 52.r,
+            decoration: BoxDecoration(
+              color: AppColors.accent.withOpacity(0.15),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.accent.withOpacity(0.3),
+                width: 1.5,
+              ),
+            ),
+            child: Center(
+              child: Text('🔥', style: TextStyle(fontSize: 22.sp)),
             ),
           ),
         ],
@@ -99,29 +100,6 @@ class _ActiveStreakCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Progress ring — only shown when streak > 0
-          SizedBox(
-            width: 64.r,
-            height: 64.r,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CustomPaint(
-                  size: Size(64.r, 64.r),
-                  painter: RingPainter(
-                    progress: pct,
-                    color: AppColors.accent,
-                    trackColor: AppColors.bgDarkAlt,
-                    strokeWidth: 5.w,
-                  ),
-                ),
-                Text(
-                  '🔥',
-                  style: TextStyle(fontSize: 22.sp),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,6 +133,29 @@ class _ActiveStreakCard extends StatelessWidget {
                     fontSize: 10.sp,
                     color: AppColors.accent,
                   ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 14.w),
+          SizedBox(
+            width: 64.r,
+            height: 64.r,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: Size(64.r, 64.r),
+                  painter: RingPainter(
+                    progress: pct,
+                    color: AppColors.accent,
+                    trackColor: AppColors.bgDarkAlt,
+                    strokeWidth: 5.w,
+                  ),
+                ),
+                Text(
+                  '🔥',
+                  style: TextStyle(fontSize: 22.sp),
                 ),
               ],
             ),

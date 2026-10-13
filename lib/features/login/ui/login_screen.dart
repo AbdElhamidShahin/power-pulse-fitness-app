@@ -1,18 +1,19 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:power_pulse/core/localization/app_localizations.dart';
-import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:power_pulse/core/localization/app_localizations.dart';
+
 import '../../../core/auth/user_mode_service.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_theme_colors.dart';
 import '../../../shared/widgets/pp_button.dart';
-import '../../../core/utils/app_regex.dart';
 import '../logic/cubit/login_cubit.dart';
 import '../logic/cubit/login_state.dart';
 
@@ -27,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+
   bool _passHidden = true;
 
   @override
@@ -38,55 +40,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+
     context.read<LoginCubit>().loginUser(
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-    );
-  }
-
-  Future<void> _showForgotPasswordDialog(BuildContext context) async {
-    final controller = TextEditingController(text: _emailCtrl.text.trim());
-    final formKey = GlobalKey<FormState>();
-
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(context.l10n.recoverPassword),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              labelText: context.l10n.email,
-              hintText: 'example@gmail.com',
-            ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) return context.l10n.enterEmail;
-              if (!AppRegex.isEmailValid(value.trim())) return context.l10n.invalidEmail;
-              return null;
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(context.l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (!formKey.currentState!.validate()) return;
-              Navigator.of(dialogContext).pop();
-              context.read<LoginCubit>().sendPasswordResetEmail(
-                email: controller.text.trim(),
-              );
-            },
-            child: Text(context.l10n.sendLink),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+        );
   }
 
   @override
@@ -94,47 +52,50 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) async {
         if (state is LoginSuccess) {
-          // Authentication creates only an identity record. A profile is
-          // complete only when real measurements have been saved.
           final prefs = await SharedPreferences.getInstance();
           final raw = prefs.getString('user_profile');
           final savedCompletionFlag = prefs.getBool('profile_completed');
+
           var recordSaysComplete = false;
           var recordHasCompletionFlag = false;
           var hasValidMeasurements = false;
+
           if (raw != null && raw.isNotEmpty) {
             try {
               final profile = jsonDecode(raw) as Map<String, dynamic>;
+
               recordHasCompletionFlag = profile.containsKey('profileCompleted');
+
               recordSaysComplete = profile['profileCompleted'] == true;
-              hasValidMeasurements =
-                  (profile['age'] as num? ?? 0) > 0 &&
-                      (profile['heightCm'] as num? ?? 0) > 0 &&
-                      (profile['weightKg'] as num? ?? 0) > 0;
+
+              hasValidMeasurements = (profile['age'] as num? ?? 0) > 0 &&
+                  (profile['heightCm'] as num? ?? 0) > 0 &&
+                  (profile['weightKg'] as num? ?? 0) > 0;
             } catch (_) {
               recordSaysComplete = false;
               hasValidMeasurements = false;
             }
           }
-          // The completion flag is stored in the profile record too, so it can
-          // be restored from Supabase on a fresh install. Older records fall
-          // back to validating real measurements.
+
           final hasCompleteProfile = recordHasCompletionFlag
               ? recordSaysComplete
               : (savedCompletionFlag == true || hasValidMeasurements);
+
           if (hasCompleteProfile && savedCompletionFlag != true) {
             await prefs.setBool('profile_completed', true);
           }
+
           if (!context.mounted) return;
-          context.go(hasCompleteProfile ? AppRouter.home : AppRouter.onboarding);
-        } else if (state is LoginPasswordResetSent) {
-          _showBanner(
-            context,
-            message: 'تم إرسال رابط استعادة كلمة المرور إلى ${state.email} 📧',
-            isError: false,
+
+          context.go(
+            hasCompleteProfile ? AppRouter.home : AppRouter.onboarding,
           );
         } else if (state is LoginError) {
-          _showBanner(context, message: state.errorMessage, isError: true);
+          _showBanner(
+            context,
+            message: state.errorMessage,
+            isError: true,
+          );
         }
       },
       child: Scaffold(
@@ -149,13 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: AppConstants.space3XL),
-
-                // ── Logo + headline ────────────────────────────────
-                _Header(),
-
+                const _Header(),
                 const SizedBox(height: AppConstants.space4XL),
-
-                // ── Form ──────────────────────────────────────────
                 Form(
                   key: _formKey,
                   child: Column(
@@ -169,10 +125,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         keyboardType: TextInputType.emailAddress,
                         icon: Icons.alternate_email_rounded,
                         validator: (v) {
-                          if (v == null || v.isEmpty)
+                          if (v == null || v.trim().isEmpty) {
                             return context.l10n.enterEmail;
-                          if (!AppRegex.isEmailValid(v))
+                          }
+
+                          final emailPattern = RegExp(
+                            r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                          );
+
+                          if (!emailPattern.hasMatch(v.trim())) {
                             return context.l10n.invalidEmail;
+                          }
+
                           return null;
                         },
                       ),
@@ -184,8 +148,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: '••••••••',
                         obscureText: _passHidden,
                         suffix: GestureDetector(
-                          onTap: () =>
-                              setState(() => _passHidden = !_passHidden),
+                          onTap: () {
+                            setState(() {
+                              _passHidden = !_passHidden;
+                            });
+                          },
                           child: Icon(
                             _passHidden
                                 ? Icons.visibility_off_outlined
@@ -195,32 +162,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return context.l10n.enterPassword;
-                          if (!AppRegex.hasMinLength(v))
+                          if (v == null || v.isEmpty) {
+                            return context.l10n.enterPassword;
+                          }
+
+                          if (v.length < 8) {
                             return context.l10n.passwordTooShort;
+                          }
+
                           return null;
                         },
                       ),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: AppConstants.spaceS),
-
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: TextButton(
-                    onPressed: () => _showForgotPasswordDialog(context),
-                    style: TextButton.styleFrom(
-                      foregroundColor: context.colors.textMuted,
-                    ),
-                    child: Text(context.l10n.forgotPassword),
-                  ),
-                ),
-
                 const SizedBox(height: AppConstants.spaceL),
-
-                // ── Login button ───────────────────────────────────
                 BlocBuilder<LoginCubit, LoginState>(
                   builder: (context, state) => PPButton(
                     label: 'تسجيل الدخول',
@@ -228,25 +184,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     isLoading: state is LoginLoading,
                   ),
                 ),
-
                 const SizedBox(height: AppConstants.spaceXL),
-
-                // ── Divider ────────────────────────────────────────
-                _OrDivider(),
-
+                const _OrDivider(),
                 const SizedBox(height: AppConstants.spaceXL),
-
-                // ── Google ─────────────────────────────────────────
                 BlocBuilder<LoginCubit, LoginState>(
                   builder: (context, state) => _GoogleButton(
                     isLoading: state is LoginLoading,
-                    onTap: () => context.read<LoginCubit>().loginWithGoogle(),
+                    onTap: () {
+                      context.read<LoginCubit>().loginWithGoogle();
+                    },
                   ),
                 ),
-
                 const SizedBox(height: AppConstants.space4XL),
-
-                // ── Sign up link ───────────────────────────────────
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -271,16 +220,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: AppConstants.spaceL),
-
-                // ── Guest option ───────────────────────────────────
                 Center(
                   child: GestureDetector(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();
+
                       await UserModeService.setGuest(prefs);
-                      if (context.mounted) context.go(AppRouter.home);
+
+                      if (context.mounted) {
+                        context.go(AppRouter.home);
+                      }
                     },
                     child: Text(
                       'متابعة كضيف بدون حساب',
@@ -292,7 +242,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: AppConstants.spaceXXL),
               ],
             ),
@@ -303,15 +252,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// ─── Header Widget ────────────────────────────────────────────────────────────
+// Header
 
 class _Header extends StatelessWidget {
+  const _Header();
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Accent pill
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spaceM,
@@ -319,7 +269,9 @@ class _Header extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: AppColors.accentDim,
-            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+            borderRadius: BorderRadius.circular(
+              AppConstants.radiusPill,
+            ),
           ),
           child: Text(
             'Power Pulse',
@@ -349,10 +301,11 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ─── Field Label ─────────────────────────────────────────────────────────────
+// Field Label
 
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel(this.text);
+
   final String text;
 
   @override
@@ -366,7 +319,7 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-// ─── Auth Text Field ─────────────────────────────────────────────────────────
+// Auth Text Field
 
 class _AuthField extends StatelessWidget {
   const _AuthField({
@@ -405,37 +358,67 @@ class _AuthField extends StatelessWidget {
           color: context.colors.borderMedium,
         ),
         prefixIcon: icon != null
-            ? Icon(icon, color: context.colors.textMuted, size: AppConstants.iconM)
+            ? Icon(
+                icon,
+                color: context.colors.textMuted,
+                size: AppConstants.iconM,
+              )
             : null,
         suffixIcon: suffix != null
             ? Padding(
-          padding: const EdgeInsets.only(left: AppConstants.spaceM),
-          child: suffix,
-        )
+                padding: const EdgeInsets.only(
+                  left: AppConstants.spaceM,
+                ),
+                child: suffix,
+              )
             : null,
         filled: true,
         fillColor: context.colors.bgSurface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: context.colors.borderSubtle),
+          borderRadius: BorderRadius.circular(
+            AppConstants.radiusM,
+          ),
+          borderSide: BorderSide(
+            color: context.colors.borderSubtle,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: context.colors.borderSubtle),
+          borderRadius: BorderRadius.circular(
+            AppConstants.radiusM,
+          ),
+          borderSide: BorderSide(
+            color: context.colors.borderSubtle,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColors.accent, width: 1.5),
+          borderRadius: BorderRadius.circular(
+            AppConstants.radiusM,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.accent,
+            width: 1.5,
+          ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColors.danger),
+          borderRadius: BorderRadius.circular(
+            AppConstants.radiusM,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.danger,
+          ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: BorderSide(color: AppColors.danger, width: 1.5),
+          borderRadius: BorderRadius.circular(
+            AppConstants.radiusM,
+          ),
+          borderSide: const BorderSide(
+            color: AppColors.danger,
+            width: 1.5,
+          ),
         ),
-        errorStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.danger),
+        errorStyle: AppTextStyles.bodySmall.copyWith(
+          color: AppColors.danger,
+        ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppConstants.spaceL,
           vertical: AppConstants.spaceL,
@@ -445,32 +428,51 @@ class _AuthField extends StatelessWidget {
   }
 }
 
-// ─── Or Divider ───────────────────────────────────────────────────────────────
+// Or Divider
 
 class _OrDivider extends StatelessWidget {
+  const _OrDivider();
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
-          child: Text(
-            'أو',
-            style: Theme.of(context).textTheme.bodySmall!
-                .copyWith(color: context.colors.textMuted),
+        Expanded(
+          child: Divider(
+            color: context.colors.borderSubtle,
+            thickness: 1,
           ),
         ),
-        Expanded(child: Divider(color: context.colors.borderSubtle, thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.spaceM,
+          ),
+          child: Text(
+            'أو',
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: context.colors.textMuted,
+                ),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            color: context.colors.borderSubtle,
+            thickness: 1,
+          ),
+        ),
       ],
     );
   }
 }
 
-// ─── Google Button ─────────────────────────────────────────────────────────────
+// Google Button
 
 class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({required this.isLoading, required this.onTap});
+  const _GoogleButton({
+    required this.isLoading,
+    required this.onTap,
+  });
+
   final bool isLoading;
   final VoidCallback onTap;
 
@@ -482,8 +484,12 @@ class _GoogleButton extends StatelessWidget {
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
           color: context.colors.bgSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: context.colors.borderSubtle),
+          borderRadius: BorderRadius.circular(
+            AppConstants.radiusM,
+          ),
+          border: Border.all(
+            color: context.colors.borderSubtle,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -498,7 +504,7 @@ class _GoogleButton extends StatelessWidget {
                 ),
               )
             else ...[
-              _GoogleIcon(),
+              const _GoogleIcon(),
               const SizedBox(width: AppConstants.spaceM),
               Text(
                 'الدخول بحساب جوجل',
@@ -515,12 +521,16 @@ class _GoogleButton extends StatelessWidget {
 }
 
 class _GoogleIcon extends StatelessWidget {
+  const _GoogleIcon();
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 20,
       height: 20,
-      child: CustomPaint(painter: _GooglePainter()),
+      child: CustomPaint(
+        painter: _GooglePainter(),
+      ),
     );
   }
 }
@@ -532,34 +542,39 @@ class _GooglePainter extends CustomPainter {
     final cy = size.height / 2;
     final r = size.width / 2;
 
-    // Blue arc
     canvas.drawArc(
-      Rect.fromCircle(center: Offset(cx, cy), radius: r),
+      Rect.fromCircle(
+        center: Offset(cx, cy),
+        radius: r,
+      ),
       -0.5,
       3.8,
       false,
       Paint()
-        ..color = Color(0xFF4285F4)
+        ..color = const Color(0xFF4285F4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8,
     );
-    // Red arc
+
     canvas.drawArc(
-      Rect.fromCircle(center: Offset(cx, cy), radius: r),
+      Rect.fromCircle(
+        center: Offset(cx, cy),
+        radius: r,
+      ),
       3.3,
       1.0,
       false,
       Paint()
-        ..color = Color(0xFFEA4335)
+        ..color = const Color(0xFFEA4335)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8,
     );
-    // Bar
+
     canvas.drawLine(
       Offset(cx, cy),
       Offset(cx + r, cy),
       Paint()
-        ..color = Color(0xFF4285F4)
+        ..color = const Color(0xFF4285F4)
         ..strokeWidth = 2.8,
     );
   }
@@ -568,10 +583,13 @@ class _GooglePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// ─── Banner helper ────────────────────────────────────────────────────────────
+// Banner helper
 
-void _showBanner(BuildContext context,
-    {required String message, required bool isError}) {
+void _showBanner(
+  BuildContext context, {
+  required String message,
+  required bool isError,
+}) {
   ScaffoldMessenger.of(context).showMaterialBanner(
     MaterialBanner(
       backgroundColor: isError ? AppColors.dangerDim : AppColors.accentDim,
@@ -587,8 +605,9 @@ void _showBanner(BuildContext context,
       ),
       actions: [
         TextButton(
-          onPressed: () =>
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+          },
           child: Text(
             'حسناً',
             style: AppTextStyles.labelMedium.copyWith(
@@ -599,6 +618,7 @@ void _showBanner(BuildContext context,
       ],
     ),
   );
+
   Future.delayed(const Duration(seconds: 3), () {
     if (context.mounted) {
       ScaffoldMessenger.of(context).hideCurrentMaterialBanner();

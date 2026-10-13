@@ -74,58 +74,70 @@ abstract class AppRouter {
             : (AppStartup.needsEntry
                 ? entry
                 : (AppStartup.needsProfileSetup ? onboarding : home))),
-    redirect: (context, state) {
-      final path = state.uri.path;
-      final authRoutes = {login, signUp, resetPassword, entry, intro};
-      final needsEntry = AppStartup.needsEntry;
-      final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
-      // Intro slides are shown once, before account/guest selection.
-      if (AppStartup.needsIntro && path != intro && path != resetPassword) {
-        return intro;
-      }
-      if (!AppStartup.needsIntro && path == intro) {
-        return needsEntry
-            ? entry
-            : (AppStartup.needsProfileSetup ? onboarding : home);
-      }
+      redirect: (context, state) {
+  final path = state.uri.path;
 
-      if (isLoggedIn &&
-          !AppStartup.needsIntro &&
-          AppStartup.needsProfileSetup &&
-          path != onboarding &&
-          path != resetPassword) {
-        return onboarding;
-      }
+  final authRoutes = {
+    login,
+    signUp,
+    resetPassword,
+    entry,
+    intro,
+  };
 
-      // لسه ماختارش (لا حساب ولا ضيف): وجّهه لشاشة الاختيار
-      if (needsEntry && !authRoutes.contains(path)) {
-        return entry;
-      }
+  final needsEntry = AppStartup.needsEntry;
+  final needsIntro = AppStartup.needsIntro;
+  final needsProfileSetup = AppStartup.needsProfileSetup;
+  final isLoggedIn =
+      Supabase.instance.client.auth.currentUser != null;
 
-      // /reset-password is only valid when the app was opened via a password-
-      // recovery deep link (AppStartup.passwordRecoveryPending == true).
-      // Without this guard a logged-in user can navigate directly to this route
-      // and change their own password without the recovery email step.
-      if (path == resetPassword) {
-        if (!AppStartup.passwordRecoveryPending) return home;
-        return null;
-      }
+  // 1. استعادة كلمة المرور لها الأولوية.
+  if (path == resetPassword) {
+  return AppStartup.passwordRecoveryPending ? null : home;
+  }
 
-      // BUGFIX: الضيف لازم يقدر يفتح login / sign-up من الإعدادات.
-      // قبل كده كان بيتحوّل للرئيسية لأن الشرط كان بيمنع أي مستخدم
-      // "مش محتاج entry" من شاشات الـ auth. دلوقتي بس المسجّل فعلاً يتمنع.
-      if (isLoggedIn && authRoutes.contains(path)) {
-        return home;
-      }
+  if (AppStartup.passwordRecoveryPending) {
+  return path == resetPassword ? null : resetPassword;
+  }
 
-      // الضيف اللي اختار يكمّل بيتخطى شاشة الـ entry
-      if (!needsEntry && path == entry) {
-        return home;
-      }
+  // 2. المقدمة تظهر فقط لو مطلوبة.
+  if (needsIntro) {
+  return path == intro ? null : intro;
+  }
 
-      return null;
-    },
+  // 3. لو المقدمة خلصت، امنع الرجوع إليها.
+  if (path == intro) {
+  if (needsEntry) return entry;
+  if (isLoggedIn && needsProfileSetup) return onboarding;
+  return home;
+  }
+
+  // 4. المستخدم الذي لم يختر حسابًا أو ضيفًا.
+  if (needsEntry) {
+  return path == entry || path == login || path == signUp
+  ? null
+      : entry;
+  }
+
+  // 5. المستخدم المسجل الذي يحتاج لإكمال ملفه الشخصي.
+  if (isLoggedIn && needsProfileSetup) {
+  return path == onboarding ? null : onboarding;
+  }
+
+  // 6. المستخدم المسجل لا يحتاج لشاشات الدخول.
+  if (isLoggedIn && authRoutes.contains(path)) {
+  return home;
+  }
+
+  // 7. الضيف يستطيع فتح تسجيل الدخول أو إنشاء حساب.
+  // لكن لا يعود إلى شاشة اختيار الدخول بعد اختياره.
+  if (path == entry) {
+  return home;
+  }
+
+  return null;
+},
     debugLogDiagnostics: kDebugMode,
     observers: [nutritionRouteObserver, progressRouteObserver],
     routes: [

@@ -50,7 +50,7 @@ class _ActiveWorkoutHeaderState extends State<ActiveWorkoutHeader> {
         children: [
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.session.name,
                     style: Theme.of(context).textTheme.headlineMedium),

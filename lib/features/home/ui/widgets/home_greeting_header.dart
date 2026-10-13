@@ -21,12 +21,8 @@ class GreetingHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        GestureDetector(
-          onTap: () => context.go('/profile'),
-          child: _HomeAvatar(name: name, avatarUrl: avatarUrl),
-        ),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               greeting,
@@ -38,7 +34,7 @@ class GreetingHeader extends StatelessWidget {
               ),
             ),
             Text(
-              '💪 $name',
+              '$name 💪 ',
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style: TextStyle(
@@ -50,7 +46,11 @@ class GreetingHeader extends StatelessWidget {
               ),
             ),
           ],
+        ),        GestureDetector(
+          onTap: () => context.go('/profile'),
+          child: _HomeAvatar(name: name, avatarUrl: avatarUrl),
         ),
+
       ],
     );
   }
