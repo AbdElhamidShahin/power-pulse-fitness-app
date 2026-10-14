@@ -77,22 +77,6 @@ final class LoginCubit extends Cubit<LoginState> {
 
   // ─── Password reset ─────────────────────────────────────────────────────
 
-  Future<void> sendPasswordResetEmail({required String email}) async {
-    emit(const LoginLoading());
-
-    try {
-      await _loginRepository.sendPasswordResetEmail(email: email);
-      if (!isClosed) {
-        emit(LoginPasswordResetSent(email: email));
-      }
-    } on AuthException catch (e) {
-      emit(LoginError(_mapError(e.message)));
-    } catch (_) {
-      emit(const LoginError(
-          'تعذر إرسال رسالة استعادة كلمة المرور، حاول مرة أخرى 📧'));
-    }
-  }
-
   void _listenToAuthChanges() {
     _authSubscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
@@ -129,8 +113,6 @@ final class LoginCubit extends Cubit<LoginState> {
     });
   }
 
-  // ─── Post-login: migrate guest data OR restore cloud data ────────────────
-
   Future<void> _postLoginSync({
     required String uid,
     required String name,
@@ -141,21 +123,15 @@ final class LoginCubit extends Cubit<LoginState> {
     final currentMode = await UserModeService.getMode(_prefs);
     final previousUid = _prefs.getString('last_authenticated_uid');
 
-    // SharedPreferences is device-wide, not account-scoped. If a different
-    // account signs in after an expired session, clear the previous account's
-    // cache before restoring the new account to prevent cross-account mixing.
-    // Guest data remains eligible for the explicit guest-to-account migration.
     if (currentMode != UserMode.guest &&
         previousUid != null &&
         previousUid != uid) {
       await GuestMigrationService.clearLocalUserData(_prefs);
     }
 
-    // BUGFIX: النسخة القديمة كانت بترفع بيانات الضيف فوق بيانات حساب موجود
-    // (فبيانات الحساب بتضيع). دلوقتي: نستعيد بيانات الحساب الأول (دمج)،
-    // وبعدين نرفع النسخة المدموجة.
     try {
       await GuestMigrationService.restoreCloudDataToLocal(
+        //استرجاع البيانات من supabase
         prefs: _prefs,
         supabase: supabase,
         uid: uid,
@@ -168,12 +144,10 @@ final class LoginCubit extends Cubit<LoginState> {
           uid: uid,
         );
       }
-    } catch (_) {
-      // مشكلة شبكة مؤقتة — الدخول يكمل والمزامنة هتتعاد تلقائياً
-    }
+    } catch (_) {}
 
-    // Save/update profile from auth data (preserves existing fields if present)
     await AuthProfileSync.saveFromAuth(
+      // حفظ بيانات prfile
       prefs: _prefs,
       name: name,
       email: email,

@@ -41,8 +41,7 @@ final class SignUpRepositoryImpl implements SignUpRepository {
     );
   }
 
-  /// يبدأ Google OAuth ثم ينتظر AuthChangeEvent.signedIn من Supabase.
-  /// كل منطق الـ listener هنا داخل الـ Repository — الـ Cubit مش بيعرف Supabase.
+
   @override
   Future<SignUpResult> signInWithGoogle() async {
     final completer = Completer<SignUpResult>();
