@@ -39,7 +39,7 @@ Future<void> main() async {
     ),
   );
 
-  // Register immediately after Supabase initialization so a password-reset
+  // Register immediately after Supabase initialization .so a password-reset
   // deep-link event is not missed before runApp().
   final authSubscription =
       Supabase.instance.client.auth.onAuthStateChange.listen((data) {

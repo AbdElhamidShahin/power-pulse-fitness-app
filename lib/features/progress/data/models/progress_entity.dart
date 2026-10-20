@@ -35,7 +35,6 @@ final class WorkoutLog {
   final int exerciseCount;
 }
 
-/// نقطة بيانات للرسم البياني
 final class ChartPoint {
   const ChartPoint({required this.x, required this.y, this.label});
   final double x;
@@ -43,8 +42,7 @@ final class ChartPoint {
   final String? label;
 }
 
-/// نشاط يوم واحد — بيجمع الخطوات + الأكل + المياه + التمرين
-/// (البيانات جاية من باقي أجزاء التطبيق)
+
 final class DailyActivity {
   const DailyActivity({
     required this.date,

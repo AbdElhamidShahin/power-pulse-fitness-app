@@ -180,7 +180,6 @@ final class ProgressRepositoryImpl implements ProgressRepository {
     }
   }
 
-  /// قراءة مصدر خارجي من غير ما فشله يوقّع صفحة التقدم كلها
   Future<T?> _safe<T>(Future<T?>? Function() read) async {
     try {
       return await read();

@@ -24,7 +24,6 @@ final class HomeCubit extends Cubit<HomeState> {
         _getDailyNutrition = getDailyNutrition,
         _getProgressSummary = getProgressSummary,
         super(const HomeInitial()) {
-    // أي تغيير في الوجبات/التمارين/الوزن/الخطة → الرئيسية تتحدّث لوحدها
     _busSub = AppDataBus.stream.listen((_) {
       _debounce?.cancel();
       _debounce = Timer(const Duration(milliseconds: 250), () {

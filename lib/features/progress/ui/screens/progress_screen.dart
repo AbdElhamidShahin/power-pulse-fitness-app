@@ -100,6 +100,7 @@ class _LoadedView extends StatelessWidget {
                     value: summary.currentStreak.toString(),
                     label: context.l10n.consecutiveDay,
                     valueColor: context.colors.textPrimary,
+
                   ),
                 ),
                 SizedBox(width: 10.w),
