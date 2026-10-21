@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+<<<<<<< HEAD
 import 'package:power_pulse/core/domain/app_failure.dart';
 import 'package:power_pulse/core/error/exceptions.dart';
 
@@ -77,5 +78,12 @@ void main() {
       final f = mapExceptionToFailure(Exception('something weird'));
       expect(f, isA<UnexpectedFailure>());
     });
+=======
+
+void main() {
+  test('Basic sanity check', () {
+    // Test بسيط مش محتاج Flutter environment
+    expect(1 + 1, equals(2));
+>>>>>>> main
   });
 }

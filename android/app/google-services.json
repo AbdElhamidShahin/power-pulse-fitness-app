@@ -9,7 +9,11 @@
       "client_info": {
         "mobilesdk_app_id": "1:569679674083:android:ad48a13aba5815745ae3d6",
         "android_client_info": {
+<<<<<<< HEAD
           "package_name": "com.yourcompanyname.yourappname"
+=======
+          "package_name": "com.powerteam.powerpulse"
+>>>>>>> main
         }
       },
       "oauth_client": [],

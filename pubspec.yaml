@@ -2,7 +2,11 @@ name: power_pulse
 description: "Power Pulse - Fitness App"
 publish_to: "none"
 
+<<<<<<< HEAD
 version: 1.0.0+23
+=======
+version: 1.0.0+22
+>>>>>>> main
 
 environment:
   sdk: ^3.5.0
@@ -35,10 +39,23 @@ dependencies:
 
   # UI / Styling
   flutter_screenutil: ^5.9.3
+<<<<<<< HEAD
   cupertino_icons: ^1.0.8
   cached_network_image: ^3.4.1
 
   # Charts / Gauges
+=======
+  google_fonts: ^6.2.1
+  lottie: ^3.1.2
+  flutter_animate: ^4.5.0
+  flutter_staggered_animations: ^1.1.1
+  cupertino_icons: ^1.0.8
+  hexcolor: ^3.0.1
+  cached_network_image: ^3.4.1
+
+  # Charts / Gauges
+  syncfusion_flutter_gauges: ^31.1.19
+>>>>>>> main
 
   # Notifications
   flutter_local_notifications: ^18.0.1
@@ -46,6 +63,7 @@ dependencies:
 
   # Pedometer
   pedometer: ^4.0.2
+<<<<<<< HEAD
   permission_handler: ^11.3.1
   flutter_svg: ^2.2.3
 
@@ -56,6 +74,16 @@ dependencies:
   # Misc
 
   # Launcher Icons
+=======
+
+  # Misc
+  url_launcher: ^6.3.0
+  provider: ^6.1.2
+
+  # Launcher Icons
+  flutter_launcher_icons: ^0.14.1
+  awesome_snackbar_content: ^0.1.7
+>>>>>>> main
 
 dev_dependencies:
   flutter_lints: ^5.0.0

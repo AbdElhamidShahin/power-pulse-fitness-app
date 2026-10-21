@@ -57,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  awesome_snackbar_content:
+    dependency: "direct main"
+    description:
+      name: awesome_snackbar_content
+      sha256: "72107acdba616908abaa5b6bed46aa0302a0f4ba9ee3e747d01b55a32a607497"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.7"
   bloc:
     dependency: "direct main"
     description:
@@ -279,6 +287,8 @@ packages:
     source: hosted
     version: "5.0.0"
   flutter_local_notifications:
+<<<<<<< HEAD
+=======
     dependency: "direct main"
     description:
       name: flutter_local_notifications
@@ -315,8 +325,60 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.9.3"
+  flutter_shaders:
+    dependency: transitive
+    description:
+      name: flutter_shaders
+      sha256: "34794acadd8275d971e02df03afee3dee0f98dbfb8c4837082ad0034f612a3e2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
+  flutter_staggered_animations:
+>>>>>>> main
+    dependency: "direct main"
+    description:
+      name: flutter_local_notifications
+      sha256: ef41ae901e7529e52934feba19ed82827b11baa67336829564aeab3129460610
+      url: "https://pub.dev"
+    source: hosted
+<<<<<<< HEAD
+    version: "18.0.1"
+  flutter_local_notifications_linux:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_linux
+      sha256: "8f685642876742c941b29c32030f6f4f6dacd0e4eaecb3efbb187d6a3812ca01"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  flutter_local_notifications_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_platform_interface
+      sha256: "6c5b83c86bf819cdb177a9247a3722067dd8cc6313827ce7c77a4b238a26fd52"
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.0.0"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_screenutil:
+    dependency: "direct main"
+    description:
+      name: flutter_screenutil
+      sha256: "8239210dd68bee6b0577aa4a090890342d04a136ce1c81f98ee513fc0ce891de"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.9.3"
   flutter_svg:
     dependency: "direct main"
+=======
+    version: "1.1.1"
+  flutter_svg:
+    dependency: transitive
+>>>>>>> main
     description:
       name: flutter_svg
       sha256: "87fbd7c534435b6c5d9d98b01e1fd527812b82e68ddd8bd35fc45ed0fa8f0a95"
@@ -350,6 +412,7 @@ packages:
     source: hosted
     version: "9.2.1"
   go_router:
+<<<<<<< HEAD
     dependency: "direct main"
     description:
       name: go_router
@@ -373,6 +436,47 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+=======
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: f02fd7d2a4dc512fec615529824fdd217fecb3a3d3de68360293a551f21634b3
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.8.1"
+  google_fonts:
+    dependency: "direct main"
+    description:
+      name: google_fonts
+      sha256: "517b20870220c48752eafa0ba1a797a092fb22df0d89535fd9991e86ee2cdd9c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.2"
+  gotrue:
+    dependency: transitive
+    description:
+      name: gotrue
+      sha256: ac6b664b35304aece2034c66bc09ce761f9f7c8fb6066bbb6b2932aa87d82653
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.25.0"
+  gtk:
+    dependency: transitive
+    description:
+      name: gtk
+      sha256: "4ff85b2a16724029dd9e5bbb5a94b6918f9973f74ba571c949d2002801879cf5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
+  hexcolor:
+    dependency: "direct main"
+    description:
+      name: hexcolor
+      sha256: "235555a30d5817a88df1cb4eb72c0c3b448f9aafb848d9f01857c2214d3e77b0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.3"
+>>>>>>> main
   http:
     dependency: transitive
     description:
@@ -393,18 +497,32 @@ packages:
     dependency: transitive
     description:
       name: image
+<<<<<<< HEAD
       sha256: "89ed75b2f8231fe676808c5564f9590d728024ded7ac782a7ed8474f1c95b72a"
       url: "https://pub.dev"
     source: hosted
     version: "4.12.0"
+=======
+      sha256: f9881ff4998044947ec38d098bc7c8316ae1186fa786eddffdb867b9bc94dfce
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.8.0"
+>>>>>>> main
   intl:
     dependency: "direct main"
     description:
       name: intl
+<<<<<<< HEAD
       sha256: "1ca20c894b1717686a2319b8548763d812bc0aabdac580420a44c5178c57a867"
       url: "https://pub.dev"
     source: hosted
     version: "0.20.3"
+=======
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
+>>>>>>> main
   json_annotation:
     dependency: transitive
     description:
@@ -455,6 +573,17 @@ packages:
     version: "5.1.1"
   logging:
     dependency: transitive
+<<<<<<< HEAD
+=======
+    description:
+      name: logging
+      sha256: c8245ada5f1717ed44271ed1c26b8ce85ca3228fd2ffdb75468ab01979309d61
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
+  lottie:
+    dependency: "direct main"
+>>>>>>> main
     description:
       name: logging
       sha256: c8245ada5f1717ed44271ed1c26b8ce85ca3228fd2ffdb75468ab01979309d61
@@ -484,7 +613,11 @@ packages:
       sha256: "307249ce4ff29d58a18e97f6345f539382eb9c9c29ecda628900f31de0443dd9"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "1.19.0"
+=======
+    version: "1.16.0"
+>>>>>>> main
   mime:
     dependency: transitive
     description:
@@ -597,6 +730,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
+<<<<<<< HEAD
   permission_handler:
     dependency: "direct main"
     description:
@@ -645,6 +779,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2"
+=======
+>>>>>>> main
   petitparser:
     dependency: transitive
     description:
@@ -684,7 +820,11 @@ packages:
       sha256: bc1bad54ad2b735816e31f8d4600cfde6c7839975085ddfbca48b6c9f7c4044e
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "6.5.2"
+=======
+    version: "6.0.3"
+>>>>>>> main
   postgrest:
     dependency: transitive
     description:
@@ -867,6 +1007,7 @@ packages:
     source: hosted
     version: "1.4.1"
   supabase:
+<<<<<<< HEAD
     dependency: transitive
     description:
       name: supabase
@@ -882,6 +1023,39 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.15.4"
+=======
+    dependency: transitive
+    description:
+      name: supabase
+      sha256: "6933e60614652fa10749eb29fdcc6f2adb6515f5638e5ce28376ae08a626d745"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.13.4"
+  supabase_flutter:
+    dependency: "direct main"
+    description:
+      name: supabase_flutter
+      sha256: b6d34558565c14f1b44ff7bc9ca2979ed38ee2907b80ed73e699150cec08b739
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.15.4"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: "2d878bce96c4fd1092205a4f72b328f7f05d86b27c3bd55db7fd440e6017352a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "31.1.19"
+  syncfusion_flutter_gauges:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_gauges
+      sha256: "243d0da6809d9ebbeda2d7764b1d0458fc8a5a41005228d78241a28556ee99d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "31.1.19"
+>>>>>>> main
   synchronized:
     dependency: transitive
     description:
@@ -905,7 +1079,11 @@ packages:
       sha256: "2a122cbe059f8b610d3a5415f42e255b6c17b1f21eee1d960f31080237fb4f11"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "0.7.12"
+=======
+    version: "0.7.4"
+>>>>>>> main
   timezone:
     dependency: "direct main"
     description:
@@ -1081,7 +1259,11 @@ packages:
       sha256: f67cdd8e07d3c6329146aaef1ba043542b3134c12489f553ca9a7435d1068aea
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "3.1.4"
+=======
+    version: "3.1.3"
+>>>>>>> main
   yet_another_json_isolate:
     dependency: transitive
     description:
@@ -1091,5 +1273,9 @@ packages:
     source: hosted
     version: "2.1.1"
 sdks:
+<<<<<<< HEAD
   dart: ">=3.11.0-0 <4.0.0"
+=======
+  dart: "3.8.1"
+>>>>>>> main
   flutter: ">=3.32.0"
