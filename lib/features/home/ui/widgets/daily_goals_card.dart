@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../../core/theme/app_colors.dart';
-import '../../logic/cubit/home_cubit.dart';
-import '../../logic/cubit/home_state.dart';
-import 'RingPainter.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'ring_painter.dart';
 
 class DailyGoalsCard extends StatelessWidget {
   const DailyGoalsCard({
@@ -22,12 +21,11 @@ class DailyGoalsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final workoutMins = () {
-      final state = context.watch<HomeCubit>().state;
-      if (state is HomeLoaded)
-        return state.summary.todayWorkoutMinutes.toDouble();
-      return minutes;
-    }();
+    final l10n = context.l10n;
+    // Use the minutes value already passed by the parent BlocBuilder.
+    // Removed context.watch<HomeCubit>() to avoid a second subscription that
+    // was rebuilding this widget on every HomeCubit state change (P7 fix).
+    final workoutMins = minutes;
 
     final movePct = (calories / caloriesGoal.clamp(1, 9999)).clamp(0.0, 1.0);
     final exPct = (workoutMins / 60).clamp(0.0, 1.0);
@@ -36,19 +34,19 @@ class DailyGoalsCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'الأهداف اليومية',
+            l10n.dailyGoals,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 14.sp,
               fontWeight: FontWeight.w700,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
               letterSpacing: 0.5,
             ),
           ),
@@ -62,28 +60,28 @@ class DailyGoalsCard extends StatelessWidget {
                   children: [
                     _GoalRow(
                       dot: AppColors.accent,
-                      label: 'الحركة',
+                      label: l10n.movement,
                       value: calories.toInt(),
                       goal: caloriesGoal.toInt(),
-                      unit: 'سعر',
+                      unit: l10n.kcal,
                     ),
                     SizedBox(height: 12.h),
                     _GoalRow(
                       dot: AppColors.danger,
-                      label: 'التمرين',
+                      label: l10n.exerciseLabel,
                       value: workoutMins.toInt(),
                       goal: 60,
-                      unit: 'دقيقة',
+                      unit: l10n.minute,
                       // يظهر ✓ لو حقق الهدف
                       done: workoutMins >= 60,
                     ),
                     SizedBox(height: 12.h),
                     _GoalRow(
                       dot: AppColors.info,
-                      label: 'بروتين',
+                      label: l10n.protein,
                       value: protein.toInt(),
                       goal: 150,
-                      unit: 'جم',
+                      unit: l10n.gram,
                     ),
                   ],
                 ),
@@ -100,7 +98,7 @@ class DailyGoalsCard extends StatelessWidget {
                       painter: RingPainter(
                         progress: movePct,
                         color: AppColors.accent,
-                        trackColor: const Color(0xFFE8E8E8),
+                        trackColor: Color(0xFFE8E8E8),
                         strokeWidth: 8.w,
                       ),
                     ),
@@ -109,7 +107,7 @@ class DailyGoalsCard extends StatelessWidget {
                       painter: RingPainter(
                         progress: exPct,
                         color: AppColors.danger,
-                        trackColor: const Color(0xFFE8E8E8),
+                        trackColor: Color(0xFFE8E8E8),
                         strokeWidth: 7.w,
                       ),
                     ),
@@ -118,7 +116,7 @@ class DailyGoalsCard extends StatelessWidget {
                       painter: RingPainter(
                         progress: standPct,
                         color: AppColors.info,
-                        trackColor: const Color(0xFFE8E8E8),
+                        trackColor: Color(0xFFE8E8E8),
                         strokeWidth: 6.w,
                       ),
                     ),
@@ -129,7 +127,7 @@ class DailyGoalsCard extends StatelessWidget {
                         fontFamily: 'Cairo',
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                   ],
@@ -179,7 +177,7 @@ class _GoalRow extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
                 letterSpacing: 0.3,
               ),
             ),
@@ -192,21 +190,21 @@ class _GoalRow extends StatelessWidget {
         ),
         RichText(
           text: TextSpan(
-            style: const TextStyle(fontFamily: 'Cairo'),
+            style: TextStyle(fontFamily: 'Cairo'),
             children: [
               TextSpan(
-                text: '$goal',
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: const Color(0xFFCCCCCC),
-                ),
-              ),
-              TextSpan(
-                text: '/$value',
+                text: '$value',
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w800,
                   color: done ? AppColors.success : dot,
+                ),
+              ),
+              TextSpan(
+                text: '/$goal',
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  color: const Color(0xFFCCCCCC),
                 ),
               ),
             ],

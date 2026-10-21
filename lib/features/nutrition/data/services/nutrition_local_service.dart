@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../core/data/app_data_bus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -55,6 +56,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
         _mealsKey(entry.loggedAt),
         jsonEncode(updated.map(_entryToJson).toList()),
       );
+      AppDataBus.notify();
     } catch (e) {
       throw CacheException(message: 'خطأ في حفظ الوجبة: $e');
     }
@@ -69,6 +71,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
         _mealsKey(date),
         jsonEncode(updated.map(_entryToJson).toList()),
       );
+      AppDataBus.notify();
     } catch (e) {
       throw CacheException(message: 'خطأ في حذف الوجبة: $e');
     }
@@ -90,6 +93,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
   Future<void> saveCalorieGoal(double goal) async {
     try {
       await _prefs.setDouble(_calorieGoalKey, goal);
+      AppDataBus.notify();
     } catch (e) {
       throw CacheException(message: 'خطأ في حفظ هدف السعرات: $e');
     }
@@ -111,6 +115,7 @@ final class NutritionLocalServiceImpl implements NutritionLocalService {
   Future<void> saveWaterLiters(double liters, DateTime date) async {
     try {
       await _prefs.setDouble(_waterKey(date), liters.clamp(0.0, 10.0));
+      AppDataBus.notify();
     } catch (e) {
       throw CacheException(message: 'خطأ في حفظ كمية المياه: $e');
     }

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../data/models/food_entity.dart';
+import '../../logic/cubit/nutrition_cubit.dart';
 import 'calorie_summary_card.dart';
 import 'meal_card.dart';
 import 'meal_type_picker_sheet.dart';
@@ -15,13 +19,23 @@ class NutritionBody extends StatelessWidget {
   final DailyNutrition daily;
 
   void _goSearch(BuildContext context, MealType type) {
-    context.push('/nutrition/search', extra: type);
+    final selectedDate = context.read<NutritionCubit>().selectedDate;
+    context.push(
+      '/nutrition/search',
+      extra: <String, Object>{
+        'mealType': type,
+        'date': selectedDate,
+        // Search is pushed on the root navigator; pass the underlying Cubit
+        // explicitly so it can refresh immediately after saving a meal.
+        'nutritionCubit': context.read<NutritionCubit>(),
+      },
+    );
   }
 
   void _showPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.bgSurface,
+      backgroundColor: context.colors.bgSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -43,11 +57,11 @@ class NutritionBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'تتبع يومك',
+                  context.l10n.trackYourDay,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 11.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -55,12 +69,12 @@ class NutritionBody extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'التغذية',
+                      context.l10n.nutrition,
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 24.sp,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     SizedBox(width: 8.w),
@@ -83,7 +97,7 @@ class NutritionBody extends StatelessWidget {
                                 color: AppColors.accent, size: 16.r),
                             SizedBox(width: 4.w),
                             Text(
-                              'إضافة',
+                              context.l10n.add,
                               style: TextStyle(
                                 fontFamily: 'Cairo',
                                 fontSize: 13.sp,
@@ -122,18 +136,18 @@ class NutritionBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'الوجبات',
+                  context.l10n.mealsLabel,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
                 GestureDetector(
                   onTap: () => _showPicker(context),
                   child: Text(
-                    'إضافة +',
+                    context.l10n.addMore,
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 13.sp,
@@ -152,7 +166,7 @@ class NutritionBody extends StatelessWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               ...MealType.values.map(
-                    (type) => Padding(
+                (type) => Padding(
                   padding: EdgeInsets.only(bottom: 10.h),
                   child: MealCard(
                     mealType: type,

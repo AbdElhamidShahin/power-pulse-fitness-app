@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 
 class StatItem extends StatelessWidget {
   const StatItem({
@@ -31,7 +32,7 @@ class StatItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 10.sp,
-            color: const Color(0xFF888888),
+            color: context.colors.textMuted,
           ),
         ),
       ],

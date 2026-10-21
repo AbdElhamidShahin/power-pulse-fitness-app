@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
 
 class NutritionDateNavigator extends StatelessWidget {
   const NutritionDateNavigator({super.key});
 
-  String _formatLabel(DateTime d) {
+  String _formatLabel(BuildContext context, DateTime d) {
     final now = DateTime.now();
-    final diff = now.difference(d).inDays;
-    if (diff == 0) return 'اليوم';
-    if (diff == 1) return 'امبارح';
-    return '${d.day}/${d.month}/${d.year}';
+    final selectedDay = DateTime(d.year, d.month, d.day);
+    final today = DateTime(now.year, now.month, now.day);
+    final difference = today.difference(selectedDay).inDays;
+    final dateLabel =
+        '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+    if (difference == 0)
+      return '${context.l10n.translate('today')} • $dateLabel';
+    if (difference == 1)
+      return '${context.l10n.translate('yesterday')} • $dateLabel';
+    return dateLabel;
   }
 
   @override
@@ -30,24 +38,24 @@ class NutritionDateNavigator extends StatelessWidget {
             width: 32.r,
             height: 32.r,
             decoration: BoxDecoration(
-              color: AppColors.bgElevated,
+              color: context.colors.bgElevated,
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.chevron_right_rounded,
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
               size: 20,
             ),
           ),
         ),
         SizedBox(width: 12.w),
         Text(
-          _formatLabel(date),
+          _formatLabel(context, date),
           style: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
           ),
         ),
         SizedBox(width: 12.w),
@@ -57,12 +65,15 @@ class NutritionDateNavigator extends StatelessWidget {
             width: 32.r,
             height: 32.r,
             decoration: BoxDecoration(
-              color: isToday ? AppColors.bgDeep : AppColors.bgElevated,
+              color:
+                  isToday ? context.colors.bgDeep : context.colors.bgElevated,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
               Icons.chevron_left_rounded,
-              color: isToday ? AppColors.borderMedium : AppColors.textMuted,
+              color: isToday
+                  ? context.colors.borderMedium
+                  : context.colors.textMuted,
               size: 20,
             ),
           ),

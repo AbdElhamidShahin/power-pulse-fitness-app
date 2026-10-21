@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../logic/cubit/nutrition_cubit.dart';
 import '../../logic/cubit/nutrition_state.dart';
 
@@ -27,7 +29,7 @@ class WaterCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Row(
@@ -41,12 +43,12 @@ class WaterCard extends StatelessWidget {
                   Text('💧', style: TextStyle(fontSize: 13.sp)),
                   SizedBox(width: 4.w),
                   Text(
-                    'الماء',
+                    context.l10n.waterLabel,
                     style: TextStyle(
                       fontFamily: 'Cairo',
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textMuted,
+                      color: context.colors.textMuted,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -55,7 +57,7 @@ class WaterCard extends StatelessWidget {
               SizedBox(height: 2.h),
               RichText(
                 text: TextSpan(
-                  style: const TextStyle(fontFamily: 'Cairo'),
+                  style: TextStyle(fontFamily: 'Cairo'),
                   children: [
                     TextSpan(
                       text: '${_round(current)}L',
@@ -70,7 +72,7 @@ class WaterCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.textMuted,
+                        color: context.colors.textMuted,
                       ),
                     ),
                   ],
@@ -94,31 +96,55 @@ class WaterCard extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            children: List.generate(_totalBars, (i) {
-              final isFilled = i < _filledBars;
-              return GestureDetector(
-                onTap: () {
-                  final targetLiters =
-                      ((i + 1) / _totalBars * goal * 4).round() / 4.0;
-                  context
-                      .read<NutritionCubit>()
-                      .setWater(targetLiters.clamp(0.0, goal));
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: EdgeInsets.only(right: 6.w),
-                  width: 16.w,
-                  height: 38.h,
-                  decoration: BoxDecoration(
-                    color: isFilled
-                        ? AppColors.info
-                        : AppColors.info.withOpacity(0.18),
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$_filledBars / $_totalBars 🥤',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 10.sp,
+                  color: context.colors.textMuted,
                 ),
-              );
-            }),
+              ),
+              SizedBox(height: 4.h),
+              Row(
+                children: List.generate(_totalBars, (i) {
+                  final isFilled = i < _filledBars;
+                  return GestureDetector(
+                    onTap: () {
+                      final targetLiters =
+                          ((i + 1) / _totalBars * goal * 4).round() / 4.0;
+                      context
+                          .read<NutritionCubit>()
+                          .setWater(targetLiters.clamp(0.0, goal));
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: EdgeInsets.only(right: 6.w),
+                      width: 16.w,
+                      height: 38.h,
+                      decoration: BoxDecoration(
+                        color: isFilled
+                            ? AppColors.info
+                            : AppColors.info.withOpacity(0.18),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8.r),
+                          topRight: Radius.circular(8.r),
+                          bottomLeft: Radius.circular(4.r),
+                          bottomRight: Radius.circular(4.r),
+                        ),
+                        border: Border.all(
+                          color:
+                              AppColors.info.withOpacity(isFilled ? 0.0 : 0.35),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
           ),
         ],
       ),

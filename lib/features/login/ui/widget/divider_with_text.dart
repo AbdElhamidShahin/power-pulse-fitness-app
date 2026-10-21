@@ -13,10 +13,7 @@ class DividerWithText extends StatelessWidget {
         Expanded(child: Divider(color: cs.outline, thickness: 1)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Text(
-            'أو',
-            style: AppTextStyles.bodySmall
-          ),
+          child: Text('أو', style: Theme.of(context).textTheme.bodySmall!),
         ),
         Expanded(child: Divider(color: cs.outline, thickness: 1)),
       ],

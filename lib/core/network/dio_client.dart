@@ -10,7 +10,7 @@ class DioClient {
   static Dio get exerciseDb {
     final dio = Dio(
       BaseOptions(
-        baseUrl: ApiEndpoints.exerciseDbBaseUrl,
+        baseUrl: ApiEndpoints.exercise_db_base_url,
         connectTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
         receiveTimeout: const Duration(seconds: AppConstants.apiTimeoutSeconds),
         headers: {
@@ -55,14 +55,16 @@ class DioClient {
     }
 
     // Error handler
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onError: (DioException e, ErrorInterceptorHandler handler) {
-          debugPrint('[$name] Error: ${e.type} — ${e.message}');
-          handler.next(e);
-        },
-      ),
-    );
+    if (kDebugMode) {
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onError: (DioException e, ErrorInterceptorHandler handler) {
+            debugPrint('[$name] Error: ${e.type} — ${e.message}');
+            handler.next(e);
+          },
+        ),
+      );
+    }
   }
 }
 

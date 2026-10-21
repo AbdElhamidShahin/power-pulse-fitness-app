@@ -24,7 +24,7 @@ final class ProgressLoaded extends ProgressState {
   ProgressLoaded copyWith({ProgressSummary? summary, ProgressPeriod? period}) =>
       ProgressLoaded(
         summary: summary ?? this.summary,
-        period:  period  ?? this.period,
+        period: period ?? this.period,
       );
 }
 

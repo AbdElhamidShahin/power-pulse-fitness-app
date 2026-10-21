@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/auth/guest_migration_service.dart';
 import '../../../../core/auth/user_mode_service.dart';
-import '../../data/auth_profile_sync.dart';
+import '../../../../core/auth/auth_profile_sync.dart';
 import '../../data/repo/login_repostry.dart';
 import 'login_state.dart';
 
@@ -75,43 +75,43 @@ final class LoginCubit extends Cubit<LoginState> {
     }
   }
 
+  // ─── Password reset ─────────────────────────────────────────────────────
+
   void _listenToAuthChanges() {
     _authSubscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
-          if (!_googleSignInInitiated) return;
-          if (data.event != AuthChangeEvent.signedIn) return;
+      if (!_googleSignInInitiated) return;
+      if (data.event != AuthChangeEvent.signedIn) return;
 
-          final user = data.session?.user;
-          if (user == null || isClosed) return;
+      final user = data.session?.user;
+      if (user == null || isClosed) return;
 
-          final name = user.userMetadata?['full_name'] as String? ??
-              user.userMetadata?['name'] as String? ??
-              user.userMetadata?['display_name'] as String? ??
-              'مستخدم';
-          final avatarUrl = user.userMetadata?['avatar_url'] as String? ??
-              user.userMetadata?['picture'] as String?;
+      final name = user.userMetadata?['full_name'] as String? ??
+          user.userMetadata?['name'] as String? ??
+          user.userMetadata?['display_name'] as String? ??
+          'مستخدم';
+      final avatarUrl = user.userMetadata?['avatar_url'] as String? ??
+          user.userMetadata?['picture'] as String?;
 
-          _googleSignInInitiated = false;
+      _googleSignInInitiated = false;
 
-          await _postLoginSync(
-            uid: user.id,
-            name: name,
-            email: user.email ?? '',
-            avatarUrl: avatarUrl,
-          );
+      await _postLoginSync(
+        uid: user.id,
+        name: name,
+        email: user.email ?? '',
+        avatarUrl: avatarUrl,
+      );
 
-          if (!isClosed) {
-            emit(LoginSuccess(
-              userId: user.id,
-              name: name,
-              email: user.email ?? '',
-              avatarUrl: avatarUrl,
-            ));
-          }
-        });
+      if (!isClosed) {
+        emit(LoginSuccess(
+          userId: user.id,
+          name: name,
+          email: user.email ?? '',
+          avatarUrl: avatarUrl,
+        ));
+      }
+    });
   }
-
-  // ─── Post-login: migrate guest data OR restore cloud data ────────────────
 
   Future<void> _postLoginSync({
     required String uid,
@@ -121,27 +121,33 @@ final class LoginCubit extends Cubit<LoginState> {
   }) async {
     final supabase = Supabase.instance.client;
     final currentMode = await UserModeService.getMode(_prefs);
+    final previousUid = _prefs.getString('last_authenticated_uid');
 
-    if (currentMode == UserMode.guest) {
-      // Flow 3: Guest → Account migration
-      // Upload local guest data to Supabase, then switch to authenticated mode.
-      await GuestMigrationService.migrateGuestDataToCloud(
-        prefs: _prefs,
-        supabase: supabase,
-        uid: uid,
-      );
-    } else {
-      // Flow 4: Existing account sign-in
-      // Firestore/Supabase is the source of truth — restore cloud data.
-      await GuestMigrationService.restoreCloudDataToLocal(
-        prefs: _prefs,
-        supabase: supabase,
-        uid: uid,
-      );
+    if (currentMode != UserMode.guest &&
+        previousUid != null &&
+        previousUid != uid) {
+      await GuestMigrationService.clearLocalUserData(_prefs);
     }
 
-    // Save/update profile from auth data (preserves existing fields if present)
+    try {
+      await GuestMigrationService.restoreCloudDataToLocal(
+        //استرجاع البيانات من supabase
+        prefs: _prefs,
+        supabase: supabase,
+        uid: uid,
+        preferCloud: true,
+      );
+      if (currentMode == UserMode.guest) {
+        await GuestMigrationService.migrateGuestDataToCloud(
+          prefs: _prefs,
+          supabase: supabase,
+          uid: uid,
+        );
+      }
+    } catch (_) {}
+
     await AuthProfileSync.saveFromAuth(
+      // حفظ بيانات prfile
       prefs: _prefs,
       name: name,
       email: email,
@@ -150,6 +156,7 @@ final class LoginCubit extends Cubit<LoginState> {
 
     // Mark as authenticated
     await UserModeService.setAuthenticated(_prefs);
+    await _prefs.setString('last_authenticated_uid', uid);
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────
@@ -161,7 +168,16 @@ final class LoginCubit extends Cubit<LoginState> {
     if (message.contains('Email not confirmed')) {
       return 'يرجى تأكيد بريدك الإلكتروني أولاً 📧';
     }
-    return 'فشل تسجيل الدخول: $message';
+    final lower = message.toLowerCase();
+    if (lower.contains('rate limit') ||
+        lower.contains('too many requests') ||
+        lower.contains('over_email_send_rate_limit')) {
+      return 'تم تجاوز حد إرسال الرسائل مؤقتاً. حاول بعد قليل 📧';
+    }
+    if (lower.contains('invalid email')) {
+      return 'البريد الإلكتروني غير صحيح';
+    }
+    return 'فشل تسجيل الدخول: حاول مرة أخرى';
   }
 
   @override

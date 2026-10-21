@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_button.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import '../../../../core/startup.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_button.dart';
 import '../../../profile/data/models/user_profile_entity.dart';
 import '../../../profile/logic/cubit/profile_cubit.dart';
 import '../../../profile/logic/cubit/profile_state.dart';
@@ -23,29 +28,35 @@ class _PageData {
   final Color color;
 }
 
-const _pages = [
-  _PageData(
-    icon: Icons.fitness_center_rounded,
-    title: 'مرحباً بك في\nPower Pulse',
-    subtitle: 'تطبيقك المتكامل للياقة البدنية\nتمارين • تغذية • تتبع التقدم',
-    color: AppColors.accent,
-  ),
-  _PageData(
-    icon: Icons.restaurant_rounded,
-    title: 'تتبع تغذيتك\nبدقة',
-    subtitle: 'آلاف الأطعمة متاحة\nتتبع السعرات والماكروز يومياً',
-    color: AppColors.info,
-  ),
-  _PageData(
-    icon: Icons.bar_chart_rounded,
-    title: 'شاهد تقدمك\nيوماً بيوم',
-    subtitle: 'رسوم بيانية واضحة\nتوضح رحلتك نحو هدفك',
-    color: AppColors.warning,
-  ),
-];
+const _pageCount = 3;
+
+List<_PageData> _buildPages(BuildContext context) => [
+      _PageData(
+        icon: Icons.fitness_center_rounded,
+        title: context.l10n.onboardingTitle1,
+        subtitle: context.l10n.onboardingSubtitle1,
+        color: AppColors.accent,
+      ),
+      _PageData(
+        icon: Icons.restaurant_rounded,
+        title: context.l10n.onboardingTitle2,
+        subtitle: context.l10n.onboardingSubtitle2,
+        color: AppColors.info,
+      ),
+      _PageData(
+        icon: Icons.bar_chart_rounded,
+        title: context.l10n.onboardingTitle3,
+        subtitle: context.l10n.onboardingSubtitle3,
+        color: AppColors.warning,
+      ),
+    ];
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, this.introOnly = false});
+
+  /// When true, this route shows only the three first-run introduction pages.
+  /// Profile setup lives on the separate /onboarding route.
+  final bool introOnly;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -57,17 +68,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _showSetup = false;
 
   @override
+  void initState() {
+    super.initState();
+    _showSetup = !widget.introOnly;
+  }
+
+  Future<void> _completeIntro() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('intro_completed', true);
+    AppStartup.markIntroCompleted();
+    if (!mounted) return;
+    final nextRoute = AppStartup.needsEntry
+        ? '/entry'
+        : (AppStartup.needsProfileSetup ? '/onboarding' : '/home');
+    context.go(nextRoute);
+  }
+
+  @override
   void dispose() {
     _pageCtrl.dispose();
     super.dispose();
   }
 
   void _next() {
-    if (_current < _pages.length - 1) {
+    if (_current < _pageCount - 1) {
       _pageCtrl.nextPage(
         duration: AppConstants.durationPage,
         curve: Curves.easeInOut,
       );
+    } else if (widget.introOnly) {
+      _completeIntro();
     } else {
       setState(() => _showSetup = true);
     }
@@ -76,14 +106,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
-        child: _showSetup ? const _SetupForm() : _IntroPages(
-          pageCtrl: _pageCtrl,
-          current: _current,
-          onPageChanged: (i) => setState(() => _current = i),
-          onNext: _next,
-          onSkip: () => setState(() => _showSetup = true),
-        ),
+        child: _showSetup
+            ? const _SetupForm()
+            : _IntroPages(
+                pageCtrl: _pageCtrl,
+                current: _current,
+                onPageChanged: (i) => setState(() => _current = i),
+                onNext: _next,
+                onSkip: widget.introOnly
+                    ? _completeIntro
+                    : () => setState(() => _showSetup = true),
+              ),
       ),
     );
   }
@@ -114,9 +149,11 @@ class _IntroPages extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: TextButton(
             onPressed: onSkip,
-            child: Text('تخطي',
-                style: AppTextStyles.labelMedium
-                    .copyWith(color: AppColors.textMuted)),
+            child: Text(context.l10n.skip,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: context.colors.textMuted)),
           ),
         ),
 
@@ -125,8 +162,9 @@ class _IntroPages extends StatelessWidget {
           child: PageView.builder(
             controller: pageCtrl,
             onPageChanged: onPageChanged,
-            itemCount: _pages.length,
-            itemBuilder: (_, i) => _OnboardingPage(page: _pages[i]),
+            itemCount: _pageCount,
+            itemBuilder: (_, i) =>
+                _OnboardingPage(page: _buildPages(context)[i]),
           ),
         ),
 
@@ -139,7 +177,7 @@ class _IntroPages extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  _pages.length,
+                  _pageCount,
                   (i) => AnimatedContainer(
                     duration: AppConstants.durationFast,
                     margin: const EdgeInsets.symmetric(horizontal: 3),
@@ -148,7 +186,7 @@ class _IntroPages extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: current == i
                           ? AppColors.accent
-                          : AppColors.bgElevated,
+                          : context.colors.bgElevated,
                       borderRadius:
                           BorderRadius.circular(AppConstants.radiusPill),
                     ),
@@ -157,9 +195,9 @@ class _IntroPages extends StatelessWidget {
               ),
               const SizedBox(height: AppConstants.spaceXXL),
               PPButton(
-                label: current == _pages.length - 1
-                    ? 'ابدأ الإعداد'
-                    : 'التالي',
+                label: current == _pageCount - 1
+                    ? context.l10n.startSetup
+                    : context.l10n.next,
                 onPressed: onNext,
               ),
             ],
@@ -177,36 +215,45 @@ class _OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppConstants.spaceXXL),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spaceXXL,
+        vertical: AppConstants.spaceL,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icon circle
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: page.color.withValues(alpha: 0.12),
-              border: Border.all(
-                  color: page.color.withValues(alpha: 0.3), width: 2),
-            ),
-            child: Icon(page.icon, color: page.color, size: 64),
-          ),
-          const SizedBox(height: AppConstants.space3XL),
+          // Icon circle — sized relative to screen height for all devices
+          LayoutBuilder(builder: (context, constraints) {
+            final circleSize = MediaQuery.of(context).size.height * 0.22;
+            return Container(
+              width: circleSize,
+              height: circleSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: page.color.withValues(alpha: 0.12),
+                border: Border.all(
+                    color: page.color.withValues(alpha: 0.3), width: 2),
+              ),
+              child:
+                  Icon(page.icon, color: page.color, size: circleSize * 0.44),
+            );
+          }),
+          const SizedBox(height: AppConstants.spaceXXL),
           Text(
             page.title,
             style: Theme.of(context)
                 .textTheme
                 .displayMedium!
-                .copyWith(color: AppColors.textPrimary),
+                .copyWith(color: context.colors.textPrimary),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: AppConstants.spaceL),
+          const SizedBox(height: AppConstants.spaceM),
           Text(
             page.subtitle,
-            style: AppTextStyles.bodyLarge
-                .copyWith(color: AppColors.textSecondary),
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: context.colors.textSecondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -224,13 +271,13 @@ class _SetupForm extends StatefulWidget {
 }
 
 class _SetupFormState extends State<_SetupForm> {
-  final _nameCtrl   = TextEditingController();
-  final _ageCtrl    = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _ageCtrl = TextEditingController();
   final _heightCtrl = TextEditingController();
   final _weightCtrl = TextEditingController();
 
-  Gender        _gender   = Gender.male;
-  FitnessGoal   _goal     = FitnessGoal.maintain;
+  Gender _gender = Gender.male;
+  FitnessGoal _goal = FitnessGoal.maintain;
   ActivityLevel _activity = ActivityLevel.moderate;
 
   @override
@@ -244,30 +291,54 @@ class _SetupFormState extends State<_SetupForm> {
 
   bool get _isValid =>
       _nameCtrl.text.trim().isNotEmpty &&
-      int.tryParse(_ageCtrl.text) != null &&
-      double.tryParse(_heightCtrl.text) != null &&
-      double.tryParse(_weightCtrl.text) != null;
+      (int.tryParse(_ageCtrl.text) ?? 0) >= 13 &&
+      (int.tryParse(_ageCtrl.text) ?? 0) <= 110 &&
+      (double.tryParse(_heightCtrl.text) ?? 0) >= 80 &&
+      (double.tryParse(_heightCtrl.text) ?? 0) <= 250 &&
+      (double.tryParse(_weightCtrl.text) ?? 0) >= 20 &&
+      (double.tryParse(_weightCtrl.text) ?? 0) <= 400;
+
+  /// 0.0–1.0 progress based on how many of the 4 required fields are valid.
+  double get _setupProgress {
+    int filled = 0;
+    if (_nameCtrl.text.trim().isNotEmpty) filled++;
+    final age = int.tryParse(_ageCtrl.text) ?? 0;
+    if (age >= 13 && age <= 110) filled++;
+    final height = double.tryParse(_heightCtrl.text) ?? 0;
+    if (height >= 80 && height <= 250) filled++;
+    final weight = double.tryParse(_weightCtrl.text) ?? 0;
+    if (weight >= 20 && weight <= 400) filled++;
+    return filled / 4.0;
+  }
 
   UserProfile get _profile => UserProfile(
-        name:          _nameCtrl.text.trim(),
-        age:           int.tryParse(_ageCtrl.text) ?? 25,
-        heightCm:      double.tryParse(_heightCtrl.text) ?? 175,
-        weightKg:      double.tryParse(_weightCtrl.text) ?? 75,
-        gender:        _gender,
-        goal:          _goal,
-        activityLevel: _activity, email: '',
+        name: _nameCtrl.text.trim(),
+        age: int.tryParse(_ageCtrl.text) ?? 0,
+        heightCm: double.tryParse(_heightCtrl.text) ?? 0,
+        weightKg: double.tryParse(_weightCtrl.text) ?? 0,
+        gender: _gender,
+        goal: _goal,
+        activityLevel: _activity,
+        email: Supabase.instance.client.auth.currentUser?.email ?? '',
       );
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return BlocListener<ProfileSaveCubit, ProfileSaveState>(
       listener: (context, state) {
         if (state is ProfileSaveSuccess) {
           context.go('/home');
+        } else if (state is ProfileSaveError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
         }
       },
       child: CustomScrollView(
         slivers: [
+          // ─── Header ───────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
@@ -279,122 +350,195 @@ class _SetupFormState extends State<_SetupForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('أخبرنا عن نفسك',
-                      style: Theme.of(context).textTheme.displayMedium),
+                  // Setup progress indicator
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: _setupProgress,
+                            backgroundColor: context.colors.borderSubtle,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(AppColors.accent),
+                            minHeight: 4,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${(_setupProgress * 100).toInt()}%',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 11,
+                          color: context.colors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppConstants.spaceL),
+                  Text(
+                    context.l10n.tellUsAboutYourself,
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium!
+                        .copyWith(color: context.colors.textPrimary),
+                  ),
                   const SizedBox(height: AppConstants.spaceS),
-                  Text('لنحسب أهدافك اليومية بدقة',
-                      style: AppTextStyles.bodyMedium
-                          .copyWith(color: AppColors.textMuted)),
+                  Text(
+                    context.l10n.calculateGoalsAccurately,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: context.colors.textMuted),
+                  ),
                 ],
               ),
             ),
           ),
 
+          // ─── Fields ───────────────────────────────────────
           SliverPadding(
             padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.screenPaddingH),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Name
-                _Label('الاسم'),
+                _FieldLabel(context.l10n.nameLabel),
                 const SizedBox(height: AppConstants.spaceS),
                 TextField(
                   controller: _nameCtrl,
-                  textDirection: TextDirection.rtl,
+                  textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+                  textAlign: isAr ? TextAlign.right : TextAlign.left,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(hintText: 'اسمك'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: context.colors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: context.l10n.yourNameHint,
+                  ),
                 ),
                 const SizedBox(height: AppConstants.spaceL),
 
-                // Age + Height
+                // Age + Height — side by side
                 Row(children: [
-                  Expanded(child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Label('العمر'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      TextField(
-                        controller: _ageCtrl,
-                        keyboardType: TextInputType.number,
-                        textDirection: TextDirection.ltr,
-                        onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(
-                            hintText: '25', suffixText: 'سنة'),
-                      ),
-                    ],
-                  )),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _FieldLabel(context.l10n.ageLabel),
+                        const SizedBox(height: AppConstants.spaceS),
+                        TextField(
+                          controller: _ageCtrl,
+                          keyboardType: TextInputType.number,
+                          textDirection: TextDirection.ltr,
+                          textAlign: TextAlign.left,
+                          onChanged: (_) => setState(() {}),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: context.colors.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: '25',
+                            suffixText: context.l10n.years,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(width: AppConstants.spaceM),
-                  Expanded(child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Label('الطول'),
-                      const SizedBox(height: AppConstants.spaceS),
-                      TextField(
-                        controller: _heightCtrl,
-                        keyboardType: TextInputType.number,
-                        textDirection: TextDirection.ltr,
-                        onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(
-                            hintText: '175', suffixText: 'سم'),
-                      ),
-                    ],
-                  )),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _FieldLabel(context.l10n.height),
+                        const SizedBox(height: AppConstants.spaceS),
+                        TextField(
+                          controller: _heightCtrl,
+                          keyboardType: TextInputType.number,
+                          textDirection: TextDirection.ltr,
+                          textAlign: TextAlign.left,
+                          onChanged: (_) => setState(() {}),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: context.colors.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: '175',
+                            suffixText: context.l10n.translate('cmUnit'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ]),
                 const SizedBox(height: AppConstants.spaceL),
 
                 // Weight
-                _Label('الوزن'),
+                _FieldLabel(context.l10n.weight),
                 const SizedBox(height: AppConstants.spaceS),
                 TextField(
                   controller: _weightCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.left,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
-                      hintText: '75.0', suffixText: 'كج'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: context.colors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: '75.0',
+                    suffixText: context.l10n.translate('kgUnit'),
+                  ),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Gender
-                _Label('الجنس'),
+                _FieldLabel(context.l10n.gender),
                 const SizedBox(height: AppConstants.spaceM),
                 _SegmentRow<Gender>(
                   values: Gender.values,
                   selected: _gender,
-                  label: (g) => g.labelAr,
+                  label: (g) => context.l10n.translate(g.name),
                   onSelect: (g) => setState(() => _gender = g),
                 ),
                 const SizedBox(height: AppConstants.spaceXXL),
 
                 // Goal
-                _Label('هدفك'),
+                _FieldLabel(context.l10n.goal),
                 const SizedBox(height: AppConstants.spaceM),
                 ...FitnessGoal.values.map((g) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                  child: _OptionTile(
-                    label: g.labelAr,
-                    selected: _goal == g,
-                    onTap: () => setState(() => _goal = g),
-                  ),
-                )),
+                      padding:
+                          const EdgeInsets.only(bottom: AppConstants.spaceS),
+                      child: _OptionTile(
+                        label: context.l10n.translate(g.name),
+                        selected: _goal == g,
+                        onTap: () => setState(() => _goal = g),
+                      ),
+                    )),
                 const SizedBox(height: AppConstants.spaceL),
 
                 // Activity
-                _Label('مستوى النشاط'),
+                _FieldLabel(context.l10n.activityLevel),
                 const SizedBox(height: AppConstants.spaceM),
                 ...ActivityLevel.values.map((a) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppConstants.spaceS),
-                  child: _OptionTile(
-                    label: a.labelAr,
-                    selected: _activity == a,
-                    onTap: () => setState(() => _activity = a),
-                  ),
-                )),
+                      padding:
+                          const EdgeInsets.only(bottom: AppConstants.spaceS),
+                      child: _OptionTile(
+                        label: context.l10n.translate(a.name),
+                        selected: _activity == a,
+                        onTap: () => setState(() => _activity = a),
+                      ),
+                    )),
                 const SizedBox(height: AppConstants.spaceXXL),
 
+                // Submit button
                 BlocBuilder<ProfileSaveCubit, ProfileSaveState>(
                   builder: (context, state) => PPButton(
-                    label: 'ابدأ رحلتك 🚀',
+                    label: '${context.l10n.translate('startJourney')} 🚀',
                     isLoading: state is ProfileSaveLoading,
                     isDisabled: !_isValid,
                     onPressed: _isValid
@@ -412,15 +556,23 @@ class _SetupFormState extends State<_SetupForm> {
   }
 }
 
-// ─── Small helpers ────────────────────────────────────────────
-class _Label extends StatelessWidget {
-  const _Label(this.text);
+// ─── _FieldLabel ─────────────────────────────────────────────
+/// Label فوق كل حقل — يأخذ اللون من context.colors تلقائياً
+class _FieldLabel extends StatelessWidget {
+  const _FieldLabel(this.text);
   final String text;
+
   @override
-  Widget build(BuildContext context) =>
-      Text(text, style: AppTextStyles.labelMedium);
+  Widget build(BuildContext context) => Text(
+        text,
+        style: Theme.of(context)
+            .textTheme
+            .labelMedium!
+            .copyWith(color: context.colors.textSecondary),
+      );
 }
 
+// ─── _SegmentRow ─────────────────────────────────────────────
 class _SegmentRow<T> extends StatelessWidget {
   const _SegmentRow({
     required this.values,
@@ -438,8 +590,9 @@ class _SegmentRow<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: context.colors.bgElevated,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        border: Border.all(color: context.colors.borderSubtle),
       ),
       child: Row(
         children: values.map((v) {
@@ -449,8 +602,8 @@ class _SegmentRow<T> extends StatelessWidget {
               onTap: () => onSelect(v),
               child: AnimatedContainer(
                 duration: AppConstants.durationFast,
-                padding: const EdgeInsets.symmetric(
-                    vertical: AppConstants.spaceS),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
                   color: active ? AppColors.accent : Colors.transparent,
                   borderRadius: BorderRadius.circular(AppConstants.radiusS),
@@ -461,7 +614,7 @@ class _SegmentRow<T> extends StatelessWidget {
                   style: AppTextStyles.labelMedium.copyWith(
                     color: active
                         ? AppColors.textOnAccent
-                        : AppColors.textMuted,
+                        : context.colors.textMuted,
                   ),
                 ),
               ),
@@ -473,6 +626,7 @@ class _SegmentRow<T> extends StatelessWidget {
   }
 }
 
+// ─── _OptionTile ─────────────────────────────────────────────
 class _OptionTile extends StatelessWidget {
   const _OptionTile({
     required this.label,
@@ -494,26 +648,30 @@ class _OptionTile extends StatelessWidget {
           vertical: AppConstants.spaceM,
         ),
         decoration: BoxDecoration(
-          color: selected ? AppColors.accentDim : AppColors.bgSurface,
+          color: selected ? AppColors.accentDim : context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
           border: Border.all(
-            color: selected ? AppColors.accent : AppColors.borderSubtle,
+            color: selected ? AppColors.accent : context.colors.borderSubtle,
             width: selected ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
             Expanded(
-              child: Text(label,
-                  style: AppTextStyles.titleMedium.copyWith(
-                    color: selected
-                        ? AppColors.accent
-                        : AppColors.textPrimary,
-                  )),
+              child: Text(
+                label,
+                style: AppTextStyles.titleMedium.copyWith(
+                  color:
+                      selected ? AppColors.accent : context.colors.textPrimary,
+                ),
+              ),
             ),
             if (selected)
-              const Icon(Icons.check_circle_rounded,
-                  color: AppColors.accent, size: AppConstants.iconS),
+              Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.accent,
+                size: AppConstants.iconS,
+              ),
           ],
         ),
       ),

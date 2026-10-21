@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_input.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_input.dart';
 import '../../../home/logic/cubit/home_cubit.dart';
 import '../../../home/logic/cubit/home_state.dart';
 import '../../../workout_plan/logic/cubit/workout_plan_cubit.dart';
-import '../../../workout_plan/logic/cubit/workout_plan_state.dart' show WorkoutPlanState, WorkoutPlanLoaded, WorkoutPlanEditing;
+import '../../../workout_plan/logic/cubit/workout_plan_state.dart'
+    show WorkoutPlanState, WorkoutPlanLoaded, WorkoutPlanEditing;
 import '../../logic/cubit/exercises_cubit.dart';
 import '../../logic/cubit/exercises_state.dart';
 import '../widgets/body_part_filter_tabs.dart';
@@ -47,7 +51,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: Column(
           children: [
@@ -59,23 +63,22 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('مكتبة التمارين  ',
+                          Text(context.l10n.exerciseLibrary,
                               style: TextStyle(
                                   fontSize: 11,
-                                  color: Color(0xFF8A8A8A),
+                                  color: context.colors.textMuted,
                                   fontFamily: 'Cairo')),
-                          Text('التمارين 🏋️',
+                          Text(context.l10n.qaExercises,
                               style: TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary,
+                                  color: context.colors.textPrimary,
                                   fontFamily: 'Cairo')),
                         ],
                       ),
-
                       GestureDetector(
                         onTap: () {
                           setState(() => _isSearching = !_isSearching);
@@ -89,8 +92,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           height: 42,
                           decoration: BoxDecoration(
                             color: _isSearching
-                                ? AppColors.bgDark
-                                : AppColors.bgElevated,
+                                ? context.colors.bgDark
+                                : context.colors.bgElevated,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -99,7 +102,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                 : Icons.search_rounded,
                             color: _isSearching
                                 ? AppColors.textOnDark
-                                : AppColors.textMuted,
+                                : context.colors.textMuted,
                             size: 20,
                           ),
                         ),
@@ -109,7 +112,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   if (_isSearching) ...[
                     const SizedBox(height: 12),
                     PPSearchBar(
-                      hint: 'ابحث عن تمرين...',
+                      hint: context.l10n.searchExercise,
                       controller: _searchController,
                       onChanged: (q) =>
                           context.read<ExerciseSearchCubit>().search(q),
@@ -123,7 +126,30 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             if (!_isSearching) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  context.l10n.todayActivity,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.textMuted,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: BlocBuilder<HomeCubit, HomeState>(
+                  buildWhen: (prev, curr) {
+                    // Only rebuild when the loaded summary values actually change.
+                    if (curr is! HomeLoaded) return prev is! HomeLoaded;
+                    if (prev is! HomeLoaded) return true;
+                    return prev.summary.weeklyWorkouts !=
+                            curr.summary.weeklyWorkouts ||
+                        prev.summary.todayWorkoutMinutes !=
+                            curr.summary.todayWorkoutMinutes;
+                  },
                   builder: (context, homeState) {
                     final thisWeek = homeState is HomeLoaded
                         ? homeState.summary.weeklyWorkouts
@@ -132,28 +158,77 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         ? homeState.summary.todayWorkoutMinutes
                         : 0;
                     return BlocBuilder<WorkoutPlanCubit, WorkoutPlanState>(
+                      buildWhen: (prev, curr) {
+                        // Rebuild only when the loaded plan changes — not on
+                        // transient Loading/Error states or unrelated edits.
+                        final prevCount = () {
+                          if (prev is WorkoutPlanLoaded)
+                            return prev.plan
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
+                          if (prev is WorkoutPlanEditing)
+                            return prev.draft
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
+                          return -1;
+                        }();
+                        final currCount = () {
+                          if (curr is WorkoutPlanLoaded)
+                            return curr.plan
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
+                          if (curr is WorkoutPlanEditing)
+                            return curr.draft
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
+                          return -1;
+                        }();
+                        return prevCount != currCount;
+                      },
                       builder: (context, planState) {
                         final todayEx = () {
                           if (planState is WorkoutPlanLoaded) {
-                            return planState.plan.dayFor(DateTime.now())?.exercises.length ?? 0;
+                            return planState.plan
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
                           }
                           if (planState is WorkoutPlanEditing) {
-                            return planState.draft.dayFor(DateTime.now())?.exercises.length ?? 0;
+                            return planState.draft
+                                    .dayFor(DateTime.now())
+                                    ?.exercises
+                                    .length ??
+                                0;
                           }
                           return 0;
                         }();
                         return Container(
                           padding: const EdgeInsets.all(18),
                           decoration: BoxDecoration(
-                            color: AppColors.bgDark,
+                            color: context.colors.bgDark,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              _StatItem(value: '$thisWeek', label: 'هذا الأسبوع'),
-                              _StatItem(value: '$todayEx', label: 'تمارين اليوم'),
-                              _StatItem(value: '$totalMins', label: 'دقيقة اليوم'),
+                              _StatItem(
+                                  value: '$thisWeek',
+                                  label: context.l10n.thisWeekWorkouts),
+                              _StatItem(
+                                  value: '$todayEx',
+                                  label: context.l10n.todayExercises),
+                              _StatItem(
+                                  value: '$totalMins',
+                                  label: context.l10n.todayMinutes),
                             ],
                           ),
                         );
@@ -186,14 +261,16 @@ class _StatItem extends StatelessWidget {
     return Column(
       children: [
         Text(value,
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
-                color: AppColors.accent)),
+                color: AppColors.textOnDark)),
         Text(label,
-            style: const TextStyle(
-                fontFamily: 'Cairo', fontSize: 10, color: Color(0xFF888888))),
+            style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 10,
+                color: context.colors.textMuted)),
       ],
     );
   }
@@ -210,7 +287,7 @@ class _ExercisesList extends StatelessWidget {
         ExercisesInitial() || ExercisesLoading() => const _Shimmer(),
         ExercisesError(:final message) => _ErrorView(message: message),
         ExercisesLoaded() =>
-            _LoadedList(state: state, scrollController: scrollController),
+          _LoadedList(state: state, scrollController: scrollController),
       },
     );
   }
@@ -233,7 +310,6 @@ class _LoadedList extends StatelessWidget {
             onSelect: (p) => context.read<ExercisesCubit>().filterByBodyPart(p),
           ),
         const SizedBox(height: 16),
-
         Expanded(
           child: ListView.separated(
             controller: scrollController,
@@ -246,7 +322,7 @@ class _LoadedList extends StatelessWidget {
                   padding: EdgeInsets.all(20),
                   child: Center(
                       child:
-                      CircularProgressIndicator(color: AppColors.accent)),
+                          CircularProgressIndicator(color: AppColors.accent)),
                 );
               }
               final ex = state.exercises[i];
@@ -267,27 +343,25 @@ class _SearchResults extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ExerciseSearchCubit, ExerciseSearchState>(
       builder: (context, state) => switch (state) {
-        ExerciseSearchIdle() => const Center(
-            child: Text('ابحث عن تمرين...',
-                style:
-                TextStyle(color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+        ExerciseSearchIdle() => Center(
+            child: Text(context.l10n.searchExercise,
+                style: TextStyle(
+                    color: context.colors.textMuted, fontFamily: 'Cairo'))),
         ExerciseSearchLoading() => const _Shimmer(),
         ExerciseSearchError() => const SizedBox(),
-        ExerciseSearchLoaded(:final results) when results.isEmpty =>
-        const Center(
-            child: Text(
-                'لا توجد نتائج',
+        ExerciseSearchLoaded(:final results) when results.isEmpty => Center(
+            child: Text(context.l10n.noResults,
                 style: TextStyle(
-                    color: Color(0xFF8A8A8A), fontFamily: 'Cairo'))),
+                    color: context.colors.textMuted, fontFamily: 'Cairo'))),
         ExerciseSearchLoaded(:final results) => ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: results.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
-          itemBuilder: (context, i) => ExerciseCard(
-            exercise: results[i],
-            onTap: () => context.push('/exercises/${results[i].id}'),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: results.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, i) => ExerciseCard(
+              exercise: results[i],
+              onTap: () => context.push('/exercises/${results[i].id}'),
+            ),
           ),
-        ),
       },
     );
   }
@@ -304,7 +378,7 @@ class _Shimmer extends StatelessWidget {
       itemBuilder: (_, __) => Container(
         height: 80,
         decoration: BoxDecoration(
-          color: AppColors.bgSurface,
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(20),
         ),
       ),
@@ -317,16 +391,15 @@ class _ErrorView extends StatelessWidget {
   final String message;
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(Icons.error_outline_rounded,
-          color: AppColors.danger, size: 48),
-      const SizedBox(height: 16),
-      Text(message, style: AppTextStyles.bodyMedium),
-      const SizedBox(height: 16),
-      GestureDetector(
-        onTap: () => context.read<ExercisesCubit>().loadInitial(),
-        child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
-      ),
-    ]),
-  );
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.error_outline_rounded, color: AppColors.danger, size: 48),
+          const SizedBox(height: 16),
+          Text(message, style: Theme.of(context).textTheme.bodyMedium!),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => context.read<ExercisesCubit>().loadInitial(),
+            child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
+          ),
+        ]),
+      );
 }

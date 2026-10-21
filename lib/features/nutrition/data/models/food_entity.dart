@@ -1,4 +1,3 @@
-
 final class FoodItem {
   const FoodItem({
     required this.id,
@@ -33,36 +32,36 @@ final class FoodItem {
   String get displayName => nameAr.trim().isNotEmpty ? nameAr.trim() : name;
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'nameAr': nameAr,
-    'calories': calories,
-    'protein': protein,
-    'carbs': carbs,
-    'fat': fat,
-    'fiber': fiber,
-    'sugar': sugar,
-    'servingSize': servingSize,
-    'servingUnit': servingUnit,
-    'imageUrl': imageUrl,
-    'brand': brand,
-  };
+        'id': id,
+        'name': name,
+        'nameAr': nameAr,
+        'calories': calories,
+        'protein': protein,
+        'carbs': carbs,
+        'fat': fat,
+        'fiber': fiber,
+        'sugar': sugar,
+        'servingSize': servingSize,
+        'servingUnit': servingUnit,
+        'imageUrl': imageUrl,
+        'brand': brand,
+      };
 
   factory FoodItem.fromJson(Map<String, dynamic> json) => FoodItem(
-    id: json['id'] as String? ?? '',
-    name: json['name'] as String? ?? '',
-    nameAr: json['nameAr'] as String? ?? '',
-    calories: (json['calories'] as num? ?? 0).toDouble(),
-    protein: (json['protein'] as num? ?? 0).toDouble(),
-    carbs: (json['carbs'] as num? ?? 0).toDouble(),
-    fat: (json['fat'] as num? ?? 0).toDouble(),
-    fiber: (json['fiber'] as num? ?? 0).toDouble(),
-    sugar: (json['sugar'] as num? ?? 0).toDouble(),
-    servingSize: (json['servingSize'] as num? ?? 100).toDouble(),
-    servingUnit: json['servingUnit'] as String? ?? 'g',
-    imageUrl: json['imageUrl'] as String?,
-    brand: json['brand'] as String?,
-  );
+        id: json['id'] as String? ?? '',
+        name: json['name'] as String? ?? '',
+        nameAr: json['nameAr'] as String? ?? '',
+        calories: (json['calories'] as num? ?? 0).toDouble(),
+        protein: (json['protein'] as num? ?? 0).toDouble(),
+        carbs: (json['carbs'] as num? ?? 0).toDouble(),
+        fat: (json['fat'] as num? ?? 0).toDouble(),
+        fiber: (json['fiber'] as num? ?? 0).toDouble(),
+        sugar: (json['sugar'] as num? ?? 0).toDouble(),
+        servingSize: (json['servingSize'] as num? ?? 100).toDouble(),
+        servingUnit: json['servingUnit'] as String? ?? 'g',
+        imageUrl: json['imageUrl'] as String?,
+        brand: json['brand'] as String?,
+      );
 
   @override
   bool operator ==(Object other) => other is FoodItem && other.id == id;
@@ -96,24 +95,24 @@ final class MealEntry {
 
   // ─── Local JSON Serialization ──────────────────────────────
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'food': food.toJson(),
-    'mealType': mealType.name,
-    'quantity': quantity,
-    'loggedAt': loggedAt.toIso8601String(),
-  };
+        'id': id,
+        'food': food.toJson(),
+        'mealType': mealType.name,
+        'quantity': quantity,
+        'loggedAt': loggedAt.toIso8601String(),
+      };
 
   factory MealEntry.fromJson(Map<String, dynamic> json) => MealEntry(
-    id: json['id'] as String? ?? '',
-    food: FoodItem.fromJson(json['food'] as Map<String, dynamic>),
-    mealType: MealType.values.firstWhere(
+        id: json['id'] as String? ?? '',
+        food: FoodItem.fromJson(json['food'] as Map<String, dynamic>),
+        mealType: MealType.values.firstWhere(
           (e) => e.name == json['mealType'],
-      orElse: () => MealType.snack,
-    ),
-    quantity: (json['quantity'] as num? ?? 100).toDouble(),
-    loggedAt: DateTime.tryParse(json['loggedAt'] as String? ?? '') ??
-        DateTime.now(),
-  );
+          orElse: () => MealType.snack,
+        ),
+        quantity: (json['quantity'] as num? ?? 100).toDouble(),
+        loggedAt: DateTime.tryParse(json['loggedAt'] as String? ?? '') ??
+            DateTime.now(),
+      );
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -123,18 +122,28 @@ enum MealType { breakfast, lunch, dinner, snack }
 
 extension MealTypeX on MealType {
   String get labelAr => switch (this) {
-    MealType.breakfast => 'الإفطار',
-    MealType.lunch => 'الغداء',
-    MealType.dinner => 'العشاء',
-    MealType.snack => 'وجبة خفيفة',
-  };
+        MealType.breakfast => 'الإفطار',
+        MealType.lunch => 'الغداء',
+        MealType.dinner => 'العشاء',
+        MealType.snack => 'وجبة خفيفة',
+      };
+
+  String get labelEn => switch (this) {
+        MealType.breakfast => 'Breakfast',
+        MealType.lunch => 'Lunch',
+        MealType.dinner => 'Dinner',
+        MealType.snack => 'Snack',
+      };
+
+  /// Returns label based on current locale
+  String label({bool isArabic = true}) => isArabic ? labelAr : labelEn;
 
   String get icon => switch (this) {
-    MealType.breakfast => '🌅',
-    MealType.lunch => '☀️',
-    MealType.dinner => '🌙',
-    MealType.snack => '🍎',
-  };
+        MealType.breakfast => '🌅',
+        MealType.lunch => '☀️',
+        MealType.dinner => '🌙',
+        MealType.snack => '🍎',
+      };
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -192,26 +201,27 @@ final class DailyNutrition {
       );
 
   Map<String, dynamic> toJson() => {
-    'date': date.toIso8601String(),
-    'entries': entries.map((e) => e.toJson()).toList(),
-    'calorieGoal': calorieGoal,
-    'waterLiters': waterLiters,
-    'waterGoal': waterGoal,
-    'proteinGoal': proteinGoal,
-    'carbsGoal': carbsGoal,
-    'fatGoal': fatGoal,
-  };
+        'date': date.toIso8601String(),
+        'entries': entries.map((e) => e.toJson()).toList(),
+        'calorieGoal': calorieGoal,
+        'waterLiters': waterLiters,
+        'waterGoal': waterGoal,
+        'proteinGoal': proteinGoal,
+        'carbsGoal': carbsGoal,
+        'fatGoal': fatGoal,
+      };
 
   factory DailyNutrition.fromJson(Map<String, dynamic> json) => DailyNutrition(
-    date: DateTime.tryParse(json['date'] as String? ?? '') ?? DateTime.now(),
-    entries: (json['entries'] as List<dynamic>? ?? [])
-        .map((e) => MealEntry.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    calorieGoal: (json['calorieGoal'] as num? ?? 2000).toDouble(),
-    waterLiters: (json['waterLiters'] as num? ?? 0.0).toDouble(),
-    waterGoal: (json['waterGoal'] as num? ?? 2.5).toDouble(),
-    proteinGoal: (json['proteinGoal'] as num? ?? 180).toDouble(),
-    carbsGoal: (json['carbsGoal'] as num? ?? 250).toDouble(),
-    fatGoal: (json['fatGoal'] as num? ?? 65).toDouble(),
-  );
+        date:
+            DateTime.tryParse(json['date'] as String? ?? '') ?? DateTime.now(),
+        entries: (json['entries'] as List<dynamic>? ?? [])
+            .map((e) => MealEntry.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        calorieGoal: (json['calorieGoal'] as num? ?? 2000).toDouble(),
+        waterLiters: (json['waterLiters'] as num? ?? 0.0).toDouble(),
+        waterGoal: (json['waterGoal'] as num? ?? 2.5).toDouble(),
+        proteinGoal: (json['proteinGoal'] as num? ?? 180).toDouble(),
+        carbsGoal: (json['carbsGoal'] as num? ?? 250).toDouble(),
+        fatGoal: (json['fatGoal'] as num? ?? 65).toDouble(),
+      );
 }

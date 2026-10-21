@@ -14,19 +14,27 @@ final class NutritionCubit extends Cubit<NutritionState> {
   DateTime get selectedDate => _today;
 
   Future<void> loadToday() async {
-    _today = DateTime.now();
-    emit(const NutritionLoading());
+    await loadDate(DateTime.now());
+  }
+
+  Future<void> reloadSelectedDate() async {
     await _silentReload(showLoading: false);
   }
 
   Future<void> loadDate(DateTime date) async {
-    _today = date;
+    // Normalize to a calendar day; adding 24 hours can drift across DST.
+    _today = DateTime(date.year, date.month, date.day);
     emit(const NutritionLoading());
     await _silentReload(showLoading: false);
   }
 
-  void goToPreviousDay() => loadDate(_today.subtract(const Duration(days: 1)));
-  void goToNextDay()     => loadDate(_today.add(const Duration(days: 1)));
+  void goToPreviousDay() =>
+      loadDate(DateTime(_today.year, _today.month, _today.day - 1));
+  void goToNextDay() {
+    if (isToday) return;
+    loadDate(DateTime(_today.year, _today.month, _today.day + 1));
+  }
+
   bool get isToday {
     final now = DateTime.now();
     return _today.year == now.year &&
@@ -35,12 +43,15 @@ final class NutritionCubit extends Cubit<NutritionState> {
   }
 
   Future<void> _silentReload({bool showLoading = false}) async {
-    final result = await _repository.getDailyNutrition(_today);
+    final requestedDate = _today;
+    final result = await _repository.getDailyNutrition(requestedDate);
+    // Ignore stale responses if the user quickly navigated to another day.
+    if (isClosed || requestedDate != _today) return;
     switch (result) {
       case Success(:final data):
         emit(NutritionLoaded(daily: data));
       case Failure(:final failure):
-        emit(NutritionError(_msg(failure)));
+        emit(NutritionError(failure.userMessage));
     }
   }
 
@@ -61,7 +72,7 @@ final class NutritionCubit extends Cubit<NutritionState> {
         await _silentReload();
       case Failure(:final failure):
         if (prev is NutritionLoaded) emit(prev);
-        emit(NutritionError(_msg(failure)));
+        emit(NutritionError(failure.userMessage));
     }
   }
 
@@ -84,7 +95,7 @@ final class NutritionCubit extends Cubit<NutritionState> {
         await _silentReload();
       case Failure(:final failure):
         emit(prev);
-        emit(NutritionError(_msg(failure)));
+        emit(NutritionError(failure.userMessage));
     }
   }
 
@@ -117,14 +128,7 @@ final class NutritionCubit extends Cubit<NutritionState> {
     emit(NutritionLoaded(daily: prev.daily.copyWith(waterLiters: next)));
     await _repository.saveWaterLiters(next, _today);
   }
-
-  String _msg(AppFailure f) => switch (f) {
-    NetworkFailure() => 'تحقق من اتصال الإنترنت',
-    CacheFailure() => 'خطأ في حفظ البيانات',
-    ServerFailure() => 'خطأ في الخادم',
-    NotFoundFailure() => 'البيانات غير موجودة',
-    UnexpectedFailure() => 'حدث خطأ غير متوقع',
-  };
+  // _msg أُزيلت — استخدم AppFailureX.userMessage
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -152,7 +156,7 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
           page: 1,
         ));
       case Failure(:final failure):
-        emit(FoodSearchError(_msg(failure)));
+        emit(FoodSearchError(failure.userMessage));
     }
   }
 
@@ -163,7 +167,7 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
 
     _isLoadingMore = true;
     final result =
-    await _repository.searchFood(current.query, page: current.page + 1);
+        await _repository.searchFood(current.query, page: current.page + 1);
     switch (result) {
       case Success(:final data):
         emit(current.copyWith(
@@ -178,11 +182,7 @@ final class FoodSearchCubit extends Cubit<FoodSearchState> {
   }
 
   void clear() => emit(const FoodSearchIdle());
-
-  String _msg(AppFailure f) => switch (f) {
-    NetworkFailure() => 'تحقق من اتصال الإنترنت',
-    _ => 'حدث خطأ غير متوقع',
-  };
+  // _msg أُزيلت — استخدم AppFailureX.userMessage
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -193,10 +193,11 @@ final class AddMealCubit extends Cubit<AddMealState> {
 
   final NutritionRepository _repository;
 
-  Future<void> addMeal({
+  Future<bool> addMeal({
     required FoodItem food,
     required MealType mealType,
     required double quantity,
+    DateTime? loggedAt,
   }) async {
     emit(const AddMealLoading());
 
@@ -205,23 +206,20 @@ final class AddMealCubit extends Cubit<AddMealState> {
       food: food,
       mealType: mealType,
       quantity: quantity,
-      loggedAt: DateTime.now(),
+      loggedAt: loggedAt ?? DateTime.now(),
     );
 
     final result = await _repository.addMealEntry(entry);
     switch (result) {
       case Success():
         emit(const AddMealSuccess());
+        return true;
       case Failure(:final failure):
-        emit(AddMealError(_msg(failure)));
+        emit(AddMealError(failure.userMessage));
+        return false;
     }
   }
 
   void reset() => emit(const AddMealIdle());
-
-  String _msg(AppFailure f) => switch (f) {
-    CacheFailure() => 'خطأ في حفظ الوجبة',
-    UnexpectedFailure() => 'حدث خطأ غير متوقع',
-    _ => 'حدث خطأ',
-  };
+  // _msg أُزيلت — استخدم AppFailureX.userMessage
 }

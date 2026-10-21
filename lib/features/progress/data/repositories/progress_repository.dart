@@ -1,6 +1,10 @@
 import '../../../../core/domain/api_result.dart';
 import '../../../../core/domain/app_failure.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../nutrition/data/services/nutrition_local_service.dart';
+import '../../../pedometer/data/pedometer_service.dart';
+import '../../../profile/data/services/profile_local_service.dart';
+import '../../../workout_plan/data/services/workout_plan_service.dart';
 import '../models/progress_entity.dart';
 import '../services/progress_local_service.dart';
 
@@ -12,32 +16,123 @@ abstract interface class ProgressRepository {
 }
 
 final class ProgressRepositoryImpl implements ProgressRepository {
-  const ProgressRepositoryImpl({required this.localService});
+  const ProgressRepositoryImpl({
+    required this.localService,
+    this.nutritionService,
+    this.pedometerService,
+    this.profileService,
+    this.planService,
+  });
 
   final ProgressLocalService localService;
+
+  // ─── مصادر باقي التطبيق (اختيارية) ──────────────────────
+  final NutritionLocalService? nutritionService;
+  final PedometerService? pedometerService;
+  final ProfileLocalService? profileService;
+  final WorkoutPlanService? planService;
 
   @override
   Future<ApiResult<ProgressSummary>> getSummary(ProgressPeriod period) async {
     try {
       final days = period.days;
-      final weights  = await localService.getWeightEntries(limitDays: days);
-      final workouts = await localService.getWorkoutLogs(limitDays: days);
-
-      // نحسب الـ streak من كل السجلات (مش مقيدة بالفترة)
+      // نقرأ كل السجلات مرة واحدة لحساب الـ streak، ثم نصفّيها للفترة المطلوبة
+      // بدل قراءتين من SharedPreferences (تحسين P7: قراءة واحدة).
+      final weights = await localService.getWeightEntries(limitDays: days);
       final allWorkouts = await localService.getWorkoutLogs(limitDays: 3650);
       final streak = _calcStreak(allWorkouts);
+      final cutoff = DateTime.now().subtract(Duration(days: days));
+      final workouts =
+          allWorkouts.where((w) => w.date.isAfter(cutoff)).toList();
+
+      // ─── ربط بباقي التطبيق: ملف شخصي + خطوات + أكل + مياه + خطة ───
+      final profile = await _safe(() => profileService?.getProfile());
+      final plan = await _safe(() => planService?.getPlan());
+
+      final now = DateTime.now();
+      final todayDate = DateTime(now.year, now.month, now.day);
+      final activity = <DailyActivity>[];
+      var stepsSum = 0, stepsDays = 0;
+      var calSum = 0.0, calDays = 0;
+      var waterSum = 0.0, waterDays = 0;
+
+      for (int i = days - 1; i >= 0; i--) {
+        final d = todayDate.subtract(Duration(days: i));
+        final steps = pedometerService?.stepsForDay(d) ?? 0;
+        final meals = await _safe(() => nutritionService?.getMealEntries(d));
+        final cal = meals?.fold<double>(0, (s, e) => s + e.calories) ?? 0.0;
+        final water =
+            await _safe(() => nutritionService?.getWaterLiters(d)) ?? 0.0;
+        final mins = allWorkouts
+            .where((w) =>
+                w.date.year == d.year &&
+                w.date.month == d.month &&
+                w.date.day == d.day)
+            .fold<int>(0, (s, w) => s + w.durationMinutes);
+
+        if (steps > 0) {
+          stepsSum += steps;
+          stepsDays++;
+        }
+        if (cal > 0) {
+          calSum += cal;
+          calDays++;
+        }
+        if (water > 0) {
+          waterSum += water;
+          waterDays++;
+        }
+
+        if (i < 7) {
+          activity.add(DailyActivity(
+            date: d,
+            steps: steps,
+            caloriesIn: cal,
+            waterLiters: water,
+            workoutMinutes: mins,
+          ));
+        }
+      }
+
+      // التزام بالخطة: آخر 7 أيام
+      var planned = 0, done = 0;
+      if (plan != null) {
+        for (int i = 0; i < 7; i++) {
+          final d = todayDate.subtract(Duration(days: i));
+          if (plan.dayFor(d).hasExercises) {
+            planned++;
+            final did = allWorkouts.any((w) =>
+                w.date.year == d.year &&
+                w.date.month == d.month &&
+                w.date.day == d.day);
+            if (did) done++;
+          }
+        }
+      }
+
+      final profileWeight =
+          (profile != null && profile.weightKg > 0) ? profile.weightKg : null;
 
       final summary = ProgressSummary(
-        totalWorkouts:      workouts.length,
-        totalMinutes:       workouts.fold(0, (s, w) => s + w.durationMinutes),
-        totalCaloriesBurned:workouts.fold(0, (s, w) => s + w.caloriesBurned),
-        currentWeight:      weights.isNotEmpty ? weights.last.weight : null,
-        startWeight:        weights.isNotEmpty ? weights.first.weight : null,
-        weightEntries:      weights,
-        workoutLogs:        workouts,
-        weeklyWorkoutPoints:_buildWeeklyPoints(workouts, days),
-        weightChartPoints:  _buildWeightPoints(weights),
-        currentStreak:      streak,
+        totalWorkouts: workouts.length,
+        totalMinutes: workouts.fold(0, (s, w) => s + w.durationMinutes),
+        totalCaloriesBurned: workouts.fold(0, (s, w) => s + w.caloriesBurned),
+        currentWeight: weights.isNotEmpty ? weights.last.weight : profileWeight,
+        startWeight: weights.isNotEmpty ? weights.first.weight : null,
+        weightEntries: weights,
+        workoutLogs: workouts,
+        weeklyWorkoutPoints: _buildWeeklyPoints(workouts, days),
+        weightChartPoints: _buildWeightPoints(weights),
+        currentStreak: streak,
+        dailyActivity: activity,
+        avgSteps: stepsDays == 0 ? 0 : (stepsSum / stepsDays).round(),
+        avgCaloriesIn: calDays == 0 ? 0 : calSum / calDays,
+        avgWaterLiters: waterDays == 0 ? 0 : waterSum / waterDays,
+        plannedDays: planned,
+        plannedDaysDone: done,
+        heightCm:
+            (profile != null && profile.heightCm > 0) ? profile.heightCm : null,
+        calorieGoal: profile?.dailyCalorieGoal,
       );
 
       return Success(summary);
@@ -52,6 +147,13 @@ final class ProgressRepositoryImpl implements ProgressRepository {
   Future<ApiResult<void>> addWeightEntry(WeightEntry entry) async {
     try {
       await localService.addWeightEntry(entry);
+      // الوزن الجديد يتحدّث في الملف الشخصي كمان (عشان الرئيسية وحساب السعرات)
+      try {
+        final p = await profileService?.getProfile();
+        if (p != null) {
+          await profileService!.saveProfile(p.copyWith(weightKg: entry.weight));
+        }
+      } catch (_) {}
       return const Success(null);
     } on CacheException catch (e) {
       return Failure(CacheFailure(message: e.message));
@@ -78,15 +180,28 @@ final class ProgressRepositoryImpl implements ProgressRepository {
     }
   }
 
+  Future<T?> _safe<T>(Future<T?>? Function() read) async {
+    try {
+      return await read();
+    } catch (_) {
+      return null;
+    }
+  }
+
   // ─── Streak Calculator ─────────────────────────────────────
   int _calcStreak(List<WorkoutLog> logs) {
     if (logs.isEmpty) return 0;
-    final days = logs.map((l) {
-      final d = l.date;
-      return DateTime(d.year, d.month, d.day);
-    }).toSet().toList()..sort((a, b) => b.compareTo(a)); // أحدث أول
+    final days = logs
+        .map((l) {
+          final d = l.date;
+          return DateTime(d.year, d.month, d.day);
+        })
+        .toSet()
+        .toList()
+      ..sort((a, b) => b.compareTo(a)); // أحدث أول
 
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    final today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     int streak = 0;
     DateTime expected = today;
 
@@ -113,7 +228,7 @@ final class ProgressRepositoryImpl implements ProgressRepository {
 
     for (int i = 0; i < buckets; i++) {
       final start = now.subtract(Duration(days: days - (i * bucketDays)));
-      final end   = start.add(Duration(days: bucketDays));
+      final end = start.add(Duration(days: bucketDays));
       final count = logs
           .where((l) => l.date.isAfter(start) && l.date.isBefore(end))
           .length;
@@ -128,10 +243,10 @@ final class ProgressRepositoryImpl implements ProgressRepository {
         .asMap()
         .entries
         .map((e) => ChartPoint(
-      x:     e.key.toDouble(),
-      y:     e.value.weight,
-      label: '${e.value.date.day}/${e.value.date.month}',
-    ))
+              x: e.key.toDouble(),
+              y: e.value.weight,
+              label: '${e.value.date.day}/${e.value.date.month}',
+            ))
         .toList();
   }
 }

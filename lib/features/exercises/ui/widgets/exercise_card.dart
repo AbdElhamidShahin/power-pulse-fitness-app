@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
-import '../../../../../shared/widgets/pp_badge.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_badge.dart';
 import '../../data/models/exercise_entity.dart';
 
 class ExerciseCard extends StatelessWidget {
@@ -34,7 +35,7 @@ class ExerciseCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppConstants.spaceM),
         decoration: BoxDecoration(
-          color: AppColors.bgSurface,
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusL),
         ),
         child: Row(
@@ -46,14 +47,14 @@ class ExerciseCard extends StatelessWidget {
                 children: [
                   Text(
                     displayName,
-                    style: AppTextStyles.titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: AppConstants.spaceXS),
                   Text(
                     displayEquipment,
-                    style: AppTextStyles.bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -68,7 +69,7 @@ class ExerciseCard extends StatelessWidget {
                       ),
                       PPBadge(
                         label: displayTarget,
-                        color: AppColors.textMuted,
+                        color: context.colors.textMuted,
                         size: PPBadgeSize.small,
                       ),
                     ],
@@ -86,14 +87,14 @@ class ExerciseCard extends StatelessWidget {
                   imageUrl: exercise.gifUrl,
                   fit: BoxFit.cover,
                   placeholder: (_, __) => Container(
-                    color: AppColors.bgElevated,
-                    child: const Icon(Icons.fitness_center,
-                        color: AppColors.textMuted, size: 24),
+                    color: context.colors.bgElevated,
+                    child: Icon(Icons.fitness_center,
+                        color: context.colors.textMuted, size: 24),
                   ),
                   errorWidget: (_, __, ___) => Container(
-                    color: AppColors.bgElevated,
-                    child: const Icon(Icons.fitness_center,
-                        color: AppColors.textMuted, size: 24),
+                    color: context.colors.bgElevated,
+                    child: Icon(Icons.fitness_center,
+                        color: context.colors.textMuted, size: 24),
                   ),
                 ),
               ),

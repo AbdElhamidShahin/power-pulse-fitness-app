@@ -12,9 +12,9 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     required GetExercisesByBodyPartUseCase getByBodyPart,
     required GetBodyPartListUseCase getBodyParts,
     required SearchExercisesUseCase searchExercises,
-  })  : _getExercises    = getExercises,
-        _getByBodyPart   = getByBodyPart,
-        _getBodyParts    = getBodyParts,
+  })  : _getExercises = getExercises,
+        _getByBodyPart = getByBodyPart,
+        _getBodyParts = getBodyParts,
         _searchExercises = searchExercises,
         super(const ExercisesInitial());
 
@@ -34,10 +34,10 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
 
     // Both must succeed
     bodyPartsResult.fold(
-      onFailure: (f) => emit(ExercisesError(_mapFailure(f))),
+      onFailure: (f) => emit(ExercisesError(f.userMessage)),
       onSuccess: (bodyParts) {
         exercisesResult.fold(
-          onFailure: (f) => emit(ExercisesError(_mapFailure(f))),
+          onFailure: (f) => emit(ExercisesError(f.userMessage)),
           onSuccess: (exercises) {
             _offset = exercises.length;
             emit(ExercisesLoaded(
@@ -63,7 +63,7 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     if (bodyPart == _allFilter) {
       final result = await _getExercises(limit: 20, offset: 0);
       result.fold(
-        onFailure: (f) => emit(ExercisesError(_mapFailure(f))),
+        onFailure: (f) => emit(ExercisesError(f.userMessage)),
         onSuccess: (exercises) {
           _offset = exercises.length;
           emit(current.copyWith(
@@ -78,7 +78,7 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
 
     final result = await _getByBodyPart(bodyPart);
     result.fold(
-      onFailure: (f) => emit(ExercisesError(_mapFailure(f))),
+      onFailure: (f) => emit(ExercisesError(f.userMessage)),
       onSuccess: (exercises) {
         emit(current.copyWith(
           exercises: exercises,
@@ -88,7 +88,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
       },
     );
   }
-
 
   Future<void> loadMore() async {
     final current = state;
@@ -119,13 +118,6 @@ final class ExercisesCubit extends Cubit<ExercisesState> {
     final result = await _searchExercises(query.trim());
     return result.fold(onFailure: (_) => [], onSuccess: (list) => list);
   }
-  String _mapFailure(AppFailure f) => switch (f) {
-    NetworkFailure() => 'تحقق من اتصال الإنترنت',
-    ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
-    NotFoundFailure() => 'لم يتم العثور على التمارين',
-    CacheFailure() => 'خطأ في التخزين المحلي',
-    UnexpectedFailure() => 'حدث خطأ غير متوقع',
-  };
 }
 
 final class ExerciseSearchCubit extends Cubit<ExerciseSearchState> {
@@ -143,18 +135,14 @@ final class ExerciseSearchCubit extends Cubit<ExerciseSearchState> {
     emit(const ExerciseSearchLoading());
     final result = await _searchExercises(query.trim());
     result.fold(
-      onFailure: (f) => emit(ExerciseSearchError(_mapFailure(f))),
+      onFailure: (f) => emit(ExerciseSearchError(f.userMessage)),
       onSuccess: (exercises) => emit(ExerciseSearchLoaded(exercises)),
     );
   }
 
   void clear() => emit(const ExerciseSearchIdle());
 
-  String _mapFailure(AppFailure f) => switch (f) {
-    NetworkFailure() => 'تحقق من اتصال الإنترنت',
-    ServerFailure() => 'خطأ في الخادم، حاول لاحقاً',
-    _ => 'حدث خطأ غير متوقع',
-  };
+  // _mapFailure أُزيلت — استخدم AppFailureX.userMessage
 }
 
 final class ExerciseDetailCubit extends Cubit<ExerciseDetailState> {
@@ -166,14 +154,11 @@ final class ExerciseDetailCubit extends Cubit<ExerciseDetailState> {
     emit(const ExerciseDetailLoading());
     final result = await _getById(id);
     result.fold(
-      onFailure: (f) => emit(ExerciseDetailError(_mapFailure(f))),
+      onFailure: (f) => emit(ExerciseDetailError(
+          f.withOverrides({NotFoundFailure: 'التمرين غير موجود'}))),
       onSuccess: (exercise) => emit(ExerciseDetailLoaded(exercise)),
     );
   }
 
-  String _mapFailure(AppFailure f) => switch (f) {
-    NetworkFailure() => 'تحقق من اتصال الإنترنت',
-    NotFoundFailure() => 'التمرين غير موجود',
-    _ => 'حدث خطأ غير متوقع',
-  };
+  // _mapFailure أُزيلت — استخدم .withOverrides()
 }

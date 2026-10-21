@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 
 class MacroBarRow extends StatelessWidget {
   const MacroBarRow({
@@ -34,7 +35,7 @@ class MacroBarRow extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
               ),
             ),
             Text(
@@ -43,7 +44,7 @@ class MacroBarRow extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
+                color: context.colors.textMuted,
               ),
             ),
           ],
@@ -55,7 +56,7 @@ class MacroBarRow extends StatelessWidget {
             value: _pct,
             minHeight: 5.h,
             color: color,
-            backgroundColor: AppColors.bgElevated,
+            backgroundColor: context.colors.bgElevated,
           ),
         ),
       ],

@@ -1,9 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.powerteam.powerpulse">
 
+<<<<<<< HEAD
+    <!-- Network -->
+=======
     <!-- ─── Existing permissions ──────────────────────────── -->
+>>>>>>> main
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <!-- Pedometer / Step Counter -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
+
+    <!-- Notifications (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- Vibration for notifications -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <!-- ─── FIX: Required by flutter_local_notifications v20+ ─
          POST_NOTIFICATIONS  : Android 13+ (API 33+) runtime notification permission.
@@ -20,7 +34,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <application
-        android:label="Power Pulse "
+        android:label="Power Pulse"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
 
@@ -32,16 +46,43 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme"
-                />
+                android:resource="@style/NormalTheme" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <!-- Supabase OAuth / Google Sign-In deep link -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.yourcompanyname.yourappname"
+                      android:host="login-callback"/>
+                <data android:scheme="com.yourcompanyname.yourappname"
+                      android:host="reset-password"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false" />
         </activity>
 
+<<<<<<< HEAD
+        <!-- مطلوب لتشغيل الإشعارات المجدولة (كان ناقص — ده سبب إن التذكيرات مكانتش بتظهر) -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+
+        <!-- Boot receiver for re-scheduling notifications after restart -->
+=======
         <!-- FIX: ScheduledNotificationReceiver
              Fires the scheduled notification at the exact time specified by
              zonedSchedule(). Without this receiver, no scheduled notification
@@ -57,11 +98,18 @@
              device reboots or the app is updated (pending alarms are cleared on
              reboot by Android). Requires RECEIVE_BOOT_COMPLETED permission above.
         -->
+>>>>>>> main
         <receiver
             android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+<<<<<<< HEAD
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+
+=======
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
@@ -70,16 +118,19 @@
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+>>>>>>> main
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+<<<<<<< HEAD
+=======
 
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility?hl=en and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+>>>>>>> main
 
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>

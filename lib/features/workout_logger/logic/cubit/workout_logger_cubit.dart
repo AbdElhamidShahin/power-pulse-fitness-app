@@ -1,61 +1,103 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
 import '../../../exercises/data/models/exercise_entity.dart';
-import '../../../exercises/logic/usecases/exercise_usecases.dart';
-import '../../../progress/data/models/progress_entity.dart';
-import '../../../progress/logic/usecases/progress_usecases.dart';
 import '../../../workout_plan/data/models/workout_plan_entity.dart';
 import '../../data/models/workout_session_entity.dart';
 import '../usecases/workout_logger_usecases.dart';
 import 'workout_logger_state.dart';
 
+/// WorkoutLoggerCubit — مسؤول عن إدارة الجلسة النشطة فقط.
+///
+/// Step 5 (P1 fix): أُزيلت الـ cross-feature dependencies:
+///   - SearchExercisesUseCase  → انتقلت لـ AddExerciseSheet
+///   - GetExercisesUseCase     → انتقلت لـ AddExerciseSheet
+///   - LogWorkoutUseCase       → انتقل لـ workout_logger_screen (UI listener)
+///
+/// الـ Cubit دلوقتي بيعرف بس عن workout_logger feature.
 final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   WorkoutLoggerCubit({
     required GetActiveSessionUseCase getActiveSession,
     required SaveSessionUseCase saveSession,
     required DeleteSessionUseCase deleteSession,
-    required LogWorkoutUseCase logWorkout,
-    required SearchExercisesUseCase searchExercises,
-    required GetExercisesUseCase getExercises,
   })  : _getActive = getActiveSession,
         _save = saveSession,
         _delete = deleteSession,
-        _logWorkout = logWorkout,
-        _searchExercises = searchExercises,
-        _getExercises = getExercises,
         super(const WorkoutLoggerInitial());
 
   final GetActiveSessionUseCase _getActive;
   final SaveSessionUseCase _save;
   final DeleteSessionUseCase _delete;
-  final LogWorkoutUseCase _logWorkout;
-  final SearchExercisesUseCase _searchExercises;
-  final GetExercisesUseCase _getExercises;
+
+  // Debounce timer for active-session saves triggered by set edits.
+  // finishSession / cancelSession / close always flush immediately (P7 fix).
+  Timer? _saveDebounce;
+  WorkoutSession? _pendingSave;
 
   // ─── Load ──────────────────────────────────────────────────
+  /// يحمّل الجلسة النشطة المحفوظة (لو التطبيق أُغلق وسط التمرين).
+  /// لو مافيش جلسة محفوظة → WorkoutLoggerIdle.
   Future<void> load() async {
     emit(const WorkoutLoggerLoading());
-    // دايماً جلسة نظيفة — مش بنرجع جلسة قديمة محفوظة
-    emit(const WorkoutLoggerIdle());
+    final result = await _getActive();
+    if (isClosed) return;
+    switch (result) {
+      case Success(:final data) when data != null:
+        // Migrate sessions persisted by versions that accidentally generated
+        // the same literal exercise ID for every planned exercise.
+        final seenIds = <String>{};
+        var changedIds = false;
+        final normalizedExercises = data.exercises.asMap().entries.map((entry) {
+          final ex = entry.value;
+          var id = ex.exerciseId;
+          if (!seenIds.add(id)) {
+            changedIds = true;
+            id = '${ex.exerciseId}_migrated_${entry.key}';
+            while (!seenIds.add(id)) {
+              id = '${id}_x';
+            }
+          }
+          if (id == ex.exerciseId) return ex;
+          return SessionExercise(
+            exerciseId: id,
+            exerciseName: ex.exerciseName,
+            bodyPart: ex.bodyPart,
+            gifPath: ex.gifPath,
+            notes: ex.notes,
+            sets: ex.sets,
+            isDone: ex.isDone,
+          );
+        }).toList();
+        final session =
+            changedIds ? data.copyWith(exercises: normalizedExercises) : data;
+        if (changedIds) await _save(session);
+        if (isClosed) return;
+        emit(WorkoutLoggerActive(session));
+      default:
+        emit(const WorkoutLoggerIdle());
+    }
   }
 
   // ─── Start ─────────────────────────────────────────────────
   Future<void> startSession(String name, {PlanDay? planDay}) async {
-    // لو عندنا خطة — نحوّل تمارين اليوم لـ SessionExercise تلقائياً
+    // Each planned occurrence needs its own stable identity, even when the
+    // same exercise appears more than once in a plan.
+    final sessionSeed = DateTime.now().microsecondsSinceEpoch;
     final exercises = planDay != null
-        ? planDay.exercises
-            .map((pe) => SessionExercise(
-                  exerciseId:
-                      '${pe.exerciseId}_${DateTime.now().millisecondsSinceEpoch}',
-                  exerciseName: pe.exerciseName,
-                  bodyPart: pe.bodyPart,
-                  gifPath: pe.gifUrl,
-                  sets: List.generate(
-                    pe.defaultSets,
-                    (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
-                  ),
-                ))
-            .toList()
+        ? planDay.exercises.asMap().entries.map((entry) {
+            final index = entry.key;
+            final pe = entry.value;
+            return SessionExercise(
+              exerciseId: '${pe.exerciseId}_${sessionSeed}_$index',
+              exerciseName: pe.exerciseName,
+              bodyPart: pe.bodyPart,
+              gifPath: pe.gifUrl,
+              sets: List.generate(
+                pe.defaultSets,
+                (i) => ExerciseSet(setNumber: i + 1, reps: pe.defaultReps),
+              ),
+            );
+          }).toList()
         : <SessionExercise>[];
 
     final session = WorkoutSession(
@@ -65,6 +107,7 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
       exercises: exercises,
     );
     await _save(session);
+    if (isClosed) return;
     emit(WorkoutLoggerActive(session));
   }
 
@@ -149,23 +192,27 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
   Future<void> markExerciseDone(String exerciseId) async {
     final current = _active;
     if (current == null) return;
+    var marked = false;
     final exercises = current.exercises.map((ex) {
-      if (ex.exerciseId != exerciseId) return ex;
-      final doneSets = ex.sets
-          .map((s) => ExerciseSet(
-                setNumber: s.setNumber,
-                reps: s.reps,
-                weight: s.weight,
-                isCompleted: true,
-              ))
-          .toList();
+      // Be defensive with sessions saved by older versions that may contain
+      // duplicate IDs: only the first matching exercise is marked complete.
+      if (ex.exerciseId != exerciseId || marked) return ex;
+      marked = true;
+      final doneSets =
+          ex.sets.map((s) => s.copyWith(isCompleted: true)).toList();
       return ex.copyWith(sets: doneSets, isDone: true);
     }).toList();
-    await _updateActive(current.copyWith(exercises: exercises));
+    if (marked) await _updateActive(current.copyWith(exercises: exercises));
   }
 
   // ─── Finish ────────────────────────────────────────────────
+  /// ينهي الجلسة ويُصدر [WorkoutLoggerFinished].
+  /// الـ UI (workout_logger_screen) مسؤول عن استدعاء LogWorkoutUseCase
+  /// بعد ما يستقبل هذه الحالة — عشان نتجنب الـ cross-feature coupling.
   Future<void> finishSession() async {
+    // Flush any debounced save before reading _active so we always work with
+    // the latest session data (P7 fix).
+    await _flushPendingSave();
     final current = _active;
     if (current == null) return;
 
@@ -175,57 +222,70 @@ final class WorkoutLoggerCubit extends Cubit<WorkoutLoggerState> {
     );
 
     await _save(finished);
-
-    // سجّل في Progress feature
-    await _logWorkout(WorkoutLog(
-      id: finished.id,
-      name: finished.name,
-      date: finished.startTime,
-      durationMinutes: finished.durationMinutes,
-      caloriesBurned: finished.caloriesBurned,
-      exerciseCount: finished.exercises.length,
-    ));
-
+    if (isClosed) return;
     emit(WorkoutLoggerFinished(finished));
   }
 
   // ─── Cancel / Reset ────────────────────────────────────────
   Future<void> cancelSession() async {
+    // Discard any pending debounced save — we're deleting the session anyway.
+    _saveDebounce?.cancel();
+    _saveDebounce = null;
+    _pendingSave = null;
     final current = _active;
     if (current != null) await _delete(current.id);
+    if (isClosed) return;
     emit(const WorkoutLoggerIdle());
   }
 
   void reset() => emit(const WorkoutLoggerIdle());
-
-  // ─── Exercise Library ──────────────────────────────────────
-
-  /// جلب كل التمارين للعرض في الـ sheet
-  Future<List<Exercise>> browseExercises() async {
-    final result = await _getExercises(limit: 300, offset: 0);
-    return result.fold(
-      onFailure: (_) => [],
-      onSuccess: (list) => list,
-    );
-  }
-
-  /// بحث في مكتبة التمارين
-  Future<List<Exercise>> searchLibrary(String query) async {
-    if (query.trim().isEmpty) return browseExercises();
-    final result = await _searchExercises(query.trim());
-    return result.fold(
-      onFailure: (_) => [],
-      onSuccess: (list) => list,
-    );
-  }
 
   // ─── Helpers ───────────────────────────────────────────────
   WorkoutSession? get _active => state is WorkoutLoggerActive
       ? (state as WorkoutLoggerActive).session
       : null;
 
+  /// Emits the new active state immediately (so the UI stays responsive) but
+  /// debounces the disk write by 250 ms.  This prevents a SharedPreferences
+  /// write on every keystroke when the user edits reps/weight in SetRowWidget.
+  ///
+  /// Safety guarantees (P7 fix):
+  ///   • finishSession / cancelSession call _flushPendingSave() before their
+  ///     own save, so no pending write is lost.
+  ///   • close() cancels the timer and flushes synchronously.
   Future<void> _updateActive(WorkoutSession session) async {
-    await _save(session);
+    if (isClosed) return;
     emit(WorkoutLoggerActive(session));
+
+    _saveDebounce?.cancel();
+    _pendingSave = session;
+    _saveDebounce = Timer(const Duration(milliseconds: 250), () async {
+      final s = _pendingSave;
+      _pendingSave = null;
+      if (s != null && !isClosed) await _save(s);
+    });
+  }
+
+  /// Cancels any pending debounced save and immediately writes to disk.
+  /// Must be called before any operation that reads or overwrites the active
+  /// session key (finish, cancel) to avoid data loss.
+  Future<void> _flushPendingSave() async {
+    _saveDebounce?.cancel();
+    _saveDebounce = null;
+    final s = _pendingSave;
+    _pendingSave = null;
+    if (s != null) await _save(s);
+  }
+
+  @override
+  Future<void> close() {
+    _saveDebounce?.cancel();
+    _saveDebounce = null;
+    // Synchronous flush: fire-and-forget is acceptable here because the
+    // platform will keep the process alive briefly after close().
+    final s = _pendingSave;
+    _pendingSave = null;
+    if (s != null) unawaited(_save(s));
+    return super.close();
   }
 }

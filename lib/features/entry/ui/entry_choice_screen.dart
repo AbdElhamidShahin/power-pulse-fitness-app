@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import '../../../core/theme/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/auth/user_mode_service.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/router/app_router.dart';
 import '../../../shared/widgets/pp_button.dart';
@@ -21,7 +24,7 @@ class EntryChoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
+      backgroundColor: context.colors.bgDeep,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -41,8 +44,7 @@ class EntryChoiceScreen extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.accentDim,
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.radiusPill),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                 ),
                 child: Text(
                   'Power Pulse',
@@ -56,9 +58,9 @@ class EntryChoiceScreen extends StatelessWidget {
               const SizedBox(height: AppConstants.spaceM),
 
               Text(
-                'مرحباً بك 👋',
+                context.l10n.welcomeTitle,
                 style: AppTextStyles.displayMedium.copyWith(
-                  color: const Color(0xFFF5F5F0),
+                  color: context.colors.textPrimary,
                   height: 1.2,
                 ),
               ),
@@ -66,9 +68,9 @@ class EntryChoiceScreen extends StatelessWidget {
               const SizedBox(height: AppConstants.spaceS),
 
               Text(
-                'ابدأ رحلتك نحو اللياقة البدنية',
+                context.l10n.startFitnessJourney,
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFF6B6B6B),
+                  color: context.colors.textMuted,
                 ),
               ),
 
@@ -79,10 +81,10 @@ class EntryChoiceScreen extends StatelessWidget {
                 icon: Icons.cloud_done_rounded,
                 iconColor: AppColors.accent,
                 iconBg: AppColors.accentDim,
-                title: 'إنشاء حساب / تسجيل الدخول',
+                title: context.l10n.createAccountLogin,
                 description:
                     'أنشئ حسابًا أو سجّل دخولك لحفظ بياناتك (الملف الشخصي، التقدم، التمارين، التغذية) بأمان على السحابة واستعادتها متى أعدت تثبيت التطبيق.',
-                actionLabel: 'متابعة بحساب',
+                actionLabel: context.l10n.continueWithAccount,
                 onTap: () => context.go(AppRouter.login),
                 isPrimary: true,
               ),
@@ -92,12 +94,12 @@ class EntryChoiceScreen extends StatelessWidget {
               // ── Guest Card ──────────────────────────────────────────
               _OptionCard(
                 icon: Icons.person_outline_rounded,
-                iconColor: const Color(0xFF9CA3AF),
-                iconBg: const Color(0xFF1F2937),
-                title: 'متابعة كضيف',
+                iconColor: context.colors.textMuted,
+                iconBg: context.colors.bgSurface,
+                title: context.l10n.continueAsGuest,
                 description:
                     'ستُحفظ بياناتك على هذا الجهاز فقط. يمكنك إنشاء حساب لاحقًا لحفظها على السحابة واستعادتها.',
-                actionLabel: 'متابعة بدون حساب',
+                actionLabel: context.l10n.continueAsGuestAction,
                 onTap: () => _continueAsGuest(context),
                 isPrimary: false,
               ),
@@ -137,10 +139,12 @@ class _OptionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppConstants.spaceXL),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
         border: Border.all(
-          color: isPrimary ? AppColors.accent.withOpacity(0.4) : const Color(0xFF2A2A2A),
+          color: isPrimary
+              ? AppColors.accent.withOpacity(0.4)
+              : context.colors.borderSubtle,
           width: isPrimary ? 1.5 : 1,
         ),
       ),
@@ -163,7 +167,7 @@ class _OptionCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: AppTextStyles.titleMedium.copyWith(
-                    color: const Color(0xFFF5F5F0),
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ),
@@ -173,7 +177,7 @@ class _OptionCard extends StatelessWidget {
           Text(
             description,
             style: AppTextStyles.bodySmall.copyWith(
-              color: const Color(0xFF6B6B6B),
+              color: context.colors.textMuted,
               height: 1.6,
             ),
           ),
@@ -185,8 +189,8 @@ class _OptionCard extends StatelessWidget {
                 : OutlinedButton(
                     onPressed: onTap,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF3A3A3A)),
-                      foregroundColor: const Color(0xFF9CA3AF),
+                      side: BorderSide(color: context.colors.borderMedium),
+                      foregroundColor: context.colors.textMuted,
                       padding: const EdgeInsets.symmetric(
                           vertical: AppConstants.spaceM),
                       shape: RoundedRectangleBorder(
@@ -195,8 +199,10 @@ class _OptionCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(actionLabel,
-                        style: AppTextStyles.labelLarge
-                            .copyWith(color: const Color(0xFF9CA3AF))),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(color: context.colors.textMuted)),
                   ),
           ),
         ],

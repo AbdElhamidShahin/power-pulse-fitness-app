@@ -9,10 +9,9 @@ import '../services/local_exercises_data.dart';
 abstract interface class ExerciseRepository {
   Future<ApiResult<List<Exercise>>> getExercises();
   Future<ApiResult<List<Exercise>>> getExercisesByBodyPart(String bodyPart);
-  Future<ApiResult<List<Exercise>>>  searchExercises(String name);
-  Future<ApiResult<Exercise>>        getExerciseById(String id);
-  Future<ApiResult<List<String>>>    getBodyPartList();
-  Future<ApiResult<void>>            refreshExercises();
+  Future<ApiResult<List<Exercise>>> searchExercises(String name);
+  Future<ApiResult<Exercise>> getExerciseById(String id);
+  Future<ApiResult<List<String>>> getBodyPartList();
 }
 
 final class ExerciseRepositoryImpl implements ExerciseRepository {
@@ -22,10 +21,9 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
     required this.networkInfo,
   });
 
-  final ExerciseService      remoteService;
+  final ExerciseService remoteService;
   final ExerciseLocalService localService;
-  final NetworkInfo          networkInfo;
-
+  final NetworkInfo networkInfo;
 
   @override
   Future<ApiResult<List<Exercise>>> getExercises() async {
@@ -39,15 +37,14 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
 
   @override
   Future<ApiResult<List<Exercise>>> getExercisesByBodyPart(
-      String bodyPart,
-      ) async {
+    String bodyPart,
+  ) async {
     final result = await getExercises();
     return result.fold(
       onFailure: (f) => Failure(f),
       onSuccess: (all) {
         final filtered = all
-            .where((e) =>
-        e.bodyPart.toLowerCase() == bodyPart.toLowerCase())
+            .where((e) => e.bodyPart.toLowerCase() == bodyPart.toLowerCase())
             .toList();
         return Success(filtered);
       },
@@ -63,9 +60,9 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
         final q = name.toLowerCase().trim();
         final filtered = all
             .where((e) =>
-        e.name.toLowerCase().contains(q) ||
-            e.target.toLowerCase().contains(q) ||
-            e.equipment.toLowerCase().contains(q))
+                e.name.toLowerCase().contains(q) ||
+                e.target.toLowerCase().contains(q) ||
+                e.equipment.toLowerCase().contains(q))
             .toList();
         return Success(filtered);
       },
@@ -100,7 +97,6 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
     );
   }
 
-  @override
   Future<ApiResult<void>> refreshExercises() async {
     await localService.clearCache();
     final result = await _fetchAndCache();
@@ -109,7 +105,6 @@ final class ExerciseRepositoryImpl implements ExerciseRepository {
       onSuccess: (_) => const Success(null),
     );
   }
-
 
   Future<ApiResult<List<Exercise>>> _fetchAndCache() async {
     if (!await networkInfo.isConnected) {

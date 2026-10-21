@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_text_styles.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
 import '../../logic/cubit/exercises_cubit.dart';
 import '../../logic/cubit/exercises_state.dart';
 import 'exercise_card.dart';
@@ -21,9 +23,9 @@ class ExercisesList extends StatelessWidget {
         ExercisesInitial() || ExercisesLoading() => const ExercisesShimmer(),
         ExercisesError(:final message) => _ErrorView(message: message),
         ExercisesLoaded() => _LoadedList(
-          state: state,
-          scrollController: scrollController,
-        ),
+            state: state,
+            scrollController: scrollController,
+          ),
       },
     );
   }
@@ -34,30 +36,30 @@ class _LoadedList extends StatelessWidget {
   final ExercisesLoaded state;
   final ScrollController scrollController;
 
-  String _translateBodyPart(String englishName) {
+  String _translateBodyPart(String englishName, dynamic context) {
     switch (englishName.toLowerCase()) {
       case 'all':
-        return 'الكل';
+        return context.l10n.all;
       case 'back':
-        return 'الظهر';
+        return context.l10n.muscleBack;
       case 'cardio':
-        return 'كارديو';
+        return context.l10n.muscleCardio;
       case 'chest':
-        return 'الصدر';
+        return context.l10n.muscleChest;
       case 'lower arms':
-        return 'الساعدين';
+        return context.l10n.forearms;
       case 'lower legs':
-        return 'السمانة / الساق';
+        return context.l10n.calves;
       case 'neck':
-        return 'الرقبة';
+        return context.l10n.neck;
       case 'shoulders':
-        return 'الكتفين';
+        return context.l10n.muscleShoulder;
       case 'upper arms':
-        return 'الباي والذراع';
+        return context.l10n.muscleArms;
       case 'upper legs':
-        return 'الفخذين';
+        return context.l10n.upperLegs;
       case 'waist':
-        return 'الوسط / البطن';
+        return context.l10n.muscleCore;
       default:
         return englishName;
     }
@@ -88,17 +90,20 @@ class _LoadedList extends StatelessWidget {
                       vertical: 7.h,
                     ),
                     decoration: BoxDecoration(
-                      color: active ? AppColors.bgDark : AppColors.bgElevated,
+                      color: active
+                          ? context.colors.bgDark
+                          : context.colors.bgElevated,
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
-                      _translateBodyPart(p),
+                      _translateBodyPart(p, context),
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
-                        color:
-                        active ? AppColors.textOnDark : AppColors.textMuted,
+                        color: active
+                            ? AppColors.textOnDark
+                            : context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -114,7 +119,7 @@ class _LoadedList extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.sp,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF8A8A8A),
+              color: context.colors.textMuted,
               fontFamily: 'Cairo',
             ),
           ),
@@ -155,22 +160,22 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.error_outline_rounded,
-          color: AppColors.danger,
-          size: 48.r,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              color: AppColors.danger,
+              size: 48.r,
+            ),
+            SizedBox(height: 16.h),
+            Text(message, style: Theme.of(context).textTheme.bodyMedium!),
+            SizedBox(height: 16.h),
+            GestureDetector(
+              onTap: () => context.read<ExercisesCubit>().loadInitial(),
+              child: Text(context.l10n.retry, style: AppTextStyles.accentLabel),
+            ),
+          ],
         ),
-        SizedBox(height: 16.h),
-        Text(message, style: AppTextStyles.bodyMedium),
-        SizedBox(height: 16.h),
-        GestureDetector(
-          onTap: () => context.read<ExercisesCubit>().loadInitial(),
-          child: Text('حاول مجدداً', style: AppTextStyles.accentLabel),
-        ),
-      ],
-    ),
-  );
+      );
 }

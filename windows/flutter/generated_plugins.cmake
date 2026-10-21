@@ -5,6 +5,10 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   connectivity_plus
+<<<<<<< HEAD
+  permission_handler_windows
+=======
+>>>>>>> main
   url_launcher_windows
 )
 

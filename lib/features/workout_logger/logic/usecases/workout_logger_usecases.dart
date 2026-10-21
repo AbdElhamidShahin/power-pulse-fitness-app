@@ -20,10 +20,3 @@ final class DeleteSessionUseCase {
   final WorkoutLoggerRepository _repo;
   Future<ApiResult<void>> call(String id) => _repo.deleteSession(id);
 }
-
-final class GetAllSessionsUseCase {
-  GetAllSessionsUseCase(this._repo);
-  final WorkoutLoggerRepository _repo;
-  Future<ApiResult<List<WorkoutSession>>> call({int limitDays = 90}) =>
-      _repo.getAllSessions(limitDays: limitDays);
-}

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -76,7 +78,8 @@ class DayDetailState extends State<DayDetail> {
               children: [
                 Row(
                   children: [
-                    Text(dayName, style: AppTextStyles.headlineMedium),
+                    Text(dayName,
+                        style: Theme.of(context).textTheme.headlineMedium!),
                     if (isToday) ...[
                       const SizedBox(width: AppConstants.spaceS),
                       Container(
@@ -85,19 +88,25 @@ class DayDetailState extends State<DayDetail> {
                         decoration: BoxDecoration(
                           color: AppColors.accentDim,
                           borderRadius:
-                          BorderRadius.circular(AppConstants.radiusPill),
+                              BorderRadius.circular(AppConstants.radiusPill),
                         ),
                         child: Text('اليوم',
-                            style: AppTextStyles.labelSmall
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall!
                                 .copyWith(color: AppColors.accent)),
                       ),
                     ],
                   ],
                 ),
                 Text(
-                  day.isRest ? 'يوم راحة' : '${day.exercises.length} تمارين',
-                  style: AppTextStyles.bodySmall
-                      .copyWith(color: AppColors.textMuted),
+                  day.isRest
+                      ? context.l10n.restDay
+                      : '${day.exercises.length} تمارين',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(color: context.colors.textMuted),
                 ),
               ],
             ),
@@ -110,11 +119,13 @@ class DayDetailState extends State<DayDetail> {
                     horizontal: AppConstants.spaceL,
                     vertical: AppConstants.spaceS),
                 decoration: BoxDecoration(
-                  color: day.isRest ? AppColors.accent : AppColors.bgElevated,
+                  color:
+                      day.isRest ? AppColors.accent : context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(AppConstants.radiusPill),
                   border: Border.all(
-                    color:
-                    day.isRest ? AppColors.accent : AppColors.borderMedium,
+                    color: day.isRest
+                        ? AppColors.accent
+                        : context.colors.borderMedium,
                   ),
                 ),
                 child: Row(
@@ -122,7 +133,7 @@ class DayDetailState extends State<DayDetail> {
                   children: [
                     Text(
                       day.isRest ? '😴' : '💪',
-                      style: const TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14),
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -130,7 +141,7 @@ class DayDetailState extends State<DayDetail> {
                       style: AppTextStyles.labelSmall.copyWith(
                         color: day.isRest
                             ? AppColors.textOnAccent
-                            : AppColors.textSecondary,
+                            : context.colors.textSecondary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -147,19 +158,22 @@ class DayDetailState extends State<DayDetail> {
           Container(
             padding: const EdgeInsets.all(AppConstants.spaceXXL),
             decoration: BoxDecoration(
-              color: AppColors.bgSurface,
+              color: context.colors.bgSurface,
               borderRadius: BorderRadius.circular(AppConstants.radiusL),
-              border: Border.all(color: AppColors.borderSubtle),
+              border: Border.all(color: context.colors.borderSubtle),
             ),
             child: Column(
               children: [
                 const Text('😴', style: TextStyle(fontSize: 40)),
                 const SizedBox(height: AppConstants.spaceM),
-                Text('يوم راحة', style: AppTextStyles.labelLarge),
+                Text(context.l10n.restDay,
+                    style: Theme.of(context).textTheme.labelLarge!),
                 const SizedBox(height: AppConstants.spaceS),
                 Text('اضغط على "راحة" أعلاه لتحويله ليوم تمرين',
-                    style: AppTextStyles.bodySmall
-                        .copyWith(color: AppColors.textMuted),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: context.colors.textMuted),
                     textAlign: TextAlign.center),
               ],
             ),
@@ -169,13 +183,13 @@ class DayDetailState extends State<DayDetail> {
           TextField(
             controller: _nameCtrl,
             onChanged: widget.onNameChanged,
-            style: AppTextStyles.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium!,
             decoration: InputDecoration(
               hintText: 'اسم اليوم — مثلاً: تمرين الصدر',
-              hintStyle:
-              AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+              hintStyle: AppTextStyles.bodySmall
+                  .copyWith(color: context.colors.textMuted),
               filled: true,
-              fillColor: AppColors.bgSurface,
+              fillColor: context.colors.bgSurface,
               contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppConstants.spaceL,
                   vertical: AppConstants.spaceM),
@@ -192,22 +206,27 @@ class DayDetailState extends State<DayDetail> {
             Container(
               padding: const EdgeInsets.all(AppConstants.spaceXXL),
               decoration: BoxDecoration(
-                color: AppColors.bgSurface,
+                color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
-                border: Border.all(color: AppColors.borderSubtle, width: 0.5),
+                border:
+                    Border.all(color: context.colors.borderSubtle, width: 0.5),
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.fitness_center_rounded,
-                      color: AppColors.textMuted, size: 32),
+                  Icon(Icons.fitness_center_rounded,
+                      color: context.colors.textMuted, size: 32),
                   const SizedBox(height: AppConstants.spaceM),
                   Text('لا توجد تمارين بعد',
-                      style: AppTextStyles.labelMedium
-                          .copyWith(color: AppColors.textMuted)),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .copyWith(color: context.colors.textMuted)),
                   const SizedBox(height: AppConstants.spaceS),
                   Text('اضغط + لإضافة تمارين ليوم $dayName',
-                      style: AppTextStyles.bodySmall
-                          .copyWith(color: AppColors.textMuted),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: context.colors.textMuted),
                       textAlign: TextAlign.center),
                 ],
               ),
@@ -222,9 +241,10 @@ class DayDetailState extends State<DayDetail> {
                     horizontal: AppConstants.spaceL,
                     vertical: AppConstants.spaceM),
                 decoration: BoxDecoration(
-                  color: AppColors.bgSurface,
+                  color: context.colors.bgSurface,
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                  border: Border.all(color: AppColors.borderSubtle, width: 0.5),
+                  border: Border.all(
+                      color: context.colors.borderSubtle, width: 0.5),
                 ),
                 child: Row(
                   children: [
@@ -238,7 +258,9 @@ class DayDetailState extends State<DayDetail> {
                       ),
                       alignment: Alignment.center,
                       child: Text('${i + 1}',
-                          style: AppTextStyles.labelSmall
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
                               .copyWith(color: AppColors.accent)),
                     ),
                     const SizedBox(width: AppConstants.spaceM),
@@ -247,13 +269,15 @@ class DayDetailState extends State<DayDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(ex.exerciseName,
-                              style: AppTextStyles.labelMedium,
+                              style: Theme.of(context).textTheme.labelMedium!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis),
                           Text(
                             '${ex.defaultSets} سيتات × ${ex.defaultReps} رابس  •  ${ex.bodyPart}',
-                            style: AppTextStyles.bodySmall
-                                .copyWith(color: AppColors.textMuted),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(color: context.colors.textMuted),
                           ),
                         ],
                       ),
@@ -261,10 +285,10 @@ class DayDetailState extends State<DayDetail> {
                     // حذف
                     GestureDetector(
                       onTap: () => widget.onRemoveExercise(ex.exerciseId),
-                      child: const Padding(
+                      child: Padding(
                         padding: EdgeInsets.all(4),
                         child: Icon(Icons.close_rounded,
-                            size: 18, color: AppColors.textMuted),
+                            size: 18, color: context.colors.textMuted),
                       ),
                     ),
                   ],
@@ -279,9 +303,9 @@ class DayDetailState extends State<DayDetail> {
             child: Container(
               width: double.infinity,
               padding:
-              const EdgeInsets.symmetric(vertical: AppConstants.spaceL),
+                  const EdgeInsets.symmetric(vertical: AppConstants.spaceL),
               decoration: BoxDecoration(
-                color: AppColors.bgSurface,
+                color: context.colors.bgSurface,
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
                 border: Border.all(
                     color: AppColors.accent.withOpacity(0.4), width: 1),
@@ -289,11 +313,12 @@ class DayDetailState extends State<DayDetail> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.add_rounded,
-                      color: AppColors.accent, size: 20),
+                  Icon(Icons.add_rounded, color: AppColors.accent, size: 20),
                   const SizedBox(width: AppConstants.spaceS),
-                  Text('إضافة تمرين',
-                      style: AppTextStyles.labelMedium
+                  Text(context.l10n.addExercise,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
                           .copyWith(color: AppColors.accent)),
                 ],
               ),

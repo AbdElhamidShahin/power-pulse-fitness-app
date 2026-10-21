@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
+import '../../../../core/startup.dart';
 
 import '../../../../core/domain/app_failure.dart';
 import '../../data/models/user_profile_entity.dart';
@@ -24,21 +25,14 @@ final class ProfileCubit extends Cubit<ProfileState> {
         emit(ProfileLoaded(profile));
       },
       onFailure: (failure) {
-        emit(ProfileError(_mapFailure(failure)));
+        // _mapFailure أُزيلت — AppFailureX.userMessage
+        emit(ProfileError(failure.userMessage));
       },
     );
   }
 
   void onProfileSaved(UserProfile profile) {
     emit(ProfileLoaded(profile));
-  }
-
-  String _mapFailure(AppFailure failure) {
-    return switch (failure) {
-      CacheFailure() => 'خطأ في قراءة بيانات الملف الشخصي',
-      UnexpectedFailure() => 'حدث خطأ غير متوقع',
-      _ => 'حدث خطأ أثناء تحميل الملف الشخصي',
-    };
   }
 }
 
@@ -57,23 +51,17 @@ final class ProfileSaveCubit extends Cubit<ProfileSaveState> {
 
     result.fold(
       onSuccess: (_) {
+        AppStartup.markProfileCompleted();
         emit(const ProfileSaveSuccess());
       },
       onFailure: (failure) {
-        emit(ProfileSaveError(_mapFailure(failure)));
+        // _mapFailure أُزيلت — AppFailureX.userMessage
+        emit(ProfileSaveError(failure.userMessage));
       },
     );
   }
 
   void reset() {
     emit(const ProfileSaveIdle());
-  }
-
-  String _mapFailure(AppFailure failure) {
-    return switch (failure) {
-      CacheFailure() => 'خطأ في حفظ بيانات الملف الشخصي',
-      UnexpectedFailure() => 'حدث خطأ غير متوقع',
-      _ => 'حدث خطأ أثناء حفظ الملف الشخصي',
-    };
   }
 }

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme.dart';
+import '../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/pp_button.dart';
-import '../../login/app_regex.dart';
+import 'package:power_pulse/core/constants/app_constants.dart';
+import 'package:power_pulse/core/router/app_router.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
+import 'package:power_pulse/shared/widgets/pp_button.dart';
+import 'package:power_pulse/core/utils/app_regex.dart';
 import '../logic/cubit/sign_up_cubit.dart';
 import '../logic/cubit/sign_up_state.dart';
 
@@ -40,11 +44,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<SignUpCubit>().signUpUser(
-      name: _nameCtrl.text.trim(),
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-      confirmPassword: _confirmPassCtrl.text,
-    );
+          name: _nameCtrl.text.trim(),
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+          confirmPassword: _confirmPassCtrl.text,
+        );
   }
 
   @override
@@ -52,12 +56,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state is SignUpSuccess) {
-          _showBanner(
-            context,
-            message: 'مرحباً بك، ${state.name}! حسابك جاهز 🎉',
-            isError: false,
-          );
-          context.go(AppRouter.home);
+          // Navigate first; a banner attached to the route being removed
+          // cannot be dismissed reliably by the user.
+          context.go(AppRouter.onboarding);
         } else if (state is SignUpVerificationRequired) {
           _showVerificationSheet(context, email: state.email);
         } else if (state is SignUpError) {
@@ -65,7 +66,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF0D0D0D),
+        backgroundColor: context.colors.bgDeep,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -79,18 +80,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 // ── Back button ───────────────────────────────────
                 GestureDetector(
-                  onTap: () => context.canPop() ? context.pop() : context.go(AppRouter.login),
+                  onTap: () => context.canPop()
+                      ? context.pop()
+                      : context.go(AppRouter.login),
                   child: Container(
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: context.colors.bgSurface,
                       borderRadius: BorderRadius.circular(AppConstants.radiusS),
-                      border: Border.all(color: const Color(0xFF2A2A2A)),
+                      border: Border.all(color: context.colors.borderSubtle),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: Color(0xFFB0B0B0),
+                      color: context.colors.textSecondary,
                       size: 16,
                     ),
                   ),
@@ -109,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('الاسم الكامل'),
+                      _FieldLabel(context.l10n.name),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _nameCtrl,
@@ -117,13 +120,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.person_outline_rounded,
                         textDirection: TextDirection.rtl,
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'أدخل اسمك';
-                          if (v.trim().length < 2) return 'الاسم قصير جداً';
+                          if (v == null || v.trim().isEmpty)
+                            return context.l10n.enterFullName;
+                          if (v.trim().length < 2)
+                            return context.l10n.nameTooShort;
                           return null;
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('البريد الإلكتروني'),
+                      _FieldLabel(context.l10n.email),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _emailCtrl,
@@ -131,56 +136,62 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أدخل بريدك الإلكتروني';
-                          if (!AppRegex.isEmailValid(v)) return 'بريد إلكتروني غير صحيح';
+                          if (v == null || v.isEmpty)
+                            return context.l10n.enterEmail;
+                          if (!AppRegex.isEmailValid(v))
+                            return context.l10n.invalidEmail;
                           return null;
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('كلمة المرور'),
+                      _FieldLabel(context.l10n.password),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _passCtrl,
                         hint: '••••••••',
-                        icon: Icons.lock_outline_rounded,
                         obscureText: _passHidden,
                         suffix: GestureDetector(
-                          onTap: () => setState(() => _passHidden = !_passHidden),
+                          onTap: () =>
+                              setState(() => _passHidden = !_passHidden),
                           child: Icon(
                             _passHidden
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: AppColors.textMuted,
+                            color: context.colors.textMuted,
                             size: AppConstants.iconM,
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أدخل كلمة المرور';
-                          if (!AppRegex.hasMinLength(v)) return '8 أحرف على الأقل';
+                          if (v == null || v.isEmpty)
+                            return context.l10n.enterPassword;
+                          if (!AppRegex.hasMinLength(v))
+                            return context.l10n.atLeast8Chars;
                           return null;
                         },
                       ),
                       const SizedBox(height: AppConstants.spaceXL),
-                      _FieldLabel('تأكيد كلمة المرور'),
+                      _FieldLabel(context.l10n.confirmPassword),
                       const SizedBox(height: AppConstants.spaceS),
                       _AuthField(
                         controller: _confirmPassCtrl,
                         hint: '••••••••',
-                        icon: Icons.lock_outline_rounded,
                         obscureText: _confirmPassHidden,
                         suffix: GestureDetector(
-                          onTap: () => setState(() => _confirmPassHidden = !_confirmPassHidden),
+                          onTap: () => setState(
+                              () => _confirmPassHidden = !_confirmPassHidden),
                           child: Icon(
                             _confirmPassHidden
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: AppColors.textMuted,
+                            color: context.colors.textMuted,
                             size: AppConstants.iconM,
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'أكّد كلمة المرور';
-                          if (v != _passCtrl.text) return 'كلمتا المرور غير متطابقتين';
+                          if (v == null || v.isEmpty)
+                            return context.l10n.confirmPasswordHint;
+                          if (v != _passCtrl.text)
+                            return context.l10n.passwordsMismatch;
                           return null;
                         },
                       ),
@@ -193,7 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // ── Create account button ──────────────────────────
                 BlocBuilder<SignUpCubit, SignUpState>(
                   builder: (context, state) => PPButton(
-                    label: 'إنشاء الحساب',
+                    label: context.l10n.createAccount,
                     onPressed: _submit,
                     isLoading: state is SignUpLoading,
                   ),
@@ -210,7 +221,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 BlocBuilder<SignUpCubit, SignUpState>(
                   builder: (context, state) => _GoogleButton(
                     isLoading: state is SignUpLoading,
-                    label: 'التسجيل بحساب جوجل',
+                    label: context.l10n.signUpWithGoogle,
                     onTap: () => context.read<SignUpCubit>().signUpWithGoogle(),
                   ),
                 ),
@@ -225,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Text(
                         'لديك حساب بالفعل؟',
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF6B6B6B),
+                          color: context.colors.textMuted,
                         ),
                       ),
                       const SizedBox(width: AppConstants.spaceXS),
@@ -284,7 +295,7 @@ class _SignUpHeader extends StatelessWidget {
         Text(
           'ابدأ رحلتك\nالآن 🔥',
           style: AppTextStyles.displayMedium.copyWith(
-            color: const Color(0xFFF5F5F0),
+            color: context.colors.textPrimary,
             height: 1.2,
           ),
         ),
@@ -292,7 +303,7 @@ class _SignUpHeader extends StatelessWidget {
         Text(
           'أنشئ حسابك وانضم لآلاف الرياضيين',
           style: AppTextStyles.bodyMedium.copyWith(
-            color: const Color(0xFF6B6B6B),
+            color: context.colors.textMuted,
           ),
         ),
       ],
@@ -310,7 +321,8 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: AppTextStyles.titleSmall.copyWith(color: const Color(0xFFB0B0B0)),
+      style: AppTextStyles.titleSmall
+          .copyWith(color: context.colors.textSecondary),
     );
   }
 }
@@ -319,7 +331,7 @@ class _AuthField extends StatelessWidget {
   const _AuthField({
     required this.controller,
     required this.hint,
-    required this.icon,
+    this.icon,
     this.obscureText = false,
     this.keyboardType,
     this.textDirection = TextDirection.ltr,
@@ -329,7 +341,7 @@ class _AuthField extends StatelessWidget {
 
   final TextEditingController controller;
   final String hint;
-  final IconData icon;
+  final IconData? icon;
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextDirection textDirection;
@@ -345,28 +357,32 @@ class _AuthField extends StatelessWidget {
       validator: validator,
       textDirection: textDirection,
       style: AppTextStyles.bodyMedium.copyWith(
-        color: const Color(0xFFF5F5F0),
+        color: context.colors.textPrimary,
         letterSpacing: obscureText ? 2.0 : 0,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.bodyMedium.copyWith(color: const Color(0xFF3A3A3A)),
-        prefixIcon: Icon(icon, color: const Color(0xFF4B4B4B), size: AppConstants.iconM),
+        hintStyle: AppTextStyles.bodyMedium
+            .copyWith(color: context.colors.borderMedium),
+        prefixIcon: icon != null
+            ? Icon(icon,
+                color: context.colors.textMuted, size: AppConstants.iconM)
+            : null,
         suffixIcon: suffix != null
             ? Padding(
-          padding: const EdgeInsets.only(left: AppConstants.spaceM),
-          child: suffix,
-        )
+                padding: const EdgeInsets.only(left: AppConstants.spaceM),
+                child: suffix,
+              )
             : null,
         filled: true,
-        fillColor: const Color(0xFF1A1A1A),
+        fillColor: context.colors.bgSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          borderSide: BorderSide(color: context.colors.borderSubtle),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
+          borderSide: BorderSide(color: context.colors.borderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -395,13 +411,16 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+        Expanded(
+            child: Divider(color: context.colors.borderSubtle, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spaceM),
           child: Text('أو',
-              style: AppTextStyles.bodySmall.copyWith(color: const Color(0xFF4B4B4B))),
+              style: AppTextStyles.bodySmall
+                  .copyWith(color: context.colors.textMuted)),
         ),
-        Expanded(child: Divider(color: const Color(0xFF2A2A2A), thickness: 1)),
+        Expanded(
+            child: Divider(color: context.colors.borderSubtle, thickness: 1)),
       ],
     );
   }
@@ -424,9 +443,9 @@ class _GoogleButton extends StatelessWidget {
       child: Container(
         height: AppConstants.buttonHeightLarge,
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: context.colors.bgSurface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: const Color(0xFF2A2A2A)),
+          border: Border.all(color: context.colors.borderSubtle),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -435,7 +454,8 @@ class _GoogleButton extends StatelessWidget {
               const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: AppColors.accent),
               )
             else ...[
               SizedBox(
@@ -446,7 +466,8 @@ class _GoogleButton extends StatelessWidget {
               const SizedBox(width: AppConstants.spaceM),
               Text(
                 label,
-                style: AppTextStyles.labelLarge.copyWith(color: const Color(0xFFB0B0B0)),
+                style: AppTextStyles.labelLarge
+                    .copyWith(color: context.colors.textSecondary),
               ),
             ],
           ],
@@ -465,17 +486,21 @@ class _GooglePainter extends CustomPainter {
 
     canvas.drawArc(
       Rect.fromCircle(center: Offset(cx, cy), radius: r),
-      -0.5, 3.8, false,
+      -0.5,
+      3.8,
+      false,
       Paint()
-        ..color = const Color(0xFF4285F4)
+        ..color = Color(0xFF4285F4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8,
     );
     canvas.drawArc(
       Rect.fromCircle(center: Offset(cx, cy), radius: r),
-      3.3, 1.0, false,
+      3.3,
+      1.0,
+      false,
       Paint()
-        ..color = const Color(0xFFEA4335)
+        ..color = Color(0xFFEA4335)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8,
     );
@@ -483,7 +508,7 @@ class _GooglePainter extends CustomPainter {
       Offset(cx, cy),
       Offset(cx + r, cy),
       Paint()
-        ..color = const Color(0xFF4285F4)
+        ..color = Color(0xFF4285F4)
         ..strokeWidth = 2.8,
     );
   }
@@ -495,10 +520,10 @@ class _GooglePainter extends CustomPainter {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 void _showBanner(
-    BuildContext context, {
-      required String message,
-      required bool isError,
-    }) {
+  BuildContext context, {
+  required String message,
+  required bool isError,
+}) {
   ScaffoldMessenger.of(context).showMaterialBanner(
     MaterialBanner(
       backgroundColor: isError ? AppColors.dangerDim : AppColors.accentDim,
@@ -536,7 +561,7 @@ void _showBanner(
 void _showVerificationSheet(BuildContext context, {required String email}) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: const Color(0xFF1A1A1A),
+    backgroundColor: context.colors.bgSurface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(AppConstants.radiusXL),
@@ -551,7 +576,7 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
             width: 48,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFF3A3A3A),
+              color: context.colors.borderMedium,
               borderRadius: BorderRadius.circular(AppConstants.radiusPill),
             ),
           ),
@@ -570,7 +595,7 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
           Text(
             'تحقق من بريدك',
             style: AppTextStyles.headlineMedium.copyWith(
-              color: const Color(0xFFF5F5F0),
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: AppConstants.spaceS),
@@ -578,7 +603,7 @@ void _showVerificationSheet(BuildContext context, {required String email}) {
             'أرسلنا رابط التفعيل إلى\n$email',
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMedium.copyWith(
-              color: const Color(0xFF6B6B6B),
+              color: context.colors.textMuted,
             ),
           ),
           const SizedBox(height: AppConstants.space3XL),

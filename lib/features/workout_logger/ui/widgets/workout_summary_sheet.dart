@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/notifications/notification_service.dart';
@@ -19,14 +21,14 @@ class WorkoutSummarySheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.emoji_events_rounded,
-              color: AppColors.accent, size: 56),
+          Icon(Icons.emoji_events_rounded, color: AppColors.accent, size: 56),
           const SizedBox(height: AppConstants.spaceL),
-          Text('أحسنت! 💪',
+          Text(context.l10n.greatJob,
               style: Theme.of(context).textTheme.displayMedium),
           const SizedBox(height: AppConstants.spaceS),
           Text('انتهى تمرين "${session.name}"',
-              style: AppTextStyles.bodyMedium, textAlign: TextAlign.center),
+              style: Theme.of(context).textTheme.bodyMedium!,
+              textAlign: TextAlign.center),
           const SizedBox(height: AppConstants.spaceXXL),
 
           // ─── Stats ───────────────────────────────────────
@@ -35,22 +37,22 @@ class WorkoutSummarySheet extends StatelessWidget {
             children: [
               _SummaryItem(
                   value: '${session.durationMinutes}',
-                  unit: 'دقيقة',
+                  unit: context.l10n.minute,
                   icon: Icons.timer_rounded,
                   color: AppColors.accent),
               _SummaryItem(
                   value: session.exercises.length.toString(),
-                  unit: 'تمرين',
+                  unit: context.l10n.exerciseUnit,
                   icon: Icons.fitness_center_rounded,
                   color: AppColors.info),
               _SummaryItem(
                   value: session.completedSets.toString(),
-                  unit: 'مجموعة',
+                  unit: context.l10n.setUnit,
                   icon: Icons.check_circle_rounded,
                   color: AppColors.success),
               _SummaryItem(
                   value: session.caloriesBurned.toInt().toString(),
-                  unit: 'سعرة',
+                  unit: context.l10n.kcal,
                   icon: Icons.local_fire_department_rounded,
                   color: AppColors.warning),
             ],
@@ -65,15 +67,19 @@ class WorkoutSummarySheet extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    width: 28, height: 28,
+                    width: 28,
+                    height: 28,
                     decoration: BoxDecoration(
-                      color: done ? AppColors.successDim : AppColors.bgElevated,
+                      color: done
+                          ? AppColors.successDim
+                          : context.colors.bgElevated,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       done ? Icons.check_rounded : Icons.remove_rounded,
                       size: 16,
-                      color: done ? AppColors.success : AppColors.textMuted,
+                      color:
+                          done ? AppColors.success : context.colors.textMuted,
                     ),
                   ),
                   const SizedBox(width: AppConstants.spaceM),
@@ -81,14 +87,16 @@ class WorkoutSummarySheet extends StatelessWidget {
                     child: Text(ex.exerciseName,
                         style: AppTextStyles.labelMedium.copyWith(
                           color: done
-                              ? AppColors.textPrimary
-                              : AppColors.textMuted,
+                              ? context.colors.textPrimary
+                              : context.colors.textMuted,
                         )),
                   ),
                   Text(
                     '${ex.completedSets}/${ex.sets.length} سيت',
-                    style: AppTextStyles.bodySmall
-                        .copyWith(color: AppColors.textMuted),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: context.colors.textMuted),
                   ),
                 ],
               ),
@@ -97,7 +105,7 @@ class WorkoutSummarySheet extends StatelessWidget {
 
           const SizedBox(height: AppConstants.spaceXXL),
           PPButton(
-            label: 'ممتاز! 🎉',
+            label: context.l10n.excellent,
             width: double.infinity,
             onPressed: () {
               // إشعار فوري بخلاص التمرين
@@ -135,12 +143,12 @@ class _SummaryItem extends StatelessWidget {
         Icon(icon, color: color, size: 24),
         const SizedBox(height: AppConstants.spaceXS),
         Text(value,
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary)),
-        Text(unit, style: AppTextStyles.bodySmall),
+                color: context.colors.textPrimary)),
+        Text(unit, style: Theme.of(context).textTheme.bodySmall!),
       ],
     );
   }

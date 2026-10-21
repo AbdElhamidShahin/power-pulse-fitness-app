@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../core/data/app_data_bus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -17,7 +18,7 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
 
   final SharedPreferences _prefs;
 
-  static const _weightKey  = 'weight_entries';
+  static const _weightKey = 'weight_entries';
   static const _workoutKey = 'workout_logs';
 
   // ─── Weight ─────────────────────────────────────────────────
@@ -45,6 +46,7 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.add(entry);
       await _prefs.setString(
           _weightKey, jsonEncode(all.map(_weightToJson).toList()));
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(message: 'خطأ في حفظ الوزن');
     }
@@ -57,6 +59,7 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       all.removeWhere((e) => e.id == id);
       await _prefs.setString(
           _weightKey, jsonEncode(all.map(_weightToJson).toList()));
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(message: 'خطأ في حذف الوزن');
     }
@@ -92,12 +95,12 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
     try {
       final raw = _prefs.getString(_workoutKey);
       final list = raw != null ? jsonDecode(raw) as List<dynamic> : [];
-      final all = list
-          .map((e) => _workoutFromJson(e as Map<String, dynamic>))
-          .toList();
+      final all =
+          list.map((e) => _workoutFromJson(e as Map<String, dynamic>)).toList();
       all.add(log);
       await _prefs.setString(
           _workoutKey, jsonEncode(all.map(_workoutToJson).toList()));
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(message: 'خطأ في حفظ التمرين');
     }
@@ -105,19 +108,22 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
 
   // ─── JSON ────────────────────────────────────────────────────
   Map<String, dynamic> _weightToJson(WeightEntry e) => {
-        'id': e.id, 'weight': e.weight,
-        'date': e.date.toIso8601String(), 'note': e.note,
+        'id': e.id,
+        'weight': e.weight,
+        'date': e.date.toIso8601String(),
+        'note': e.note,
       };
 
   WeightEntry _weightFromJson(Map<String, dynamic> j) => WeightEntry(
-        id:     j['id'] as String,
+        id: j['id'] as String,
         weight: (j['weight'] as num).toDouble(),
-        date:   DateTime.parse(j['date'] as String),
-        note:   j['note'] as String?,
+        date: DateTime.parse(j['date'] as String),
+        note: j['note'] as String?,
       );
 
   Map<String, dynamic> _workoutToJson(WorkoutLog e) => {
-        'id': e.id, 'name': e.name,
+        'id': e.id,
+        'name': e.name,
         'date': e.date.toIso8601String(),
         'durationMinutes': e.durationMinutes,
         'caloriesBurned': e.caloriesBurned,
@@ -125,11 +131,11 @@ final class ProgressLocalServiceImpl implements ProgressLocalService {
       };
 
   WorkoutLog _workoutFromJson(Map<String, dynamic> j) => WorkoutLog(
-        id:              j['id'] as String,
-        name:            j['name'] as String,
-        date:            DateTime.parse(j['date'] as String),
+        id: j['id'] as String,
+        name: j['name'] as String,
+        date: DateTime.parse(j['date'] as String),
         durationMinutes: j['durationMinutes'] as int,
-        caloriesBurned:  (j['caloriesBurned'] as num).toDouble(),
-        exerciseCount:   j['exerciseCount'] as int? ?? 0,
+        caloriesBurned: (j['caloriesBurned'] as num).toDouble(),
+        exerciseCount: j['exerciseCount'] as int? ?? 0,
       );
 }

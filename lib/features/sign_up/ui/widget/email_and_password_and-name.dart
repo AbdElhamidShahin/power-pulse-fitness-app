@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../login/app_regex.dart';
+import '../../../../core/utils/app_regex.dart';
 import '../../../login/custom_text_feild.dart';
 import '../../logic/cubit/sign_up_cubit.dart';
 import '../../logic/cubit/sign_up_state.dart';
@@ -101,9 +103,9 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
               return null;
             },
             suffixIcon: _buildPasswordIcon(
-              _isPasswordHidden,
-              () => setState(() => _isPasswordHidden = !_isPasswordHidden),
-            ),
+                _isPasswordHidden,
+                () => setState(() => _isPasswordHidden = !_isPasswordHidden),
+                context),
           ),
           SizedBox(height: 16.h),
           _buildLabel(context, 'تأكيد كلمة المرور'),
@@ -121,11 +123,12 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
               return null;
             },
             suffixIcon: _buildPasswordIcon(
-              _isConfirmPasswordHidden,
-              () => setState(
-                () => _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
-              ),
-            ),
+                _isConfirmPasswordHidden,
+                () => setState(
+                      () =>
+                          _isConfirmPasswordHidden = !_isConfirmPasswordHidden,
+                    ),
+                context),
           ),
           SizedBox(height: 20.h),
           SizedBox(
@@ -134,9 +137,9 @@ class _EmailAndPasswordAndNameState extends State<EmailAndPasswordAndName> {
             child: BlocBuilder<SignUpCubit, SignUpState>(
               builder: (context, state) {
                 if (state is SignUpLoading) {
-                  return const Center(
-                    child:
-                        CircularProgressIndicator(color: AppColors.textPrimary),
+                  return Center(
+                    child: CircularProgressIndicator(
+                        color: context.colors.textPrimary),
                   );
                 }
                 return ElevatedButton(
@@ -173,7 +176,7 @@ Widget _buildLabel(BuildContext context, String text) {
       text,
       style: AppTextStyles.bodySmall.copyWith(
         fontSize: 14.sp,
-        color: isDark ? Colors.white : AppColors.textPrimary,
+        color: isDark ? Colors.white : context.colors.textPrimary,
       ),
     ),
   );
@@ -186,12 +189,12 @@ Widget _buildSuffixIcon(IconData icon, context) {
     child: Icon(
       icon,
       size: 22.r,
-      color: isDark ? Colors.white70 : AppColors.textPrimary,
+      color: isDark ? Colors.white70 : context.colors.textPrimary,
     ),
   );
 }
 
-Widget _buildPasswordIcon(bool obscure, VoidCallback onTap) {
+Widget _buildPasswordIcon(bool obscure, VoidCallback onTap, context) {
   return GestureDetector(
     onTap: onTap,
     child: Padding(
@@ -199,7 +202,7 @@ Widget _buildPasswordIcon(bool obscure, VoidCallback onTap) {
       child: Icon(
         obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
         size: 22.r,
-        color: AppColors.textPrimary,
+        color: context.colors.textPrimary,
       ),
     ),
   );

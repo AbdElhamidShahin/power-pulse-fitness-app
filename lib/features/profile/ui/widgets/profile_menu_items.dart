@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileSectionTitle extends StatelessWidget {
@@ -15,7 +17,7 @@ class ProfileSectionTitle extends StatelessWidget {
           fontFamily: 'Cairo',
           fontSize: 13.sp,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF888888),
+          color: context.colors.textMuted,
         ),
       ),
     );
@@ -54,7 +56,7 @@ class ProfileInfoRow extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 13.sp,
-                color: const Color(0xFF6B7280),
+                color: context.colors.textMuted,
               ),
             ),
             const Spacer(),
@@ -64,14 +66,14 @@ class ProfileInfoRow extends StatelessWidget {
                 fontFamily: 'Cairo',
                 fontSize: 13.sp,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF111827),
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(width: 8.w),
             Icon(
-              Icons.chevron_right_rounded,
-              color: const Color(0xFF9CA3AF),
-              size: 20.r,
+              Icons.arrow_forward_ios_rounded,
+              color: context.colors.textMuted,
+              size: 14.r,
             ),
           ],
         ),
@@ -110,7 +112,7 @@ class ProfileToggleRow extends StatelessWidget {
               fontFamily: 'Cairo',
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF111827),
+              color: context.colors.textPrimary,
             ),
           ),
           const Spacer(),
@@ -118,8 +120,12 @@ class ProfileToggleRow extends StatelessWidget {
             scale: 0.85,
             child: Switch.adaptive(
               value: value,
-              activeColor: const Color(0xFFA3E635),
-              activeTrackColor: const Color(0xFFA3E635).withOpacity(0.3),
+              activeColor: AppColors.accent,
+              activeTrackColor: AppColors.accentDim,
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) return Colors.white;
+                return null;
+              }),
               onChanged: onChanged,
             ),
           ),
@@ -139,7 +145,7 @@ class ProfileDivider extends StatelessWidget {
       thickness: 0.5,
       indent: 16.w,
       endIndent: 16.w,
-      color: const Color(0xFFF3F4F6),
+      color: context.colors.borderSubtle,
     );
   }
 }

@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/data/app_data_bus.dart';
 import 'package:power_pulse/core/domain/api_result.dart';
 
 import '../../../../core/domain/app_failure.dart';
@@ -9,17 +13,39 @@ import 'progress_state.dart';
 final class ProgressCubit extends Cubit<ProgressState> {
   ProgressCubit({required GetProgressSummaryUseCase getSummary})
       : _getSummary = getSummary,
-        super(const ProgressInitial());
+        super(const ProgressInitial()) {
+    // صفحة التقدم مربوطة ببقية التطبيق: أي وجبة/تمرين/وزن/ماء يتسجّل
+    // بيحدّثها تلقائياً.
+    _busSub = AppDataBus.stream.listen((_) {
+      _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        final s = state;
+        if (!isClosed && s is ProgressLoaded) load(s.period, true);
+      });
+    });
+  }
 
   final GetProgressSummaryUseCase _getSummary;
+  StreamSubscription<void>? _busSub;
+  Timer? _debounce;
 
-  Future<void> load([ProgressPeriod period = ProgressPeriod.month]) async {
-    emit(const ProgressLoading());
+  @override
+  Future<void> close() {
+    _debounce?.cancel();
+    _busSub?.cancel();
+    return super.close();
+  }
+
+  Future<void> load([
+    ProgressPeriod period = ProgressPeriod.month,
+    bool silent = false,
+  ]) async {
+    if (!silent || state is! ProgressLoaded) emit(const ProgressLoading());
     final result = await _getSummary(period);
     result.fold(
       onSuccess: (summary) =>
           emit(ProgressLoaded(summary: summary, period: period)),
-      onFailure: (f) => emit(ProgressError(_map(f))),
+      onFailure: (f) => emit(ProgressError(f.userMessage)),
     );
   }
 
@@ -29,11 +55,7 @@ final class ProgressCubit extends Cubit<ProgressState> {
     await load(period);
   }
 
-  String _map(AppFailure f) => switch (f) {
-        CacheFailure()      => 'خطأ في قراءة البيانات',
-        UnexpectedFailure() => 'حدث خطأ غير متوقع',
-        _                   => 'حدث خطأ',
-      };
+  // _map أُزيلت — استخدم AppFailureX.userMessage
 }
 
 /// WeightLogCubit — إضافة / حذف الوزن
@@ -51,15 +73,15 @@ final class WeightLogCubit extends Cubit<WeightLogState> {
   Future<void> addEntry(double weight, {String? note}) async {
     emit(const WeightLogLoading());
     final entry = WeightEntry(
-      id:     'w_${DateTime.now().millisecondsSinceEpoch}',
+      id: 'w_${DateTime.now().millisecondsSinceEpoch}',
       weight: weight,
-      date:   DateTime.now(),
-      note:   note,
+      date: DateTime.now(),
+      note: note,
     );
     final result = await _addWeight(entry);
     result.fold(
       onSuccess: (_) => emit(const WeightLogSuccess()),
-      onFailure: (f) => emit(WeightLogError(_map(f))),
+      onFailure: (f) => emit(WeightLogError(f.userMessage)),
     );
   }
 
@@ -67,14 +89,11 @@ final class WeightLogCubit extends Cubit<WeightLogState> {
     final result = await _deleteWeight(id);
     result.fold(
       onSuccess: (_) => emit(const WeightLogSuccess()),
-      onFailure: (f) => emit(WeightLogError(_map(f))),
+      onFailure: (f) => emit(WeightLogError(f.userMessage)),
     );
   }
 
   void reset() => emit(const WeightLogIdle());
 
-  String _map(AppFailure f) => switch (f) {
-        CacheFailure() => 'خطأ في حفظ البيانات',
-        _              => 'حدث خطأ',
-      };
+  // _map أُزيلت — استخدم AppFailureX.userMessage
 }

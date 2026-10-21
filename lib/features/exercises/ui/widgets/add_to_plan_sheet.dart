@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -22,20 +24,14 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
   int? _selectedWeekday;
   bool _added = false;
 
-  static const _dayNames = [
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-    'الأحد',
-  ];
+  /// Returns the ordered day-name list (Mon→Sun) from the active locale.
+  List<String> _dayNamesFor(BuildContext context) =>
+      context.l10n.dayNamesMonFirst;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: sl<WorkoutPlanCubit>()..load(),
+      value: sl<WorkoutPlanCubit>()..ensureLoaded(),
       child: BlocBuilder<WorkoutPlanCubit, WorkoutPlanState>(
         builder: (context, state) {
           if (state is WorkoutPlanEmpty || state is WorkoutPlanInitial) {
@@ -68,20 +64,20 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.borderMedium,
+                      color: context.colors.borderMedium,
                       borderRadius:
                           BorderRadius.circular(AppConstants.radiusPill),
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'أضف لأي يوم؟',
+                Text(
+                  context.l10n.addToWhichDay,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -89,7 +85,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                   widget.exercise.nameAr.isNotEmpty
                       ? widget.exercise.nameAr
                       : widget.exercise.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 14,
                     color: AppColors.accent,
@@ -123,7 +119,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.accentDim
-                            : AppColors.bgElevated,
+                            : context.colors.bgElevated,
                         borderRadius:
                             BorderRadius.circular(AppConstants.radiusM),
                         border: Border.all(
@@ -137,7 +133,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                         children: [
                           Text(
                             day.isRest ? '😴' : '💪',
-                            style: const TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 18),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -146,14 +142,14 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                               children: [
                                 Row(children: [
                                   Text(
-                                    _dayNames[i],
+                                    _dayNamesFor(context)[i],
                                     style: TextStyle(
                                       fontFamily: 'Cairo',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
                                       color: day.isRest
-                                          ? AppColors.textMuted
-                                          : AppColors.textPrimary,
+                                          ? context.colors.textMuted
+                                          : context.colors.textPrimary,
                                     ),
                                   ),
                                   if (isToday) ...[
@@ -165,8 +161,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                                         color: AppColors.accentDim,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: const Text('اليوم',
-                                          style: TextStyle(
+                                      child: Text(context.l10n.today,
+                                          style: const TextStyle(
                                             fontFamily: 'Cairo',
                                             fontSize: 10,
                                             color: AppColors.accent,
@@ -178,28 +174,28 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                                 if (!day.isRest)
                                   Text(
                                     alreadyHas
-                                        ? '✓ مضاف بالفعل'
-                                        : '${day.exercises.length} تمارين',
+                                        ? context.l10n.alreadyAdded
+                                        : '${day.exercises.length} ${context.l10n.exerciseUnit}',
                                     style: TextStyle(
                                       fontFamily: 'Cairo',
                                       fontSize: 11,
                                       color: alreadyHas
                                           ? AppColors.success
-                                          : AppColors.textMuted,
+                                          : context.colors.textMuted,
                                     ),
                                   ),
                               ],
                             ),
                           ),
                           if (isSelected)
-                            const Icon(Icons.check_circle_rounded,
+                            Icon(Icons.check_circle_rounded,
                                 color: AppColors.accent, size: 20),
                           if (day.isRest)
-                            const Text('راحة',
+                            Text(context.l10n.restLabel,
                                 style: TextStyle(
                                   fontFamily: 'Cairo',
                                   fontSize: 11,
-                                  color: AppColors.textMuted,
+                                  color: context.colors.textMuted,
                                 )),
                         ],
                       ),
@@ -214,11 +210,7 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                       ? null
                       : () {
                           final planCubit = context.read<WorkoutPlanCubit>();
-
-                          if (planCubit.state is! WorkoutPlanEditing) {
-                            planCubit.startEditing();
-                          }
-                          planCubit.addExerciseToDay(
+                          planCubit.addExerciseAndSave(
                             _selectedWeekday!,
                             PlanExercise(
                               exerciseId: widget.exercise.id,
@@ -231,7 +223,6 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                               gifUrl: widget.exercise.gifUrl,
                             ),
                           );
-                          planCubit.saveDraft();
                           setState(() => _added = true);
                         },
                   child: AnimatedContainer(
@@ -241,21 +232,22 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     decoration: BoxDecoration(
                       color: _selectedWeekday != null
                           ? AppColors.accent
-                          : AppColors.bgElevated,
+                          : context.colors.bgElevated,
                       borderRadius: BorderRadius.circular(AppConstants.radiusL),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       _selectedWeekday != null
-                          ? 'أضف ليوم ${_dayNames[_selectedWeekday! - 1]}'
-                          : 'اختار اليوم الأول',
+                          ? context.l10n.addToDay.replaceFirst('{day}',
+                              _dayNamesFor(context)[_selectedWeekday! - 1])
+                          : context.l10n.chooseFirstDay,
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: _selectedWeekday != null
                             ? AppColors.textOnAccent
-                            : AppColors.textMuted,
+                            : context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -276,20 +268,22 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
         children: [
           const Text('💪', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
-          const Text(
-            'مفيش خطة تمرين بعد',
+          Text(
+            context.l10n.noWorkoutPlan,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 16,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'اعمل خطة الأسبوع الأول وبعدين ضيف التمارين',
+          Text(
+            context.l10n.setupPlanFirst,
             style: TextStyle(
-                fontFamily: 'Cairo', fontSize: 13, color: AppColors.textMuted),
+                fontFamily: 'Cairo',
+                fontSize: 13,
+                color: context.colors.textMuted),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -306,9 +300,9 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
               ),
               alignment: Alignment.center,
-              child: const Text(
-                'إعداد الخطة الأسبوعية',
-                style: TextStyle(
+              child: Text(
+                context.l10n.setupWeeklyPlan,
+                style: const TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -331,28 +325,31 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
           Container(
             width: 72,
             height: 72,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.successDim,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_rounded,
-                color: AppColors.success, size: 40),
+            child:
+                Icon(Icons.check_rounded, color: AppColors.success, size: 40),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'تمت الإضافة! 🎉',
+          Text(
+            context.l10n.exerciseAdded,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'اتضاف لـ ${_dayNames[(_selectedWeekday ?? 1) - 1]}',
-            style: const TextStyle(
-                fontFamily: 'Cairo', fontSize: 14, color: AppColors.textMuted),
+            context.l10n.addedToDay.replaceFirst(
+                '{day}', _dayNamesFor(context)[(_selectedWeekday ?? 1) - 1]),
+            style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 14,
+                color: context.colors.textMuted),
           ),
           const SizedBox(height: 24),
           Row(children: [
@@ -362,16 +359,16 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: AppColors.bgElevated,
+                    color: context.colors.bgElevated,
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   ),
                   alignment: Alignment.center,
-                  child: const Text('تمام',
+                  child: Text(context.l10n.ok,
                       style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary)),
+                          color: context.colors.textPrimary)),
                 ),
               ),
             ),
@@ -390,8 +387,8 @@ class _AddToPlanSheetState extends State<AddToPlanSheet> {
                     border: Border.all(color: AppColors.accent),
                   ),
                   alignment: Alignment.center,
-                  child: const Text('عرض الخطة',
-                      style: TextStyle(
+                  child: Text(context.l10n.viewPlan,
+                      style: const TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,

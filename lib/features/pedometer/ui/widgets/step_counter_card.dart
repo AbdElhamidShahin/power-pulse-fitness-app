@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -13,9 +15,9 @@ class StepCounterCard extends StatelessWidget {
     return BlocBuilder<PedometerCubit, PedometerState>(
       builder: (context, state) {
         return switch (state) {
-          PedometerInitial()     => const _LoadingCard(),
-          PedometerUnavailable() => const _UnavailableCard(),
-          PedometerCounting()    => _CountingCard(state: state),
+          PedometerInitial() => const _LoadingCard(),
+          PedometerUnavailable() => _UnavailableCard(state: state),
+          PedometerCounting() => _CountingCard(state: state),
         };
       },
     );
@@ -35,12 +37,12 @@ class _CountingCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: reached
               ? AppColors.success.withOpacity(0.4)
-              : AppColors.borderSubtle,
+              : context.colors.borderSubtle,
         ),
       ),
       child: Column(
@@ -57,7 +59,7 @@ class _CountingCard extends StatelessWidget {
                   fontFamily: 'Cairo',
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textMuted,
+                  color: context.colors.textMuted,
                 ),
               ),
               const Spacer(),
@@ -104,7 +106,7 @@ class _CountingCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 13.sp,
-                    color: AppColors.textMuted,
+                    color: context.colors.textMuted,
                   ),
                 ),
               ),
@@ -118,7 +120,7 @@ class _CountingCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: pct,
               minHeight: 7.h,
-              backgroundColor: AppColors.bgElevated,
+              backgroundColor: context.colors.bgElevated,
               valueColor: AlwaysStoppedAnimation<Color>(
                 reached ? AppColors.success : AppColors.accent,
               ),
@@ -134,7 +136,7 @@ class _CountingCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 11.sp,
-              color: reached ? AppColors.success : AppColors.textMuted,
+              color: reached ? AppColors.success : context.colors.textMuted,
             ),
           ),
         ],
@@ -159,7 +161,7 @@ class _LoadingCard extends StatelessWidget {
     return Container(
       height: 110.h,
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: const Center(
@@ -171,45 +173,82 @@ class _LoadingCard extends StatelessWidget {
 
 // ─── Unavailable ──────────────────────────────────────────────────────
 class _UnavailableCard extends StatelessWidget {
-  const _UnavailableCard();
+  const _UnavailableCard({required this.state});
+  final PedometerUnavailable state;
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<PedometerCubit>();
+    final needsPermission = state.permissionDenied;
+    final permanent = state.permanentlyDenied;
+
     return Container(
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        color: AppColors.bgSurface,
+        color: context.colors.bgSurface,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: AppColors.borderSubtle),
+        border: Border.all(color: context.colors.borderSubtle),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('👟', style: TextStyle(fontSize: 24.sp)),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'عداد الخطوات',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
+          Row(
+            children: [
+              Text('👟', style: TextStyle(fontSize: 24.sp)),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'عداد الخطوات',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: context.colors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      needsPermission
+                          ? 'محتاجين إذن "النشاط البدني" عشان نعدّ خطواتك'
+                          : 'الجهاز لا يدعم عداد الخطوات',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 11.sp,
+                        color: context.colors.textMuted,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'الجهاز لا يدعم هذه الميزة أو تحتاج لمنح الإذن',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 11.sp,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+          if (needsPermission) ...[
+            SizedBox(height: 10.h),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: permanent ? cubit.openSystemSettings : cubit.retry,
+                style: TextButton.styleFrom(
+                  backgroundColor: AppColors.accent,
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+                child: Text(
+                  permanent ? 'فتح إعدادات التطبيق' : 'منح الإذن',
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

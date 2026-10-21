@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../../core/theme/app_colors.dart';
-import '../../../../../../core/theme/app_text_styles.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_text_styles.dart';
 import '../../logic/cubit/home_cubit.dart';
 
 class HomeErrorView extends StatelessWidget {
@@ -26,14 +27,14 @@ class HomeErrorView extends StatelessWidget {
             SizedBox(height: 12.h),
             Text(
               message,
-              style: AppTextStyles.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium!,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
             GestureDetector(
               onTap: () => context.read<HomeCubit>().load(),
-              child: const Text(
-                'حاول مجدداً',
+              child: Text(
+                context.l10n.retry,
                 style: AppTextStyles.accentLabel,
               ),
             ),

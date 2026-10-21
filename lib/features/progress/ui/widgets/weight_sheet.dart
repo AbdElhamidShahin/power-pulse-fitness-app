@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import 'package:power_pulse/core/theme/app_theme_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 import '../../logic/cubit/progress_cubit.dart';
 import '../../logic/cubit/progress_state.dart';
-
 
 class WeightSheet extends StatefulWidget {
   const WeightSheet({super.key});
@@ -45,19 +46,19 @@ class _WeightSheetState extends State<WeightSheet> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: AppColors.bgElevated,
+                  color: context.colors.bgElevated,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
             ),
             SizedBox(height: 20.h),
             Text(
-              'تسجيل الوزن',
+              context.l10n.updateWeight,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(height: 20.h),
@@ -66,13 +67,13 @@ class _WeightSheetState extends State<WeightSheet> {
               autofocus: true,
               textDirection: TextDirection.ltr,
               keyboardType:
-              const TextInputType.numberWithOptions(decimal: true),
+                  const TextInputType.numberWithOptions(decimal: true),
               style: TextStyle(fontFamily: 'Cairo', fontSize: 16.sp),
               decoration: InputDecoration(
-                labelText: 'الوزن',
+                labelText: context.l10n.weight,
                 suffixText: 'كجم',
                 filled: true,
-                fillColor: AppColors.bgElevated,
+                fillColor: context.colors.bgElevated,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14.r),
                   borderSide: BorderSide.none,
@@ -86,7 +87,7 @@ class _WeightSheetState extends State<WeightSheet> {
               child: BlocBuilder<WeightLogCubit, WeightLogState>(
                 builder: (context, state) => ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.bgDark,
+                    backgroundColor: context.colors.bgDark,
                     foregroundColor: AppColors.textOnDark,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14.r),
@@ -95,28 +96,28 @@ class _WeightSheetState extends State<WeightSheet> {
                   onPressed: state is WeightLogLoading
                       ? null
                       : () {
-                    final w = double.tryParse(_ctrl.text);
-                    if (w != null && w > 0) {
-                      context.read<WeightLogCubit>().addEntry(w);
-                    }
-                  },
+                          final w = double.tryParse(_ctrl.text);
+                          if (w != null && w > 0) {
+                            context.read<WeightLogCubit>().addEntry(w);
+                          }
+                        },
                   child: state is WeightLogLoading
                       ? SizedBox(
-                    width: 20.w,
-                    height: 20.h,
-                    child: const CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
+                          width: 20.w,
+                          height: 20.h,
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : Text(
-                    'حفظ',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                          context.l10n.save,
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
               ),
             ),

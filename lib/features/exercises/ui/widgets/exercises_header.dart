@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:power_pulse/core/localization/app_localizations.dart';
+import '../../../../core/theme/app_theme_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/theme/app_colors.dart';
+import 'package:power_pulse/core/theme/app_colors.dart';
 
 class ExercisesHeader extends StatelessWidget {
   const ExercisesHeader({
@@ -22,19 +24,19 @@ class ExercisesHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'مكتبة التمارين',
+              context.l10n.exerciseLibrary,
               style: TextStyle(
                 fontSize: 11.sp,
-                color: const Color(0xFF8A8A8A),
+                color: context.colors.textMuted,
                 fontFamily: 'Cairo',
               ),
             ),
             Text(
-              'التمارين 🏋️',
+              context.l10n.qaExercises,
               style: TextStyle(
                 fontSize: 26.sp,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
                 fontFamily: 'Cairo',
               ),
             ),
@@ -46,12 +48,15 @@ class ExercisesHeader extends StatelessWidget {
             width: 42.w,
             height: 42.h,
             decoration: BoxDecoration(
-              color: isSearching ? AppColors.bgDark : AppColors.bgElevated,
+              color: isSearching
+                  ? context.colors.bgDark
+                  : context.colors.bgElevated,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               isSearching ? Icons.close_rounded : Icons.search_rounded,
-              color: isSearching ? AppColors.textOnDark : AppColors.textMuted,
+              color:
+                  isSearching ? AppColors.textOnDark : context.colors.textMuted,
               size: 24.r,
             ),
           ),

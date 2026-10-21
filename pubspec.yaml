@@ -2,7 +2,11 @@ name: power_pulse
 description: "Power Pulse - Fitness App"
 publish_to: "none"
 
+<<<<<<< HEAD
+version: 1.0.0+23
+=======
 version: 1.0.0+22
+>>>>>>> main
 
 environment:
   sdk: ^3.5.0
@@ -35,6 +39,12 @@ dependencies:
 
   # UI / Styling
   flutter_screenutil: ^5.9.3
+<<<<<<< HEAD
+  cupertino_icons: ^1.0.8
+  cached_network_image: ^3.4.1
+
+  # Charts / Gauges
+=======
   google_fonts: ^6.2.1
   lottie: ^3.1.2
   flutter_animate: ^4.5.0
@@ -45,6 +55,7 @@ dependencies:
 
   # Charts / Gauges
   syncfusion_flutter_gauges: ^31.1.19
+>>>>>>> main
 
   # Notifications
   flutter_local_notifications: ^18.0.1
@@ -52,6 +63,18 @@ dependencies:
 
   # Pedometer
   pedometer: ^4.0.2
+<<<<<<< HEAD
+  permission_handler: ^11.3.1
+  flutter_svg: ^2.2.3
+
+  # Localization
+  intl: ^0.20.2
+  flutter_launcher_icons: ^0.14.4
+
+  # Misc
+
+  # Launcher Icons
+=======
 
   # Misc
   url_launcher: ^6.3.0
@@ -60,6 +83,7 @@ dependencies:
   # Launcher Icons
   flutter_launcher_icons: ^0.14.1
   awesome_snackbar_content: ^0.1.7
+>>>>>>> main
 
 dev_dependencies:
   flutter_lints: ^5.0.0
@@ -72,13 +96,9 @@ flutter:
     - assets/langs/en.json
     - assets/langs/ar.json
     - assets/exercises.json
-    - assets/animation/
-    - assets/images/
-    - assets/catogry/
     - assets/GIF/chest/
     - assets/GIF/lats/
     - assets/GIF/shorter/
     - assets/GIF/hands/
     - assets/GIF/legs/
     - assets/GIF/beily/
-    - assets/images/123456.jpg

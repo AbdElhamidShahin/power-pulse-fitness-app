@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../core/data/app_data_bus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/workout_plan_entity.dart';
@@ -30,6 +31,7 @@ final class WorkoutPlanServiceImpl implements WorkoutPlanService {
   Future<void> savePlan(WorkoutPlan plan) async {
     try {
       await _prefs.setString(_key, jsonEncode(plan.toJson()));
+      AppDataBus.notify();
     } catch (_) {
       throw const CacheException(message: 'خطأ في حفظ خطة التمرين');
     }
@@ -38,5 +40,6 @@ final class WorkoutPlanServiceImpl implements WorkoutPlanService {
   @override
   Future<void> deletePlan() async {
     await _prefs.remove(_key);
+    AppDataBus.notify();
   }
 }
